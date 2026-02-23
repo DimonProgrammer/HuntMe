@@ -1,0 +1,6 @@
+{
+  "outputDirectory": "landing",
+  "buildCommand": null,
+  "cleanUrls": true,
+  "trailingSlash": false
+}
