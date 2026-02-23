@@ -1,0 +1,25 @@
+name: Health Check
+
+on:
+  schedule:
+    - cron: '*/30 * * * *' # Every 30 minutes
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping n8n
+        run: |
+          if [ -n "$N8N_URL" ]; then
+            status=$(curl -s -o /dev/null -w "%{http_code}" "$N8N_URL/healthz" --max-time 10 || echo "000")
+            if [ "$status" != "200" ]; then
+              curl -s "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+                -d "chat_id=${ADMIN_CHAT_ID}" \
+                -d "text=⚠️ n8n is DOWN! HTTP status: $status" || true
+            fi
+          fi
+        env:
+          N8N_URL: ${{ secrets.N8N_URL }}
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          ADMIN_CHAT_ID: ${{ secrets.ADMIN_CHAT_ID }}

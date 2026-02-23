@@ -1,0 +1,106 @@
+{
+  "name": "Candidate Screening Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "new-application",
+        "httpMethod": "POST",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "position": [250, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $env.CLAUDE_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "body",
+              "value": "={\"model\":\"claude-haiku-4-5-20251001\",\"max_tokens\":500,\"system\":\"You are an HR screening assistant. Score candidate 1-100 for Remote Chat Moderator role. Return JSON only.\",\"messages\":[{\"role\":\"user\",\"content\":\"Screen: Name={{ $json.name }}, Experience={{ $json.experience }}, English={{ $json.english_level }}, Availability={{ $json.availability }}, Rate={{ $json.expected_rate }}. Return JSON: {overall_score, recommendation: PASS/MAYBE/REJECT, reasoning}\"}]}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Claude Screening",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [500, 300],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = JSON.parse($input.first().json.content[0].text);\nconst original = $('Webhook').first().json;\nreturn [{json: {...original, ...response}}];"
+      },
+      "name": "Parse Score",
+      "type": "n8n-nodes-base.code",
+      "position": [750, 300],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.overall_score }}",
+              "operation": "largerEqual",
+              "value2": 70
+            }
+          ]
+        }
+      },
+      "name": "Is Qualified?",
+      "type": "n8n-nodes-base.if",
+      "position": [1000, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.ADMIN_CHAT_ID }}",
+        "text": "=✅ QUALIFIED: {{ $json.name }}\nScore: {{ $json.overall_score }}/100\nTG: @{{ $json.telegram_username }}\nReason: {{ $json.reasoning }}",
+        "additionalFields": {}
+      },
+      "name": "Notify Admin (Pass)",
+      "type": "n8n-nodes-base.telegram",
+      "position": [1250, 200],
+      "typeVersion": 1,
+      "credentials": { "telegramApi": { "id": "1", "name": "HuntMe Bot" } }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.ADMIN_CHAT_ID }}",
+        "text": "=⚠️ REVIEW: {{ $json.name }}\nScore: {{ $json.overall_score }}/100\nTG: @{{ $json.telegram_username }}\nReason: {{ $json.reasoning }}",
+        "additionalFields": {}
+      },
+      "name": "Notify Admin (Maybe/Reject)",
+      "type": "n8n-nodes-base.telegram",
+      "position": [1250, 400],
+      "typeVersion": 1,
+      "credentials": { "telegramApi": { "id": "1", "name": "HuntMe Bot" } }
+    }
+  ],
+  "connections": {
+    "Webhook": { "main": [[{ "node": "Claude Screening", "type": "main", "index": 0 }]] },
+    "Claude Screening": { "main": [[{ "node": "Parse Score", "type": "main", "index": 0 }]] },
+    "Parse Score": { "main": [[{ "node": "Is Qualified?", "type": "main", "index": 0 }]] },
+    "Is Qualified?": {
+      "main": [
+        [{ "node": "Notify Admin (Pass)", "type": "main", "index": 0 }],
+        [{ "node": "Notify Admin (Maybe/Reject)", "type": "main", "index": 0 }]
+      ]
+    }
+  }
+}

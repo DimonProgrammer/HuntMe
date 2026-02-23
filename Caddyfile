@@ -1,0 +1,12 @@
+# Replace with your domain or use localhost for testing
+# For Oracle Cloud: n8n.yourdomain.com
+# For local dev: :80
+
+:80 {
+    reverse_proxy n8n:5678
+}
+
+# Uncomment below for production with auto-HTTPS:
+# n8n.yourdomain.com {
+#     reverse_proxy n8n:5678
+# }
