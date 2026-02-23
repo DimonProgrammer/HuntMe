@@ -1,4 +1,9 @@
-"""FSM flow for candidate application via Telegram bot."""
+"""11-step FSM flow for candidate qualification via Telegram bot.
+
+Based on official HuntMe Operator Call & Messenger Scripts.
+Steps: name → PC → age → study/work → english → PC confidence →
+       CPU → GPU → internet → start date → contact
+"""
 
 import logging
 
@@ -9,6 +14,16 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from bot.config import config
+from bot.services.followup import (
+    DECLINE_ENGLISH,
+    DECLINE_HARDWARE,
+    DECLINE_NO_PC,
+    DECLINE_STUDENT_INPERSON,
+    DECLINE_UNDERAGE,
+    WARM_GREETING,
+)
+from bot.services.hardware_checker import quick_check
+from bot.services.objection_handler import detect_objection, get_response
 from bot.services.screener import screen_candidate
 
 logger = logging.getLogger(__name__)
@@ -17,120 +32,416 @@ router = Router()
 
 class ApplicationForm(StatesGroup):
     waiting_name = State()
-    waiting_experience = State()
+    waiting_has_pc = State()
+    waiting_no_pc_followup = State()
+    waiting_age = State()
+    waiting_study_work = State()
     waiting_english = State()
-    waiting_availability = State()
-    waiting_rate = State()
+    waiting_pc_confidence = State()
+    waiting_cpu = State()
+    waiting_gpu = State()
+    waiting_internet = State()
+    waiting_start_date = State()
+    waiting_contact = State()
 
+
+# --- /start ---
 
 @router.message(F.text == "/start")
 async def cmd_start(message: Message, state: FSMContext):
-    # Skip if this is the admin
     if message.from_user.id == config.ADMIN_CHAT_ID:
         return
 
-    await message.answer(
-        "Welcome! We're hiring Remote Chat Moderators.\n\n"
-        "I'll ask you a few quick questions to see if you're a good fit.\n"
-        "It takes less than 2 minutes.\n\n"
-        "What is your full name?"
-    )
+    greeting = WARM_GREETING.format(name=message.from_user.first_name or "there")
+    await message.answer(greeting)
     await state.set_state(ApplicationForm.waiting_name)
 
 
+# --- Step 1: Name ---
+
 @router.message(ApplicationForm.waiting_name)
 async def process_name(message: Message, state: FSMContext):
-    await state.update_data(name=message.text)
-    await message.answer(
-        "Great! Do you have any experience in admin, customer support, "
-        "virtual assistant, or similar online work?\n\n"
-        "Tell me briefly (or type 'No experience' if none)."
-    )
-    await state.set_state(ApplicationForm.waiting_experience)
+    name = message.text.strip()
 
+    # Check for objection in free text
+    objection = detect_objection(name)
+    if objection and len(name) > 30:
+        response = get_response(objection)
+        if response:
+            await message.answer(response)
+            return
 
-@router.message(ApplicationForm.waiting_experience)
-async def process_experience(message: Message, state: FSMContext):
-    await state.update_data(experience=message.text)
+    await state.update_data(name=name)
+
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Beginner", callback_data="eng_beginner")],
-        [InlineKeyboardButton(text="Intermediate", callback_data="eng_intermediate")],
-        [InlineKeyboardButton(text="Advanced", callback_data="eng_advanced")],
+        [
+            InlineKeyboardButton(text="Yes, PC/Desktop", callback_data="pc_desktop"),
+            InlineKeyboardButton(text="Yes, Laptop", callback_data="pc_laptop"),
+        ],
+        [InlineKeyboardButton(text="No", callback_data="pc_no")],
+    ])
+    await message.answer(
+        "Nice to meet you, {}! 🙂\n\n"
+        "Do you have a personal PC or laptop? (Windows only — MacBooks are not supported)".format(name.split()[0]),
+        reply_markup=keyboard,
+    )
+    await state.set_state(ApplicationForm.waiting_has_pc)
+
+
+# --- Step 2: PC Check ---
+
+@router.callback_query(ApplicationForm.waiting_has_pc, F.data.startswith("pc_"))
+async def process_has_pc(callback: CallbackQuery, state: FSMContext):
+    choice = callback.data.removeprefix("pc_")
+    await callback.answer()
+
+    if choice == "no":
+        await state.update_data(has_pc=False)
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [
+                InlineKeyboardButton(text="Yes, within 1-2 weeks", callback_data="nopc_soon"),
+                InlineKeyboardButton(text="No plans yet", callback_data="nopc_no"),
+            ],
+        ])
+        await callback.message.answer(
+            "I see. This role requires a Windows PC or laptop for the streaming software.\n\n"
+            "Are you planning to get one in the near future?",
+            reply_markup=keyboard,
+        )
+        await state.set_state(ApplicationForm.waiting_no_pc_followup)
+        return
+
+    await state.update_data(has_pc=True, pc_type=choice)
+    await callback.message.answer("Great! 👍\n\nHow old are you?")
+    await state.set_state(ApplicationForm.waiting_age)
+
+
+@router.callback_query(ApplicationForm.waiting_no_pc_followup, F.data.startswith("nopc_"))
+async def process_no_pc_followup(callback: CallbackQuery, state: FSMContext):
+    choice = callback.data.removeprefix("nopc_")
+    await callback.answer()
+
+    if choice == "soon":
+        await callback.message.answer(
+            "That's great! 🙂 Feel free to come back when you have your PC set up. "
+            "Just message /start and we'll pick up where we left off!\n\n"
+            "We'll keep your application on file. Good luck! 🍀"
+        )
+    else:
+        await callback.message.answer(DECLINE_NO_PC)
+
+    await state.clear()
+
+
+# --- Step 3: Age ---
+
+@router.message(ApplicationForm.waiting_age)
+async def process_age(message: Message, state: FSMContext):
+    text = message.text.strip()
+
+    # Try to extract number
+    age = None
+    for word in text.split():
+        if word.isdigit():
+            age = int(word)
+            break
+
+    if age is None:
+        try:
+            age = int(text)
+        except ValueError:
+            await message.answer("Please enter your age as a number (e.g., 22).")
+            return
+
+    if age < 18:
+        await state.update_data(age=age)
+        await message.answer(DECLINE_UNDERAGE)
+        await state.clear()
+        return
+
+    await state.update_data(age=age)
+
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="Working", callback_data="study_working")],
+        [InlineKeyboardButton(text="Student (distance/online)", callback_data="study_distance")],
+        [InlineKeyboardButton(text="Student (in-person)", callback_data="study_inperson")],
+        [InlineKeyboardButton(text="Neither", callback_data="study_neither")],
+    ])
+    await message.answer(
+        "Are you currently studying or working?",
+        reply_markup=keyboard,
+    )
+    await state.set_state(ApplicationForm.waiting_study_work)
+
+
+# --- Step 4: Study/Work Status ---
+
+@router.callback_query(ApplicationForm.waiting_study_work, F.data.startswith("study_"))
+async def process_study_work(callback: CallbackQuery, state: FSMContext):
+    status = callback.data.removeprefix("study_")
+    await callback.answer()
+
+    if status == "inperson":
+        await state.update_data(study_status="student_inperson")
+        await callback.message.answer(DECLINE_STUDENT_INPERSON)
+        await state.clear()
+        return
+
+    status_map = {"working": "working", "distance": "student_distance", "neither": "neither"}
+    await state.update_data(study_status=status_map.get(status, status))
+
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text="Beginner (A1-A2)", callback_data="eng_beginner"),
+            InlineKeyboardButton(text="Intermediate (B1)", callback_data="eng_b1"),
+        ],
+        [
+            InlineKeyboardButton(text="Upper-Intermediate (B2)", callback_data="eng_b2"),
+            InlineKeyboardButton(text="Advanced (C1+)", callback_data="eng_c1"),
+        ],
         [InlineKeyboardButton(text="Native / Fluent", callback_data="eng_native")],
     ])
-    await message.answer("How would you rate your English level?", reply_markup=keyboard)
+    await callback.message.answer(
+        "What is your English level?\n\n"
+        "B1 (Intermediate) is the minimum requirement — "
+        "you'll be moderating English-language chats.",
+        reply_markup=keyboard,
+    )
     await state.set_state(ApplicationForm.waiting_english)
 
+
+# --- Step 5: English Level ---
 
 @router.callback_query(ApplicationForm.waiting_english, F.data.startswith("eng_"))
 async def process_english(callback: CallbackQuery, state: FSMContext):
     level = callback.data.removeprefix("eng_")
-    await state.update_data(english_level=level)
-    await callback.message.answer(
-        "How many hours per day can you work?\n"
-        "(e.g., '6 hours, flexible schedule' or 'full-time 8 hours')"
-    )
-    await state.set_state(ApplicationForm.waiting_availability)
     await callback.answer()
 
+    if level == "beginner":
+        await state.update_data(english_level="beginner")
+        await callback.message.answer(DECLINE_ENGLISH)
+        await state.clear()
+        return
 
-@router.message(ApplicationForm.waiting_availability)
-async def process_availability(message: Message, state: FSMContext):
-    await state.update_data(availability=message.text)
-    await message.answer(
-        "Last question: what is your expected monthly salary in USD?\n"
-        "(e.g., '$300', '$500', 'flexible')"
+    level_map = {"b1": "B1", "b2": "B2", "c1": "C1", "native": "Native"}
+    await state.update_data(english_level=level_map.get(level, level))
+
+    await callback.message.answer(
+        "Do you consider yourself a confident PC user?\n\n"
+        "For example: do you install programs, troubleshoot issues, "
+        "know your way around Windows settings?"
     )
-    await state.set_state(ApplicationForm.waiting_rate)
+    await state.set_state(ApplicationForm.waiting_pc_confidence)
 
 
-@router.message(ApplicationForm.waiting_rate)
-async def process_rate(message: Message, state: FSMContext):
-    await state.update_data(expected_rate=message.text)
+# --- Step 6: PC Confidence ---
+
+@router.message(ApplicationForm.waiting_pc_confidence)
+async def process_pc_confidence(message: Message, state: FSMContext):
+    await state.update_data(pc_confidence=message.text.strip())
+
+    await message.answer(
+        "What is your processor (CPU) model?\n\n"
+        "💡 How to check: Press Win+R → type 'dxdiag' → press Enter → "
+        "look at 'Processor' line\n\n"
+        "Example: Intel Core i5-12400 or AMD Ryzen 5 5600"
+    )
+    await state.set_state(ApplicationForm.waiting_cpu)
+
+
+# --- Step 7: CPU ---
+
+@router.message(ApplicationForm.waiting_cpu)
+async def process_cpu(message: Message, state: FSMContext):
+    cpu = message.text.strip()
+
+    # Check for objection
+    objection = detect_objection(cpu)
+    if objection and len(cpu) > 20:
+        response = get_response(objection)
+        if response:
+            await message.answer(response)
+            await message.answer(
+                "Now, back to the application — "
+                "what is your processor model? 🙂\n\n"
+                "💡 Press Win+R → type 'dxdiag' → Enter → look at 'Processor'"
+            )
+            return
+
+    await state.update_data(cpu_model=cpu)
+
+    await message.answer(
+        "What is your graphics card (GPU)?\n\n"
+        "💡 In the same dxdiag window → click 'Display' tab → "
+        "look at 'Name' under Device\n\n"
+        "Example: NVIDIA GeForce RTX 3060 or AMD Radeon RX 6600"
+    )
+    await state.set_state(ApplicationForm.waiting_gpu)
+
+
+# --- Step 8: GPU ---
+
+@router.message(ApplicationForm.waiting_gpu)
+async def process_gpu(message: Message, state: FSMContext):
+    gpu = message.text.strip()
+    await state.update_data(gpu_model=gpu)
+
+    # Run hardware check
+    data = await state.get_data()
+    hw_result = quick_check(data["cpu_model"], gpu)
+
+    await state.update_data(
+        hardware_compatible=hw_result.compatible,
+        cpu_status=hw_result.cpu_reason,
+        gpu_status=hw_result.gpu_reason,
+    )
+
+    if not hw_result.compatible:
+        # Still continue to collect remaining info but note the issue
+        issues = []
+        if not hw_result.cpu_ok:
+            issues.append(f"CPU: {hw_result.cpu_reason}")
+        if not hw_result.gpu_ok:
+            issues.append(f"GPU: {hw_result.gpu_reason}")
+
+        await state.update_data(hardware_issues="\n".join(issues))
+
+    await message.answer(
+        "What is your internet speed? (minimum 100 Mbps required)\n\n"
+        "💡 You can check at speedtest.net\n\n"
+        "Also — do you have a LAN (ethernet) port or do you use Wi-Fi only?"
+    )
+    await state.set_state(ApplicationForm.waiting_internet)
+
+
+# --- Step 9: Internet Speed ---
+
+@router.message(ApplicationForm.waiting_internet)
+async def process_internet(message: Message, state: FSMContext):
+    await state.update_data(internet_speed=message.text.strip())
+
+    await message.answer(
+        "When would you be ready to start?\n\n"
+        "Our next training group starts soon — ideally within 1 week."
+    )
+    await state.set_state(ApplicationForm.waiting_start_date)
+
+
+# --- Step 10: Start Date ---
+
+@router.message(ApplicationForm.waiting_start_date)
+async def process_start_date(message: Message, state: FSMContext):
+    await state.update_data(start_date=message.text.strip())
+
+    await message.answer(
+        "Last question! 🙂\n\n"
+        "Please share your contact for the interview:\n"
+        "• Telegram @username (preferred)\n"
+        "• Or WhatsApp number"
+    )
+    await state.set_state(ApplicationForm.waiting_contact)
+
+
+# --- Step 11: Contact → Screening ---
+
+@router.message(ApplicationForm.waiting_contact)
+async def process_contact(message: Message, state: FSMContext):
+    await state.update_data(contact_info=message.text.strip())
     data = await state.get_data()
     await state.clear()
 
-    await message.answer("Thank you! Reviewing your application now...")
+    # Check if hardware was already flagged as incompatible
+    if data.get("hardware_compatible") is False:
+        await message.answer(DECLINE_HARDWARE)
+        await _notify_admin(message, data, None, declined_reason="hardware")
+        return
 
-    # Screen with Claude
-    result = await screen_candidate(
-        name=data["name"],
-        experience=data.get("experience", "N/A"),
-        english_level=data.get("english_level", "N/A"),
-        availability=data.get("availability", "N/A"),
-        expected_rate=data.get("expected_rate", "N/A"),
-        message=f"Telegram user @{message.from_user.username or 'no_username'}",
+    await message.answer(
+        "Thank you for completing the application! 🎉\n\n"
+        "I'm reviewing your information now — this usually takes about 30 seconds..."
     )
 
-    # Send response to candidate
+    # AI screening
+    result = await screen_candidate(
+        name=data.get("name", "N/A"),
+        has_pc=data.get("has_pc"),
+        age=data.get("age"),
+        study_status=data.get("study_status", "N/A"),
+        english_level=data.get("english_level", "N/A"),
+        pc_confidence=data.get("pc_confidence", "N/A"),
+        cpu_model=data.get("cpu_model", "N/A"),
+        gpu_model=data.get("gpu_model", "N/A"),
+        cpu_status=data.get("cpu_status", "N/A"),
+        gpu_status=data.get("gpu_status", "N/A"),
+        hardware_compatible=data.get("hardware_compatible"),
+        internet_speed=data.get("internet_speed", "N/A"),
+        start_date=data.get("start_date", "N/A"),
+        contact_info=data.get("contact_info", "N/A"),
+        tg_username=message.from_user.username or "N/A",
+    )
+
+    # Send AI response to candidate
     await message.answer(result.suggested_response)
 
     # Notify admin
-    status_icon = {"PASS": "GREEN", "MAYBE": "YELLOW", "REJECT": "RED"}.get(result.recommendation, "?")
-    admin_text = (
-        f"[{status_icon}] {result.recommendation}\n\n"
-        f"Name: {data['name']}\n"
-        f"TG: @{message.from_user.username or 'N/A'} (ID: {message.from_user.id})\n"
-        f"Score: {result.overall_score}/100\n"
-        f"English: {result.english_score}/10 | Experience: {result.experience_score}/10\n"
-        f"Availability: {result.availability_score}/10 | Equipment: {result.equipment_score}/10\n"
-        f"Motivation: {result.motivation_score}/10\n\n"
-        f"Reasoning: {result.reasoning}"
-    )
+    await _notify_admin(message, data, result)
 
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton(text="Send Referral Link", callback_data=f"ref_{message.from_user.id}"),
-            InlineKeyboardButton(text="Reject", callback_data=f"rej_{message.from_user.id}"),
-        ],
-    ])
+    # Send to n8n webhook
+    await _send_to_n8n(message, data, result)
+
+
+async def _notify_admin(
+    message: Message,
+    data: dict,
+    result,
+    declined_reason: str | None = None,
+):
+    """Send candidate info to admin with action buttons."""
+    if declined_reason:
+        admin_text = (
+            f"[AUTO-DECLINED] {declined_reason.upper()}\n\n"
+            f"Name: {data.get('name', 'N/A')}\n"
+            f"TG: @{message.from_user.username or 'N/A'} (ID: {message.from_user.id})\n"
+            f"Age: {data.get('age', 'N/A')}\n"
+            f"PC: {data.get('has_pc', 'N/A')} | Study: {data.get('study_status', 'N/A')}\n"
+            f"CPU: {data.get('cpu_model', 'N/A')}\n"
+            f"GPU: {data.get('gpu_model', 'N/A')}\n"
+            f"Issues: {data.get('hardware_issues', 'N/A')}"
+        )
+        keyboard = None
+    else:
+        icon = {"PASS": "🟢", "MAYBE": "🟡", "REJECT": "🔴"}.get(result.recommendation, "❓")
+        admin_text = (
+            f"{icon} {result.recommendation} — Score: {result.overall_score}/100\n\n"
+            f"Name: {data.get('name', 'N/A')}\n"
+            f"TG: @{message.from_user.username or 'N/A'} (ID: {message.from_user.id})\n"
+            f"Age: {data.get('age', 'N/A')} | English: {data.get('english_level', 'N/A')}\n"
+            f"Study/Work: {data.get('study_status', 'N/A')}\n"
+            f"CPU: {data.get('cpu_model', 'N/A')} | GPU: {data.get('gpu_model', 'N/A')}\n"
+            f"HW Compatible: {'✅' if data.get('hardware_compatible') else '❌'}\n"
+            f"Internet: {data.get('internet_speed', 'N/A')}\n"
+            f"Start: {data.get('start_date', 'N/A')}\n"
+            f"Contact: {data.get('contact_info', 'N/A')}\n\n"
+            f"Scores: HW={result.hardware_score} | Eng={result.english_score} | "
+            f"Avail={result.availability_score} | Motiv={result.motivation_score} | "
+            f"Exp={result.experience_score}\n\n"
+            f"Reasoning: {result.reasoning}"
+        )
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [
+                InlineKeyboardButton(text="✅ Send Interview Invite", callback_data=f"ref_{message.from_user.id}"),
+                InlineKeyboardButton(text="❌ Reject", callback_data=f"rej_{message.from_user.id}"),
+            ],
+        ])
 
     try:
         await message.bot.send_message(config.ADMIN_CHAT_ID, admin_text, reply_markup=keyboard)
     except Exception:
         logger.exception("Failed to notify admin")
 
-    # Send to n8n webhook (non-blocking)
+
+async def _send_to_n8n(message: Message, data: dict, result):
+    """Send application data to n8n webhook (non-blocking)."""
     try:
         async with aiohttp.ClientSession() as session:
             await session.post(
@@ -138,7 +449,17 @@ async def process_rate(message: Message, state: FSMContext):
                 json={
                     "telegram_user_id": message.from_user.id,
                     "telegram_username": message.from_user.username,
-                    **data,
+                    "name": data.get("name"),
+                    "has_pc": data.get("has_pc"),
+                    "age": data.get("age"),
+                    "study_status": data.get("study_status"),
+                    "english_level": data.get("english_level"),
+                    "cpu_model": data.get("cpu_model"),
+                    "gpu_model": data.get("gpu_model"),
+                    "hardware_compatible": data.get("hardware_compatible"),
+                    "internet_speed": data.get("internet_speed"),
+                    "start_date": data.get("start_date"),
+                    "contact_info": data.get("contact_info"),
                     "score": result.overall_score,
                     "recommendation": result.recommendation,
                 },

@@ -21,35 +21,43 @@ logger = logging.getLogger(__name__)
 # Pre-written posts to use when Claude API is not available
 FALLBACK_POSTS = {
     "ph": (
-        "🌐 Remote Chat Moderator — Work From Home — USD Payment\n\n"
-        "We are hiring chat moderators for a growing international platform.\n\n"
-        "Requirements:\n"
-        "— Good written English\n"
-        "— Reliable internet connection\n"
-        "— 4+ hours daily availability\n"
-        "— Laptop or PC\n"
-        "— No experience needed — full training provided\n\n"
+        "🎬 Live Stream Moderator — $150-400/week — Work From Home\n\n"
+        "We're a talent agency looking for remote streaming moderators.\n\n"
+        "What you'll do:\n"
+        "— Set up streaming software (OBS) — full training provided\n"
+        "— Moderate live chats during streams\n"
+        "— Help streamers with technical issues\n"
+        "— You NEVER appear on camera — behind-the-scenes work\n\n"
         "What we offer:\n"
-        "— Work from home, flexible schedule\n"
-        "— Payment in USD (weekly via GCash/Wise/crypto)\n"
-        "— Long-term position with growth\n"
-        "— Supportive team and ongoing training\n\n"
-        "Interested? Send a short introduction about yourself."
+        "— $150/week starting, top performers earn $400+/week\n"
+        "— Paid training: 5-7 days with personal mentor ($30/shift)\n"
+        "— Weekly payment every Sunday via GCash/Wise/USDT\n"
+        "— 5/2 schedule, choose your shift\n"
+        "— No experience needed\n\n"
+        "Requirements:\n"
+        "— Good English (B1+ level)\n"
+        "— PC or laptop (Windows)\n"
+        "— 100 Mbps internet\n\n"
+        "Interested? Send your name and I'll tell you more!"
     ),
     "ng": (
-        "💼 Hiring: Online Chat Moderator — Earn in USD Weekly\n\n"
-        "Join our international team as a remote chat moderator.\n\n"
+        "💼 Remote Streaming Moderator — Earn $150-400/week in USD\n\n"
+        "Join our international team as a behind-the-scenes streaming moderator.\n\n"
+        "The role:\n"
+        "— Technical setup for streamers (OBS, equipment)\n"
+        "— Chat moderation during live streams\n"
+        "— No camera, no content creation — purely behind the scenes\n\n"
+        "What you get:\n"
+        "— Starting pay: $150/week ($600/month)\n"
+        "— Growth to $200-400+/week within 1-2 months\n"
+        "— Paid training: 5-7 days, $30 per shift, personal mentor\n"
+        "— Payment every Sunday via USDT/bank transfer\n"
+        "— 5/2 schedule, 6-8 hours/day\n\n"
         "What you need:\n"
         "— Good English (written)\n"
-        "— Stable internet\n"
-        "— Computer or laptop\n"
-        "— 4-8 hours per day\n\n"
-        "What you get:\n"
-        "— Weekly pay in USD (USDT/bank transfer)\n"
-        "— Work from anywhere\n"
-        "— Free training — no experience needed\n"
-        "— Flexible hours\n\n"
-        "Apply now: send your name, age, and a short message about yourself."
+        "— PC/laptop (Windows) + 100 Mbps internet\n"
+        "— No experience required\n\n"
+        "Apply: send your name and age. Let's talk!"
     ),
 }
 
@@ -69,8 +77,11 @@ async def generate_post_text(region: str) -> str:
             model="claude-haiku-4-5-20251001",
             max_tokens=500,
             system=(
-                "Generate a job posting for Remote Chat Moderator. "
-                "NEVER use words: webcam, adult, OnlyFans, nsfw. "
+                "Generate a job posting for Live Stream Moderator position. "
+                "Role: behind-the-scenes technical support for streamers (OBS, chat moderation). "
+                "Pay: $150/week starting, growth to $400+/week. Weekly Sunday payments. "
+                "Paid training 5-7 days with personal mentor. No camera required. "
+                "NEVER use words: webcam, adult, OnlyFans, nsfw, HuntMe. "
                 "Use AIDA framework. Output post text only."
             ),
             messages=[
@@ -116,7 +127,7 @@ async def post_to_jora():
             await asyncio.sleep(random.uniform(1, 3))
 
             # Fill in job details
-            await page.fill('input[name="title"]', "Remote Chat Moderator — USD Payment")
+            await page.fill('input[name="title"]', "Live Stream Moderator — $150-400/week — Remote")
             await page.fill('textarea[name="description"]', post_text)
             # Additional fields may vary — adjust selectors as needed
 

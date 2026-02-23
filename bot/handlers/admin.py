@@ -49,13 +49,13 @@ async def cmd_screen(message: Message):
     from bot.services.screener import screen_candidate
 
     await message.answer("Screening...")
-    result = await screen_candidate(name="Unknown", message=args[1])
+    result = await screen_candidate(name="Manual Screen", tg_username="admin_manual")
     await message.answer(
         f"Score: {result.overall_score}/100\n"
         f"Recommendation: {result.recommendation}\n\n"
-        f"English: {result.english_score} | Experience: {result.experience_score}\n"
-        f"Availability: {result.availability_score} | Equipment: {result.equipment_score}\n"
-        f"Motivation: {result.motivation_score}\n\n"
+        f"Hardware: {result.hardware_score} | English: {result.english_score}\n"
+        f"Availability: {result.availability_score} | Motivation: {result.motivation_score}\n"
+        f"Experience: {result.experience_score}\n\n"
         f"Reasoning: {result.reasoning}\n\n"
         f"Suggested response:\n{result.suggested_response}"
     )
@@ -77,7 +77,7 @@ async def cmd_pipeline(message: Message):
         await message.answer("Pipeline is empty. No candidates yet.")
         return
 
-    status_order = ["new", "screened", "link_sent", "webinar_registered", "active", "churned"]
+    status_order = ["new", "screened", "interview_invited", "active", "churned"]
     status_map = dict(rows)
     lines = []
     total = 0
@@ -137,12 +137,17 @@ async def cb_send_referral(callback: CallbackQuery):
     try:
         await callback.bot.send_message(
             user_id,
-            f"Great news! You've been selected for the next step.\n\n"
-            f"Please register for our onboarding webinar here:\n{link}\n\n"
-            f"Pick a time that works for you. See you there!",
+            "Great news! You've been selected for an interview! 🎉\n\n"
+            "Please register through the link below to choose your interview time:\n"
+            f"{link}\n\n"
+            "The interview is a quick 15-minute Zoom call where we'll:\n"
+            "• Explain the role in detail\n"
+            "• Answer all your questions\n"
+            "• Do a quick age verification\n\n"
+            "Looking forward to meeting you! 🙂",
         )
-        await callback.answer("Referral link sent!")
-        await callback.message.edit_text(callback.message.text + "\n\n--- REFERRAL SENT ---")
+        await callback.answer("Interview invite sent!")
+        await callback.message.edit_text(callback.message.text + "\n\n✅ INTERVIEW INVITE SENT")
     except Exception:
         await callback.answer("Failed to send — user may have blocked the bot")
 
@@ -153,12 +158,15 @@ async def cb_reject(callback: CallbackQuery):
     try:
         await callback.bot.send_message(
             user_id,
-            "Thank you for your interest! Unfortunately, we don't have a matching "
-            "position right now. We'll keep your application on file for future openings. "
-            "Best of luck!",
+            "Thank you for your interest in our team! 🙏\n\n"
+            "Unfortunately, we're not able to move forward with your application "
+            "at this time. We'll keep your information on file for future openings.\n\n"
+            "If you know anyone who might be interested in a remote moderator position, "
+            "feel free to send them our way!\n\n"
+            "Wishing you all the best! 🙂",
         )
         await callback.answer("Rejection sent.")
-        await callback.message.edit_text(callback.message.text + "\n\n--- REJECTED ---")
+        await callback.message.edit_text(callback.message.text + "\n\n❌ REJECTED")
     except Exception:
         await callback.answer("Failed to send")
 

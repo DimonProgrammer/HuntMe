@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import BigInteger, DateTime, Integer, String, Text, func
+from sqlalchemy import BigInteger, Boolean, DateTime, Integer, String, Text, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -18,14 +18,31 @@ class Candidate(Base):
     region: Mapped[str] = mapped_column(String(50))  # ph, ng, latam, other
     platform: Mapped[str] = mapped_column(String(100))  # jora, hotnigerianjobs, etc.
     candidate_type: Mapped[str] = mapped_column(String(20))  # operator, model, agent
-    experience: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    # Qualification fields (from HuntMe official scripts)
+    has_pc: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    age: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    study_status: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    # Values: working, student_distance, student_inperson, neither
     english_level: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    pc_confidence: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    cpu_model: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    gpu_model: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    hardware_compatible: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    internet_speed: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    start_date: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    contact_info: Mapped[str | None] = mapped_column(String(255), nullable=True)
+
+    # Legacy fields (kept for backwards compatibility)
+    experience: Mapped[str | None] = mapped_column(Text, nullable=True)
     availability: Mapped[str | None] = mapped_column(String(100), nullable=True)
     expected_rate: Mapped[str | None] = mapped_column(String(50), nullable=True)
+
+    # Screening results
     score: Mapped[int | None] = mapped_column(Integer, nullable=True)
     recommendation: Mapped[str | None] = mapped_column(String(20), nullable=True)  # PASS, MAYBE, REJECT
     status: Mapped[str] = mapped_column(String(30), default="new")
-    # Statuses: new -> screened -> link_sent -> webinar_registered -> active -> churned
+    # Statuses: new -> screened -> interview_invited -> active -> churned
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())

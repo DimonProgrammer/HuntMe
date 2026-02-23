@@ -7,27 +7,196 @@
 
 ## 1. Что такое HuntMe
 
-HuntMe — партнёрская программа по привлечению кадров для вебкам-индустрии (OnlyFans, стриминговые платформы).
+HuntMe — партнёрская программа по привлечению кадров для стриминговых платформ.
+
+**ВАЖНО: Брендинг**
+- **НИКОГДА** не упоминать "HuntMe" кандидатам — это внутреннее название
+- Представляться как talent agency / talent management agency для стримеров
+- Позиция для кандидатов: **Live Stream Moderator** / **Streaming Platform Moderator**
 
 **Три типа кандидатов, которых привлекает агент:**
 
 | Тип | Что делает | Куда записывать |
 |-----|-----------|-----------------|
 | **Модель** | Ведёт стримы/контент на платформах | Онлайн 2,3,4,5,8 (RU), 6 (UA), **7** (мир) |
-| **Оператор** | Модерирует чаты, общается от имени моделей | Онлайн 2 (RU), **3** (мир) |
+| **Оператор** | Настраивает оборудование, модерирует чаты, работает с OBS | Онлайн 2 (RU), **3** (мир) |
 | **Агент (реферал)** | Сам привлекает моделей/операторов | Реферальная программа |
 
-**Воронка кандидата:**
+**Воронка кандидата (оператор):**
 ```
-Увидел объявление → Откликнулся → Скрининг → Реферальная ссылка →
-→ @huntme_webinar_bot → Выбрал вебинар → Прошёл регистрацию → Начал работать
+Увидел объявление → Откликнулся → 11-шаговая квалификация → AI Screening →
+→ Админ решение → Zoom-интервью → Обучение 5-7 дней → Начал работать
 ```
 
 ---
 
-## 2. Финансовая модель (актуально с декабря 2025)
+## 2. Роль оператора (как объяснять кандидату)
 
-### 2.1 Модели — пассивный доход
+Оператор — это **техническая + организационная роль** за кулисами стримеров.
+
+**Что делает оператор:**
+- Настройка оборудования и стримингового софта (OBS)
+- Модерация чатов во время стримов
+- Планирование и организация стрим-сессий
+- Помощь стримерам с техническими проблемами
+
+**Ключевые месседжи:**
+- Оператор **НИКОГДА** не появляется на камеру
+- Это работа **за кулисами** (behind the scenes)
+- Не нужно создавать контент самому
+- Аналогия: как звукорежиссёр на радио — управляет техникой, но не в эфире
+
+---
+
+## 3. Value Proposition (точные цифры из официальных скриптов)
+
+### 3.1 Компенсация оператора
+
+| Параметр | Значение |
+|----------|----------|
+| Старт | **$150/неделя** ($600/мес) |
+| Через 1-2 месяца | **$200-300/неделя** ($800-1,200/мес) |
+| Топ-перформеры | **$400+/неделя** ($1,600+/мес) |
+| Оплата | **Каждое воскресенье** без исключений |
+| Способ оплаты | GCash, Wise, USDT — на выбор |
+| Модель дохода | Revenue share (donations, ads, platform monetization) |
+
+### 3.2 Условия работы
+
+| Параметр | Значение |
+|----------|----------|
+| Формат | 100% удалённо (WFH) |
+| График | 5/2 (5 дней работы, 2 выходных) |
+| Часы | 6-8 часов/день |
+| Смены | 4 варианта: утро (6-12), день (12-18), вечер (18-00), ночь (00-06) |
+| Команда | 15+ стран |
+
+### 3.3 Обучение
+
+| Параметр | Значение |
+|----------|----------|
+| Длительность | 5-7 дней |
+| Оплата за обучение | **$30/смена** |
+| Формат | Личный ментор + групповые сессии |
+| Опыт | **Не требуется** |
+
+---
+
+## 4. Хард-требования (дисквалификаторы)
+
+| Требование | Порог | Действие при несоответствии |
+|-----------|-------|--------------------------|
+| ПК/ноутбук | Обязательно (Windows) | Отказ (или keep on file если планирует купить) |
+| Возраст | 18+ | Отказ |
+| Очное обучение | НЕ подходит | Отказ (заочники ок) |
+| CPU | Intel i3 10th gen+ / Ryzen 3 3000+ | Отказ |
+| GPU | GTX 1060 6GB+ / AMD RX 5500+ | Отказ |
+| MacBook | Не поддерживается | Отказ |
+| Интернет | 100 Mbps+ | Отказ (или upgrade в теч. 1 нед) |
+| LAN-порт | Предпочтительно | Предупреждение |
+| Английский | B1 (Intermediate)+ | Отказ |
+| Старт | Максимум 1 неделя | Предпочтительно |
+
+---
+
+## 5. Hardware Requirements (полные таблицы)
+
+### 5.1 CPU — минимальные требования
+
+**Intel (10th gen и выше):**
+
+| Поколение | i3 | i5 | i7 | i9 |
+|-----------|----|----|----|----|
+| 10th (10xxx) | i3-10100 | i5-10400 | i7-10700 | i9-10900 |
+| 11th (11xxx) | i3-11100 | i5-11400 | i7-11700 | i9-11900 |
+| 12th (12xxx) | i3-12100 | i5-12400 | i7-12700 | i9-12900 |
+| 13th (13xxx) | i3-13100 | i5-13400 | i7-13700 | i9-13900 |
+| 14th (14xxx) | i3-14100 | i5-14400 | i7-14700 | i9-14900 |
+
+**AMD (Ryzen 3000 серии и выше):**
+
+| Серия | Ryzen 3 | Ryzen 5 | Ryzen 7 | Ryzen 9 |
+|-------|---------|---------|---------|---------|
+| 3000 | 3100 | 3600 | 3700X | 3900X |
+| 5000 | 5300G | 5600X | 5800X | 5900X |
+| 7000 | 7300X | 7600X | 7700X | 7900X |
+
+**НЕ поддерживаются:** Pentium, Celeron, Xeon, Atom, AMD FX, AMD A-series, Apple Silicon
+
+### 5.2 GPU — минимальные требования
+
+**NVIDIA (GTX 1060 6GB и выше):**
+- GTX 1060 **6GB** (3GB версия НЕ подходит), 1070, 1080
+- GTX 1650, 1650 Super, 1660, 1660 Super, 1660 Ti
+- RTX 2060-2080 Ti
+- RTX 3050-3090 Ti
+- RTX 4050-4090
+
+**AMD (2019+ модели):**
+- RX 5500 XT, RX 5600 XT, RX 5700 XT
+- RX 6400-6950 XT
+- RX 7600-7900 XTX
+
+**НЕ поддерживаются:** GT 710/730/1030, GTX 750-980, GTX 1050, RX 460-590, Radeon R/HD серии, встроенная графика Intel
+
+---
+
+## 6. 11-шаговая квалификация (порядок вопросов)
+
+1. **Имя** — "What is your full name?"
+2. **ПК** — "Do you have a personal PC or laptop?" (inline: PC / Laptop / No)
+3. **Возраст** — "How old are you?" (→ <18 = отказ)
+4. **Учёба/работа** — "Are you currently studying or working?" (inline: Working / Student-distance / Student-in-person / Neither)
+5. **Английский** — "What is your English level?" (inline: Beginner / B1 / B2 / C1+ / Native)
+6. **Уверенность с ПК** — "Do you consider yourself a confident PC user?"
+7. **CPU** — "What is your processor model?" + подсказка dxdiag
+8. **GPU** — "What is your graphics card?" + подсказка dxdiag
+9. **Интернет** — "What is your internet speed?" + speedtest.net
+10. **Дата старта** — "When would you be ready to start?"
+11. **Контакт** — "Please share your Telegram @username or WhatsApp number"
+
+---
+
+## 7. Обработка возражений (15 типов)
+
+Фреймворк: **Acknowledge → Reframe → Bridge**
+Правило: **Rule of One** — не давить дважды на одно возражение
+
+| # | Возражение | Ключевой ответ |
+|---|-----------|---------------|
+| 1 | "Что такое стриминг-модерация?" | Это ИНТЕРЕС — объяснить роль подробно |
+| 2 | "Это для взрослых?" | "Платформы типа Twitch, вы за кулисами" |
+| 3 | "Это скам?" | Нет предоплат + Zoom-интервью + weekly оплата |
+| 4 | "Что за компания?" | Talent agency, 15+ стран, сайт |
+| 5 | "$150 мало" | Это СТАРТ, рост до $400+/нед за 1-2 мес |
+| 6 | "Надо подумать" | "Что конкретно?" + зарезервировать слот |
+| 7 | "У меня есть работа" | Допник, 4 варианта смен |
+| 8 | "Не знаю OBS" | 5-7 дней обучения с ментором, $30/смена |
+| 9 | "Ночные смены не подходят" | 4 варианта смен на выбор |
+| 10 | "Не интересно" | 1 попытка + seed на реферал |
+| 11 | "Откуда мой номер?" | Прозрачность + извинение |
+| 12 | "Я студент" | Заочники ок, очники нет |
+| 13 | "Есть офис?" | Remote = преимущество |
+| 14 | "Как узнаю что заплатите?" | Weekly без исключений, $30/смена с 1 дня |
+| 15 | "Зачем паспорт?" | Верификация 18+ на камеру, 10 сек |
+
+---
+
+## 8. Follow-up протокол
+
+| # | Ситуация | Через сколько | Действие |
+|---|---------|--------------|---------|
+| 1 | Нет ответа после питча | 2-4 часа | Мягкое напоминание + "slots available" |
+| 2 | Нет ответа на follow-up | Следующий день | Краткое напоминание + "reply Yes" |
+| 3 | "Подумаю" | 12 часов | "Зарезервировал слот, хотите оставить?" |
+| 4 | Не пришёл на интервью | 1 час | "Всё ок? Хотите перенести?" |
+| 5 | Замолчал на вопросах | 4 часа | "Застряли? Помогу!" |
+
+---
+
+## 9. Финансовая модель (выплаты агенту)
+
+### 9.1 Модели — пассивный доход
 
 **Базовая выплата:** $10 за каждый рабочий день модели в течение 12 месяцев.
 
@@ -36,14 +205,10 @@ HuntMe — партнёрская программа по привлечению
 | Регион модели | Бонус | С подъёмным x2 |
 |---------------|-------|-----------------|
 | РФ | $25 | $50 |
-| СНГ (UA, BY, KZ, UZ, KG, MD, AM, AZ, TJ) | $35 | $70 |
+| СНГ | $35 | $70 |
 | Евро / Америка / Азия / Австралия | $50 | $100 |
 
-**Пример:** 10 моделей из ЛатАм × 20 рабочих дней × $10 = $2,000/мес + $500 бонусов = **$2,500/мес**
-
-### 2.2 Операторы — быстрые деньги (НАШ ПРИОРИТЕТ)
-
-Разовая выплата за каждого записанного оператора:
+### 9.2 Операторы — быстрые деньги (НАШ ПРИОРИТЕТ)
 
 | Порядковый номер | Выплата | С подъёмным x2 |
 |------------------|---------|-----------------|
@@ -51,10 +216,7 @@ HuntMe — партнёрская программа по привлечению
 | 4–6 оператор | $75 | $150 |
 | 7+ оператор | $100 | $200 |
 
-**Пример:** 10 операторов = $50×3 + $75×3 + $100×4 = **$775**
-С подъёмным x2: $100×3 + $150×3 + $200×4 = **$1,550**
-
-### 2.3 Реферальные агенты
+### 9.3 Реферальные агенты
 
 | Порядковый номер | Онлайн-оффер | Оффлайн-оффер |
 |------------------|-------------|---------------|
@@ -62,16 +224,7 @@ HuntMe — партнёрская программа по привлечению
 | 3–4 агент | $135 | $90 |
 | 5+ агент | $180 | $180 |
 
-Шаг сбрасывается каждый месяц. Выплата — при условии, что агент записывает модель.
-
-### 2.4 Подъёмный бонус x2 (для новых команд)
-
-- Срок: 2 месяца с регистрации команды
-- Условие: минимум 2–3 агента + рост назначений
-- Все ставки удваиваются
-- Контакт для создания команды: @seniorcashcraft
-
-### 2.5 Выплаты
+### 9.4 Выплаты
 
 - Валюта: **USDT BEP20**
 - Периодичность: **еженедельно** (выходные)
@@ -79,286 +232,134 @@ HuntMe — партнёрская программа по привлечению
 
 ---
 
-## 3. Реферальная система (автоматизация)
+## 10. Целевые регионы и площадки
 
-> Старая схема (через интервьюера) больше НЕ работает!
+### 10.1 Филиппины — приоритет №1 (операторы)
 
-**Новая система:**
-
-1. Создать заявку: `huntmecrm.com/request-call/create`
-2. Выбрать тип:
-   - **«Соло»** — личная ссылка
-   - **«Команда прикрепления»** — ссылка команды (НЕ личная!)
-3. Отправить ссылку кандидату
-4. Кандидат → `@huntme_webinar_bot` → выбирает вебинар → регистрируется
-5. Система автоматически привязывает кандидата к тебе
-
----
-
-## 4. Целевые регионы и площадки
-
-### 4.1 Филиппины — приоритет №1 (операторы)
-
-**Почему:** 110 млн населения, английский как 2-й государственный, культура удалёнки, готовы работать за $300-500/мес, отклик в 5-10 раз выше СНГ.
+**Почему:** 110 млн населения, английский как 2-й государственный, культура удалёнки, отклик в 5-10 раз выше СНГ.
 
 | Площадка | Стоимость | Ожидаемые отклики | Автоматизация |
 |----------|-----------|-------------------|---------------|
-| **Jora Philippines** (employer.jora.com) | Бесплатно | 50-100/нед | Playwright |
-| **JobIsland** (jobisland.com) | Бесплатно | 20-50/нед | Playwright |
+| **Jora Philippines** | Бесплатно | 50-100/нед | Playwright |
+| **JobIsland** | Бесплатно | 20-50/нед | Playwright |
 | **OnlineJobs.ph** | $69/мес | 50-200/нед | Playwright |
 | Facebook Groups (WFH Philippines) | Бесплатно | 30-100/пост | Ручной/Бот |
-| Reddit r/phclassifieds, r/buhaydigital | Бесплатно | 10-30/пост | Ручной |
 
-**Специфика коммуникации:**
-- Мессенджеры: Facebook Messenger (№1), Viber, Telegram
-- Оплата: GCash, Maya (PayMaya), Wise, крипто
-- Культура: вежливые, ценят стабильность, трудолюбивые
-- Часовой пояс: UTC+8 (постить вечером МСК = утро Филиппины)
-- Лучшие дни для постинга: понедельник-вторник
+**Специфика:** GCash, UTC+8, вежливые, ценят стабильность
 
-**Ключевые триггеры в вакансии:**
-- "USD payment" — главный магнит (слабая местная валюта)
-- "No experience needed" — снижает барьер
-- "Training provided" — снимает страх
-- "Work From Home" / "WFH" — стандартный запрос
-
-### 4.2 Нигерия — приоритет №2 (операторы)
-
-**Почему:** 200+ млн населения, английский — официальный, молодёжь активно ищет онлайн-работу, высокий отклик.
+### 10.2 Нигерия — приоритет №2 (операторы)
 
 | Площадка | Стоимость | Ожидаемые отклики |
 |----------|-----------|-------------------|
 | **HotNigerianJobs** | Бесплатно | 30-80/нед |
 | **MyJobMag** | Бесплатно | 20-50/нед |
-| **DelonJobs** | Бесплатно | 10-30/нед |
-| Nairaland Forum (Jobs section) | Бесплатно | 20-60/пост |
+| Nairaland Forum | Бесплатно | 20-60/пост |
 | Facebook Groups | Бесплатно | 30-100/пост |
-| Twitter/X #NigerianJobs | Бесплатно | Вирусный потенциал |
 
-**Специфика коммуникации:**
-- Мессенджеры: WhatsApp (абсолютный №1), Telegram
-- Оплата: крипто USDT, Chipper Cash, банковский перевод
-- Культура: энергичные, предприимчивые, быстрый отклик
-- Часовой пояс: UTC+1 (постить утром МСК)
-- Ключевые триггеры: "Earn in USD", "Weekly payment", "Work from phone"
+**Специфика:** WhatsApp (мессенджер №1), USDT/банк, UTC+1
 
-### 4.3 Латинская Америка — фаза 2 (модели)
+### 10.3 Латинская Америка — фаза 2 (модели)
 
-| Страна | Площадки | Стоимость |
-|--------|----------|-----------|
-| Бразилия | Remotar, FreelaWeb | Бесплатно |
-| Аргентина | Bumeran, Jooble | Бесплатно |
-| Колумбия | AccionTrabajo, TalentBox | Бесплатно |
-| Мексика | Talenteca, FlexJobs | Бесплатно |
-| Доминикана | Tecoloco, Plaza Libre | Бесплатно |
-| Весь ЛатАм | **WORKANA** (топ-1), SoyFreelancer | Бесплатно |
-
-### 4.4 Дополнительные бесплатные каналы
-
-| Канал | Регион | Тип |
-|-------|--------|-----|
-| Reddit r/forhire, r/workonline | Global | Форум |
-| Discord (Remote Work серверы) | Global | Чат |
-| Twitter/X #RemoteJobs #WFH #HiringNow | Global | Соцсеть |
-| LinkedIn (посты, не вакансии) | Global | Соцсеть |
-| Telegram-группы удалёнщиков | Global | Мессенджер |
-| WhatsApp-группы | Нигерия | Мессенджер |
-| Gumtree | ЮАР | Доска |
-| EthiopiaWork, GeezJobs | Эфиопия | Доска |
-| GrabJobs, JobStore | Малайзия | Доска |
+| Страна | Площадки |
+|--------|----------|
+| Бразилия | Remotar, FreelaWeb |
+| Аргентина | Bumeran, Jooble |
+| Колумбия | AccionTrabajo, TalentBox |
+| Мексика | Talenteca, FlexJobs |
+| Весь ЛатАм | **WORKANA**, SoyFreelancer |
 
 ---
 
-## 5. Шаблоны объявлений
+## 11. Формулировки: как избежать банов
 
-### 5.1 Оператор — Филиппины (English)
+**ЗАПРЕЩЕНО:** webcam, adult, OnlyFans, nsfw, 18+, sexy, intimate, HuntMe
+
+**БЕЗОПАСНЫЕ формулировки:**
+- Live Stream Moderator / Streaming Platform Moderator
+- Content Moderator / Remote Technical Support for Streamers
+- Behind-the-scenes streaming role
+
+**Описание работы:**
+- "Setting up streaming equipment and managing live chats"
+- "Technical and organizational support for content creators"
+- "Working behind the scenes on streaming platforms"
+
+---
+
+## 12. Шаблоны объявлений
+
+### 12.1 Оператор — Филиппины (English)
 
 ```
-🌐 Remote Chat Moderator — Work From Home — USD Payment
+🎬 Live Stream Moderator — $150-400/week — Work From Home
 
-We are hiring chat moderators for a growing international platform.
+We're a talent agency looking for remote streaming moderators.
 
-Requirements:
-— Good written English
-— Reliable internet connection
-— 4+ hours daily availability
-— Laptop or PC
-— No experience needed — full training provided
+What you'll do:
+— Set up streaming software (OBS) — full training provided
+— Moderate live chats during streams
+— Help streamers with technical issues
+— You NEVER appear on camera — this is behind-the-scenes work
 
 What we offer:
-— Work from home, flexible schedule (you choose your hours)
-— Payment in USD (weekly via GCash/Wise/crypto)
-— Long-term position with growth opportunities
-— Supportive team and ongoing training
+— $150/week starting, top performers earn $400+/week
+— Paid training: 5-7 days with a personal mentor ($30/shift)
+— Weekly payment every Sunday via GCash/Wise/USDT
+— 5/2 schedule, choose your shift (morning/day/evening/night)
+— International team, 15+ countries
 
-Interested? Send a short introduction about yourself:
-your name, age, available hours, and English level.
+Requirements:
+— Good English (B1/Intermediate minimum)
+— PC or laptop (Windows) — no MacBooks
+— 100 Mbps internet
+— No experience needed
+
+Interested? Send your name and I'll tell you more!
 ```
 
-### 5.2 Оператор — Нигерия (English)
+### 12.2 Оператор — Нигерия (English)
 
 ```
-💼 Hiring: Online Chat Moderator — Earn in USD Weekly
+💼 Remote Streaming Moderator — Earn $150-400/week in USD
 
-Join our international team as a remote chat moderator.
+Join our international team as a behind-the-scenes streaming moderator.
+
+The role:
+— Technical setup for streamers (OBS, equipment)
+— Chat moderation during live streams
+— Scheduling and organizing stream sessions
+— No camera, no content creation — purely behind the scenes
+
+What you get:
+— Starting pay: $150/week ($600/month)
+— Growth to $200-400+/week within 1-2 months
+— Paid training: 5-7 days, $30 per shift, personal mentor
+— Payment every Sunday via USDT/bank transfer
+— 5/2 schedule, 6-8 hours/day, choose your shift
 
 What you need:
 — Good English (written)
-— Stable internet connection
-— Computer or laptop
-— 4-8 hours per day availability
+— PC/laptop (Windows) + 100 Mbps internet
+— Willingness to learn — no experience required
 
-What you get:
-— Weekly pay in USD (USDT/bank transfer)
-— Work from anywhere in Nigeria
-— Free training — no experience needed
-— Flexible schedule
-
-Apply now: send your name, age, available hours,
-and a short message about why you're interested.
-```
-
-### 5.3 Модель — ЛатАм (English/Spanish)
-
-```
-🌟 Remote Content Creator — Earn $1000+/month from Home
-
-We're looking for confident women (21+) to join our content platform.
-
-Requirements:
-— Age 21+
-— Good internet & smartphone/laptop
-— 3+ hours per day
-— Comfortable on camera
-
-Benefits:
-— Earn $1000-3000+/month
-— Work from home, set your own hours
-— Full training & support provided
-— Weekly payments in USD
-
-Interested? Message us with your name, age, and a selfie.
+Apply: send your name and age. Let's talk!
 ```
 
 ---
 
-## 6. Скрининг кандидатов (критерии для Claude)
+## 13. Реферальная система
 
-### Scoring Rubric (оператор)
-
-| Критерий | Вес | 8-10 | 5-7 | 1-4 |
-|----------|-----|------|-----|-----|
-| English | 30% | Fluent, natural | Some errors but clear | Major issues |
-| Availability | 25% | 6+ hrs/day, flexible | 4-5 hrs/day | Under 4 hrs |
-| Motivation | 20% | Specific, enthusiastic | Generic positive | Copy-paste |
-| Equipment | 15% | PC + stable internet | Phone + ok internet | No equipment |
-| Experience | 10% | Admin/VA/support background | Any online work | None |
-
-**Решение:**
-- Score >= 70: **PASS** → отправить реферальную ссылку + уведомить админа
-- Score 50-69: **MAYBE** → задать уточняющие вопросы
-- Score < 50: **REJECT** → вежливый отказ
+1. Создать заявку: `huntmecrm.com/request-call/create`
+2. Выбрать тип: **«Соло»** (личная ссылка) или **«Команда прикрепления»**
+3. Отправить ссылку кандидату
+4. Кандидат → `@huntme_webinar_bot` → вебинар → регистрация
 
 ---
 
-## 7. Инструменты
-
-### 7.1 Платёжные сервисы (для оплаты площадок)
-
-| Сервис | Сайт | Особенности |
-|--------|------|-------------|
-| PST.NET | pst.net | Популярный в арбитраже |
-| Capitalist | capitalist.net | Мультивалюта, крипта |
-| FlexCard | flexcard.io | Высокие лимиты |
-| 4x4 | 4x4.io | Быстрый старт |
-| Karta.io | karta.io | Корпоративные карты |
-| Colibrix | colibrix.com | Европейские карты |
-| Wallester | wallester.com | Белый сервис |
-
-Пополнение: **через USDT** (быстро, дешево, без банковских блокировок).
-
-### 7.2 AI-инструменты для фейков
-
-| Инструмент | Что делает | Стоимость |
-|-----------|-----------|-----------|
-| Google AI Studio | Фото + текст | Бесплатно |
-| Freepik AI (Mystic) | Реалистичные фото | EUR 5 бесплатно |
-| thispersondoesnotexist.com | Случайные лица | Бесплатно |
-| Midjourney | Качественные фото | Платно |
-
-**Правила:**
-1. Разные фото для разных площадок
-2. "Обычные" фото > модельные (больше доверия)
-3. Проверять через поиск по картинкам
-
----
-
-## 8. Формулировки: как избежать банов
-
-**ЗАПРЕЩЕНО** (приведёт к бану):
-webcam, adult, OnlyFans, nsfw, 18+, модель для взрослых, sexy, intimate
-
-**БЕЗОПАСНЫЕ формулировки:**
-- Remote Chat Moderator
-- Live Chat Operator
-- Content Moderator
-- Virtual Assistant
-- Online Customer Engagement Specialist
-- Community Manager
-- Digital Content Assistant
-
-**Описание работы (safe version):**
-"Moderating live chat sessions on an entertainment platform"
-"Managing customer interactions in real-time"
-"Providing text-based support to platform users"
-
----
-
-## 9. Чеклист запуска с нуля (без бюджета)
-
-### Неделя 1: Фундамент
-- [ ] Зарегистрироваться в HuntMe CRM (huntmecrm.com)
-- [ ] Получить реферальную ссылку (huntmecrm.com/request-call/create)
-- [ ] Развернуть Oracle Cloud VM (бесплатно)
-- [ ] Запустить Telegram-бота + n8n
-- [ ] Создать 3 фейк-профиля (разные этнические типы)
-- [ ] Разместить объявления на бесплатных площадках (Jora, HotNigerianJobs, MyJobMag)
-- [ ] Запостить в 5+ Facebook Groups
-
-### Неделя 2-3: Первые конверсии
-- [ ] Обрабатывать отклики (цель: 100+ за неделю)
-- [ ] Скринить через Claude → отправлять реферальные ссылки
-- [ ] Цель: 3-5 записанных операторов = $150-$375
-- [ ] Настроить автоматические follow-up'ы
-
-### Месяц 2: Масштабирование
-- [ ] Reinvest $69 → OnlineJobs.ph (10x отклики)
-- [ ] Подключить ЛатАм для моделей
-- [ ] Рассмотреть вступление в команду (x2 бонусы)
-- [ ] Добавить новые площадки и регионы
-
----
-
-## 10. Ограничения и решения
-
-| Ограничение | Решение |
-|-------------|---------|
-| Job boards банят adult-adjacent | Safe формулировки (см. раздел 8) |
-| Telegram антиспам | Rate limiter 25 msg/s, персонализация |
-| Facebook модерация постов | 1 пост/группу/неделю, полезный контент |
-| Reddit shadowban | Karma farming, соблюдение правил r/ |
-| Playwright + Cloudflare | playwright-stealth, задержки 2-5 сек |
-| Claude Max ≠ API key | OpenRouter бесплатный tier / Anthropic Console $5 |
-| Нет бюджета | Только бесплатные площадки на старте |
-
----
-
-## 11. Контакты HuntMe
+## 14. Контакты HuntMe
 
 - CRM: huntmecrm.com
 - Бот регистрации: @huntme_webinar_bot
 - Создание заявки: huntmecrm.com/request-call/create
 - Создание команды: @seniorcashcraft
-- Блог: partnerkin.com/pblog/blog-huntme
-- Курсы: huntmecrm.com/courses
 - Поддержка: t.me/jobwith_huntme
