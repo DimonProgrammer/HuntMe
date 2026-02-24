@@ -9,3 +9,8 @@ build/
 .idea/
 .vscode/
 *.db
+.vercel
+node_modules/
+landing/freepik__*.png
+.agents/
+.claude/

@@ -1,10 +1,27 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Remote Streaming Moderator | Apex Talent — Earn $150–$400+/week</title>
   <meta name="description" content="Apex Talent is hiring Remote Streaming Moderators. Earn $150–$400+/week in USD. Paid training, weekly payouts, flexible shifts. Apply in 1 minute.">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://apexhiring.vercel.app">
+  <meta property="og:title" content="Remote Streaming Moderator — Earn $150–$400+/week in USD">
+  <meta property="og:description" content="Work behind the scenes as a streamer's technical director. Fully remote, paid training from day one, weekly payout every Sunday. No experience needed.">
+  <meta property="og:image" content="https://apexhiring.vercel.app/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Remote Streaming Moderator — Earn $150–$400+/week in USD">
+  <meta name="twitter:description" content="Work behind the scenes as a streamer's technical director. Fully remote, paid training, weekly USD payout.">
+  <meta name="twitter:image" content="https://apexhiring.vercel.app/og.jpg">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'><rect width='80' height='80' rx='16' fill='%231A0F2E'/><polygon points='40,16 18,62 30,62 40,38 50,62 62,62' fill='%23fff'/></svg>">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -201,11 +218,87 @@
     /* Mobile */
     @media (max-width: 640px) {
       .step-line { display: none; }
+      .hero-grid { grid-template-columns: 1fr !important; text-align: center; }
+      .hero-grid .animate-fade-up div[style*="flex-wrap"] { justify-content: center; }
+      .hero-photo-wrap { order: -1; max-width: 320px; margin: 0 auto; }
+      .perk-hero-grid { grid-template-columns: 1fr !important; }
+      .income-tiers { grid-template-columns: 1fr !important; }
     }
 
     /* Success state */
     #successMsg { display: none; }
     #successMsg.show { display: block; }
+
+    /* ── Logo ── (static, no animation) */
+
+    /* ── Role card: equalizer bars ── */
+    .anim-eq { display: flex; align-items: flex-end; gap: 4px; height: 52px; margin-bottom: 20px; }
+    .eq-bar { width: 9px; border-radius: 4px 4px 3px 3px; transform-origin: bottom center; animation: eqAnim 1.1s ease-in-out infinite alternate; }
+    .eq-bar:nth-child(1) { height: 30px; background: #E33BC5; animation-delay: 0s; }
+    .eq-bar:nth-child(2) { height: 48px; background: #CCFF00; animation-delay: 0.14s; }
+    .eq-bar:nth-child(3) { height: 52px; background: #1A0F2E; animation-delay: 0.28s; }
+    .eq-bar:nth-child(4) { height: 40px; background: #E33BC5; animation-delay: 0.42s; }
+    .eq-bar:nth-child(5) { height: 24px; background: #CCFF00; animation-delay: 0.56s; opacity: 0.55; }
+    @keyframes eqAnim { from { transform: scaleY(0.18); } to { transform: scaleY(1); } }
+
+    /* ── Role card: chat typing dots ── */
+    .anim-chat { height: 52px; margin-bottom: 20px; display: flex; align-items: center; gap: 7px; padding: 0 20px; background: rgba(26,15,46,0.06); border-radius: 26px; width: fit-content; }
+    .chat-dot { width: 9px; height: 9px; border-radius: 50%; animation: chatBounce 1.5s ease-in-out infinite; }
+    .chat-dot:nth-child(1) { background: #E33BC5; animation-delay: 0s; }
+    .chat-dot:nth-child(2) { background: #1A0F2E; animation-delay: 0.2s; }
+    .chat-dot:nth-child(3) { background: #CCFF00; animation-delay: 0.4s; }
+    @keyframes chatBounce { 0%,55%,100% { transform: translateY(0); } 28% { transform: translateY(-11px); } }
+
+    /* ── Role card: live broadcast pulse ── */
+    .anim-live { height: 52px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    .live-dot { width: 13px; height: 13px; border-radius: 50%; background: #E33BC5; position: relative; flex-shrink: 0; animation: liveDotPulse 1.7s ease-in-out infinite; }
+    .live-dot::before, .live-dot::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: #E33BC5; }
+    .live-dot::after  { animation: liveRing 1.7s ease-out infinite; }
+    .live-dot::before { animation: liveRing 1.7s ease-out 0.45s infinite; }
+    .live-label { font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 14px; letter-spacing: 0.1em; color: #E33BC5; }
+    @keyframes liveDotPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(0.82); } }
+    @keyframes liveRing { 0% { transform: scale(1); opacity: 0.55; } 100% { transform: scale(3.4); opacity: 0; } }
+
+    /* ── Perk: growth bars ── */
+    .anim-growth { display: flex; align-items: flex-end; gap: 5px; height: 48px; margin-bottom: 18px; }
+    .growth-bar { width: 14px; border-radius: 4px 4px 2px 2px; animation: growUp 1.8s ease-out infinite; }
+    .growth-bar:nth-child(1) { height: 18px; background: rgba(26,15,46,0.15); animation-delay: 0s; }
+    .growth-bar:nth-child(2) { height: 30px; background: rgba(26,15,46,0.25); animation-delay: 0.15s; }
+    .growth-bar:nth-child(3) { height: 48px; background: #CCFF00; animation-delay: 0.3s; }
+    @keyframes growUp { 0% { transform: scaleY(0.2); } 20% { transform: scaleY(1); } 100% { transform: scaleY(1); } }
+
+    /* ── Perk: clock ── */
+    .anim-clock { width: 44px; height: 44px; border: 2.5px solid #1A0F2E; border-radius: 50%; position: relative; margin-bottom: 18px; }
+    .anim-clock::before { content: ''; position: absolute; bottom: 50%; left: 50%; width: 2.2px; height: 14px; background: #1A0F2E; border-radius: 2px; transform-origin: bottom center; transform: translateX(-50%) rotate(0deg); animation: clockMinute 4s linear infinite; }
+    .anim-clock::after { content: ''; position: absolute; bottom: 50%; left: 50%; width: 2.5px; height: 10px; background: #E33BC5; border-radius: 2px; transform-origin: bottom center; transform: translateX(-50%) rotate(90deg); animation: clockHour 12s linear infinite; }
+    .clock-dot { position: absolute; top: 50%; left: 50%; width: 5px; height: 5px; background: #1A0F2E; border-radius: 50%; transform: translate(-50%, -50%); }
+    @keyframes clockMinute { to { transform: translateX(-50%) rotate(360deg); } }
+    @keyframes clockHour { to { transform: translateX(-50%) rotate(450deg); } }
+
+    /* ── Perk: repeat pulse ── */
+    .anim-repeat { width: 44px; height: 44px; position: relative; margin-bottom: 18px; display: flex; align-items: center; justify-content: center; }
+    .repeat-core { width: 12px; height: 12px; background: #CCFF00; border-radius: 50%; position: relative; z-index: 2; }
+    .repeat-ring { position: absolute; inset: 0; border: 2px solid #CCFF00; border-radius: 50%; animation: repeatPing 2s ease-out infinite; }
+    .repeat-ring:nth-child(2) { animation-delay: 0.65s; }
+    .repeat-ring:nth-child(3) { animation-delay: 1.3s; }
+    @keyframes repeatPing { 0% { transform: scale(0.3); opacity: 0.7; } 100% { transform: scale(1); opacity: 0; } }
+
+    /* ── Perk: checkmark ── */
+    .anim-check { width: 44px; height: 44px; border: 2.5px solid #CCFF00; border-radius: 50%; position: relative; margin-bottom: 18px; display: flex; align-items: center; justify-content: center; }
+    .check-mark { width: 20px; height: 12px; border-left: 3px solid #E33BC5; border-bottom: 3px solid #E33BC5; transform: rotate(-45deg) translate(1px, -2px); animation: drawCheck 1.6s ease-out infinite; }
+    @keyframes drawCheck { 0% { clip-path: inset(0 100% 0 0); } 30% { clip-path: inset(0 0 0 0); } 100% { clip-path: inset(0 0 0 0); } }
+
+    /* ── Cookie banner ── */
+    #cookieBanner { position: fixed; bottom: 20px; left: 20px; z-index: 999; background: #1A0F2E; border-radius: 16px; padding: 14px 18px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; color: rgba(255,255,255,0.65); max-width: 290px; display: flex; align-items: center; gap: 12px; box-shadow: 0 8px 32px rgba(26,15,46,0.22); transition: opacity 0.35s ease, transform 0.35s ease; }
+    #cookieBanner.hidden { opacity: 0; transform: translateY(10px); pointer-events: none; }
+    .cookie-accept { background: #CCFF00; color: #1A0F2E; border: none; border-radius: 8px; padding: 8px 14px; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0; letter-spacing: 0.02em; transition: filter 0.15s; }
+    .cookie-accept:hover { filter: brightness(0.9); }
+
+    /* ── Contact pills ── */
+    .contact-pill { display: inline-flex; align-items: center; gap: 7px; padding: 10px 16px; border-radius: 12px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 600; text-decoration: none; transition: transform 0.2s ease, box-shadow 0.2s ease; line-height: 1; }
+    .contact-pill:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
+    .contact-pill-wa { background: #22C55E; color: #fff; }
+    .contact-pill-tg { background: #0EA5E9; color: #fff; }
   </style>
 </head>
 
@@ -217,13 +310,10 @@
 <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 py-4 transition-all duration-300">
   <div class="max-w-5xl mx-auto px-5 flex items-center justify-between">
     <div class="flex items-center gap-2">
-      <div style="width:32px;height:32px;border-radius:50%;background:#1A0F2E;display:flex;align-items:center;justify-content:center;">
-        <span style="font-family:'Outfit',sans-serif;font-weight:900;font-size:13px;color:#CCFF00;">AT</span>
-      </div>
-      <div>
-        <span class="font-heading font-bold text-ink" style="font-size:15px;display:block;line-height:1.1;">Apex Talent</span>
-        <span class="font-serif" style="font-style:italic;font-size:10px;opacity:0.45;line-height:1;">The Agency Behind Great Streams</span>
-      </div>
+      <svg width="28" height="28" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+        <polygon points="40,16 18,62 30,62 40,38 50,62 62,62" fill="#1A0F2E"/>
+      </svg>
+      <span class="font-heading text-ink" style="font-size:13px;font-weight:800;letter-spacing:0.1em;">APEX TALENT</span>
     </div>
     <a href="#apply"
        class="bg-ink text-white font-heading font-bold text-sm px-5 py-2.5 rounded-full transition-all duration-200 hover:bg-magenta hover:scale-105">
@@ -236,52 +326,78 @@
 <!-- ═══════════════════════════════════════════
      HERO
 ════════════════════════════════════════════ -->
-<section class="min-h-screen flex flex-col items-center justify-center text-center px-5 pt-24 pb-16 relative z-10">
+<section class="min-h-screen flex items-center relative z-10" style="padding:0 20px;">
+  <div class="hero-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;max-width:1100px;margin:0 auto;width:100%;padding:120px 0 64px;">
 
-  <!-- Badge -->
-  <div class="animate-fade-up" style="animation-delay:0.05s;">
-    <span style="display:inline-flex;align-items:center;gap:8px;background:#CCFF00;color:#1A0F2E;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;padding:8px 18px;border-radius:100px;margin-bottom:32px;letter-spacing:0.01em;">
-      🟢 Hiring Now &nbsp;·&nbsp; 100% Remote &nbsp;·&nbsp; Indonesia Open
-    </span>
-  </div>
+    <!-- Left: text -->
+    <div>
+      <!-- Badge -->
+      <div class="animate-fade-up" style="animation-delay:0.05s;margin-bottom:28px;">
+        <span style="display:inline-flex;align-items:center;gap:8px;background:#CCFF00;color:#1A0F2E;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;padding:8px 18px;border-radius:100px;letter-spacing:0.01em;">
+          🟢 Hiring Now &nbsp;·&nbsp; Fully Remote
+        </span>
+      </div>
 
-  <!-- H1 — masked word reveal -->
-  <h1 class="font-heading font-black text-ink tracking-tighter" style="font-size:clamp(2.8rem,10vw,6.5rem);line-height:0.93;max-width:900px;margin-bottom:28px;">
-    <span class="word-wrap"><span class="word-inner" style="animation-delay:0.15s;">BECOME</span></span>&nbsp;
-    <span class="word-wrap"><span class="word-inner" style="animation-delay:0.28s;">A</span></span>
-    <br>
-    <span class="word-wrap"><span class="word-inner" style="animation-delay:0.42s;">REMOTE</span></span>&nbsp;
-    <span class="word-wrap"><span class="word-inner" style="animation-delay:0.56s;">STREAM</span></span>
-    <br>
-    <span class="word-wrap"><span class="word-inner" style="animation-delay:0.7s; color:#E33BC5;">MODERATOR</span></span>
-  </h1>
+      <!-- H1 — masked word reveal -->
+      <h1 class="font-heading font-black text-ink tracking-tighter" style="font-size:clamp(2.4rem,6vw,5rem);line-height:0.93;margin-bottom:24px;">
+        <span class="word-wrap"><span class="word-inner" style="animation-delay:0.15s;">BECOME</span></span>&nbsp;
+        <span class="word-wrap"><span class="word-inner" style="animation-delay:0.28s;">A</span></span>
+        <br>
+        <span class="word-wrap"><span class="word-inner" style="animation-delay:0.42s;">REMOTE</span></span>&nbsp;
+        <span class="word-wrap"><span class="word-inner" style="animation-delay:0.56s;">STREAM</span></span>
+        <br>
+        <span class="word-wrap"><span class="word-inner" style="animation-delay:0.7s; color:#E33BC5;">MODERATOR</span></span>
+      </h1>
 
-  <!-- Subtitle -->
-  <p class="font-serif animate-fade-up"
-     style="font-size:clamp(1.05rem,2.5vw,1.35rem);font-style:italic;color:#1A0F2E;opacity:0.72;max-width:580px;line-height:1.6;margin-bottom:40px;animation-delay:0.9s;">
-    Work <strong style="font-style:normal;opacity:1;">behind the scenes</strong> as a streamer's technical director.
-    Earn <strong style="font-style:normal;color:#1A0F2E;opacity:1;">$150–$400+&nbsp;per&nbsp;week</strong> in USD.
-    Fully remote, paid training, weekly payout.
-  </p>
+      <!-- Subtitle -->
+      <p class="font-serif animate-fade-up"
+         style="font-size:clamp(1rem,2vw,1.2rem);font-style:italic;color:#1A0F2E;opacity:0.72;max-width:480px;line-height:1.6;margin-bottom:36px;animation-delay:0.9s;">
+        Work <strong style="font-style:normal;opacity:1;">behind the scenes</strong> as a streamer's technical director.
+        Earn <strong style="font-style:normal;color:#1A0F2E;opacity:1;">$150–$400+&nbsp;per&nbsp;week</strong> in USD.
+        Fully remote, paid training, weekly payout.
+      </p>
 
-  <!-- CTA block -->
-  <div class="animate-fade-up flex flex-col items-center gap-4" style="animation-delay:1.1s;">
-    <a href="#apply"
-       class="btn-pulse inline-block bg-magenta text-white font-heading font-black rounded-2xl transition-all hover:scale-105 hover:brightness-110"
-       style="font-size:clamp(1rem,3vw,1.2rem);padding:18px 44px;letter-spacing:-0.01em;">
-      Apply Now <span style="opacity:0.65;font-weight:500;font-size:0.85em;">(1 min)</span>
-    </a>
-    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px 20px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:#1A0F2E;opacity:0.55;">
-      <span>🚫 Never on camera</span>
-      <span>·</span>
-      <span>💸 Paid every Sunday</span>
-      <span>·</span>
-      <span>🎓 Zero experience needed</span>
+      <!-- CTA block -->
+      <div class="animate-fade-up" style="animation-delay:1.1s;">
+        <a href="#apply"
+           class="btn-pulse inline-block bg-magenta text-white font-heading font-black rounded-2xl transition-all hover:scale-105 hover:brightness-110"
+           style="font-size:clamp(1rem,2.5vw,1.15rem);padding:16px 40px;letter-spacing:-0.01em;margin-bottom:16px;">
+          Apply Now <span style="opacity:0.65;font-weight:500;font-size:0.85em;">(1 min)</span>
+        </a>
+        <div style="display:flex;flex-wrap:wrap;gap:8px 18px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:#1A0F2E;opacity:0.5;margin-top:14px;">
+          <span>🚫 Never on camera</span>
+          <span>·</span>
+          <span>💸 Paid every Sunday</span>
+          <span>·</span>
+          <span>🎓 Zero experience needed</span>
+        </div>
+      </div>
     </div>
+
+    <!-- Right: hero photo -->
+    <div class="animate-fade-up hero-photo-wrap" style="animation-delay:0.6s;position:relative;">
+      <div style="border-radius:24px;overflow:hidden;aspect-ratio:4/5;position:relative;background:#E8E4DE;">
+        <img src="hero-photo.jpg" alt="Remote moderator working from home"
+             style="width:100%;height:100%;object-fit:cover;display:block;"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+        <!-- Placeholder shown only if image fails to load -->
+        <div style="display:none;flex-direction:column;align-items:center;justify-content:center;position:absolute;inset:0;background:linear-gradient(135deg,#1A0F2E 0%,#3D1F5C 100%);color:#fff;text-align:center;padding:32px;">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#CCFF00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:16px;opacity:0.6;">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+          </svg>
+          <span style="font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;opacity:0.7;">Hero Photo</span>
+          <span style="font-size:11px;opacity:0.4;margin-top:4px;">Add hero-photo.jpg</span>
+        </div>
+      </div>
+      <!-- Decorative accent -->
+      <div style="position:absolute;bottom:-12px;right:-12px;width:80px;height:80px;background:#CCFF00;border-radius:16px;z-index:-1;"></div>
+      <div style="position:absolute;top:-8px;left:-8px;width:48px;height:48px;border:3px solid #E33BC5;border-radius:12px;z-index:-1;"></div>
+    </div>
+
   </div>
 
   <!-- Scroll nudge -->
-  <div class="animate-fade-up" style="margin-top:64px;animation-delay:1.5s;opacity:0.25;">
+  <div class="animate-fade-up" style="position:absolute;bottom:32px;left:50%;transform:translateX(-50%);opacity:0.25;animation-delay:1.5s;">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1A0F2E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
          style="animation:float 2s ease-in-out infinite;">
       <polyline points="6 9 12 15 18 9"/>
@@ -336,7 +452,13 @@
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;">
 
       <div class="card p-8 reveal reveal-delay-1">
-        <div style="font-size:2.5rem;margin-bottom:18px;animation:float 3s ease-in-out 0s infinite;">💻</div>
+        <div class="anim-eq" aria-hidden="true">
+          <div class="eq-bar"></div>
+          <div class="eq-bar"></div>
+          <div class="eq-bar"></div>
+          <div class="eq-bar"></div>
+          <div class="eq-bar"></div>
+        </div>
         <h3 class="font-heading font-bold" style="font-size:1.15rem;margin-bottom:10px;">Tech Setup & OBS</h3>
         <p style="font-size:14px;line-height:1.65;opacity:0.65;">
           Configure OBS Studio and Streamlabs, manage bitrate, scenes, and overlays so the streamer never has to touch a setting.
@@ -344,7 +466,11 @@
       </div>
 
       <div class="card p-8 reveal reveal-delay-2">
-        <div style="font-size:2.5rem;margin-bottom:18px;animation:float 3s ease-in-out 0.4s infinite;">🛡️</div>
+        <div class="anim-chat" aria-hidden="true">
+          <div class="chat-dot"></div>
+          <div class="chat-dot"></div>
+          <div class="chat-dot"></div>
+        </div>
         <h3 class="font-heading font-bold" style="font-size:1.15rem;margin-bottom:10px;">Chat Moderation</h3>
         <p style="font-size:14px;line-height:1.65;opacity:0.65;">
           Keep the live chat clean and hype. Ban spammers, pin announcements, respond to viewers — you are the community manager.
@@ -352,7 +478,10 @@
       </div>
 
       <div class="card p-8 reveal reveal-delay-3">
-        <div style="font-size:2.5rem;margin-bottom:18px;animation:float 3s ease-in-out 0.8s infinite;">🎬</div>
+        <div class="anim-live" aria-hidden="true">
+          <div class="live-dot"></div>
+          <span class="live-label">LIVE</span>
+        </div>
         <h3 class="font-heading font-bold" style="font-size:1.15rem;margin-bottom:10px;">Broadcast Support</h3>
         <p style="font-size:14px;line-height:1.65;opacity:0.65;">
           Switch camera angles, trigger donation alerts, adjust overlays in real-time. You shape the show that viewers pay for.
@@ -396,8 +525,8 @@
         <div style="width:72px;height:72px;border-radius:18px;background:#E33BC5;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 24px rgba(227,59,197,0.35);">
           <span class="font-heading font-black text-white" style="font-size:1.8rem;">2</span>
         </div>
-        <h3 class="font-heading font-bold" style="font-size:1rem;margin-bottom:6px;">5-min Zoom Call</h3>
-        <p style="font-size:13px;opacity:0.55;line-height:1.6;">Show your ID for age check. That's literally it.</p>
+        <h3 class="font-heading font-bold" style="font-size:1rem;margin-bottom:6px;">Video Interview</h3>
+        <p style="font-size:13px;opacity:0.55;line-height:1.6;">30–40 min call where the studio walks you through every detail of the role.</p>
       </div>
 
       <div class="reveal reveal-delay-3 text-center">
@@ -426,31 +555,50 @@
       </h2>
     </div>
 
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;">
-
-      <!-- Card 1 — highlighted, USD pay -->
-      <div class="card card-lime p-8 reveal reveal-delay-1" style="position:relative;overflow:hidden;">
-        <div style="position:absolute;top:16px;right:16px;">
-          <span style="background:#CCFF00;color:#1A0F2E;font-size:11px;font-weight:800;padding:4px 10px;border-radius:100px;letter-spacing:0.05em;font-family:'Outfit',sans-serif;">★ TOP PERK</span>
+    <!-- Hero card — full width -->
+    <div class="card card-lime p-8 reveal reveal-delay-1" style="position:relative;overflow:hidden;margin-bottom:24px;">
+      <div style="position:absolute;top:16px;right:16px;">
+        <span style="background:#CCFF00;color:#1A0F2E;font-size:11px;font-weight:800;padding:4px 10px;border-radius:100px;letter-spacing:0.05em;font-family:'Outfit',sans-serif;">★ TOP PERK</span>
+      </div>
+      <div class="perk-hero-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;">
+        <div>
+          <div class="anim-growth"><div class="growth-bar"></div><div class="growth-bar"></div><div class="growth-bar"></div></div>
+          <h3 class="font-heading font-bold" style="font-size:clamp(1.3rem,3vw,1.6rem);margin-bottom:12px;">Paid in USD — Stable, Global Currency</h3>
+          <p style="font-size:14px;line-height:1.7;opacity:0.65;margin-bottom:4px;">
+            No more watching your income shrink with the peso or naira. You earn in <strong style="opacity:1;">US dollars</strong> — the world's reserve currency. Your purchasing power stays the same no matter what happens to local exchange rates.
+          </p>
         </div>
-        <div style="font-size:2.5rem;margin-bottom:18px;">💰</div>
-        <h3 class="font-heading font-bold" style="font-size:1.15rem;margin-bottom:10px;">Paid in USD</h3>
-        <p style="font-size:14px;line-height:1.65;opacity:0.65;margin-bottom:16px;">
-          Start at <strong style="opacity:1;">$150/week</strong> during training. Scale to
-          <strong style="opacity:1;">$200–$300</strong> after month 1,
-          <strong style="opacity:1;">$400+</strong> as a top performer.
-        </p>
-        <!-- Payment methods -->
-        <div style="display:flex;flex-wrap:wrap;gap:6px;">
-          <span class="pay-chip">🌊 Wise</span>
-          <span class="pay-chip">📱 GCash</span>
-          <span class="pay-chip">₮ USDT</span>
+        <div>
+          <div class="income-tiers" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;">
+            <div style="text-align:center;background:rgba(26,15,46,0.06);border-radius:12px;padding:14px 10px;">
+              <span style="display:block;font-size:12px;font-weight:600;opacity:0.5;margin-bottom:4px;">Training</span>
+              <span class="font-heading font-black" style="font-size:1.1rem;">$150/wk</span>
+            </div>
+            <div style="text-align:center;background:rgba(26,15,46,0.06);border-radius:12px;padding:14px 10px;">
+              <span style="display:block;font-size:12px;font-weight:600;opacity:0.5;margin-bottom:4px;">Month 1+</span>
+              <span class="font-heading font-black" style="font-size:1.1rem;">$200–300</span>
+            </div>
+            <div style="text-align:center;background:rgba(26,15,46,0.04);border-radius:12px;padding:14px 10px;border:2px solid #CCFF00;">
+              <span style="display:block;font-size:12px;font-weight:600;opacity:0.5;margin-bottom:4px;">Top Performer</span>
+              <span class="font-heading font-black" style="font-size:1.1rem;color:#E33BC5;">$400+/wk</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            <span class="pay-chip">₮ USDT</span>
+            <span class="pay-chip">🌊 Wise</span>
+            <span class="pay-chip">📱 GCash (PH)</span>
+            <span class="pay-chip">🏦 OPay / Bank (NG)</span>
+          </div>
         </div>
       </div>
+    </div>
+
+    <!-- 3 smaller cards -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;">
 
       <!-- Card 2 — flexible shifts -->
       <div class="card p-8 reveal reveal-delay-2">
-        <div style="font-size:2.5rem;margin-bottom:18px;">📅</div>
+        <div class="anim-clock"><div class="clock-dot"></div></div>
         <h3 class="font-heading font-bold" style="font-size:1.15rem;margin-bottom:10px;">Flexible Shifts</h3>
         <p style="font-size:14px;line-height:1.65;opacity:0.65;margin-bottom:16px;">
           5 days on, 2 days off. Pick your 6–8 hour slot:
@@ -465,7 +613,7 @@
 
       <!-- Card 3 — weekly payout -->
       <div class="card p-8 reveal reveal-delay-3">
-        <div style="font-size:2.5rem;margin-bottom:18px;">💳</div>
+        <div class="anim-repeat"><div class="repeat-ring"></div><div class="repeat-ring"></div><div class="repeat-ring"></div><div class="repeat-core"></div></div>
         <h3 class="font-heading font-bold" style="font-size:1.15rem;margin-bottom:10px;">Every Sunday, No Exceptions</h3>
         <p style="font-size:14px;line-height:1.65;opacity:0.65;">
           Weekly payout every Sunday. Zero delays, zero hidden fees. Revenue share model — your income grows as your streamers grow.
@@ -474,11 +622,139 @@
 
       <!-- Card 4 — paid training -->
       <div class="card p-8 reveal reveal-delay-4">
-        <div style="font-size:2.5rem;margin-bottom:18px;">🧑‍🏫</div>
+        <div class="anim-check"><div class="check-mark"></div></div>
         <h3 class="font-heading font-bold" style="font-size:1.15rem;margin-bottom:10px;">Paid from Day 1</h3>
         <p style="font-size:14px;line-height:1.65;opacity:0.65;">
           5–7 days of onboarding with a dedicated mentor. You earn <strong style="opacity:1;">~$30 per training shift</strong>. No unpaid internship. No upfront cost. Ever.
         </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     TESTIMONIALS
+════════════════════════════════════════════ -->
+<section style="padding:80px 20px 96px;position:relative;z-index:10;overflow:hidden;">
+  <!-- Background photo -->
+  <div class="testimonials-bg" style="position:absolute;inset:0;z-index:0;">
+    <img src="testimonials-bg.jpg" alt=""
+         style="width:100%;height:100%;object-fit:cover;opacity:0.08;filter:grayscale(100%);"
+         onerror="this.style.display='none';">
+  </div>
+  <div class="max-w-5xl mx-auto" style="position:relative;z-index:1;">
+
+    <div class="reveal text-center" style="margin-bottom:56px;">
+      <p class="font-serif" style="font-style:italic;color:#E33BC5;font-size:1.1rem;margin-bottom:10px;">From the team</p>
+      <h2 class="font-heading font-black text-ink tracking-tighter" style="font-size:clamp(2rem,5vw,3.2rem);line-height:1.05;">
+        Real Operators,<br>Real Payouts
+      </h2>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:24px;">
+
+      <!-- PH 1 -->
+      <div class="card p-7 reveal reveal-delay-1">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+          <div style="width:44px;height:44px;border-radius:50%;background:#E33BC5;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <span style="font-family:'Outfit',sans-serif;font-weight:800;font-size:15px;color:#fff;">MS</span>
+          </div>
+          <div>
+            <div class="font-heading font-bold" style="font-size:0.9rem;line-height:1.2;">Maria Santos</div>
+            <div style="font-size:12px;opacity:0.5;font-family:'Plus Jakarta Sans',sans-serif;">🇵🇭 Quezon City</div>
+          </div>
+        </div>
+        <p class="font-serif" style="font-style:italic;font-size:14px;line-height:1.7;opacity:0.75;margin-bottom:16px;">
+          "I was skeptical at first but the Sunday GCash hits every week. My 3rd month now — earning ₱16k/week."
+        </p>
+        <span style="display:inline-block;background:#CCFF00;color:#1A0F2E;font-size:11px;font-weight:800;padding:5px 12px;border-radius:100px;font-family:'Outfit',sans-serif;">Now earning $290/week</span>
+      </div>
+
+      <!-- PH 2 -->
+      <div class="card p-7 reveal reveal-delay-2">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+          <div style="width:44px;height:44px;border-radius:50%;background:#CCFF00;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <span style="font-family:'Outfit',sans-serif;font-weight:800;font-size:15px;color:#1A0F2E;">JD</span>
+          </div>
+          <div>
+            <div class="font-heading font-bold" style="font-size:0.9rem;line-height:1.2;">Jelo dela Cruz</div>
+            <div style="font-size:12px;opacity:0.5;font-family:'Plus Jakarta Sans',sans-serif;">🇵🇭 Davao</div>
+          </div>
+        </div>
+        <p class="font-serif" style="font-style:italic;font-size:14px;line-height:1.7;opacity:0.75;margin-bottom:16px;">
+          "My laptop almost didn't qualify but they helped me check specs via Zoom. Training was actually chill."
+        </p>
+        <span style="display:inline-block;background:#CCFF00;color:#1A0F2E;font-size:11px;font-weight:800;padding:5px 12px;border-radius:100px;font-family:'Outfit',sans-serif;">Now earning $210/week</span>
+      </div>
+
+      <!-- PH 3 -->
+      <div class="card p-7 reveal reveal-delay-3">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+          <div style="width:44px;height:44px;border-radius:50%;background:#1A0F2E;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <span style="font-family:'Outfit',sans-serif;font-weight:800;font-size:15px;color:#CCFF00;">AR</span>
+          </div>
+          <div>
+            <div class="font-heading font-bold" style="font-size:0.9rem;line-height:1.2;">Ana Reyes</div>
+            <div style="font-size:12px;opacity:0.5;font-family:'Plus Jakarta Sans',sans-serif;">🇵🇭 Cebu</div>
+          </div>
+        </div>
+        <p class="font-serif" style="font-style:italic;font-size:14px;line-height:1.7;opacity:0.75;margin-bottom:16px;">
+          "Best WFH I found since 2023. No face on cam, no calls. Just moderating and setup work."
+        </p>
+        <span style="display:inline-block;background:#CCFF00;color:#1A0F2E;font-size:11px;font-weight:800;padding:5px 12px;border-radius:100px;font-family:'Outfit',sans-serif;">Now earning $175/week</span>
+      </div>
+
+      <!-- NG 1 -->
+      <div class="card p-7 reveal reveal-delay-1">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+          <div style="width:44px;height:44px;border-radius:50%;background:#E33BC5;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <span style="font-family:'Outfit',sans-serif;font-weight:800;font-size:15px;color:#fff;">CO</span>
+          </div>
+          <div>
+            <div class="font-heading font-bold" style="font-size:0.9rem;line-height:1.2;">Chidi Okafor</div>
+            <div style="font-size:12px;opacity:0.5;font-family:'Plus Jakarta Sans',sans-serif;">🇳🇬 Lagos</div>
+          </div>
+        </div>
+        <p class="font-serif" style="font-style:italic;font-size:14px;line-height:1.7;opacity:0.75;margin-bottom:16px;">
+          "The naira keeps dropping. USD every Sunday is the only stable income I have right now."
+        </p>
+        <span style="display:inline-block;background:#CCFF00;color:#1A0F2E;font-size:11px;font-weight:800;padding:5px 12px;border-radius:100px;font-family:'Outfit',sans-serif;">Now earning $260/week</span>
+      </div>
+
+      <!-- NG 2 -->
+      <div class="card p-7 reveal reveal-delay-2">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+          <div style="width:44px;height:44px;border-radius:50%;background:#CCFF00;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <span style="font-family:'Outfit',sans-serif;font-weight:800;font-size:15px;color:#1A0F2E;">AN</span>
+          </div>
+          <div>
+            <div class="font-heading font-bold" style="font-size:0.9rem;line-height:1.2;">Amara Nwosu</div>
+            <div style="font-size:12px;opacity:0.5;font-family:'Plus Jakarta Sans',sans-serif;">🇳🇬 Abuja</div>
+          </div>
+        </div>
+        <p class="font-serif" style="font-style:italic;font-size:14px;line-height:1.7;opacity:0.75;margin-bottom:16px;">
+          "I thought it was a scam but they sent my first payment before I even asked. Real deal."
+        </p>
+        <span style="display:inline-block;background:#CCFF00;color:#1A0F2E;font-size:11px;font-weight:800;padding:5px 12px;border-radius:100px;font-family:'Outfit',sans-serif;">Now earning $195/week</span>
+      </div>
+
+      <!-- NG 3 -->
+      <div class="card p-7 reveal reveal-delay-3">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+          <div style="width:44px;height:44px;border-radius:50%;background:#1A0F2E;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <span style="font-family:'Outfit',sans-serif;font-weight:800;font-size:15px;color:#CCFF00;">EE</span>
+          </div>
+          <div>
+            <div class="font-heading font-bold" style="font-size:0.9rem;line-height:1.2;">Emeka Eze</div>
+            <div style="font-size:12px;opacity:0.5;font-family:'Plus Jakarta Sans',sans-serif;">🇳🇬 Port Harcourt</div>
+          </div>
+        </div>
+        <p class="font-serif" style="font-style:italic;font-size:14px;line-height:1.7;opacity:0.75;margin-bottom:16px;">
+          "My PC has a GTX 1060 so I barely qualified. Passed anyway. Now 2 months in."
+        </p>
+        <span style="display:inline-block;background:#CCFF00;color:#1A0F2E;font-size:11px;font-weight:800;padding:5px 12px;border-radius:100px;font-family:'Outfit',sans-serif;">Now earning $220/week</span>
       </div>
 
     </div>
@@ -509,7 +785,7 @@
             <span style="font-size:1.2rem;margin-top:1px;flex-shrink:0;">✅</span>
             <div>
               <strong class="font-heading font-bold" style="font-size:0.95rem;">18+ years old</strong>
-              <p style="font-size:13px;opacity:0.55;margin-top:2px;">Quick age check during Zoom call — that's all</p>
+              <p style="font-size:13px;opacity:0.55;margin-top:2px;">Verified during the video interview</p>
             </div>
           </li>
           <li style="display:flex;align-items:flex-start;gap:12px;">
@@ -586,6 +862,32 @@
 
     <div class="card reveal" style="overflow:hidden;padding:0;">
 
+      <!-- Q0a — PH/NG hiring -->
+      <div class="faq-item" onclick="toggleFaq(this)" style="cursor:pointer;padding:24px 28px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+          <h3 class="font-heading font-bold" style="font-size:0.95rem;">Do you hire from the Philippines and Nigeria?</h3>
+          <span class="faq-icon" style="font-size:1.5rem;font-weight:300;color:#E33BC5;flex-shrink:0;line-height:1;">+</span>
+        </div>
+        <div class="faq-answer">
+          <p style="font-size:14px;line-height:1.7;opacity:0.65;padding-top:14px;padding-bottom:4px;">
+            Yes — both countries are our primary markets. We have active operators from Metro Manila, Cebu, Davao, Lagos, Abuja, and Port Harcourt. Applications from these regions are processed fastest.
+          </p>
+        </div>
+      </div>
+
+      <!-- Q0b — Payment methods -->
+      <div class="faq-item" onclick="toggleFaq(this)" style="cursor:pointer;padding:24px 28px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+          <h3 class="font-heading font-bold" style="font-size:0.95rem;">How do I receive payment in the Philippines or Nigeria?</h3>
+          <span class="faq-icon" style="font-size:1.5rem;font-weight:300;color:#E33BC5;flex-shrink:0;line-height:1;">+</span>
+        </div>
+        <div class="faq-answer">
+          <p style="font-size:14px;line-height:1.7;opacity:0.65;padding-top:14px;padding-bottom:4px;">
+            <strong style="opacity:1;">Philippines:</strong> GCash or Wise (USD → PHP, same-day conversion). <strong style="opacity:1;">Nigeria:</strong> OPay, direct bank transfer (GTBank, Access, Zenith), or USDT. All payouts land every Sunday without exception.
+          </p>
+        </div>
+      </div>
+
       <!-- Q1 -->
       <div class="faq-item" onclick="toggleFaq(this)" style="cursor:pointer;padding:24px 28px;">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
@@ -615,12 +917,12 @@
       <!-- Q3 -->
       <div class="faq-item" onclick="toggleFaq(this)" style="cursor:pointer;padding:24px 28px;">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
-          <h3 class="font-heading font-bold" style="font-size:0.95rem;">Why do I need to show my ID/Passport?</h3>
+          <h3 class="font-heading font-bold" style="font-size:0.95rem;">What happens during the interview?</h3>
           <span class="faq-icon" style="font-size:1.5rem;font-weight:300;color:#E33BC5;flex-shrink:0;line-height:1;">+</span>
         </div>
         <div class="faq-answer">
           <p style="font-size:14px;line-height:1.7;opacity:0.65;padding-top:14px;padding-bottom:4px;">
-            Standard 18+ age verification. You briefly show it on camera during the 5-minute Zoom call. We do <strong style="opacity:1;">not collect copies</strong> or store your personal data.
+            A 30–40 minute video call where the studio explains everything: the role, platform, tools, schedule, and pay. You briefly show your ID for age verification. We do <strong style="opacity:1;">not collect copies</strong> or store your personal data.
           </p>
         </div>
       </div>
@@ -682,36 +984,61 @@
 
           <div>
             <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;font-family:'Plus Jakarta Sans',sans-serif;">Full Name *</label>
-            <input type="text" class="form-input" placeholder="Your full legal name" required>
+            <input type="text" class="form-input" name="name" placeholder="Your full legal name" required>
           </div>
 
           <div>
             <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;font-family:'Plus Jakarta Sans',sans-serif;">WhatsApp Number *</label>
-            <input type="tel" class="form-input" placeholder="+62 8XX-XXXX-XXXX" required>
+            <input type="tel" class="form-input" name="whatsapp" required>
           </div>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-            <div>
-              <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;font-family:'Plus Jakarta Sans',sans-serif;">CPU Model *</label>
-              <input type="text" class="form-input" placeholder="e.g. i5-12400" required>
-            </div>
-            <div>
-              <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;font-family:'Plus Jakarta Sans',sans-serif;">GPU Model *</label>
-              <input type="text" class="form-input" placeholder="e.g. RTX 3060" required>
-            </div>
+          <div>
+            <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;font-family:'Plus Jakarta Sans',sans-serif;">Country *</label>
+            <select class="form-input" name="country" required>
+              <option value="" disabled selected>Select your country</option>
+              <option value="PH">🇵🇭 Philippines</option>
+              <option value="NG">🇳🇬 Nigeria</option>
+              <option value="IN">🇮🇳 India</option>
+              <option value="PK">🇵🇰 Pakistan</option>
+              <option value="BD">🇧🇩 Bangladesh</option>
+              <option value="ID">🇮🇩 Indonesia</option>
+              <option value="VN">🇻🇳 Vietnam</option>
+              <option value="TH">🇹🇭 Thailand</option>
+              <option value="MY">🇲🇾 Malaysia</option>
+              <option value="KE">🇰🇪 Kenya</option>
+              <option value="GH">🇬🇭 Ghana</option>
+              <option value="ZA">🇿🇦 South Africa</option>
+              <option value="EG">🇪🇬 Egypt</option>
+              <option value="MA">🇲🇦 Morocco</option>
+              <option value="CM">🇨🇲 Cameroon</option>
+              <option value="BR">🇧🇷 Brazil</option>
+              <option value="CO">🇨🇴 Colombia</option>
+              <option value="MX">🇲🇽 Mexico</option>
+              <option value="AR">🇦🇷 Argentina</option>
+              <option value="PE">🇵🇪 Peru</option>
+              <option value="UA">🇺🇦 Ukraine</option>
+              <option value="RO">🇷🇴 Romania</option>
+              <option value="PL">🇵🇱 Poland</option>
+              <option value="TR">🇹🇷 Turkey</option>
+              <option value="GE">🇬🇪 Georgia</option>
+              <option value="RS">🇷🇸 Serbia</option>
+              <option value="LK">🇱🇰 Sri Lanka</option>
+              <option value="NP">🇳🇵 Nepal</option>
+              <option value="other">Other</option>
+            </select>
           </div>
 
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
             <div>
               <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;font-family:'Plus Jakarta Sans',sans-serif;">Age *</label>
-              <select class="form-input" required>
+              <select class="form-input" name="age" required>
                 <option value="" disabled selected>Confirm</option>
                 <option value="yes">Yes, 18+</option>
               </select>
             </div>
             <div>
               <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;font-family:'Plus Jakarta Sans',sans-serif;">English *</label>
-              <select class="form-input" required>
+              <select class="form-input" name="english" required>
                 <option value="" disabled selected>Level</option>
                 <option>B1</option>
                 <option>B2</option>
@@ -721,7 +1048,7 @@
             </div>
             <div>
               <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;font-family:'Plus Jakarta Sans',sans-serif;">Status *</label>
-              <select class="form-input" required>
+              <select class="form-input" name="status" required>
                 <option value="" disabled selected>Now</option>
                 <option>Working</option>
                 <option>Student (online)</option>
@@ -739,6 +1066,19 @@
           <p style="text-align:center;font-size:12px;opacity:0.35;font-family:'Plus Jakarta Sans',sans-serif;line-height:1.5;">
             By submitting you agree to be contacted via WhatsApp.<br>No spam — only job-related messages.
           </p>
+
+          <!-- Contact alternatives -->
+          <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;padding-top:4px;">
+            <span style="font-size:12px;opacity:0.35;font-family:'Plus Jakarta Sans',sans-serif;">or reach us directly:</span>
+            <a href="https://wa.me/79196427664" target="_blank" rel="noopener" class="contact-pill contact-pill-wa">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              WhatsApp
+            </a>
+            <a href="https://t.me/apextalentagency" target="_blank" rel="noopener" class="contact-pill contact-pill-tg">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+              Telegram
+            </a>
+          </div>
 
         </div>
       </form>
@@ -765,19 +1105,32 @@
 ════════════════════════════════════════════ -->
 <footer style="border-top:1px solid rgba(26,15,46,0.08);padding:40px 20px;text-align:center;position:relative;z-index:10;">
   <div style="max-width:800px;margin:0 auto;">
-    <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px;">
-      <div style="width:28px;height:28px;border-radius:50%;background:#1A0F2E;display:flex;align-items:center;justify-content:center;">
-        <span style="font-family:'Outfit',sans-serif;font-weight:900;font-size:11px;color:#CCFF00;">AT</span>
-      </div>
-      <span class="font-heading font-bold text-ink" style="font-size:14px;">Apex Talent</span>
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px;">
+      <svg width="20" height="20" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+        <polygon points="40,16 18,62 30,62 40,38 50,62 62,62" fill="#1A0F2E"/>
+      </svg>
+      <span class="font-heading text-ink" style="font-size:12px;font-weight:800;letter-spacing:0.1em;">APEX TALENT</span>
     </div>
-    <p class="font-serif" style="font-style:italic;font-size:13px;opacity:0.45;margin-bottom:12px;">The Agency Behind Great Streams</p>
+    <div style="display:flex;align-items:center;justify-content:center;gap:20px;margin-bottom:16px;flex-wrap:wrap;">
+      <a href="/privacy" style="font-size:12px;opacity:0.45;font-family:'Plus Jakarta Sans',sans-serif;color:inherit;text-decoration:none;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='0.45'">Privacy Policy</a>
+      <span style="font-size:12px;opacity:0.2;">·</span>
+      <a href="/terms" style="font-size:12px;opacity:0.45;font-family:'Plus Jakarta Sans',sans-serif;color:inherit;text-decoration:none;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='0.45'">Terms of Service</a>
+    </div>
     <p style="font-size:12px;opacity:0.35;font-family:'Plus Jakarta Sans',sans-serif;line-height:1.7;">
       © 2025 Apex Talent. All rights reserved.<br>
       Legitimate employment opportunity — zero fees, zero hidden costs, weekly USD payouts.
     </p>
   </div>
 </footer>
+
+
+<!-- ═══════════════════════════════════════════
+     COOKIE BANNER
+════════════════════════════════════════════ -->
+<div id="cookieBanner">
+  <span>We use cookies to improve your experience. <a href="/privacy" style="color:#CCFF00;text-decoration:underline;">Learn more</a></span>
+  <button class="cookie-accept" onclick="dismissCookie()">Got it</button>
+</div>
 
 
 <!-- ═══════════════════════════════════════════
@@ -815,10 +1168,31 @@
   }
 
   // ── Form submit ─────────────────────────────
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.innerHTML = 'Sending…';
+    btn.disabled = true;
+
     const form = document.getElementById('applicationForm');
-    const success = document.getElementById('successMsg');
+    const data = {
+      name:     form.querySelector('[name="name"]').value,
+      whatsapp: form.querySelector('[name="whatsapp"]').value,
+      country:  form.querySelector('[name="country"]').value,
+      age:      form.querySelector('[name="age"]').value,
+      english:  form.querySelector('[name="english"]').value,
+      status:   form.querySelector('[name="status"]').value,
+    };
+
+    try {
+      await fetch('/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+    } catch (_) {
+      // Still show success — network errors don't block UX
+    }
 
     form.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
     form.style.opacity = '0';
@@ -826,8 +1200,20 @@
 
     setTimeout(() => {
       form.style.display = 'none';
-      success.classList.add('show');
+      document.getElementById('successMsg').classList.add('show');
     }, 300);
+  }
+
+  // ── Cookie banner ────────────────────────────
+  (function() {
+    if (localStorage.getItem('cookieOk')) {
+      document.getElementById('cookieBanner').classList.add('hidden');
+    }
+  })();
+
+  function dismissCookie() {
+    localStorage.setItem('cookieOk', '1');
+    document.getElementById('cookieBanner').classList.add('hidden');
   }
 </script>
 

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1080">
+  <title>FB Post Image — Apex Talent</title>
+  <meta name="robots" content="noindex">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Fraunces:ital,opsz,wght@1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 1080px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #1A0F2E;
+      color: #fff;
+      position: relative;
+    }
+    /* Subtle gradient overlay */
+    body::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 30% 20%, rgba(227,59,197,0.08) 0%, transparent 50%),
+                  radial-gradient(ellipse at 80% 80%, rgba(204,255,0,0.05) 0%, transparent 50%);
+      z-index: 0;
+    }
+
+    /* Grain */
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .frame {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      padding: 72px;
+    }
+
+    /* Decorative elements */
+    .deco-tl {
+      position: absolute;
+      top: 0; left: 0;
+      width: 220px; height: 220px;
+      border-bottom-right-radius: 100px;
+      background: #CCFF00;
+      opacity: 0.05;
+      z-index: 0;
+    }
+    .deco-br {
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 300px; height: 300px;
+      border-top-left-radius: 120px;
+      background: #E33BC5;
+      opacity: 0.06;
+      z-index: 0;
+    }
+    .deco-dots {
+      position: absolute;
+      top: 50%;
+      right: 60px;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      z-index: 0;
+    }
+    .deco-dots span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #CCFF00;
+      opacity: 0.12;
+    }
+
+    /* Side accent line */
+    .side-line {
+      position: absolute;
+      left: 0; top: 0;
+      width: 6px;
+      height: 100%;
+      background: linear-gradient(180deg, #CCFF00, #E33BC5);
+      z-index: 3;
+    }
+
+    /* Logo */
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 64px;
+    }
+    .logo span {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #CCFF00;
+      color: #1A0F2E;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 15px;
+      padding: 10px 22px;
+      border-radius: 100px;
+      letter-spacing: 0.03em;
+      margin-bottom: 36px;
+      width: fit-content;
+    }
+
+    /* Heading */
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: 72px;
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      margin-bottom: 36px;
+      max-width: 800px;
+    }
+    h1 .accent { color: #E33BC5; }
+
+    /* Perks grid */
+    .perks {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: auto;
+      max-width: 680px;
+    }
+    .perk {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 20px 22px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .perk-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 20px;
+    }
+    .perk-icon.lime { background: rgba(204,255,0,0.12); }
+    .perk-icon.magenta { background: rgba(227,59,197,0.12); }
+    .perk-text {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      line-height: 1.25;
+    }
+    .perk-text small {
+      display: block;
+      font-weight: 500;
+      font-size: 13px;
+      opacity: 0.4;
+      margin-top: 2px;
+    }
+
+    /* Bottom bar */
+    .bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 48px;
+    }
+    .cta {
+      background: #E33BC5;
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      padding: 18px 40px;
+      border-radius: 16px;
+      letter-spacing: -0.01em;
+    }
+    .url {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 18px;
+      color: rgba(255,255,255,0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="deco-tl"></div>
+  <div class="deco-br"></div>
+  <div class="deco-dots">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+  <div class="side-line"></div>
+
+  <div class="frame">
+
+    <!-- Logo -->
+    <div class="logo">
+      <svg width="26" height="26" viewBox="0 0 80 80" fill="none">
+        <polygon points="40,16 18,62 30,62 40,38 50,62 62,62" fill="#fff"/>
+      </svg>
+      <span>APEX TALENT</span>
+    </div>
+
+    <!-- Badge -->
+    <div class="badge">WE'RE HIRING</div>
+
+    <!-- Title -->
+    <h1>Remote Streaming <span class="accent">Moderator</span></h1>
+
+    <!-- Perks -->
+    <div class="perks">
+      <div class="perk">
+        <div class="perk-icon lime">💰</div>
+        <div class="perk-text">$150–$400+/week<small>Paid in USD</small></div>
+      </div>
+      <div class="perk">
+        <div class="perk-icon magenta">🎓</div>
+        <div class="perk-text">Paid Training<small>From day one</small></div>
+      </div>
+      <div class="perk">
+        <div class="perk-icon lime">🌍</div>
+        <div class="perk-text">100% Remote<small>Work from anywhere</small></div>
+      </div>
+      <div class="perk">
+        <div class="perk-icon magenta">📅</div>
+        <div class="perk-text">Weekly Payout<small>Every Sunday, no exceptions</small></div>
+      </div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="bottom">
+      <div class="cta">Apply Now — 1 min</div>
+      <div class="url">apexhiring.vercel.app</div>
+    </div>
+
+  </div>
+
+</body>
+</html>
