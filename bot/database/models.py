@@ -38,6 +38,14 @@ class Candidate(Base):
     availability: Mapped[str | None] = mapped_column(String(100), nullable=True)
     expected_rate: Mapped[str | None] = mapped_column(String(50), nullable=True)
 
+    # Agent-specific fields
+    recruiting_experience: Mapped[str | None] = mapped_column(Text, nullable=True)
+    available_hours: Mapped[str | None] = mapped_column(String(50), nullable=True)
+
+    # Model-specific fields
+    platform_experience: Mapped[str | None] = mapped_column(Text, nullable=True)
+    preferred_schedule: Mapped[str | None] = mapped_column(String(100), nullable=True)
+
     # Screening results
     score: Mapped[int | None] = mapped_column(Integer, nullable=True)
     recommendation: Mapped[str | None] = mapped_column(String(20), nullable=True)  # PASS, MAYBE, REJECT

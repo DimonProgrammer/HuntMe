@@ -162,3 +162,45 @@ DECLINE_GENERIC = (
     "feel free to send them our way!\n\n"
     "Wishing you all the best! 🙂"
 )
+
+# --- Agent Greeting ---
+
+AGENT_GREETING = (
+    "Hi {name}! 👋\n\n"
+    "Great that you're interested in our Agent program!\n\n"
+    "As a Recruitment Agent, you earn for every person you successfully refer:\n\n"
+    "Operators:\n"
+    "  • 1st–3rd hire: $50 each\n"
+    "  • 4th–6th hire: $75 each\n"
+    "  • 7th+ hire: $100 each\n\n"
+    "Models:\n"
+    "  • $10 per working day for 12 months (passive income!)\n\n"
+    "Payments: USDT (BEP20), every Sunday, $50 minimum payout.\n\n"
+    "Let me ask a few quick questions. What is your full name?"
+)
+
+# --- Model Greeting ---
+
+MODEL_GREETING = (
+    "Hi {name}! 👋\n\n"
+    "Thanks for your interest in the Content Creator role!\n\n"
+    "We work with streaming platforms and are looking for confident, "
+    "creative people to join our international team.\n\n"
+    "What we offer:\n"
+    "  • Flexible schedule — you choose your hours\n"
+    "  • Revenue share from streaming income\n"
+    "  • Full training with a personal mentor\n"
+    "  • Weekly payments (GCash / Wise / USDT)\n"
+    "  • Team across 15+ countries\n\n"
+    "Let me ask a few quick questions.\n\n"
+    "What is your full name?"
+)
+
+# --- Application Received (agent/model) ---
+
+APPLICATION_RECEIVED = (
+    "Thank you for applying! 🙏\n\n"
+    "Our team will review your application and get back to you within 24 hours.\n\n"
+    "If you have any questions in the meantime, feel free to message us!\n\n"
+    "You can return to the main menu anytime by typing /menu."
+)

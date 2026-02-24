@@ -171,6 +171,90 @@ async def cb_reject(callback: CallbackQuery):
         await callback.answer("Failed to send")
 
 
+# --- Agent callbacks ---
+
+@router.callback_query(F.data.startswith("agentok_"))
+async def cb_approve_agent(callback: CallbackQuery):
+    user_id = int(callback.data.removeprefix("agentok_"))
+    try:
+        await callback.bot.send_message(
+            user_id,
+            "Great news — you've been approved as a Recruitment Agent! 🎉\n\n"
+            "Here's what happens next:\n"
+            "• You'll receive your unique referral link\n"
+            "• Share it with potential operators and models\n"
+            "• Earn $50-100 per operator + $10/day per model for 12 months\n"
+            "• Payouts every Sunday in USDT (BEP20), minimum $50\n\n"
+            "Our team will be in touch shortly with your onboarding details.\n\n"
+            "Welcome to the team! 🙂",
+        )
+        await callback.answer("Agent approved!")
+        await callback.message.edit_text(callback.message.text + "\n\n✅ AGENT APPROVED")
+    except Exception:
+        await callback.answer("Failed to send — user may have blocked the bot")
+
+
+@router.callback_query(F.data.startswith("agentno_"))
+async def cb_reject_agent(callback: CallbackQuery):
+    user_id = int(callback.data.removeprefix("agentno_"))
+    try:
+        await callback.bot.send_message(
+            user_id,
+            "Thank you for your interest in our Agent program! 🙏\n\n"
+            "Unfortunately, we're not able to move forward with your application "
+            "at this time.\n\n"
+            "If your situation changes or you'd like to apply for another role, "
+            "feel free to reach out again — just send /start.\n\n"
+            "Wishing you all the best! 🙂",
+        )
+        await callback.answer("Rejection sent.")
+        await callback.message.edit_text(callback.message.text + "\n\n❌ REJECTED")
+    except Exception:
+        await callback.answer("Failed to send")
+
+
+# --- Model callbacks ---
+
+@router.callback_query(F.data.startswith("modelok_"))
+async def cb_approve_model(callback: CallbackQuery):
+    user_id = int(callback.data.removeprefix("modelok_"))
+    try:
+        await callback.bot.send_message(
+            user_id,
+            "Great news — you've been approved as a Content Creator! 🎉\n\n"
+            "Here's what happens next:\n"
+            "• You'll be paired with a dedicated operator\n"
+            "• You'll go through 5-7 days of paid training ($30/shift)\n"
+            "• Your first paycheck comes at the end of your first training week\n"
+            "• Payments every Sunday via GCash / Wise / USDT\n\n"
+            "Our team will be in touch shortly to get you started.\n\n"
+            "Welcome to the team! 🙂",
+        )
+        await callback.answer("Model approved!")
+        await callback.message.edit_text(callback.message.text + "\n\n✅ MODEL APPROVED")
+    except Exception:
+        await callback.answer("Failed to send — user may have blocked the bot")
+
+
+@router.callback_query(F.data.startswith("modelno_"))
+async def cb_reject_model(callback: CallbackQuery):
+    user_id = int(callback.data.removeprefix("modelno_"))
+    try:
+        await callback.bot.send_message(
+            user_id,
+            "Thank you for your interest in joining our team! 🙏\n\n"
+            "Unfortunately, we're not able to move forward with your application "
+            "at this time.\n\n"
+            "If your situation changes or you'd like to explore other roles, "
+            "feel free to reach out again — just send /start.\n\n"
+            "Wishing you all the best! 🙂",
+        )
+        await callback.answer("Rejection sent.")
+        await callback.message.edit_text(callback.message.text + "\n\n❌ REJECTED")
+    except Exception:
+        await callback.answer("Failed to send")
+
+
 # --- Help ---
 
 @router.message(Command("help"), F.func(is_admin))

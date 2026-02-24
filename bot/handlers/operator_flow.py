@@ -1,6 +1,6 @@
-"""11-step FSM flow for candidate qualification via Telegram bot.
+"""11-step FSM flow for operator (Live Stream Moderator) qualification.
 
-Based on official HuntMe Operator Call & Messenger Scripts.
+Extracted from candidate.py. Triggered from menu.py when user selects Operator.
 Steps: name → PC → age → study/work → english → PC confidence →
        CPU → GPU → internet → start date → contact
 """
@@ -20,7 +20,6 @@ from bot.services.followup import (
     DECLINE_NO_PC,
     DECLINE_STUDENT_INPERSON,
     DECLINE_UNDERAGE,
-    WARM_GREETING,
 )
 from bot.services.hardware_checker import quick_check
 from bot.services.objection_handler import detect_objection, get_response
@@ -30,7 +29,7 @@ logger = logging.getLogger(__name__)
 router = Router()
 
 
-class ApplicationForm(StatesGroup):
+class OperatorForm(StatesGroup):
     waiting_name = State()
     waiting_has_pc = State()
     waiting_no_pc_followup = State()
@@ -45,25 +44,12 @@ class ApplicationForm(StatesGroup):
     waiting_contact = State()
 
 
-# --- /start ---
-
-@router.message(F.text == "/start")
-async def cmd_start(message: Message, state: FSMContext):
-    if message.from_user.id == config.ADMIN_CHAT_ID:
-        return
-
-    greeting = WARM_GREETING.format(name=message.from_user.first_name or "there")
-    await message.answer(greeting)
-    await state.set_state(ApplicationForm.waiting_name)
-
-
 # --- Step 1: Name ---
 
-@router.message(ApplicationForm.waiting_name)
+@router.message(OperatorForm.waiting_name)
 async def process_name(message: Message, state: FSMContext):
     name = message.text.strip()
 
-    # Check for objection in free text
     objection = detect_objection(name)
     if objection and len(name) > 30:
         response = get_response(objection)
@@ -85,12 +71,12 @@ async def process_name(message: Message, state: FSMContext):
         "Do you have a personal PC or laptop? (Windows only — MacBooks are not supported)".format(name.split()[0]),
         reply_markup=keyboard,
     )
-    await state.set_state(ApplicationForm.waiting_has_pc)
+    await state.set_state(OperatorForm.waiting_has_pc)
 
 
 # --- Step 2: PC Check ---
 
-@router.callback_query(ApplicationForm.waiting_has_pc, F.data.startswith("pc_"))
+@router.callback_query(OperatorForm.waiting_has_pc, F.data.startswith("pc_"))
 async def process_has_pc(callback: CallbackQuery, state: FSMContext):
     choice = callback.data.removeprefix("pc_")
     await callback.answer()
@@ -108,15 +94,15 @@ async def process_has_pc(callback: CallbackQuery, state: FSMContext):
             "Are you planning to get one in the near future?",
             reply_markup=keyboard,
         )
-        await state.set_state(ApplicationForm.waiting_no_pc_followup)
+        await state.set_state(OperatorForm.waiting_no_pc_followup)
         return
 
     await state.update_data(has_pc=True, pc_type=choice)
     await callback.message.answer("Great! 👍\n\nHow old are you?")
-    await state.set_state(ApplicationForm.waiting_age)
+    await state.set_state(OperatorForm.waiting_age)
 
 
-@router.callback_query(ApplicationForm.waiting_no_pc_followup, F.data.startswith("nopc_"))
+@router.callback_query(OperatorForm.waiting_no_pc_followup, F.data.startswith("nopc_"))
 async def process_no_pc_followup(callback: CallbackQuery, state: FSMContext):
     choice = callback.data.removeprefix("nopc_")
     await callback.answer()
@@ -124,7 +110,7 @@ async def process_no_pc_followup(callback: CallbackQuery, state: FSMContext):
     if choice == "soon":
         await callback.message.answer(
             "That's great! 🙂 Feel free to come back when you have your PC set up. "
-            "Just message /start and we'll pick up where we left off!\n\n"
+            "Just send /start and we'll get you going!\n\n"
             "We'll keep your application on file. Good luck! 🍀"
         )
     else:
@@ -135,11 +121,10 @@ async def process_no_pc_followup(callback: CallbackQuery, state: FSMContext):
 
 # --- Step 3: Age ---
 
-@router.message(ApplicationForm.waiting_age)
+@router.message(OperatorForm.waiting_age)
 async def process_age(message: Message, state: FSMContext):
     text = message.text.strip()
 
-    # Try to extract number
     age = None
     for word in text.split():
         if word.isdigit():
@@ -171,12 +156,12 @@ async def process_age(message: Message, state: FSMContext):
         "Are you currently studying or working?",
         reply_markup=keyboard,
     )
-    await state.set_state(ApplicationForm.waiting_study_work)
+    await state.set_state(OperatorForm.waiting_study_work)
 
 
 # --- Step 4: Study/Work Status ---
 
-@router.callback_query(ApplicationForm.waiting_study_work, F.data.startswith("study_"))
+@router.callback_query(OperatorForm.waiting_study_work, F.data.startswith("study_"))
 async def process_study_work(callback: CallbackQuery, state: FSMContext):
     status = callback.data.removeprefix("study_")
     await callback.answer()
@@ -207,12 +192,12 @@ async def process_study_work(callback: CallbackQuery, state: FSMContext):
         "you'll be moderating English-language chats.",
         reply_markup=keyboard,
     )
-    await state.set_state(ApplicationForm.waiting_english)
+    await state.set_state(OperatorForm.waiting_english)
 
 
 # --- Step 5: English Level ---
 
-@router.callback_query(ApplicationForm.waiting_english, F.data.startswith("eng_"))
+@router.callback_query(OperatorForm.waiting_english, F.data.startswith("eng_"))
 async def process_english(callback: CallbackQuery, state: FSMContext):
     level = callback.data.removeprefix("eng_")
     await callback.answer()
@@ -231,31 +216,30 @@ async def process_english(callback: CallbackQuery, state: FSMContext):
         "For example: do you install programs, troubleshoot issues, "
         "know your way around Windows settings?"
     )
-    await state.set_state(ApplicationForm.waiting_pc_confidence)
+    await state.set_state(OperatorForm.waiting_pc_confidence)
 
 
 # --- Step 6: PC Confidence ---
 
-@router.message(ApplicationForm.waiting_pc_confidence)
+@router.message(OperatorForm.waiting_pc_confidence)
 async def process_pc_confidence(message: Message, state: FSMContext):
     await state.update_data(pc_confidence=message.text.strip())
 
     await message.answer(
         "What is your processor (CPU) model?\n\n"
-        "💡 How to check: Press Win+R → type 'dxdiag' → press Enter → "
+        "How to check: Press Win+R → type 'dxdiag' → press Enter → "
         "look at 'Processor' line\n\n"
         "Example: Intel Core i5-12400 or AMD Ryzen 5 5600"
     )
-    await state.set_state(ApplicationForm.waiting_cpu)
+    await state.set_state(OperatorForm.waiting_cpu)
 
 
 # --- Step 7: CPU ---
 
-@router.message(ApplicationForm.waiting_cpu)
+@router.message(OperatorForm.waiting_cpu)
 async def process_cpu(message: Message, state: FSMContext):
     cpu = message.text.strip()
 
-    # Check for objection
     objection = detect_objection(cpu)
     if objection and len(cpu) > 20:
         response = get_response(objection)
@@ -264,7 +248,7 @@ async def process_cpu(message: Message, state: FSMContext):
             await message.answer(
                 "Now, back to the application — "
                 "what is your processor model? 🙂\n\n"
-                "💡 Press Win+R → type 'dxdiag' → Enter → look at 'Processor'"
+                "Press Win+R → type 'dxdiag' → Enter → look at 'Processor'"
             )
             return
 
@@ -272,21 +256,20 @@ async def process_cpu(message: Message, state: FSMContext):
 
     await message.answer(
         "What is your graphics card (GPU)?\n\n"
-        "💡 In the same dxdiag window → click 'Display' tab → "
+        "In the same dxdiag window → click 'Display' tab → "
         "look at 'Name' under Device\n\n"
         "Example: NVIDIA GeForce RTX 3060 or AMD Radeon RX 6600"
     )
-    await state.set_state(ApplicationForm.waiting_gpu)
+    await state.set_state(OperatorForm.waiting_gpu)
 
 
 # --- Step 8: GPU ---
 
-@router.message(ApplicationForm.waiting_gpu)
+@router.message(OperatorForm.waiting_gpu)
 async def process_gpu(message: Message, state: FSMContext):
     gpu = message.text.strip()
     await state.update_data(gpu_model=gpu)
 
-    # Run hardware check
     data = await state.get_data()
     hw_result = quick_check(data["cpu_model"], gpu)
 
@@ -297,26 +280,24 @@ async def process_gpu(message: Message, state: FSMContext):
     )
 
     if not hw_result.compatible:
-        # Still continue to collect remaining info but note the issue
         issues = []
         if not hw_result.cpu_ok:
             issues.append(f"CPU: {hw_result.cpu_reason}")
         if not hw_result.gpu_ok:
             issues.append(f"GPU: {hw_result.gpu_reason}")
-
         await state.update_data(hardware_issues="\n".join(issues))
 
     await message.answer(
         "What is your internet speed? (minimum 100 Mbps required)\n\n"
-        "💡 You can check at speedtest.net\n\n"
-        "Also — do you have a LAN (ethernet) port or do you use Wi-Fi only?"
+        "You can check at speedtest.net\n\n"
+        "Also — do you have a LAN (ethernet) connection or Wi-Fi only?"
     )
-    await state.set_state(ApplicationForm.waiting_internet)
+    await state.set_state(OperatorForm.waiting_internet)
 
 
 # --- Step 9: Internet Speed ---
 
-@router.message(ApplicationForm.waiting_internet)
+@router.message(OperatorForm.waiting_internet)
 async def process_internet(message: Message, state: FSMContext):
     await state.update_data(internet_speed=message.text.strip())
 
@@ -324,12 +305,12 @@ async def process_internet(message: Message, state: FSMContext):
         "When would you be ready to start?\n\n"
         "Our next training group starts soon — ideally within 1 week."
     )
-    await state.set_state(ApplicationForm.waiting_start_date)
+    await state.set_state(OperatorForm.waiting_start_date)
 
 
 # --- Step 10: Start Date ---
 
-@router.message(ApplicationForm.waiting_start_date)
+@router.message(OperatorForm.waiting_start_date)
 async def process_start_date(message: Message, state: FSMContext):
     await state.update_data(start_date=message.text.strip())
 
@@ -339,18 +320,17 @@ async def process_start_date(message: Message, state: FSMContext):
         "• Telegram @username (preferred)\n"
         "• Or WhatsApp number"
     )
-    await state.set_state(ApplicationForm.waiting_contact)
+    await state.set_state(OperatorForm.waiting_contact)
 
 
 # --- Step 11: Contact → Screening ---
 
-@router.message(ApplicationForm.waiting_contact)
+@router.message(OperatorForm.waiting_contact)
 async def process_contact(message: Message, state: FSMContext):
     await state.update_data(contact_info=message.text.strip())
     data = await state.get_data()
     await state.clear()
 
-    # Check if hardware was already flagged as incompatible
     if data.get("hardware_compatible") is False:
         await message.answer(DECLINE_HARDWARE)
         await _notify_admin(message, data, None, declined_reason="hardware")
@@ -361,7 +341,6 @@ async def process_contact(message: Message, state: FSMContext):
         "I'm reviewing your information now — this usually takes about 30 seconds..."
     )
 
-    # AI screening
     result = await screen_candidate(
         name=data.get("name", "N/A"),
         has_pc=data.get("has_pc"),
@@ -380,13 +359,8 @@ async def process_contact(message: Message, state: FSMContext):
         tg_username=message.from_user.username or "N/A",
     )
 
-    # Send AI response to candidate
     await message.answer(result.suggested_response)
-
-    # Notify admin
     await _notify_admin(message, data, result)
-
-    # Send to n8n webhook
     await _send_to_n8n(message, data, result)
 
 
@@ -396,10 +370,9 @@ async def _notify_admin(
     result,
     declined_reason: str | None = None,
 ):
-    """Send candidate info to admin with action buttons."""
     if declined_reason:
         admin_text = (
-            f"[AUTO-DECLINED] {declined_reason.upper()}\n\n"
+            f"[OPERATOR — AUTO-DECLINED: {declined_reason.upper()}]\n\n"
             f"Name: {data.get('name', 'N/A')}\n"
             f"TG: @{message.from_user.username or 'N/A'} (ID: {message.from_user.id})\n"
             f"Age: {data.get('age', 'N/A')}\n"
@@ -412,7 +385,7 @@ async def _notify_admin(
     else:
         icon = {"PASS": "🟢", "MAYBE": "🟡", "REJECT": "🔴"}.get(result.recommendation, "❓")
         admin_text = (
-            f"{icon} {result.recommendation} — Score: {result.overall_score}/100\n\n"
+            f"[OPERATOR] {icon} {result.recommendation} — Score: {result.overall_score}/100\n\n"
             f"Name: {data.get('name', 'N/A')}\n"
             f"TG: @{message.from_user.username or 'N/A'} (ID: {message.from_user.id})\n"
             f"Age: {data.get('age', 'N/A')} | English: {data.get('english_level', 'N/A')}\n"
@@ -441,7 +414,6 @@ async def _notify_admin(
 
 
 async def _send_to_n8n(message: Message, data: dict, result):
-    """Send application data to n8n webhook (non-blocking)."""
     try:
         async with aiohttp.ClientSession() as session:
             await session.post(
@@ -449,6 +421,7 @@ async def _send_to_n8n(message: Message, data: dict, result):
                 json={
                     "telegram_user_id": message.from_user.id,
                     "telegram_username": message.from_user.username,
+                    "candidate_type": "operator",
                     "name": data.get("name"),
                     "has_pc": data.get("has_pc"),
                     "age": data.get("age"),
