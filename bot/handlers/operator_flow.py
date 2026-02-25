@@ -54,22 +54,30 @@ class OperatorForm(StatesGroup):
 # ═══ QUESTION / OBJECTION HANDLING ═══
 
 async def _handle_possible_question(message: Message, state: FSMContext) -> bool:
-    """Check if message is a question/objection. Handle it and return True, or return False."""
+    """Check if message is a question/objection. Handle it and return True, or return False.
+
+    Only triggers on messages that look like questions/objections (contain '?' or are
+    long enough to be conversational), not short factual answers to step questions.
+    """
     text = message.text.strip() if message.text else ""
     if not text:
         return False
 
-    # 1. Try objection handler (known patterns)
-    objection = detect_objection(text)
-    if objection:
-        response = get_response(objection)
-        if response:
-            await message.answer(response)
-            await _remind_current_step(message, state)
-            return True
+    has_question_mark = "?" in text
+    is_conversational = len(text) > 40
+
+    # 1. Try objection handler — only on conversational messages or explicit questions
+    if has_question_mark or is_conversational:
+        objection = detect_objection(text)
+        if objection:
+            response = get_response(objection)
+            if response:
+                await message.answer(response)
+                await _remind_current_step(message, state)
+                return True
 
     # 2. If text contains "?" → likely a question → forward to admin
-    if "?" in text:
+    if has_question_mark:
         await _forward_question_to_admin(message, state, text)
         return True
 

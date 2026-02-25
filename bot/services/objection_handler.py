@@ -191,7 +191,7 @@ OBJECTIONS = {
         ),
     },
     "passport_question": {
-        "keywords": ["passport", "id", "identification", "document", "verify", "verification", "personal document"],
+        "keywords": ["passport", "need id", "show id", "my id", "send id", "identification", "document", "verify identity", "verification", "personal document"],
         "response": (
             "Good question! 📋\n\n"
             "We do a quick age verification during onboarding — "
