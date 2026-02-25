@@ -26,18 +26,29 @@ gh issue list --label in-progress --repo DimonProgrammer/HuntMe --state open
 ## Ключевые файлы
 
 - `bot/main.py` — точка входа бота
-- `bot/handlers/menu.py` — главное меню (/start)
-- `bot/handlers/operator_flow.py` — 11-шаговый FSM оператора
-- `bot/handlers/agent_flow.py` — 6-шаговый FSM агента
-- `bot/handlers/model_flow.py` — 7-шаговый FSM модели
-- `bot/handlers/admin.py` — approve/reject callbacks
+- `bot/handlers/menu.py` — главное меню (/start, 3 кнопки → operator flow)
+- `bot/handlers/operator_flow.py` — 11-шаговый FSM оператора (активен)
+- `bot/handlers/admin.py` — approve/reject + reply на вопросы кандидатов
+- `bot/services/objection_handler.py` — 15 паттернов возражений (Acknowledge-Reframe-Bridge)
+- `bot/services/hardware_checker.py` — валидация CPU/GPU кандидатов
+- `bot/services/claude_client.py` — AI скрининг (OpenRouter / Anthropic)
+- `bot/services/followup.py` — шаблоны follow-up сообщений
+- `bot/handlers/agent_flow.py` — FSM агента (Phase 2, роутер отключён)
+- `bot/handlers/model_flow.py` — FSM модели (Phase 2, роутер отключён)
 - `landing/index.html` — лендинг
+- `landing/kb.html` — база знаний (пароль 8008)
 - `STRATEGY.md` — маркетинговая стратегия
 - `DEPLOY.md` — инструкция по деплою (Render.com)
 
 ## Стек
 
-- Python + aiogram 3.x + PostgreSQL (SQLAlchemy async)
-- Claude API / OpenRouter — AI скрининг кандидатов
-- Лендинг: static HTML/JS (Vercel)
-- n8n — автоматизация (опционально, `n8n-workflows/`)
+- Python + aiogram 3.x + SQLAlchemy async (SQLite локально, PostgreSQL на Render)
+- OpenRouter (meta-llama/llama-3.1-8b-instruct:free) — AI скрининг кандидатов
+- Лендинг: static HTML/JS (Vercel, автодеплой при push)
+- Follow-up автоматизация: Phase 2 (APScheduler)
+
+## Текущая фаза: Operator-only (Phase 1)
+
+Активен только operator flow. Agent и Model flows готовы, но роутеры не подключены в main.py.
+Кандидат может в любой момент задать вопрос — бот проверяет objection_handler, если не найдено → пересылает админу.
+Админ отвечает reply на пересланное сообщение → ответ доставляется кандидату.
