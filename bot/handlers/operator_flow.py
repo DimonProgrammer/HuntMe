@@ -566,9 +566,9 @@ async def _save_candidate(
     message: Message,
     data: dict,
     status: str = "new",
-    score: int | None = None,
-    recommendation: str | None = None,
-    notes: str | None = None,
+    score=None,
+    recommendation=None,
+    notes=None,
     user=None,
 ):
     """Save candidate to the database."""
@@ -609,7 +609,7 @@ async def _notify_admin(
     message: Message,
     data: dict,
     result,
-    declined_reason: str | None = None,
+    declined_reason=None,
 ):
     if declined_reason:
         admin_text = (

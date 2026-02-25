@@ -17,7 +17,7 @@ class Config:
     DATABASE_URL: str = os.getenv(
         "DATABASE_URL",
         "sqlite+aiosqlite:///huntme.db",
-    )
+    ).replace("postgres://", "postgresql+asyncpg://", 1)
 
     N8N_WEBHOOK_URL: str = os.getenv("N8N_WEBHOOK_URL", "http://n8n:5678/webhook")
 

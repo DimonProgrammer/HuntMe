@@ -7,7 +7,7 @@ Rule of One: never push more than once on the same objection.
 from typing import Optional
 
 # Each objection: keyword patterns for detection + messenger-style response
-OBJECTIONS: dict[str, dict] = {
+OBJECTIONS = {
     "what_is_moderation": {
         "keywords": ["what is", "what do", "what does", "moderator do", "what exactly", "explain the job", "what kind of work"],
         "response": (

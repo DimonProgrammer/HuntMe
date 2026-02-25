@@ -89,8 +89,8 @@ class ScreeningResult:
 
 async def screen_candidate(
     name: str = "N/A",
-    has_pc: bool | None = None,
-    age: int | None = None,
+    has_pc: bool = None,
+    age: int = None,
     study_status: str = "N/A",
     english_level: str = "N/A",
     pc_confidence: str = "N/A",
@@ -98,7 +98,7 @@ async def screen_candidate(
     gpu_model: str = "N/A",
     cpu_status: str = "N/A",
     gpu_status: str = "N/A",
-    hardware_compatible: bool | None = None,
+    hardware_compatible: bool = None,
     internet_speed: str = "N/A",
     start_date: str = "N/A",
     contact_info: str = "N/A",

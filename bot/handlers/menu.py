@@ -56,8 +56,6 @@ MAIN_MENU_TEXT = (
 
 @router.message(F.text == "/start")
 async def cmd_start(message: Message, state: FSMContext):
-    if message.from_user.id == config.ADMIN_CHAT_ID:
-        return
     await state.clear()
     await message.answer(MAIN_MENU_TEXT, reply_markup=_main_menu_kb())
     await state.set_state(MenuStates.main_menu)
@@ -67,8 +65,6 @@ async def cmd_start(message: Message, state: FSMContext):
 
 @router.message(F.text == "/menu")
 async def cmd_menu(message: Message, state: FSMContext):
-    if message.from_user.id == config.ADMIN_CHAT_ID:
-        return
     await state.clear()
     await message.answer(MAIN_MENU_TEXT, reply_markup=_main_menu_kb())
     await state.set_state(MenuStates.main_menu)

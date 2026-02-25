@@ -5,7 +5,7 @@
 
 # --- Follow-up Templates ---
 
-FOLLOWUP_TEMPLATES: dict[str, dict] = {
+FOLLOWUP_TEMPLATES = {
     "no_response_initial": {
         "delay_hours": 3,
         "message": (

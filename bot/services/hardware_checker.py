@@ -97,7 +97,7 @@ def _normalize(text: str) -> str:
     return text
 
 
-def check_cpu(model: str) -> tuple[bool, str]:
+def check_cpu(model: str):
     """Check CPU compatibility. Returns (is_compatible, reason)."""
     norm = _normalize(model)
 
@@ -146,7 +146,7 @@ def check_cpu(model: str) -> tuple[bool, str]:
     return True, f"Could not auto-verify '{model}' — marked for manual review."
 
 
-def check_gpu(model: str) -> tuple[bool, str]:
+def check_gpu(model: str):
     """Check GPU compatibility. Returns (is_compatible, reason)."""
     norm = _normalize(model)
 
