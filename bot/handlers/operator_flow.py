@@ -30,7 +30,7 @@ from bot.services.followup import (
 )
 from bot.services.hardware_checker import quick_check
 from bot.services.objection_handler import detect_objection, get_response
-from bot.services.screener import screen_candidate
+from bot.services.screener import ScreeningResult, screen_candidate
 
 logger = logging.getLogger(__name__)
 router = Router()
@@ -529,29 +529,44 @@ async def process_contact(message: Message, state: FSMContext):
         await _notify_admin(message, data, None, declined_reason="hardware")
         return
 
-    # AI screening
+    # AI screening (with fallback if AI unavailable)
     await message.answer(
         "Thank you for completing the application! 🎉\n\n"
-        "I'm reviewing your information now — this usually takes about 30 seconds..."
+        "I'm reviewing your information now..."
     )
 
-    result = await screen_candidate(
-        name=data.get("name", "N/A"),
-        has_pc=data.get("has_pc"),
-        age=data.get("age"),
-        study_status=data.get("study_status", "N/A"),
-        english_level=data.get("english_level", "N/A"),
-        pc_confidence=data.get("pc_confidence", "N/A"),
-        cpu_model=data.get("cpu_model", "N/A"),
-        gpu_model=data.get("gpu_model", "N/A"),
-        cpu_status=data.get("cpu_status", "N/A"),
-        gpu_status=data.get("gpu_status", "N/A"),
-        hardware_compatible=data.get("hardware_compatible"),
-        internet_speed=data.get("internet_speed", "N/A"),
-        start_date=data.get("start_date", "N/A"),
-        contact_info=data.get("contact_info", "N/A"),
-        tg_username=message.from_user.username or "N/A",
-    )
+    try:
+        result = await screen_candidate(
+            name=data.get("name", "N/A"),
+            has_pc=data.get("has_pc"),
+            age=data.get("age"),
+            study_status=data.get("study_status", "N/A"),
+            english_level=data.get("english_level", "N/A"),
+            pc_confidence=data.get("pc_confidence", "N/A"),
+            cpu_model=data.get("cpu_model", "N/A"),
+            gpu_model=data.get("gpu_model", "N/A"),
+            cpu_status=data.get("cpu_status", "N/A"),
+            gpu_status=data.get("gpu_status", "N/A"),
+            hardware_compatible=data.get("hardware_compatible"),
+            internet_speed=data.get("internet_speed", "N/A"),
+            start_date=data.get("start_date", "N/A"),
+            contact_info=data.get("contact_info", "N/A"),
+            tg_username=message.from_user.username or "N/A",
+        )
+    except Exception:
+        logger.exception("AI screening failed — using fallback")
+        result = ScreeningResult(
+            english_score=0, hardware_score=0, availability_score=0,
+            motivation_score=0, experience_score=0, overall_score=0,
+            recommendation="MAYBE",
+            reasoning="AI screening unavailable — manual review needed",
+            suggested_response=(
+                "Thank you for applying! 🎉\n\n"
+                "Our team will review your application and get back to you "
+                "within 24 hours to schedule your interview.\n\n"
+                "Talk to you soon!"
+            ),
+        )
 
     await message.answer(result.suggested_response)
 
