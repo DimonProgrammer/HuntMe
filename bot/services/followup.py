@@ -71,7 +71,7 @@ INTERVIEW_INVITATION = (
     "📍 Platform: Zoom\n"
     "🔗 Link: {zoom_link}\n\n"
     "What to expect:\n"
-    "• 15-minute video call\n"
+    "• 30-40 minute video call\n"
     "• Learn about the role in detail\n"
     "• Ask any questions you have\n"
     "• Quick age verification (just show your ID briefly)\n\n"

@@ -15,8 +15,8 @@ class Candidate(Base):
     tg_user_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=True)
     tg_username: Mapped[str | None] = mapped_column(String(255), nullable=True)
     name: Mapped[str] = mapped_column(String(255))
-    region: Mapped[str] = mapped_column(String(50))  # ph, ng, latam, other
-    platform: Mapped[str] = mapped_column(String(100))  # jora, hotnigerianjobs, etc.
+    region: Mapped[str | None] = mapped_column(String(50), nullable=True)  # ph, ng, latam, other
+    platform: Mapped[str | None] = mapped_column(String(100), nullable=True, default="telegram")
     candidate_type: Mapped[str] = mapped_column(String(20))  # operator, model, agent
 
     # Qualification fields (from HuntMe official scripts)

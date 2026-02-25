@@ -1,8 +1,13 @@
 """11-step FSM flow for operator (Live Stream Moderator) qualification.
 
-Extracted from candidate.py. Triggered from menu.py when user selects Operator.
 Steps: name → PC → age → study/work → english → PC confidence →
        CPU → GPU → internet → start date → contact
+
+Features:
+- Objection auto-handling at every step
+- Unknown questions forwarded to admin (admin replies via bot)
+- Candidate saved to DB at the end
+- AI screening via Claude
 """
 
 import logging
@@ -14,6 +19,8 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from bot.config import config
+from bot.database import async_session
+from bot.database.models import Candidate
 from bot.services.followup import (
     DECLINE_ENGLISH,
     DECLINE_HARDWARE,
@@ -44,18 +51,172 @@ class OperatorForm(StatesGroup):
     waiting_contact = State()
 
 
-# --- Step 1: Name ---
+# ═══ QUESTION / OBJECTION HANDLING ═══
 
-@router.message(OperatorForm.waiting_name)
-async def process_name(message: Message, state: FSMContext):
-    name = message.text.strip()
+async def _handle_possible_question(message: Message, state: FSMContext) -> bool:
+    """Check if message is a question/objection. Handle it and return True, or return False."""
+    text = message.text.strip() if message.text else ""
+    if not text:
+        return False
 
-    objection = detect_objection(name)
-    if objection and len(name) > 30:
+    # 1. Try objection handler (known patterns)
+    objection = detect_objection(text)
+    if objection:
         response = get_response(objection)
         if response:
             await message.answer(response)
-            return
+            await _remind_current_step(message, state)
+            return True
+
+    # 2. If text contains "?" → likely a question → forward to admin
+    if "?" in text:
+        await _forward_question_to_admin(message, state, text)
+        return True
+
+    return False
+
+
+async def _forward_question_to_admin(message: Message, state: FSMContext, text: str):
+    """Forward candidate's question to admin for manual reply."""
+    data = await state.get_data()
+    current = await state.get_state()
+    name = data.get("name", "Unknown")
+    username = message.from_user.username or "N/A"
+
+    admin_text = (
+        f"❓ QUESTION from {name} "
+        f"(@{username}, ID: {message.from_user.id})\n"
+        f"Step: {current}\n\n"
+        f"{text}\n\n"
+        f"Reply to this message to answer the candidate."
+    )
+    try:
+        await message.bot.send_message(config.ADMIN_CHAT_ID, admin_text)
+    except Exception:
+        logger.exception("Failed to forward question to admin")
+
+    await message.answer(
+        "Great question! I've forwarded it to our team — "
+        "they'll get back to you shortly. 🙂\n\n"
+        "In the meantime, let's continue with the application."
+    )
+    await _remind_current_step(message, state)
+
+
+async def _remind_current_step(message: Message, state: FSMContext):
+    """Re-send the current step's prompt after handling a question."""
+    current = await state.get_state()
+
+    # Text-based state prompts
+    text_prompts = {
+        OperatorForm.waiting_name.state: "What is your full name?",
+        OperatorForm.waiting_age.state: "How old are you?",
+        OperatorForm.waiting_pc_confidence.state: (
+            "Do you consider yourself a confident PC user?\n\n"
+            "For example: installing programs, troubleshooting, Windows settings?"
+        ),
+        OperatorForm.waiting_cpu.state: (
+            "What is your processor (CPU) model?\n\n"
+            "Press Win+R → type 'dxdiag' → Enter → look at 'Processor'"
+        ),
+        OperatorForm.waiting_gpu.state: (
+            "What is your graphics card (GPU)?\n\n"
+            "In dxdiag → 'Display' tab → 'Name' under Device"
+        ),
+        OperatorForm.waiting_internet.state: (
+            "What is your internet speed? (minimum 100 Mbps)\n"
+            "Check at speedtest.net. Also — LAN or Wi-Fi?"
+        ),
+        OperatorForm.waiting_start_date.state: "When would you be ready to start?",
+        OperatorForm.waiting_contact.state: (
+            "Please share your contact for the interview:\n"
+            "• Telegram @username (preferred)\n"
+            "• Or WhatsApp number"
+        ),
+    }
+
+    prompt = text_prompts.get(current)
+    if prompt:
+        await message.answer(prompt)
+        return
+
+    # Callback-based state prompts (re-send with keyboard)
+    if current == OperatorForm.waiting_has_pc.state:
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [
+                InlineKeyboardButton(text="Yes, PC/Desktop", callback_data="pc_desktop"),
+                InlineKeyboardButton(text="Yes, Laptop", callback_data="pc_laptop"),
+            ],
+            [InlineKeyboardButton(text="No", callback_data="pc_no")],
+        ])
+        await message.answer(
+            "Do you have a personal PC or laptop? (Windows only — MacBooks are not supported)",
+            reply_markup=keyboard,
+        )
+    elif current == OperatorForm.waiting_no_pc_followup.state:
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [
+                InlineKeyboardButton(text="Yes, within 1-2 weeks", callback_data="nopc_soon"),
+                InlineKeyboardButton(text="No plans yet", callback_data="nopc_no"),
+            ],
+        ])
+        await message.answer(
+            "Are you planning to get a Windows PC in the near future?",
+            reply_markup=keyboard,
+        )
+    elif current == OperatorForm.waiting_study_work.state:
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Working", callback_data="study_working")],
+            [InlineKeyboardButton(text="Student (distance/online)", callback_data="study_distance")],
+            [InlineKeyboardButton(text="Student (in-person)", callback_data="study_inperson")],
+            [InlineKeyboardButton(text="Neither", callback_data="study_neither")],
+        ])
+        await message.answer("Are you currently studying or working?", reply_markup=keyboard)
+    elif current == OperatorForm.waiting_english.state:
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [
+                InlineKeyboardButton(text="Beginner (A1-A2)", callback_data="eng_beginner"),
+                InlineKeyboardButton(text="Intermediate (B1)", callback_data="eng_b1"),
+            ],
+            [
+                InlineKeyboardButton(text="Upper-Intermediate (B2)", callback_data="eng_b2"),
+                InlineKeyboardButton(text="Advanced (C1+)", callback_data="eng_c1"),
+            ],
+            [InlineKeyboardButton(text="Native / Fluent", callback_data="eng_native")],
+        ])
+        await message.answer(
+            "What is your English level?\n\n"
+            "B1 (Intermediate) is the minimum requirement.",
+            reply_markup=keyboard,
+        )
+
+
+# ═══ CATCH-ALL: text in callback-based states ═══
+
+@router.message(OperatorForm.waiting_has_pc)
+@router.message(OperatorForm.waiting_no_pc_followup)
+@router.message(OperatorForm.waiting_study_work)
+@router.message(OperatorForm.waiting_english)
+async def catch_text_in_button_states(message: Message, state: FSMContext):
+    """Handle free text when buttons are expected."""
+    handled = await _handle_possible_question(message, state)
+    if not handled:
+        await message.answer("Please use the buttons above to answer. 👆")
+
+
+# ═══ STEP 1: Name ═══
+
+@router.message(OperatorForm.waiting_name)
+async def process_name(message: Message, state: FSMContext):
+    name = message.text.strip() if message.text else ""
+
+    # Check for questions/objections
+    if await _handle_possible_question(message, state):
+        return
+
+    if len(name) < 2 or len(name) > 100:
+        await message.answer("Please enter your full name (e.g., John Smith).")
+        return
 
     await state.update_data(name=name)
 
@@ -67,14 +228,14 @@ async def process_name(message: Message, state: FSMContext):
         [InlineKeyboardButton(text="No", callback_data="pc_no")],
     ])
     await message.answer(
-        "Nice to meet you, {}! 🙂\n\n"
-        "Do you have a personal PC or laptop? (Windows only — MacBooks are not supported)".format(name.split()[0]),
+        f"Nice to meet you, {name.split()[0]}! 🙂\n\n"
+        "Do you have a personal PC or laptop? (Windows only — MacBooks are not supported)",
         reply_markup=keyboard,
     )
     await state.set_state(OperatorForm.waiting_has_pc)
 
 
-# --- Step 2: PC Check ---
+# ═══ STEP 2: PC Check ═══
 
 @router.callback_query(OperatorForm.waiting_has_pc, F.data.startswith("pc_"))
 async def process_has_pc(callback: CallbackQuery, state: FSMContext):
@@ -119,11 +280,15 @@ async def process_no_pc_followup(callback: CallbackQuery, state: FSMContext):
     await state.clear()
 
 
-# --- Step 3: Age ---
+# ═══ STEP 3: Age ═══
 
 @router.message(OperatorForm.waiting_age)
 async def process_age(message: Message, state: FSMContext):
-    text = message.text.strip()
+    text = message.text.strip() if message.text else ""
+
+    # Check for questions first
+    if await _handle_possible_question(message, state):
+        return
 
     age = None
     for word in text.split():
@@ -141,6 +306,7 @@ async def process_age(message: Message, state: FSMContext):
     if age < 18:
         await state.update_data(age=age)
         await message.answer(DECLINE_UNDERAGE)
+        await _save_candidate(message, await state.get_data(), status="declined", notes="underage")
         await state.clear()
         return
 
@@ -159,7 +325,7 @@ async def process_age(message: Message, state: FSMContext):
     await state.set_state(OperatorForm.waiting_study_work)
 
 
-# --- Step 4: Study/Work Status ---
+# ═══ STEP 4: Study/Work Status ═══
 
 @router.callback_query(OperatorForm.waiting_study_work, F.data.startswith("study_"))
 async def process_study_work(callback: CallbackQuery, state: FSMContext):
@@ -169,6 +335,11 @@ async def process_study_work(callback: CallbackQuery, state: FSMContext):
     if status == "inperson":
         await state.update_data(study_status="student_inperson")
         await callback.message.answer(DECLINE_STUDENT_INPERSON)
+        await _save_candidate(
+            callback.message, await state.get_data(),
+            status="declined", notes="in-person student",
+            user=callback.from_user,
+        )
         await state.clear()
         return
 
@@ -195,7 +366,7 @@ async def process_study_work(callback: CallbackQuery, state: FSMContext):
     await state.set_state(OperatorForm.waiting_english)
 
 
-# --- Step 5: English Level ---
+# ═══ STEP 5: English Level ═══
 
 @router.callback_query(OperatorForm.waiting_english, F.data.startswith("eng_"))
 async def process_english(callback: CallbackQuery, state: FSMContext):
@@ -205,6 +376,11 @@ async def process_english(callback: CallbackQuery, state: FSMContext):
     if level == "beginner":
         await state.update_data(english_level="beginner")
         await callback.message.answer(DECLINE_ENGLISH)
+        await _save_candidate(
+            callback.message, await state.get_data(),
+            status="declined", notes="english below B1",
+            user=callback.from_user,
+        )
         await state.clear()
         return
 
@@ -219,10 +395,13 @@ async def process_english(callback: CallbackQuery, state: FSMContext):
     await state.set_state(OperatorForm.waiting_pc_confidence)
 
 
-# --- Step 6: PC Confidence ---
+# ═══ STEP 6: PC Confidence ═══
 
 @router.message(OperatorForm.waiting_pc_confidence)
 async def process_pc_confidence(message: Message, state: FSMContext):
+    if await _handle_possible_question(message, state):
+        return
+
     await state.update_data(pc_confidence=message.text.strip())
 
     await message.answer(
@@ -234,23 +413,14 @@ async def process_pc_confidence(message: Message, state: FSMContext):
     await state.set_state(OperatorForm.waiting_cpu)
 
 
-# --- Step 7: CPU ---
+# ═══ STEP 7: CPU ═══
 
 @router.message(OperatorForm.waiting_cpu)
 async def process_cpu(message: Message, state: FSMContext):
-    cpu = message.text.strip()
+    cpu = message.text.strip() if message.text else ""
 
-    objection = detect_objection(cpu)
-    if objection and len(cpu) > 20:
-        response = get_response(objection)
-        if response:
-            await message.answer(response)
-            await message.answer(
-                "Now, back to the application — "
-                "what is your processor model? 🙂\n\n"
-                "Press Win+R → type 'dxdiag' → Enter → look at 'Processor'"
-            )
-            return
+    if await _handle_possible_question(message, state):
+        return
 
     await state.update_data(cpu_model=cpu)
 
@@ -263,11 +433,15 @@ async def process_cpu(message: Message, state: FSMContext):
     await state.set_state(OperatorForm.waiting_gpu)
 
 
-# --- Step 8: GPU ---
+# ═══ STEP 8: GPU ═══
 
 @router.message(OperatorForm.waiting_gpu)
 async def process_gpu(message: Message, state: FSMContext):
-    gpu = message.text.strip()
+    gpu = message.text.strip() if message.text else ""
+
+    if await _handle_possible_question(message, state):
+        return
+
     await state.update_data(gpu_model=gpu)
 
     data = await state.get_data()
@@ -295,10 +469,13 @@ async def process_gpu(message: Message, state: FSMContext):
     await state.set_state(OperatorForm.waiting_internet)
 
 
-# --- Step 9: Internet Speed ---
+# ═══ STEP 9: Internet Speed ═══
 
 @router.message(OperatorForm.waiting_internet)
 async def process_internet(message: Message, state: FSMContext):
+    if await _handle_possible_question(message, state):
+        return
+
     await state.update_data(internet_speed=message.text.strip())
 
     await message.answer(
@@ -308,10 +485,13 @@ async def process_internet(message: Message, state: FSMContext):
     await state.set_state(OperatorForm.waiting_start_date)
 
 
-# --- Step 10: Start Date ---
+# ═══ STEP 10: Start Date ═══
 
 @router.message(OperatorForm.waiting_start_date)
 async def process_start_date(message: Message, state: FSMContext):
+    if await _handle_possible_question(message, state):
+        return
+
     await state.update_data(start_date=message.text.strip())
 
     await message.answer(
@@ -323,19 +503,25 @@ async def process_start_date(message: Message, state: FSMContext):
     await state.set_state(OperatorForm.waiting_contact)
 
 
-# --- Step 11: Contact → Screening ---
+# ═══ STEP 11: Contact → Screening ═══
 
 @router.message(OperatorForm.waiting_contact)
 async def process_contact(message: Message, state: FSMContext):
+    if await _handle_possible_question(message, state):
+        return
+
     await state.update_data(contact_info=message.text.strip())
     data = await state.get_data()
     await state.clear()
 
+    # Hardware decline
     if data.get("hardware_compatible") is False:
         await message.answer(DECLINE_HARDWARE)
+        await _save_candidate(message, data, status="declined", notes="hardware incompatible")
         await _notify_admin(message, data, None, declined_reason="hardware")
         return
 
+    # AI screening
     await message.answer(
         "Thank you for completing the application! 🎉\n\n"
         "I'm reviewing your information now — this usually takes about 30 seconds..."
@@ -360,9 +546,64 @@ async def process_contact(message: Message, state: FSMContext):
     )
 
     await message.answer(result.suggested_response)
+
+    # Save to DB
+    await _save_candidate(
+        message, data,
+        status="screened",
+        score=result.overall_score,
+        recommendation=result.recommendation,
+        notes=result.reasoning,
+    )
+
     await _notify_admin(message, data, result)
     await _send_to_n8n(message, data, result)
 
+
+# ═══ DB SAVE ═══
+
+async def _save_candidate(
+    message: Message,
+    data: dict,
+    status: str = "new",
+    score: int | None = None,
+    recommendation: str | None = None,
+    notes: str | None = None,
+    user=None,
+):
+    """Save candidate to the database."""
+    from_user = user or message.from_user
+    try:
+        async with async_session() as session:
+            candidate = Candidate(
+                tg_user_id=from_user.id,
+                tg_username=from_user.username,
+                name=data.get("name", "Unknown"),
+                candidate_type=data.get("candidate_type", "operator"),
+                has_pc=data.get("has_pc"),
+                age=data.get("age"),
+                study_status=data.get("study_status"),
+                english_level=data.get("english_level"),
+                pc_confidence=data.get("pc_confidence"),
+                cpu_model=data.get("cpu_model"),
+                gpu_model=data.get("gpu_model"),
+                hardware_compatible=data.get("hardware_compatible"),
+                internet_speed=data.get("internet_speed"),
+                start_date=data.get("start_date"),
+                contact_info=data.get("contact_info"),
+                score=score,
+                recommendation=recommendation,
+                status=status,
+                notes=notes,
+            )
+            session.add(candidate)
+            await session.commit()
+            logger.info("Saved candidate %s (tg_id=%s, status=%s)", data.get("name"), from_user.id, status)
+    except Exception:
+        logger.exception("Failed to save candidate to DB")
+
+
+# ═══ ADMIN NOTIFICATION ═══
 
 async def _notify_admin(
     message: Message,
@@ -413,7 +654,11 @@ async def _notify_admin(
         logger.exception("Failed to notify admin")
 
 
+# ═══ N8N WEBHOOK ═══
+
 async def _send_to_n8n(message: Message, data: dict, result):
+    if not config.N8N_WEBHOOK_URL:
+        return
     try:
         async with aiohttp.ClientSession() as session:
             await session.post(

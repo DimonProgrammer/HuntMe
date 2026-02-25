@@ -8,7 +8,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 
 from bot.config import config
 from bot.database import init_db
-from bot.handlers import admin, menu, operator_flow, agent_flow, model_flow
+from bot.handlers import admin, menu, operator_flow
 
 logging.basicConfig(
     level=logging.INFO,
@@ -29,14 +29,12 @@ async def main():
     dp = Dispatcher(storage=MemoryStorage())
 
     # Register routers (order matters):
-    # admin first — so admin commands take priority
-    # menu second — handles /start, /menu, info pages, back_main (no state filter)
-    # role flows last — handle FSM states only
+    # admin first — so admin commands + reply handler take priority
+    # menu second — handles /start, /menu, info pages, back_main
+    # operator flow last — handles FSM states only
     dp.include_router(admin.router)
     dp.include_router(menu.router)
     dp.include_router(operator_flow.router)
-    dp.include_router(agent_flow.router)
-    dp.include_router(model_flow.router)
 
     logger.info("Bot is running. Admin ID: %s", config.ADMIN_CHAT_ID)
 

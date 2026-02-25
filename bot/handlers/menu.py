@@ -1,4 +1,7 @@
-"""Main menu handler — /start, role selection, info pages, company info."""
+"""Main menu handler — /start, vacancy info, company info.
+
+Operator-only flow (Phase 1). Agent and Model flows disabled.
+"""
 
 import logging
 
@@ -6,11 +9,12 @@ from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
+from sqlalchemy import select
 
 from bot.config import config
+from bot.database import async_session
+from bot.database.models import Candidate
 from bot.handlers.operator_flow import OperatorForm
-from bot.handlers.agent_flow import AgentForm
-from bot.handlers.model_flow import ModelForm
 
 logger = logging.getLogger(__name__)
 router = Router()
@@ -18,8 +22,6 @@ router = Router()
 
 class MenuStates(StatesGroup):
     main_menu = State()
-    role_select = State()
-    info_select = State()
 
 
 # --- Keyboards ---
@@ -27,7 +29,7 @@ class MenuStates(StatesGroup):
 def _main_menu_kb() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="Apply Now", callback_data="menu_apply")],
-        [InlineKeyboardButton(text="About Our Vacancies", callback_data="menu_vacancies")],
+        [InlineKeyboardButton(text="About the Vacancy", callback_data="menu_vacancy")],
         [InlineKeyboardButton(text="About the Company", callback_data="menu_company")],
     ])
 
@@ -44,6 +46,8 @@ MAIN_MENU_TEXT = (
     "Welcome to Apex Talent! 👋\n\n"
     "We're an international talent management agency working with "
     "content creators on streaming platforms in 15+ countries.\n\n"
+    "We're hiring Live Stream Operators — a fully remote, "
+    "behind-the-scenes role starting at $150/week.\n\n"
     "What would you like to do?"
 )
 
@@ -83,35 +87,79 @@ async def cb_back_main(callback: CallbackQuery, state: FSMContext):
     await state.set_state(MenuStates.main_menu)
 
 
-# --- Apply Now → role selection ---
+# --- Apply Now → check duplicate → operator flow ---
 
 @router.callback_query(MenuStates.main_menu, F.data == "menu_apply")
 async def cb_menu_apply(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Live Stream Operator", callback_data="role_operator")],
-        [InlineKeyboardButton(text="Recruitment Agent", callback_data="role_agent")],
-        [InlineKeyboardButton(text="Content Creator / Model", callback_data="role_model")],
-        [InlineKeyboardButton(text="<< Back to Menu", callback_data="back_main")],
-    ])
-    text = (
-        "Which role are you interested in?\n\n"
-        "Live Stream Operator — technical setup, chat moderation, $150-400+/wk\n\n"
-        "Recruitment Agent — refer talent, earn $50-100 per hire + passive income\n\n"
-        "Content Creator — stream on platforms, flexible hours, revenue share"
-    )
+    user_id = callback.from_user.id
+
+    # Check if candidate already applied
     try:
-        await callback.message.edit_text(text, reply_markup=keyboard)
+        async with async_session() as session:
+            result = await session.execute(
+                select(Candidate).where(Candidate.tg_user_id == user_id)
+            )
+            existing = result.scalar_one_or_none()
+
+        if existing:
+            status_labels = {
+                "new": "under review",
+                "screened": "screened, waiting for decision",
+                "interview_invited": "interview scheduled",
+                "active": "active operator",
+                "declined": "declined",
+                "churned": "inactive",
+            }
+            status_text = status_labels.get(existing.status, existing.status)
+            keyboard = InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="Start new application", callback_data="reapply")],
+                [InlineKeyboardButton(text="<< Back to Menu", callback_data="back_main")],
+            ])
+            try:
+                await callback.message.edit_text(
+                    f"Hey {existing.name.split()[0]}! 👋\n\n"
+                    f"You've already applied. Your current status: {status_text}.\n\n"
+                    "Would you like to start a new application?",
+                    reply_markup=keyboard,
+                )
+            except Exception:
+                await callback.message.answer(
+                    f"Hey {existing.name.split()[0]}! 👋\n\n"
+                    f"You've already applied. Your current status: {status_text}.\n\n"
+                    "Would you like to start a new application?",
+                    reply_markup=keyboard,
+                )
+            return
     except Exception:
-        await callback.message.answer(text, reply_markup=keyboard)
-    await state.set_state(MenuStates.role_select)
+        logger.debug("DB check failed — proceeding without duplicate check")
+
+    # No duplicate — start operator flow
+    await _start_operator_flow(callback, state)
 
 
-# --- Role selection → hand off to flow ---
-
-@router.callback_query(MenuStates.role_select, F.data == "role_operator")
-async def cb_role_operator(callback: CallbackQuery, state: FSMContext):
+@router.callback_query(F.data == "reapply")
+async def cb_reapply(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
+
+    # Delete old application
+    try:
+        async with async_session() as session:
+            result = await session.execute(
+                select(Candidate).where(Candidate.tg_user_id == callback.from_user.id)
+            )
+            existing = result.scalar_one_or_none()
+            if existing:
+                await session.delete(existing)
+                await session.commit()
+    except Exception:
+        logger.debug("Failed to delete old application")
+
+    await _start_operator_flow(callback, state)
+
+
+async def _start_operator_flow(callback: CallbackQuery, state: FSMContext):
+    """Send operator greeting and enter the flow."""
     await state.update_data(candidate_type="operator")
     from bot.services.followup import WARM_GREETING
     greeting = WARM_GREETING.format(name=callback.from_user.first_name or "there")
@@ -122,58 +170,18 @@ async def cb_role_operator(callback: CallbackQuery, state: FSMContext):
     await state.set_state(OperatorForm.waiting_name)
 
 
-@router.callback_query(MenuStates.role_select, F.data == "role_agent")
-async def cb_role_agent(callback: CallbackQuery, state: FSMContext):
+# --- Apply shortcut from vacancy info ---
+
+@router.callback_query(F.data == "apply_from_info")
+async def cb_apply_from_info(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
-    await state.update_data(candidate_type="agent")
-    from bot.services.followup import AGENT_GREETING
-    greeting = AGENT_GREETING.format(name=callback.from_user.first_name or "there")
-    try:
-        await callback.message.edit_text(greeting)
-    except Exception:
-        await callback.message.answer(greeting)
-    await state.set_state(AgentForm.waiting_name)
+    await _start_operator_flow(callback, state)
 
 
-@router.callback_query(MenuStates.role_select, F.data == "role_model")
-async def cb_role_model(callback: CallbackQuery, state: FSMContext):
-    await callback.answer()
-    await state.update_data(candidate_type="model")
-    from bot.services.followup import MODEL_GREETING
-    greeting = MODEL_GREETING.format(name=callback.from_user.first_name or "there")
-    try:
-        await callback.message.edit_text(greeting)
-    except Exception:
-        await callback.message.answer(greeting)
-    await state.set_state(ModelForm.waiting_name)
+# --- About the Vacancy ---
 
-
-# --- About Vacancies ---
-
-@router.callback_query(MenuStates.main_menu, F.data == "menu_vacancies")
-async def cb_menu_vacancies(callback: CallbackQuery, state: FSMContext):
-    await callback.answer()
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Live Stream Operator", callback_data="info_operator")],
-        [InlineKeyboardButton(text="Recruitment Agent", callback_data="info_agent")],
-        [InlineKeyboardButton(text="Content Creator / Model", callback_data="info_model")],
-        [InlineKeyboardButton(text="<< Back to Menu", callback_data="back_main")],
-    ])
-    try:
-        await callback.message.edit_text(
-            "Which role would you like to learn about?",
-            reply_markup=keyboard,
-        )
-    except Exception:
-        await callback.message.answer(
-            "Which role would you like to learn about?",
-            reply_markup=keyboard,
-        )
-    await state.set_state(MenuStates.info_select)
-
-
-@router.callback_query(MenuStates.info_select, F.data == "info_operator")
-async def cb_info_operator(callback: CallbackQuery, state: FSMContext):
+@router.callback_query(MenuStates.main_menu, F.data == "menu_vacancy")
+async def cb_menu_vacancy(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
     text = (
         "LIVE STREAM OPERATOR\n\n"
@@ -202,148 +210,16 @@ async def cb_info_operator(callback: CallbackQuery, state: FSMContext):
         "  • Age: 18+"
     )
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Apply as Operator", callback_data="apply_from_info_operator")],
-        [InlineKeyboardButton(text="<< Back", callback_data="back_vacancies")],
-    ])
-    try:
-        await callback.message.edit_text(text, reply_markup=keyboard)
-    except Exception:
-        await callback.message.answer(text, reply_markup=keyboard)
-
-
-@router.callback_query(MenuStates.info_select, F.data == "info_agent")
-async def cb_info_agent(callback: CallbackQuery, state: FSMContext):
-    await callback.answer()
-    text = (
-        "RECRUITMENT AGENT\n\n"
-        "What you'll do:\n"
-        "  • Find and refer talented operators and models\n"
-        "  • Earn commissions for every successful hire\n"
-        "  • Work at your own pace — no fixed schedule\n\n"
-        "Earnings per Operator referred:\n"
-        "  • 1st–3rd hire: $50 each\n"
-        "  • 4th–6th hire: $75 each\n"
-        "  • 7th+ hire: $100 each\n\n"
-        "Earnings per Model referred:\n"
-        "  • $10 per working day for 12 months (passive income!)\n\n"
-        "Payment:\n"
-        "  • USDT (BEP20 network)\n"
-        "  • Every Sunday\n"
-        "  • $50 minimum payout\n\n"
-        "Requirements:\n"
-        "  • English B1+\n"
-        "  • Access to social media / job platforms / local networks\n"
-        "  • Self-motivated and proactive"
-    )
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Apply as Agent", callback_data="apply_from_info_agent")],
-        [InlineKeyboardButton(text="<< Back", callback_data="back_vacancies")],
-    ])
-    try:
-        await callback.message.edit_text(text, reply_markup=keyboard)
-    except Exception:
-        await callback.message.answer(text, reply_markup=keyboard)
-
-
-@router.callback_query(MenuStates.info_select, F.data == "info_model")
-async def cb_info_model(callback: CallbackQuery, state: FSMContext):
-    await callback.answer()
-    text = (
-        "CONTENT CREATOR / MODEL\n\n"
-        "What you'll do:\n"
-        "  • Create content on streaming platforms\n"
-        "  • Work with a dedicated operator who handles all tech\n"
-        "  • Build your audience and grow your income over time\n\n"
-        "What we provide:\n"
-        "  • Full training with a personal mentor\n"
-        "  • Technical support from your operator\n"
-        "  • Revenue share — the more you grow, the more you earn\n"
-        "  • Weekly payments (GCash / Wise / USDT)\n\n"
-        "Schedule:\n"
-        "  • Flexible — you choose your hours\n"
-        "  • 4 shift options available\n"
-        "  • 100% work from home\n\n"
-        "Requirements:\n"
-        "  • Age: 18+\n"
-        "  • Comfortable being on camera\n"
-        "  • Reliable internet connection"
-    )
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Apply as Model", callback_data="apply_from_info_model")],
-        [InlineKeyboardButton(text="<< Back", callback_data="back_vacancies")],
-    ])
-    try:
-        await callback.message.edit_text(text, reply_markup=keyboard)
-    except Exception:
-        await callback.message.answer(text, reply_markup=keyboard)
-
-
-# --- Apply shortcuts from info pages ---
-
-@router.callback_query(F.data == "apply_from_info_operator")
-async def cb_apply_from_info_operator(callback: CallbackQuery, state: FSMContext):
-    await callback.answer()
-    await state.update_data(candidate_type="operator")
-    from bot.services.followup import WARM_GREETING
-    greeting = WARM_GREETING.format(name=callback.from_user.first_name or "there")
-    try:
-        await callback.message.edit_text(greeting)
-    except Exception:
-        await callback.message.answer(greeting)
-    await state.set_state(OperatorForm.waiting_name)
-
-
-@router.callback_query(F.data == "apply_from_info_agent")
-async def cb_apply_from_info_agent(callback: CallbackQuery, state: FSMContext):
-    await callback.answer()
-    await state.update_data(candidate_type="agent")
-    from bot.services.followup import AGENT_GREETING
-    greeting = AGENT_GREETING.format(name=callback.from_user.first_name or "there")
-    try:
-        await callback.message.edit_text(greeting)
-    except Exception:
-        await callback.message.answer(greeting)
-    await state.set_state(AgentForm.waiting_name)
-
-
-@router.callback_query(F.data == "apply_from_info_model")
-async def cb_apply_from_info_model(callback: CallbackQuery, state: FSMContext):
-    await callback.answer()
-    await state.update_data(candidate_type="model")
-    from bot.services.followup import MODEL_GREETING
-    greeting = MODEL_GREETING.format(name=callback.from_user.first_name or "there")
-    try:
-        await callback.message.edit_text(greeting)
-    except Exception:
-        await callback.message.answer(greeting)
-    await state.set_state(ModelForm.waiting_name)
-
-
-# --- Back to vacancies list ---
-
-@router.callback_query(F.data == "back_vacancies")
-async def cb_back_vacancies(callback: CallbackQuery, state: FSMContext):
-    await callback.answer()
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Live Stream Operator", callback_data="info_operator")],
-        [InlineKeyboardButton(text="Recruitment Agent", callback_data="info_agent")],
-        [InlineKeyboardButton(text="Content Creator / Model", callback_data="info_model")],
+        [InlineKeyboardButton(text="Apply Now", callback_data="apply_from_info")],
         [InlineKeyboardButton(text="<< Back to Menu", callback_data="back_main")],
     ])
     try:
-        await callback.message.edit_text(
-            "Which role would you like to learn about?",
-            reply_markup=keyboard,
-        )
+        await callback.message.edit_text(text, reply_markup=keyboard)
     except Exception:
-        await callback.message.answer(
-            "Which role would you like to learn about?",
-            reply_markup=keyboard,
-        )
-    await state.set_state(MenuStates.info_select)
+        await callback.message.answer(text, reply_markup=keyboard)
 
 
-# --- About Company ---
+# --- About the Company ---
 
 @router.callback_query(MenuStates.main_menu, F.data == "menu_company")
 async def cb_menu_company(callback: CallbackQuery, state: FSMContext):
@@ -361,10 +237,6 @@ async def cb_menu_company(callback: CallbackQuery, state: FSMContext):
         "  • 100% remote — work from anywhere\n"
         "  • Weekly payments every Sunday, without exception\n"
         "  • Dedicated mentor for every new team member\n\n"
-        "Open roles:\n"
-        "  • Live Stream Operators (technical, behind-the-scenes)\n"
-        "  • Content Creators (streaming on platforms)\n"
-        "  • Recruitment Agents (refer talent, earn commissions)\n\n"
         "We never ask for upfront payments.\n"
         "Your first earnings start during paid training ($30/shift, 5-7 days)."
     )
