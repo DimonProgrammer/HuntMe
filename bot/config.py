@@ -11,11 +11,12 @@ class Config:
     CLAUDE_API_KEY: str = os.getenv("CLAUDE_API_KEY", "")
     CLAUDE_BASE_URL: str = os.getenv("CLAUDE_BASE_URL", "https://api.anthropic.com")
 
-    FREEPIK_API_KEY: str = os.getenv("FREEPIK_API_KEY", "")
+    OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "")
+    OPENROUTER_MODEL: str = os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3.1-8b-instruct:free")
 
     DATABASE_URL: str = os.getenv(
         "DATABASE_URL",
-        "postgresql+asyncpg://huntme:huntme_password@localhost:5432/huntme",
+        "sqlite+aiosqlite:///huntme.db",
     )
 
     N8N_WEBHOOK_URL: str = os.getenv("N8N_WEBHOOK_URL", "http://n8n:5678/webhook")
