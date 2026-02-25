@@ -830,6 +830,7 @@ async def _save_candidate(message, data, status="new", score=None, recommendatio
                 internet_speed=data.get("internet_speed"),
                 start_date=data.get("start_date"),
                 contact_info=data.get("contact_info"),
+                referrer_tg_id=data.get("referrer_tg_id"),
                 score=score,
                 recommendation=recommendation,
                 status=status,
@@ -869,7 +870,8 @@ async def _notify_admin(message, data, result, declined_reason=None):
             f"HW Compatible: {'✅' if data.get('hardware_compatible') else '❌'}\n"
             f"Internet: {data.get('internet_speed', 'N/A')}\n"
             f"Start: {data.get('start_date', 'N/A')}\n"
-            f"Contact: {data.get('contact_info', 'N/A')}\n\n"
+            f"Contact: {data.get('contact_info', 'N/A')}\n"
+            f"{'Referred by: ' + str(data.get('referrer_tg_id')) if data.get('referrer_tg_id') else ''}\n\n"
             f"Scores: HW={result.hardware_score} | Eng={result.english_score} | "
             f"Avail={result.availability_score} | Motiv={result.motivation_score} | "
             f"Exp={result.experience_score}\n\n"

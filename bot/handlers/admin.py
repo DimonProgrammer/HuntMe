@@ -15,7 +15,7 @@ from aiogram.types import CallbackQuery, Message
 from sqlalchemy import func, select
 
 from bot.config import config
-from bot.database import Candidate, async_session
+from bot.database import Candidate, FunnelEvent, async_session
 from bot.services.post_generator import generate_post
 
 logger = logging.getLogger(__name__)
@@ -202,6 +202,24 @@ async def cb_send_referral(callback: CallbackQuery):
         except Exception:
             logger.debug("Failed to update candidate status")
 
+        # Notify referrer if this candidate was referred
+        try:
+            async with async_session() as session:
+                result = await session.execute(
+                    select(Candidate).where(Candidate.tg_user_id == user_id)
+                )
+                cand = result.scalar_one_or_none()
+                if cand and cand.referrer_tg_id:
+                    await callback.bot.send_message(
+                        cand.referrer_tg_id,
+                        f"Great news! Your referral {cand.name.split()[0]} has been invited "
+                        f"to an interview! 🎉\n\n"
+                        "Keep referring — you earn $50-100 per hired person.\n"
+                        "Your link: /referral",
+                    )
+        except Exception:
+            logger.debug("Failed to notify referrer")
+
         await callback.answer("Interview invite sent!")
         await callback.message.edit_text(callback.message.text + "\n\n✅ INTERVIEW INVITE SENT")
     except Exception:
@@ -241,6 +259,88 @@ async def cb_reject(callback: CallbackQuery):
         await callback.answer("Failed to send")
 
 
+# ═══ FUNNEL ANALYTICS ═══
+
+@router.message(Command("funnel"), F.func(is_admin))
+async def cmd_funnel(message: Message):
+    """Show step-by-step funnel conversion analytics."""
+    async with async_session() as session:
+        # Count events by step_name for step_completed and declined
+        result = await session.execute(
+            select(FunnelEvent.event_type, FunnelEvent.step_name, func.count(FunnelEvent.id))
+            .group_by(FunnelEvent.event_type, FunnelEvent.step_name)
+            .order_by(func.count(FunnelEvent.id).desc())
+        )
+        rows = result.all()
+
+        # Total unique users who started
+        starts = await session.execute(
+            select(func.count(func.distinct(FunnelEvent.tg_user_id)))
+            .where(FunnelEvent.event_type == "bot_started")
+        )
+        total_starts = starts.scalar() or 0
+
+        # Total unique users who clicked Apply
+        applies = await session.execute(
+            select(func.count(func.distinct(FunnelEvent.tg_user_id)))
+            .where(FunnelEvent.event_type == "button_clicked")
+            .where(FunnelEvent.step_name == "apply_now")
+        )
+        total_applies = applies.scalar() or 0
+
+        # Completed applications
+        completed = await session.execute(
+            select(func.count(func.distinct(FunnelEvent.tg_user_id)))
+            .where(FunnelEvent.event_type == "completed")
+        )
+        total_completed = completed.scalar() or 0
+
+        # Declined
+        declined = await session.execute(
+            select(func.count(func.distinct(FunnelEvent.tg_user_id)))
+            .where(FunnelEvent.event_type == "declined")
+        )
+        total_declined = declined.scalar() or 0
+
+    if not rows and total_starts == 0:
+        await message.answer("No funnel data yet.")
+        return
+
+    # Build step completion counts
+    step_counts = {}
+    decline_counts = {}
+    for event_type, step_name, count in rows:
+        if event_type == "step_completed":
+            step_counts[step_name or "unknown"] = count
+        elif event_type == "declined":
+            decline_counts[step_name or "unknown"] = count
+
+    step_order = ["name", "has_pc", "age", "study_work", "english",
+                  "pc_confidence", "cpu", "gpu", "internet", "start_date", "contact"]
+
+    lines = [
+        f"📊 Funnel Analytics",
+        f"",
+        f"👤 /start: {total_starts}",
+        f"📝 Apply Now: {total_applies}",
+        f"",
+        f"Step completions:",
+    ]
+    for step in step_order:
+        c = step_counts.get(step, 0)
+        lines.append(f"  {step:>14}: {c}")
+
+    lines.append(f"\n✅ Completed: {total_completed}")
+    lines.append(f"❌ Declined: {total_declined}")
+
+    if decline_counts:
+        lines.append(f"\nDecline reasons:")
+        for step, count in sorted(decline_counts.items(), key=lambda x: -x[1]):
+            lines.append(f"  {step}: {count}")
+
+    await message.answer("\n".join(lines))
+
+
 # ═══ HELP ═══
 
 @router.message(Command("help"), F.func(is_admin))
@@ -250,6 +350,7 @@ async def cmd_help(message: Message):
         "/post [ph|ng|latam] — Generate a job posting\n"
         "/screen <text> — Screen a candidate's application\n"
         "/pipeline — View candidate funnel\n"
+        "/funnel — Step-by-step conversion analytics\n"
         "/stats — Earnings estimate\n"
         "/ref — Show referral link\n"
         "/help — This message\n\n"

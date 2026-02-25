@@ -14,8 +14,8 @@ from sqlalchemy import select
 
 from bot.config import config
 from bot.database import async_session
-from bot.database.models import Candidate
-from bot.handlers.operator_flow import OperatorForm
+from bot.database.models import Candidate, FunnelEvent
+from bot.handlers.operator_flow import OperatorForm, _track_event
 
 logger = logging.getLogger(__name__)
 router = Router()
@@ -46,22 +46,60 @@ def _back_kb() -> InlineKeyboardMarkup:
 # --- Main menu text ---
 
 MAIN_MENU_TEXT = (
-    "Welcome to Apex Talent! 👋\n\n"
-    "We're an international talent management agency working with "
-    "content creators on streaming platforms in 15+ countries.\n\n"
-    "We're hiring Live Stream Operators — a fully remote, "
-    "behind-the-scenes role starting at $150/week.\n\n"
-    "What would you like to do?"
+    "Hey! Welcome to Apex Talent 👋\n\n"
+    "We hire Live Stream Operators — a behind-the-scenes remote role. "
+    "You help streamers with OBS, chat, and scheduling. Never on camera.\n\n"
+    "💰 $150/week starting (paid every Sunday)\n"
+    "📈 Grows to $200-400+/week\n"
+    "🏠 100% remote, flexible shifts\n"
+    "🎓 Paid training — no experience needed\n"
+    "🛡 Zero fees — we pay you, never the other way\n\n"
+    "Takes 2-3 minutes to apply. Ready?"
 )
 
 
 # --- /start ---
 
-@router.message(F.text == "/start")
+@router.message(F.text.startswith("/start"))
 async def cmd_start(message: Message, state: FSMContext):
     await state.clear()
+
+    # Parse referral deep link: /start ref_123456
+    referrer_id = None
+    parts = message.text.split()
+    if len(parts) > 1 and parts[1].startswith("ref_"):
+        try:
+            referrer_id = int(parts[1].removeprefix("ref_"))
+            # Don't let users refer themselves
+            if referrer_id == message.from_user.id:
+                referrer_id = None
+            else:
+                await state.update_data(referrer_tg_id=referrer_id)
+                await _track_event(message.from_user.id, "referral_click", "start", {"referrer_id": referrer_id})
+        except ValueError:
+            pass
+
+    await _track_event(message.from_user.id, "bot_started", "start")
     await message.answer(MAIN_MENU_TEXT, reply_markup=_main_menu_kb())
     await state.set_state(MenuStates.main_menu)
+
+
+# --- /referral — generate unique referral link ---
+
+@router.message(F.text == "/referral")
+async def cmd_referral(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+    link = f"https://t.me/apextalent_bot?start=ref_{user_id}"
+    await message.answer(
+        "Your personal referral link:\n\n"
+        f"{link}\n\n"
+        "Share it with friends! When someone you refer gets hired, "
+        "you earn $50-100 per person.\n\n"
+        "The more people you refer, the more you earn:\n"
+        "  1-3 hires: $50 each\n"
+        "  4-6 hires: $75 each\n"
+        "  7+ hires: $100 each"
+    )
 
 
 # --- /menu — return from anywhere ---
@@ -188,6 +226,7 @@ async def cb_menu_apply(callback: CallbackQuery, state: FSMContext):
         logger.debug("DB check failed — proceeding without duplicate check")
 
     # No duplicate — start operator flow
+    await _track_event(callback.from_user.id, "button_clicked", "apply_now")
     await _start_operator_flow(callback, state)
 
 

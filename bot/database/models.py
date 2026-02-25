@@ -47,6 +47,9 @@ class Candidate(Base):
     platform_experience: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     preferred_schedule: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
 
+    # Referral tracking
+    referrer_tg_id: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)
+
     # Screening results
     score: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     recommendation: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)  # PASS, MAYBE, REJECT
@@ -55,6 +58,20 @@ class Candidate(Base):
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
+
+
+class FunnelEvent(Base):
+    """Tracks every step/action in the candidate funnel for analytics."""
+    __tablename__ = "funnel_events"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    tg_user_id: Mapped[int] = mapped_column(BigInteger, index=True)
+    event_type: Mapped[str] = mapped_column(String(50))
+    # Types: step_entered, step_completed, question_asked, objection_detected,
+    #        declined, completed, button_clicked, bot_started
+    step_name: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    data: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # JSON extra info
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 
 class JobPosting(Base):
