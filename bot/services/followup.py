@@ -106,61 +106,66 @@ WARM_GREETING = (
 
 DECLINE_NO_PC = (
     "Thank you for your interest! 🙏\n\n"
-    "Unfortunately, this role requires a PC or laptop "
-    "(Windows, not MacBook) for the streaming software.\n\n"
-    "If you're planning to get one in the near future, "
-    "feel free to reach out again — we'd love to hear from you! 🙂\n\n"
-    "Wishing you all the best!"
+    "This role needs a Windows PC or laptop for the streaming software. "
+    "Many of our operators started by getting a refurbished one for $150-200 — "
+    "it's a solid investment that pays for itself in the first week.\n\n"
+    "We'll keep your application on file — just send /start when you're ready "
+    "and we'll pick up where you left off!\n\n"
+    "💡 Know someone with a PC who might be interested? "
+    "Share this link: t.me/apextalent_bot — you could both benefit! 🙂"
 )
 
 DECLINE_UNDERAGE = (
     "Thank you for your interest! 🙏\n\n"
-    "Unfortunately, you need to be at least 18 years old for this position. "
-    "It's a legal requirement for working with streaming platforms.\n\n"
-    "If you know anyone who's 18+ and looking for remote work, "
-    "feel free to send them our way! 🙂\n\n"
-    "Best of luck with your studies!"
+    "You need to be 18+ for this role — it's a platform requirement. "
+    "But don't worry, we'll be here when you turn 18! Just send /start again "
+    "and we'll get you going.\n\n"
+    "💡 In the meantime, know anyone 18+ who's looking for remote work? "
+    "Share this link: t.me/apextalent_bot — they'll thank you! 🙂\n\n"
+    "Best of luck with your studies! 📚"
 )
 
 DECLINE_STUDENT_INPERSON = (
     "Thank you for your interest! 🙏\n\n"
-    "This role requires a consistent 5/2 schedule with 6-8 hour shifts, "
-    "which is typically not compatible with in-person university attendance.\n\n"
-    "If your schedule changes or you switch to distance learning, "
-    "feel free to reach out again!\n\n"
-    "Wishing you success with your studies! 📚"
+    "The shifts (6-8 hours, 5 days/week) are tough to combine with "
+    "in-person classes. But if your schedule changes — maybe during "
+    "a semester break or if you switch to online classes — just send /start "
+    "and we'll reopen your application.\n\n"
+    "💡 Know any friends studying online or already graduated? "
+    "Share this link: t.me/apextalent_bot — $150/week remote work! 🙂\n\n"
+    "Good luck with your studies! 📚"
 )
 
 DECLINE_HARDWARE = (
     "Thank you for completing the application! 🙏\n\n"
-    "Unfortunately, your current PC hardware doesn't meet the minimum requirements "
-    "for the streaming software we use.\n\n"
-    "Minimum specs needed:\n"
+    "Your hardware is close, but the streaming software needs a bit more power. "
+    "Here's what you'd need:\n\n"
     "• CPU: Intel Core i3 10th gen+ or AMD Ryzen 3 3000+\n"
     "• GPU: NVIDIA GTX 1060 6GB+ or AMD RX 5500+\n"
     "• Internet: 100 Mbps+\n\n"
-    "If you upgrade your setup in the future, "
-    "you're welcome to apply again! 🙂\n\n"
-    "Best of luck!"
+    "A small upgrade could get you there! If you upgrade in the future, "
+    "just send /start — we'll have your info on file.\n\n"
+    "💡 Know someone with a gaming PC? "
+    "Share this link: t.me/apextalent_bot — $150/week remote work! 🙂"
 )
 
 DECLINE_ENGLISH = (
     "Thank you for your interest! 🙏\n\n"
-    "This role requires at least an Intermediate (B1) level of English, "
-    "as you'll be moderating English-language chats.\n\n"
-    "If you're improving your English, feel free to apply again "
-    "once you feel more confident!\n\n"
-    "Best wishes! 🙂"
+    "This role involves moderating English-language chats, so we need "
+    "at least a conversational level. But English improves fast with practice!\n\n"
+    "Try free apps like Duolingo or watching English YouTube for 2-3 months, "
+    "then send /start again — we'd love to reconsider you.\n\n"
+    "💡 Know someone who speaks English well and wants remote work? "
+    "Share this link: t.me/apextalent_bot — $150/week! 🙂"
 )
 
 DECLINE_GENERIC = (
-    "Thank you for your interest in our team! 🙏\n\n"
-    "Unfortunately, we're not able to move forward with your application "
-    "at this time.\n\n"
-    "We'll keep your information on file for future openings. "
-    "If you know anyone who might be interested in a remote moderator position, "
-    "feel free to send them our way!\n\n"
-    "Wishing you all the best! 🙂"
+    "Thank you for your interest! 🙏\n\n"
+    "We can't move forward with your application right now, "
+    "but we'll keep your info for future openings.\n\n"
+    "💡 Know someone looking for remote work ($150/week)? "
+    "Share this link: t.me/apextalent_bot 🙂\n\n"
+    "Wishing you all the best!"
 )
 
 # --- Agent Greeting ---
