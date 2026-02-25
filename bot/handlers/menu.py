@@ -1,9 +1,10 @@
-"""Main menu handler — /start, vacancy info, company info.
+"""Main menu handler — /start, vacancy info, company info, ask question.
 
 Operator-only flow (Phase 1). Agent and Model flows disabled.
 """
 
 import logging
+import re
 
 from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
@@ -22,6 +23,7 @@ router = Router()
 
 class MenuStates(StatesGroup):
     main_menu = State()
+    waiting_question = State()
 
 
 # --- Keyboards ---
@@ -31,6 +33,7 @@ def _main_menu_kb() -> InlineKeyboardMarkup:
         [InlineKeyboardButton(text="Apply Now", callback_data="menu_apply")],
         [InlineKeyboardButton(text="About the Vacancy", callback_data="menu_vacancy")],
         [InlineKeyboardButton(text="About the Company", callback_data="menu_company")],
+        [InlineKeyboardButton(text="Ask a Question", callback_data="menu_question")],
     ])
 
 
@@ -80,6 +83,60 @@ async def cb_back_main(callback: CallbackQuery, state: FSMContext):
         await callback.message.edit_text(MAIN_MENU_TEXT, reply_markup=_main_menu_kb())
     except Exception:
         await callback.message.answer(MAIN_MENU_TEXT, reply_markup=_main_menu_kb())
+    await state.set_state(MenuStates.main_menu)
+
+
+# --- Ask a Question ---
+
+@router.callback_query(MenuStates.main_menu, F.data == "menu_question")
+async def cb_menu_question(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+    try:
+        await callback.message.edit_text(
+            "What would you like to know? 🤔\n\n"
+            "Type your question and our team will get back to you shortly.",
+            reply_markup=_back_kb(),
+        )
+    except Exception:
+        await callback.message.answer(
+            "What would you like to know? 🤔\n\n"
+            "Type your question and our team will get back to you shortly.",
+            reply_markup=_back_kb(),
+        )
+    await state.set_state(MenuStates.waiting_question)
+
+
+@router.message(MenuStates.waiting_question)
+async def process_question(message: Message, state: FSMContext):
+    text = message.text.strip() if message.text else ""
+    if not text:
+        return
+
+    # Forward to admin
+    username = message.from_user.username or "N/A"
+    first_name = message.from_user.first_name or "Unknown"
+    admin_text = (
+        f"❓ QUESTION from {first_name} "
+        f"(@{username}, ID: {message.from_user.id})\n\n"
+        f"{text}\n\n"
+        f"Reply to this message to answer."
+    )
+    try:
+        await message.bot.send_message(config.ADMIN_CHAT_ID, admin_text)
+    except Exception:
+        logger.exception("Failed to forward question to admin")
+
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="Ask another question", callback_data="menu_question")],
+        [InlineKeyboardButton(text="Apply Now", callback_data="menu_apply")],
+        [InlineKeyboardButton(text="<< Back to Menu", callback_data="back_main")],
+    ])
+    await message.answer(
+        "Thanks for your question! 🙂\n\n"
+        "Our team will get back to you shortly. "
+        "You'll receive a reply right here in this chat.",
+        reply_markup=keyboard,
+    )
     await state.set_state(MenuStates.main_menu)
 
 
