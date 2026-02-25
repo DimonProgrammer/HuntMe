@@ -529,6 +529,15 @@ async def process_english(callback: CallbackQuery, state: FSMContext):
     await state.update_data(english_level=eng_val)
     await _track_event(callback.from_user.id, "step_completed", "english", {"level": eng_val})
 
+    # Social proof — rebuild trust before hardware steps
+    await callback.message.answer(
+        "You're doing great! Almost halfway there.\n\n"
+        "People like you are already earning with us:\n"
+        "  Maria from Manila — $250/week after 2 months\n"
+        "  Emeka from Lagos — started from zero, now $200/week\n\n"
+        "Just a few more questions about your setup!"
+    )
+
     await state.set_state(OperatorForm.waiting_pc_confidence)
     kb = InlineKeyboardMarkup(inline_keyboard=[_back_row()])
     await callback.message.answer(
