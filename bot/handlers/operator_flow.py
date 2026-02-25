@@ -488,7 +488,7 @@ async def process_internet(message: Message, state: FSMContext):
 
     await message.answer(
         "When would you be ready to start?\n\n"
-        "Our next training group starts soon — ideally within 1 week."
+        "We can schedule your interview and start training the same day!"
     )
     await state.set_state(OperatorForm.waiting_start_date)
 
