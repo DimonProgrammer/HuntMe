@@ -301,13 +301,13 @@ async def cb_menu_vacancy(callback: CallbackQuery, state: FSMContext):
         "  • Starting: $600-800/month\n"
         "  • After 1-2 months: $1,000-1,200/month\n"
         "  • Top performers: $1,500+/month\n"
-        "  • Paid training: 5-7 days with a personal mentor\n"
+        "  • Paid training: 5-7 days, $30 per shift\n"
         "  • All payments in USD\n\n"
         "Schedule:\n"
         "  • 5 days/week, 2 days off\n"
         "  • 6-8 hours/day\n"
         "  • 4 shift options: morning / day / evening / night\n"
-        "  • Weekly payments in USD\n\n"
+        "  • Payment every Sunday in USD\n\n"
         "Requirements:\n"
         "  • Windows PC or laptop (MacBooks not supported)\n"
         "  • CPU: Intel Core i3 10th gen+ or AMD Ryzen 3 3000+\n"
@@ -342,10 +342,10 @@ async def cb_menu_company(callback: CallbackQuery, state: FSMContext):
         "Our team:\n"
         "  • Operating in 15+ countries\n"
         "  • 100% remote — work from anywhere\n"
-        "  • Weekly payments in USD, without exception\n"
+        "  • Payment every Sunday in USD, without exception\n"
         "  • Dedicated mentor for every new team member\n\n"
         "We never ask for upfront payments.\n"
-        "Your first earnings start during paid training (5-7 days)."
+        "Your first earnings start during paid training ($30/shift, 5-7 days)."
     )
     try:
         await callback.message.edit_text(text, reply_markup=_back_kb())
