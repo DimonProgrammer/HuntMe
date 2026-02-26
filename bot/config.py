@@ -39,5 +39,8 @@ class Config:
 
     REFERRAL_LINK: str = os.getenv("REFERRAL_LINK", "")
 
+    NOTION_TOKEN: str = os.getenv("NOTION_TOKEN", "")
+    NOTION_LEADS_DB_ID: str = os.getenv("NOTION_LEADS_DB_ID", "237a3a0a251941b3973c74212d6a6ee8")
+
 
 config = Config()

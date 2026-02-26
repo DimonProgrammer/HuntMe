@@ -26,6 +26,7 @@ from bot.database.models import Candidate, FunnelEvent
 from bot.services.hardware_checker import quick_check
 from bot.services.objection_handler import detect_objection, get_response
 from bot.services.screener import ScreeningResult, screen_candidate
+from bot.services import notion_leads
 
 logger = logging.getLogger(__name__)
 router = Router()
@@ -386,6 +387,8 @@ async def process_name(message: Message, state: FSMContext):
 
     await state.update_data(name=name)
     await _track_event(message.from_user.id, "step_completed", "name", {"name": name})
+    data = await state.get_data()
+    await notion_leads.on_name(data.get("notion_page_id"), name)
     await state.set_state(OperatorForm.waiting_has_pc)
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [
@@ -430,6 +433,8 @@ async def process_has_pc(callback: CallbackQuery, state: FSMContext):
 
     await state.update_data(has_pc=True, pc_type=choice)
     await _track_event(callback.from_user.id, "step_completed", "has_pc", {"has_pc": True, "pc_type": choice})
+    data = await state.get_data()
+    await notion_leads.on_has_pc(data.get("notion_page_id"), True)
     await state.set_state(OperatorForm.waiting_age)
     kb = InlineKeyboardMarkup(inline_keyboard=[_back_row()])
     await callback.message.answer(f"Great! 👍\n\n{_progress(3)}\n\nHow old are you?", reply_markup=kb)
@@ -477,6 +482,8 @@ async def process_age(message: Message, state: FSMContext):
 
     await state.update_data(age=age)
     await _track_event(message.from_user.id, "step_completed", "age", {"age": age})
+    data = await state.get_data()
+    await notion_leads.on_age(data.get("notion_page_id"), age)
     await state.set_state(OperatorForm.waiting_study_work)
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="Working", callback_data="study_working")],
@@ -532,6 +539,8 @@ async def process_english(callback: CallbackQuery, state: FSMContext):
     eng_val = level_map.get(level, level)
     await state.update_data(english_level=eng_val)
     await _track_event(callback.from_user.id, "step_completed", "english", {"level": eng_val})
+    data = await state.get_data()
+    await notion_leads.on_english(data.get("notion_page_id"), eng_val)
 
     # Social proof — rebuild trust before hardware steps
     await callback.message.answer(
@@ -916,6 +925,16 @@ async def process_contact(message: Message, state: FSMContext):
         status="screened",
         score=result.overall_score,
         recommendation=result.recommendation,
+        notes=result.reasoning,
+    )
+
+    await notion_leads.on_complete(
+        page_id=data.get("notion_page_id"),
+        tg_id=message.from_user.id,
+        tg_username=message.from_user.username,
+        data=data,
+        recommendation=result.recommendation,
+        score=result.overall_score,
         notes=result.reasoning,
     )
 

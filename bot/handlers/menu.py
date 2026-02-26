@@ -16,6 +16,7 @@ from bot.config import config
 from bot.database import async_session
 from bot.database.models import Candidate, FunnelEvent
 from bot.handlers.operator_flow import OperatorForm, _track_event
+from bot.services import notion_leads
 
 logger = logging.getLogger(__name__)
 router = Router()
@@ -83,6 +84,17 @@ async def cmd_start(message: Message, state: FSMContext):
             await _track_event(message.from_user.id, "utm_source", "start", {"source": param})
 
     await _track_event(message.from_user.id, "bot_started", "start")
+
+    # Track in Notion
+    data = await state.get_data()
+    notion_page_id = await notion_leads.on_start(
+        tg_id=message.from_user.id,
+        tg_username=message.from_user.username,
+        utm_source=data.get("utm_source"),
+    )
+    if notion_page_id:
+        await state.update_data(notion_page_id=notion_page_id)
+
     await message.answer(MAIN_MENU_TEXT, reply_markup=_main_menu_kb())
     await state.set_state(MenuStates.main_menu)
 
