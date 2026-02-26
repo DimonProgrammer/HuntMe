@@ -43,7 +43,7 @@ OBJECTIONS = {
             "Here's why this is different:\n"
             "✅ We NEVER ask for any upfront payment\n"
             "✅ You'll have a video interview on Zoom before starting\n"
-            "✅ Payment is weekly — every Sunday, without exception\n"
+            "✅ Payment is weekly in USD, without exception\n"
             "✅ You get a personal mentor during your paid training\n\n"
             "We've been operating for years with a team in 15+ countries.\n\n"
             "Would you like to schedule a quick Zoom call so you can see everything for yourself?"
@@ -64,14 +64,13 @@ OBJECTIONS = {
         "keywords": ["too low", "not enough", "more money", "higher pay", "low salary", "only 150", "150 is low", "pay more"],
         "response": (
             "I hear you! 💰\n\n"
-            "$150/week is just the starting point during your first week or two. "
+            "$600-800/month is just the starting range. "
             "Here's how the growth works:\n\n"
-            "📈 Week 1-2: $150/week (training + first shifts)\n"
-            "📈 Month 1-2: $200-300/week as you get more experience\n"
-            "📈 Top performers: $400+/week\n\n"
+            "📈 Month 1: $600-800/month (training + first shifts)\n"
+            "📈 Month 2-3: $1,000-1,200/month as you get more experience\n"
+            "📈 Top performers: $1,500+/month\n\n"
             "Your income is based on revenue share — "
             "the better you get, the more you earn.\n\n"
-            "Many of our top moderators started at $150 and now earn $1,600+/month. "
             "Would you like to give it a try?"
         ),
     },
@@ -181,9 +180,9 @@ OBJECTIONS = {
         "response": (
             "That's a very reasonable question! 💰\n\n"
             "Here's how our payment works:\n"
-            "✅ Payments go out every Sunday — no exceptions\n"
+            "✅ Payments go out weekly in USD — no exceptions\n"
             "✅ Your first payment comes after your first training shifts\n"
-            "✅ We pay via GCash, Wise, or USDT — your choice\n"
+            "✅ All payments in USD\n"
             "✅ We've been paying our team consistently for years\n\n"
             "During the training period you already earn $30 per shift, "
             "so you'll see real money from day one.\n\n"

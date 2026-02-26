@@ -2,8 +2,8 @@
 
 Position: Live Stream Moderator (NOT "chat moderator")
 Key points:
-- $150/week starting, growth to $400+/week
-- Weekly Sunday payments (GCash/Wise/USDT)
+- $600-800/month starting, top performers $1,500+/month
+- Weekly payments in USD
 - 100% remote, 5/2 schedule, 4 shift options
 - Paid training 5-7 days with personal mentor
 - Behind the scenes role — no camera
@@ -23,10 +23,10 @@ ROLE DESCRIPTION (use this for accurate content):
 - Think of it as a tech + organizational role for streamers
 
 COMPENSATION (be specific):
-- Starting pay: $150/week ($600/month minimum)
-- Growth: $200-300/week after 1-2 months
-- Top performers: $400+/week ($1,600+/month)
-- Payment: every Sunday, via GCash/Wise/USDT
+- Starting pay: $600-800/month
+- Growth: $1,000-1,200/month after 1-2 months
+- Top performers: $1,500+/month
+- Paid weekly in USD
 - Income = revenue share from streams (donations, ads, monetization)
 
 WORKING CONDITIONS:
@@ -37,7 +37,7 @@ WORKING CONDITIONS:
 - Team of 15+ countries
 
 TRAINING:
-- 5-7 days paid training ($30 per shift)
+- 5-7 days paid training with a personal mentor
 - Personal mentor assigned to each new hire
 - No prior experience needed
 
@@ -53,28 +53,28 @@ Rules:
 REGION_CONTEXT = {
     "ph": (
         "Target: Philippines. "
-        "Emphasize: USD payment via GCash (their primary e-wallet), Wise, or crypto. "
+        "Emphasize: Earn in USD — paid weekly. "
         "WFH is huge here — highlight 'no commute, work in your pajamas.' "
-        "Mention specific numbers: $150/week = ~₱8,500/week, $600/month = ~₱34,000/month. "
+        "Mention specific numbers: $600-800/month starting = ~₱34,000-45,000/month. "
         "Training provided, personal mentor, no experience needed. "
         "CRITICAL: 'You never appear on camera — this is a behind-the-scenes role.' "
-        "Weekly Sunday payments (huge selling point). "
+        "Weekly payments in USD (huge selling point). "
         "Tone: professional but warm, empowering. Language: English."
     ),
     "ng": (
         "Target: Nigeria. "
-        "Emphasize: Earn in USD — $150/week starting (huge vs local salaries). "
-        "Weekly Sunday payments via USDT or bank transfer. "
+        "Emphasize: Earn in USD — $600-800/month starting (huge vs local salaries). "
+        "Weekly payments in USD. "
         "Work from anywhere — just need PC + internet. "
-        "Paid training $30/shift for 5-7 days. Personal mentor. "
+        "Paid training for 5-7 days with personal mentor. "
         "Team across 15+ countries — international exposure. "
         "Behind the scenes role — no camera, no content creation. "
         "Tone: energetic, opportunity-focused, emphasize growth. Language: English."
     ),
     "latam": (
         "Target: Latin America (Brazil, Argentina, Colombia, Mexico). "
-        "Emphasize: Earn $600-1,600/month in USD working from home. "
-        "Weekly payments — every Sunday without fail. "
+        "Emphasize: Earn $600-1,500+/month in USD working from home. "
+        "Weekly payments in USD. "
         "Flexible shifts — choose morning, day, evening, or night. "
         "Paid training with personal mentor. International team. "
         "For CONTENT CREATOR / MODEL role: separate track, different compensation. "

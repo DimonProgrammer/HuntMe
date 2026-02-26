@@ -22,7 +22,7 @@ FOLLOWUP_TEMPLATES = {
             "Hi again! 🙂\n\n"
             "I know you're probably busy — just a quick reminder that "
             "we're looking for moderators to start next week.\n\n"
-            "Starting pay is $150/week, fully remote, and we provide all the training.\n\n"
+            "Starting pay is $600-800/month in USD, fully remote, and we provide all the training.\n\n"
             "If you're interested, just reply with \"Yes\" and I'll send you the next steps. "
             "If not, no worries at all! 🙏"
         ),
@@ -89,12 +89,12 @@ WARM_GREETING = (
     "on streaming platforms. We're looking for Live Stream Moderators "
     "to join our remote team.\n\n"
     "Here's a quick overview:\n\n"
-    "💰 Starting pay: $150/week\n"
-    "📈 Growth: $200-400+/week within 1-2 months\n"
+    "💰 Starting pay: $600-800/month in USD\n"
+    "📈 Growth: $1,000-1,500+/month within 1-2 months\n"
     "🏠 100% remote — work from home\n"
     "📅 Schedule: 5/2, 6-8 hours/day, you choose your shift\n"
-    "🎓 Paid training: 5-7 days with a personal mentor ($30/shift)\n"
-    "💸 Payment: every Sunday via GCash/Wise/USDT\n\n"
+    "🎓 Paid training: 5-7 days with a personal mentor\n"
+    "💵 Weekly payments in USD\n\n"
     "Your role: technical setup (OBS), chat moderation, "
     "scheduling — all behind the scenes. You never appear on camera.\n\n"
     "Let me ask you a few quick questions to see if this is a good fit. "
@@ -132,7 +132,7 @@ DECLINE_STUDENT_INPERSON = (
     "a semester break or if you switch to online classes — just send /start "
     "and we'll reopen your application.\n\n"
     "💡 Know any friends studying online or already graduated? "
-    "Share this link: t.me/apextalent_bot — $150/week remote work! 🙂\n\n"
+    "Share this link: t.me/apextalent_bot — $600-800/month remote work! 🙂\n\n"
     "Good luck with your studies! 📚"
 )
 
@@ -146,7 +146,7 @@ DECLINE_HARDWARE = (
     "A small upgrade could get you there! If you upgrade in the future, "
     "just send /start — we'll have your info on file.\n\n"
     "💡 Know someone with a gaming PC? "
-    "Share this link: t.me/apextalent_bot — $150/week remote work! 🙂"
+    "Share this link: t.me/apextalent_bot — $600-800/month remote work! 🙂"
 )
 
 DECLINE_ENGLISH = (
@@ -156,14 +156,14 @@ DECLINE_ENGLISH = (
     "Try free apps like Duolingo or watching English YouTube for 2-3 months, "
     "then send /start again — we'd love to reconsider you.\n\n"
     "💡 Know someone who speaks English well and wants remote work? "
-    "Share this link: t.me/apextalent_bot — $150/week! 🙂"
+    "Share this link: t.me/apextalent_bot — $600-800/month remote work! 🙂"
 )
 
 DECLINE_GENERIC = (
     "Thank you for your interest! 🙏\n\n"
     "We can't move forward with your application right now, "
     "but we'll keep your info for future openings.\n\n"
-    "💡 Know someone looking for remote work ($150/week)? "
+    "💡 Know someone looking for remote work ($600-800/month)? "
     "Share this link: t.me/apextalent_bot 🙂\n\n"
     "Wishing you all the best!"
 )
@@ -180,7 +180,7 @@ AGENT_GREETING = (
     "  • 7th+ hire: $100 each\n\n"
     "Models:\n"
     "  • $10 per working day for 12 months (passive income!)\n\n"
-    "Payments: USDT (BEP20), every Sunday, $50 minimum payout.\n\n"
+    "Payments: weekly in USD, $50 minimum payout.\n\n"
     "Let me ask a few quick questions. What is your full name?"
 )
 
@@ -195,7 +195,7 @@ MODEL_GREETING = (
     "  • Flexible schedule — you choose your hours\n"
     "  • Revenue share from streaming income\n"
     "  • Full training with a personal mentor\n"
-    "  • Weekly payments (GCash / Wise / USDT)\n"
+    "  • Weekly payments in USD\n"
     "  • Team across 15+ countries\n\n"
     "Let me ask a few quick questions.\n\n"
     "What is your full name?"

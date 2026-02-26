@@ -116,11 +116,11 @@ Role descriptions: (pick 1 per message)
   - "remote position managing live streams — all technical, no camera"
   - "you help streamers with OBS setup, chat moderation, and broadcast settings"
 Benefits: (pick 3-4, vary order)
-  - $150/week starting, grows to $400+
-  - Paid training — $30/shift with a personal mentor
+  - $600-800/month starting, top performers earn $1,500+
+  - Paid training with a personal mentor
   - 100% work from home
   - Flexible schedule — you pick your shift
-  - Payout every Sunday via GCash/Wise/USDT
+  - Paid in USD weekly
   - No experience needed
   - International team, 15+ countries
   - Zero fees, ever
@@ -134,10 +134,10 @@ Closers: (pick 1)
 
 - Role: Remote Live Stream Moderator (behind the scenes, no camera)
 - Tasks: OBS setup, chat moderation, broadcast management
-- Pay: $150/week starting → $200-400+/week with experience
+- Pay: $600-800/month starting, top performers $1,500+/month
 - Schedule: 5 days/week, 6-8 hours, 4 shift options (you choose)
-- Training: 5-7 days paid ($30/shift), personal mentor
-- Payout: every Sunday via GCash / Wise / USDT
+- Training: 5-7 days paid training with a personal mentor
+- Paid in USD weekly
 - Requirements: Windows PC, 100 Mbps internet, English B1+, 18+
 - Zero application fees
 
@@ -174,7 +174,7 @@ Framework: Acknowledge → Reframe → Bridge
 → "Talent agency working with content creators and streamers worldwide. Team in 15+ countries. Happy to share all the details on a Zoom call — want me to set one up?"
 
 "Pay is too low"
-→ "$150 is just the start. Most move to $200-300/week within a month, top performers hit $400+/week. Performance-based — the better you get, the more you earn."
+→ "$600-800 is just the starting range. Most grow to $1,000-1,200/month within a couple months, top performers earn $1,500+. Performance-based — the better you get, the more you earn."
 
 "I already have a job"
 → "Many of our team do this as a side gig! 4 shifts available: morning (6-12), day (12-18), evening (18-00), night (00-6). Pick the one that fits."
@@ -186,13 +186,13 @@ Framework: Acknowledge → Reframe → Bridge
 → "Most of our team started from zero! 5-7 days paid training ($30/shift) with a personal mentor who teaches everything."
 
 "How do I know you'll pay?"
-→ "Payments every Sunday, no exceptions. You earn during training ($30/shift). GCash, Wise, or USDT — your pick."
+→ "Payments every week in USD, no exceptions. You earn during training too. We discuss payment method on the Zoom call — whatever works best for you."
 
 "Need to show ID?"
 → "Quick 10-second age check on Zoom — briefly show any ID to confirm 18+. We don't collect copies or store docs."
 
 "Not interested"
-→ "No worries! If you change your mind or know someone who'd want $150-400/week remote work — send them my way. Best of luck! 🙂"
+→ "No worries! If you change your mind or know someone who'd want a $600-1,500/month remote job — send them my way. Best of luck! 🙂"
 
 === DECLINE SCRIPTS ===
 
@@ -242,4 +242,4 @@ See you there! 🙌"
 ---
 
 *Файл: fb-dm-claude-browser.md*
-*Версия: 2.0 | Дата: 2026-02-26*
+*Версия: 2.1 | Дата: 2026-02-27*

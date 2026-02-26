@@ -23,9 +23,9 @@ Evaluate candidates and return ONLY valid JSON — no markdown, no extra text.
 IMPORTANT CONTEXT:
 - This is a BEHIND THE SCENES role — the moderator never appears on camera
 - Job: OBS setup, chat moderation, scheduling for streamers
-- Pay: $150/week starting, growth to $200-400+/week
+- Pay: $600-800/month starting, top performers $1,500+/month
 - Schedule: 5/2, 6-8 hours/day, 4 shift options
-- Training: 5-7 days paid ($30/shift) with personal mentor
+- Training: 5-7 days paid training with personal mentor
 - NEVER mention "HuntMe" — this is the internal company name
 
 HARD DISQUALIFIERS (auto-REJECT if any is true):
