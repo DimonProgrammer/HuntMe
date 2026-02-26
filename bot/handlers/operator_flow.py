@@ -56,7 +56,10 @@ class OperatorForm(StatesGroup):
     waiting_english = State()
     waiting_pc_confidence = State()
     waiting_cpu = State()
+    waiting_cpu_simple_age = State()      # "Not sure" → how old is PC
+    waiting_cpu_simple_usage = State()    # "Not sure" → what's it used for
     waiting_gpu = State()
+    waiting_gpu_simple_gaming = State()   # "Not sure" → can it play games
     waiting_internet = State()
     waiting_start_date = State()
     waiting_contact = State()
@@ -73,7 +76,10 @@ STEP_BACK = {
     OperatorForm.waiting_english.state: OperatorForm.waiting_study_work.state,
     OperatorForm.waiting_pc_confidence.state: OperatorForm.waiting_english.state,
     OperatorForm.waiting_cpu.state: OperatorForm.waiting_pc_confidence.state,
+    OperatorForm.waiting_cpu_simple_age.state: OperatorForm.waiting_cpu.state,
+    OperatorForm.waiting_cpu_simple_usage.state: OperatorForm.waiting_cpu_simple_age.state,
     OperatorForm.waiting_gpu.state: OperatorForm.waiting_cpu.state,
+    OperatorForm.waiting_gpu_simple_gaming.state: OperatorForm.waiting_gpu.state,
     OperatorForm.waiting_internet.state: OperatorForm.waiting_gpu.state,
     OperatorForm.waiting_start_date.state: OperatorForm.waiting_internet.state,
     OperatorForm.waiting_contact.state: OperatorForm.waiting_start_date.state,
@@ -230,7 +236,7 @@ async def _send_step_prompt(target, state: FSMContext, set_state=False):
 
     elif current == OperatorForm.waiting_cpu.state:
         kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="I'm not sure / skip", callback_data="cpu_skip")],
+            [InlineKeyboardButton(text="Not sure", callback_data="cpu_skip")],
             _back_row(),
         ])
         await send(
@@ -239,13 +245,37 @@ async def _send_step_prompt(target, state: FSMContext, set_state=False):
             "How to check:\n"
             "Settings > System > About > look for 'Processor'\n\n"
             "Example: Intel Core i5-12400 or AMD Ryzen 5 5600\n\n"
-            "Not sure? Tap 'skip' — we'll check during your interview.",
+            "Not sure? Tap the button — we'll ask a few simple questions instead.",
             reply_markup=kb,
         )
 
+    elif current == OperatorForm.waiting_cpu_simple_age.state:
+        kb = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Less than 2 years", callback_data="pcage_new")],
+            [InlineKeyboardButton(text="2-4 years", callback_data="pcage_mid")],
+            [InlineKeyboardButton(text="5+ years", callback_data="pcage_old")],
+            [InlineKeyboardButton(text="Not sure", callback_data="pcage_unsure")],
+            _back_row(),
+        ])
+        await send(
+            f"{_progress(7)} — No worries! A few quick questions instead.\n\n"
+            "How old is your computer?",
+            reply_markup=kb,
+        )
+
+    elif current == OperatorForm.waiting_cpu_simple_usage.state:
+        kb = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Gaming", callback_data="pcuse_gaming")],
+            [InlineKeyboardButton(text="Work / Office", callback_data="pcuse_work")],
+            [InlineKeyboardButton(text="Browsing / Social media", callback_data="pcuse_browsing")],
+            [InlineKeyboardButton(text="Video editing / Design", callback_data="pcuse_creative")],
+            _back_row(),
+        ])
+        await send(f"{_progress(7)}\n\nWhat do you mainly use your computer for?", reply_markup=kb)
+
     elif current == OperatorForm.waiting_gpu.state:
         kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="I'm not sure / skip", callback_data="gpu_skip")],
+            [InlineKeyboardButton(text="Not sure", callback_data="gpu_skip")],
             _back_row(),
         ])
         await send(
@@ -254,7 +284,21 @@ async def _send_step_prompt(target, state: FSMContext, set_state=False):
             "How to check:\n"
             "Settings > System > Display > Advanced display > look for GPU info\n\n"
             "Example: NVIDIA GeForce RTX 3060 or AMD Radeon RX 6600\n\n"
-            "Not sure? Tap 'skip' — we'll check during your interview.",
+            "Not sure? Tap the button below.",
+            reply_markup=kb,
+        )
+
+    elif current == OperatorForm.waiting_gpu_simple_gaming.state:
+        kb = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Yes, modern games (GTA, Fortnite)", callback_data="game_modern")],
+            [InlineKeyboardButton(text="Yes, but only simple/old games", callback_data="game_basic")],
+            [InlineKeyboardButton(text="No / Never tried", callback_data="game_no")],
+            [InlineKeyboardButton(text="Not sure", callback_data="game_unsure")],
+            _back_row(),
+        ])
+        await send(
+            f"{_progress(8)} — One more quick question.\n\n"
+            "Can your computer run video games?",
             reply_markup=kb,
         )
 
@@ -317,6 +361,9 @@ async def cb_go_back(callback: CallbackQuery, state: FSMContext):
 @router.message(OperatorForm.waiting_no_pc_followup)
 @router.message(OperatorForm.waiting_study_work)
 @router.message(OperatorForm.waiting_english)
+@router.message(OperatorForm.waiting_cpu_simple_age)
+@router.message(OperatorForm.waiting_cpu_simple_usage)
+@router.message(OperatorForm.waiting_gpu_simple_gaming)
 async def catch_text_in_button_states(message: Message, state: FSMContext):
     """Handle free text when buttons are expected."""
     handled = await _handle_possible_question(message, state)
@@ -517,7 +564,7 @@ async def process_pc_confidence(message: Message, state: FSMContext):
     await _track_event(message.from_user.id, "step_completed", "pc_confidence", {"value": confidence})
     await state.set_state(OperatorForm.waiting_cpu)
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="I'm not sure / skip", callback_data="cpu_skip")],
+        [InlineKeyboardButton(text="Not sure", callback_data="cpu_skip")],
         _back_row(),
     ])
     await message.answer(
@@ -526,7 +573,7 @@ async def process_pc_confidence(message: Message, state: FSMContext):
         "How to check:\n"
         "Settings > System > About > look for 'Processor'\n\n"
         "Example: Intel Core i5-12400 or AMD Ryzen 5 5600\n\n"
-        "Not sure? Tap 'skip' — we'll check during your interview.",
+        "Not sure? Tap the button — we'll ask a few simple questions instead.",
         reply_markup=kb,
     )
 
@@ -535,21 +582,79 @@ async def process_pc_confidence(message: Message, state: FSMContext):
 
 @router.callback_query(OperatorForm.waiting_cpu, F.data == "cpu_skip")
 async def process_cpu_skip(callback: CallbackQuery, state: FSMContext):
+    """CPU skip → ask simplified questions instead."""
     await callback.answer()
-    await state.update_data(cpu_model="SKIPPED — verify at interview")
-    await _track_event(callback.from_user.id, "step_completed", "cpu", {"cpu_model": "skipped"})
+    await state.set_state(OperatorForm.waiting_cpu_simple_age)
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="Less than 2 years", callback_data="pcage_new")],
+        [InlineKeyboardButton(text="2-4 years", callback_data="pcage_mid")],
+        [InlineKeyboardButton(text="5+ years", callback_data="pcage_old")],
+        [InlineKeyboardButton(text="Not sure", callback_data="pcage_unsure")],
+        _back_row(),
+    ])
+    await callback.message.answer(
+        f"{_progress(7)} — No worries! A few quick questions instead.\n\n"
+        "How old is your computer?",
+        reply_markup=kb,
+    )
+
+
+# ═══ STEP 7a: Simplified CPU — PC Age ═══
+
+@router.callback_query(OperatorForm.waiting_cpu_simple_age, F.data.startswith("pcage_"))
+async def process_cpu_simple_age(callback: CallbackQuery, state: FSMContext):
+    choice = callback.data.removeprefix("pcage_")
+    await callback.answer()
+
+    age_labels = {"new": "Less than 2 years", "mid": "2-4 years", "old": "5+ years", "unsure": "Not sure"}
+    await state.update_data(pc_age_estimate=age_labels.get(choice, choice))
+
+    await state.set_state(OperatorForm.waiting_cpu_simple_usage)
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="Gaming", callback_data="pcuse_gaming")],
+        [InlineKeyboardButton(text="Work / Office", callback_data="pcuse_work")],
+        [InlineKeyboardButton(text="Browsing / Social media", callback_data="pcuse_browsing")],
+        [InlineKeyboardButton(text="Video editing / Design", callback_data="pcuse_creative")],
+        _back_row(),
+    ])
+    await callback.message.answer(
+        f"{_progress(7)}\n\n"
+        "What do you mainly use your computer for?",
+        reply_markup=kb,
+    )
+
+
+# ═══ STEP 7b: Simplified CPU — Usage → proceed to GPU ═══
+
+@router.callback_query(OperatorForm.waiting_cpu_simple_usage, F.data.startswith("pcuse_"))
+async def process_cpu_simple_usage(callback: CallbackQuery, state: FSMContext):
+    choice = callback.data.removeprefix("pcuse_")
+    await callback.answer()
+
+    usage_labels = {"gaming": "Gaming", "work": "Work/Office", "browsing": "Browsing/Social media", "creative": "Video editing/Design"}
+    usage = usage_labels.get(choice, choice)
+    await state.update_data(pc_usage=usage)
+
+    # Compose a descriptive CPU string for AI scoring
+    data = await state.get_data()
+    pc_age = data.get("pc_age_estimate", "unknown")
+    cpu_desc = f"Not sure (PC age: {pc_age}, Usage: {usage})"
+    await state.update_data(cpu_model=cpu_desc)
+    await _track_event(callback.from_user.id, "step_completed", "cpu", {"cpu_model": cpu_desc, "method": "simplified"})
+
+    # Proceed to GPU
     await state.set_state(OperatorForm.waiting_gpu)
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="I'm not sure / skip", callback_data="gpu_skip")],
+        [InlineKeyboardButton(text="Not sure", callback_data="gpu_skip")],
         _back_row(),
     ])
     await callback.message.answer(
         f"{_progress(8)}\n\n"
         "What is your graphics card (GPU)?\n\n"
         "How to check:\n"
-        "Settings > System > Display > Advanced display\n\n"
+        "Settings > System > Display > Advanced display > look for GPU info\n\n"
         "Example: NVIDIA GeForce RTX 3060 or AMD Radeon RX 6600\n\n"
-        "Not sure? Tap 'skip' — we'll check during your interview.",
+        "Not sure? Tap the button below.",
         reply_markup=kb,
     )
 
@@ -582,21 +687,72 @@ async def process_cpu(message: Message, state: FSMContext):
 
 @router.callback_query(OperatorForm.waiting_gpu, F.data == "gpu_skip")
 async def process_gpu_skip(callback: CallbackQuery, state: FSMContext):
+    """GPU skip → ask simplified gaming question."""
     await callback.answer()
-    await state.update_data(gpu_model="SKIPPED — verify at interview")
-    # If CPU was also skipped, mark hw as needing review
+    await state.set_state(OperatorForm.waiting_gpu_simple_gaming)
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="Yes, modern games (GTA, Fortnite)", callback_data="game_modern")],
+        [InlineKeyboardButton(text="Yes, but only simple/old games", callback_data="game_basic")],
+        [InlineKeyboardButton(text="No / Never tried", callback_data="game_no")],
+        [InlineKeyboardButton(text="Not sure", callback_data="game_unsure")],
+        _back_row(),
+    ])
+    await callback.message.answer(
+        f"{_progress(8)} — One more quick question.\n\n"
+        "Can your computer run video games?",
+        reply_markup=kb,
+    )
+
+
+# ═══ STEP 8a: Simplified GPU — Gaming capability ═══
+
+@router.callback_query(OperatorForm.waiting_gpu_simple_gaming, F.data.startswith("game_"))
+async def process_gpu_simple_gaming(callback: CallbackQuery, state: FSMContext):
+    choice = callback.data.removeprefix("game_")
+    await callback.answer()
+
+    gaming_labels = {
+        "modern": "Runs modern games (GTA, Fortnite)",
+        "basic": "Only simple/old games",
+        "no": "No / Never tried gaming",
+        "unsure": "Not sure",
+    }
+    gaming = gaming_labels.get(choice, choice)
+    await state.update_data(pc_gaming=gaming)
+
+    # Compose descriptive GPU string for AI scoring
+    gpu_desc = f"Not sure (Gaming: {gaming})"
+    await state.update_data(gpu_model=gpu_desc)
+
+    # Run hardware check with available data
     data = await state.get_data()
     cpu = data.get("cpu_model", "")
-    if "SKIPPED" in cpu:
-        await state.update_data(hardware_compatible=None, cpu_status="skipped", gpu_status="skipped")
+    if "Not sure" in cpu:
+        # Both simplified — estimate compatibility from answers
+        pc_age = data.get("pc_age_estimate", "unknown")
+        pc_usage = data.get("pc_usage", "unknown")
+        # Heuristic: new gaming PC = likely compatible
+        likely_ok = (
+            (pc_age in ("Less than 2 years", "2-4 years") and pc_usage == "Gaming")
+            or (pc_age == "Less than 2 years" and pc_usage in ("Video editing/Design", "Work/Office"))
+            or (choice == "modern")
+        )
+        await state.update_data(
+            hardware_compatible=True if likely_ok else None,
+            cpu_status=f"estimated from answers (age: {pc_age}, usage: {pc_usage})",
+            gpu_status=f"estimated from answers (gaming: {gaming})",
+        )
     else:
-        hw_result = quick_check(cpu, "SKIPPED")
+        hw_result = quick_check(cpu, "UNKNOWN")
         await state.update_data(
             hardware_compatible=None,
             cpu_status=hw_result.cpu_reason,
-            gpu_status="skipped — manual review needed",
+            gpu_status=f"estimated from answers (gaming: {gaming})",
         )
-    await _track_event(callback.from_user.id, "step_completed", "gpu", {"gpu_model": "skipped"})
+
+    await _track_event(callback.from_user.id, "step_completed", "gpu", {"gpu_model": gpu_desc, "method": "simplified"})
+
+    # Proceed to internet
     await state.set_state(OperatorForm.waiting_internet)
     kb = InlineKeyboardMarkup(inline_keyboard=[_back_row()])
     await callback.message.answer(
@@ -815,6 +971,8 @@ async def _notify_admin(message, data, result):
         flags.append("⚠️ HW INCOMPATIBLE")
     if data.get("hardware_compatible") is None:
         flags.append("⚠️ HW NOT VERIFIED")
+    if data.get("pc_age_estimate") or data.get("pc_gaming"):
+        flags.append("ℹ️ HW ESTIMATED (simplified answers)")
     flags_str = " | ".join(flags) if flags else "None"
 
     admin_text = (
@@ -825,8 +983,9 @@ async def _notify_admin(message, data, result):
         f"Age: {data.get('age', 'N/A')} | English: {data.get('english_level', 'N/A')}\n"
         f"Study/Work: {data.get('study_status', 'N/A')}\n"
         f"PC: {'Yes (' + data.get('pc_type', '?') + ')' if data.get('has_pc') else 'No'}\n"
-        f"CPU: {data.get('cpu_model', 'N/A')} | GPU: {data.get('gpu_model', 'N/A')}\n"
-        f"HW: {data.get('cpu_status', 'N/A')} / {data.get('gpu_status', 'N/A')}\n"
+        f"CPU: {data.get('cpu_model', 'N/A')}\n"
+        f"GPU: {data.get('gpu_model', 'N/A')}\n"
+        f"HW check: {data.get('cpu_status', 'N/A')} / {data.get('gpu_status', 'N/A')}\n"
         f"Internet: {data.get('internet_speed', 'N/A')}\n"
         f"Start: {data.get('start_date', 'N/A')}\n"
         f"Contact: {data.get('contact_info', 'N/A')}\n"
