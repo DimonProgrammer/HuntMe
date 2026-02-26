@@ -31,6 +31,8 @@ class Config:
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
     GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
 
+    LIVE_FEED_CHANNEL_ID: int = int(os.getenv("LIVE_FEED_CHANNEL_ID", "0"))
+
     DATABASE_URL: str = _fix_db_url(os.getenv("DATABASE_URL", "sqlite+aiosqlite:///huntme.db"))
 
     N8N_WEBHOOK_URL: str = os.getenv("N8N_WEBHOOK_URL", "http://n8n:5678/webhook")

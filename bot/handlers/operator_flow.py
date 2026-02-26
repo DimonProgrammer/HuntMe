@@ -894,7 +894,17 @@ async def process_contact(message: Message, state: FSMContext):
             ),
         )
 
-    await message.answer(result.suggested_response)
+    # For PASS — don't auto-send an invite, admin approves manually via button.
+    # For MAYBE/REJECT — AI's message is appropriate (clarifying questions / polite decline).
+    if result.recommendation == "PASS":
+        await message.answer(
+            "Thank you for completing the application! 🎉\n\n"
+            "Our team is reviewing your profile and will get back to you "
+            "within 24 hours.\n\n"
+            "Talk to you soon! 😊"
+        )
+    else:
+        await message.answer(result.suggested_response)
 
     await _track_event(message.from_user.id, "completed", "screening", {
         "score": result.overall_score,

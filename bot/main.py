@@ -8,14 +8,16 @@ import re
 from typing import Optional
 
 from aiohttp import web
-from aiogram import Bot, Dispatcher
+from aiogram import BaseMiddleware, Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.types import Message, TelegramObject
 
 from bot.config import config
 from bot.database import init_db
 from bot.database.connection import async_session
 from bot.database.models import Candidate
 from bot.handlers import admin, menu, operator_flow
+from bot.services import live_feed
 
 logging.basicConfig(
     level=logging.INFO,
@@ -25,6 +27,37 @@ logger = logging.getLogger(__name__)
 
 # Global bot reference (set in main(), used by webhook handlers)
 _bot: Optional[Bot] = None
+
+
+# ── Live-feed: log every outgoing message ───────────────────────────────────
+class LoggingBot(Bot):
+    """Subclasses Bot to mirror outgoing messages to the live feed channel."""
+
+    async def send_message(self, chat_id, text="", **kwargs):  # type: ignore[override]
+        result = await super().send_message(chat_id, text, **kwargs)
+        cid = int(chat_id)
+        skip = {config.ADMIN_CHAT_ID, config.LIVE_FEED_CHANNEL_ID}
+        if text and cid not in skip:
+            asyncio.create_task(live_feed.log_outgoing(cid, str(text)))
+        return result
+
+
+# ── Live-feed: log every incoming message ───────────────────────────────────
+class LiveFeedMiddleware(BaseMiddleware):
+    async def __call__(self, handler, event: TelegramObject, data: dict):
+        if isinstance(event, Message) and event.from_user:
+            user  = event.from_user
+            state = data.get("state")
+            step  = "—"
+            if state:
+                current = await state.get_state()
+                if current:
+                    step = current.split(":")[-1]
+            text = event.text or f"[{event.content_type}]"
+            asyncio.create_task(
+                live_feed.log_incoming(user.id, user.username, text, step)
+            )
+        return await handler(event, data)
 
 
 # Health-check HTTP server (keeps Render free tier awake)
@@ -185,9 +218,18 @@ async def main():
 
     # Create bot and dispatcher
     global _bot
-    bot = Bot(token=config.BOT_TOKEN)
+    bot = LoggingBot(token=config.BOT_TOKEN)
     _bot = bot
     dp = Dispatcher(storage=MemoryStorage())
+
+    # Live feed: init service + register incoming-message middleware
+    live_feed.init(bot, channel_id=config.LIVE_FEED_CHANNEL_ID, admin_id=config.ADMIN_CHAT_ID)
+    if config.LIVE_FEED_CHANNEL_ID:
+        dp.message.outer_middleware(LiveFeedMiddleware())
+        asyncio.create_task(live_feed.run_inactivity_checker())
+        logger.info("Live feed enabled → channel %s", config.LIVE_FEED_CHANNEL_ID)
+    else:
+        logger.info("Live feed disabled (LIVE_FEED_CHANNEL_ID not set)")
 
     # Register routers (order matters):
     # admin first — so admin commands + reply handler take priority
