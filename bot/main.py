@@ -50,7 +50,7 @@ async def landing_webhook(request):
         return web.Response(status=400, text="Bad request")
 
     name = data.get("name", "").strip()
-    whatsapp = data.get("whatsapp", "").strip()
+    whatsapp = data.get("contact", data.get("whatsapp", "")).strip()
     country = data.get("country", "").strip()
     age_raw = data.get("age", "")
     english = data.get("english", "").strip()
@@ -88,7 +88,7 @@ async def landing_webhook(request):
         msg = (
             f"🌐 <b>Новый лид с сайта!</b>\n\n"
             f"👤 <b>Имя:</b> {name or '—'}\n"
-            f"📱 <b>WhatsApp:</b> {whatsapp or '—'}\n"
+            f"📱 <b>Контакт:</b> {whatsapp or '—'}\n"
             f"🌍 <b>Страна:</b> {country or '—'}\n"
             f"🎂 <b>Возраст:</b> {age or '—'}\n"
             f"🇬🇧 <b>Английский:</b> {english or '—'}\n"
