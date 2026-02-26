@@ -10,7 +10,7 @@ from typing import Optional
 from aiohttp import web
 from aiogram import BaseMiddleware, Bot, Dispatcher
 from bot.services.pg_storage import PostgresStorage
-from aiogram.types import Message, TelegramObject
+from aiogram.types import CallbackQuery, Message, TelegramObject
 
 from bot.config import config
 from bot.database import init_db
@@ -42,7 +42,7 @@ class LoggingBot(Bot):
         return result
 
 
-# ── Live-feed: log every incoming message ───────────────────────────────────
+# ── Live-feed: log every incoming message + button press ──────────────────
 class LiveFeedMiddleware(BaseMiddleware):
     async def __call__(self, handler, event: TelegramObject, data: dict):
         if isinstance(event, Message) and event.from_user:
@@ -56,6 +56,25 @@ class LiveFeedMiddleware(BaseMiddleware):
             text = event.text or f"[{event.content_type}]"
             asyncio.create_task(
                 live_feed.log_incoming(user.id, user.username, text, step)
+            )
+        elif isinstance(event, CallbackQuery) and event.from_user and event.data:
+            user = event.from_user
+            # Extract readable button text from the inline keyboard
+            button_text = event.data
+            if event.message and hasattr(event.message, "reply_markup") and event.message.reply_markup:
+                for row in event.message.reply_markup.inline_keyboard:
+                    for btn in row:
+                        if btn.callback_data == event.data:
+                            button_text = btn.text
+                            break
+            state = data.get("state")
+            step = "—"
+            if state:
+                current = await state.get_state()
+                if current:
+                    step = current.split(":")[-1]
+            asyncio.create_task(
+                live_feed.log_incoming(user.id, user.username, f"🔘 {button_text}", step)
             )
         return await handler(event, data)
 
@@ -225,7 +244,9 @@ async def main():
     # Live feed: init service + register incoming-message middleware
     live_feed.init(bot, channel_id=config.LIVE_FEED_CHANNEL_ID, admin_id=config.ADMIN_CHAT_ID)
     if config.LIVE_FEED_CHANNEL_ID:
-        dp.message.outer_middleware(LiveFeedMiddleware())
+        _lf_mw = LiveFeedMiddleware()
+        dp.message.outer_middleware(_lf_mw)
+        dp.callback_query.outer_middleware(_lf_mw)
         asyncio.create_task(live_feed.run_inactivity_checker())
         logger.info("Live feed enabled → channel %s", config.LIVE_FEED_CHANNEL_ID)
     else:
