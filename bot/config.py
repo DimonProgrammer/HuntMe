@@ -1,4 +1,5 @@
 import os
+import re
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -7,9 +8,13 @@ load_dotenv()
 def _fix_db_url(url: str) -> str:
     """Convert various PostgreSQL URL formats to asyncpg driver."""
     if url.startswith("postgres://"):
-        return url.replace("postgres://", "postgresql+asyncpg://", 1)
-    if url.startswith("postgresql://"):
-        return url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        url = url.replace("postgres://", "postgresql+asyncpg://", 1)
+    elif url.startswith("postgresql://"):
+        url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+    # Strip params asyncpg doesn't understand (sslmode, channel_binding)
+    url = re.sub(r'[?&](sslmode|channel_binding)=[^&]*', '', url)
+    # Fix leftover '&' at start of query string
+    url = url.replace('?&', '?')
     return url
 
 
