@@ -46,7 +46,7 @@ class AIClient:
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
-            "HTTP-Referer": "https://apexhiring.vercel.app",
+            "HTTP-Referer": "https://apextalent.pro",
             "X-Title": "Apex Talent Bot",
         }
         payload = {
