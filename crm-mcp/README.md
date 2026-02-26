@@ -1,29 +1,47 @@
 # HuntMe CRM — MCP Server
 
-Позволяет Клоду смотреть слоты и бронировать интервью в HuntMe CRM прямо из чата.
+MCP-сервер для работы с HuntMe CRM прямо из Claude Desktop или Claude Code.
 
-## Инструменты
+Позволяет смотреть доступные слоты для интервью и бронировать кандидатов одной командой — без ручного входа в CRM.
 
-| Tool | Что делает |
+---
+
+## Что умеет
+
+| Инструмент | Описание |
 |---|---|
-| `check_crm` | Проверяет подключение и авторизацию |
-| `get_slots` | Показывает доступные слоты (Manila time) |
-| `book_candidate` | Подаёт заявку в CRM |
+| `check_crm` | Проверить подключение и авторизацию |
+| `get_slots` | Показать ближайшие доступные слоты (время Manila, GMT+8) |
+| `book_candidate` | Подать заявку кандидата в CRM и забронировать слот |
+
+---
 
 ## Установка
 
-### 1. Зависимости
+### 1. Клонируй репо
 
 ```bash
-cd crm-mcp
+git clone https://github.com/DimonProgrammer/huntme-crm-mcp
+cd huntme-crm-mcp
+```
+
+### 2. Установи зависимости
+
+```bash
 pip install -r requirements.txt
 ```
 
-### 2. Credentials
+Нужен Python 3.10+.
 
-Добавь в `.env` в корне проекта (уже должны быть):
+### 3. Создай `.env`
 
+```bash
+cp .env.example .env
 ```
+
+Заполни credentials:
+
+```env
 HUNTME_CRM_BASE_URL=https://app.huntme.pro
 HUNTME_CRM_LOGIN=твой_логин
 HUNTME_CRM_PASSWORD=твой_пароль
@@ -31,40 +49,104 @@ HUNTME_CRM_PASSWORD=твой_пароль
 
 ---
 
-### Claude Code
-
-`.mcp.json` уже лежит в корне репо — заполни `HUNTME_CRM_LOGIN` и `HUNTME_CRM_PASSWORD`.
-
-Либо просто держи `.env` — сервер подтягивает его автоматически.
-
----
+## Подключение к Claude
 
 ### Claude Desktop
 
-Добавь в `~/Library/Application Support/Claude/claude_desktop_config.json`:
+Открой конфиг:
+- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+
+Добавь секцию `mcpServers`:
 
 ```json
 {
   "mcpServers": {
     "huntme-crm": {
       "command": "python3",
-      "args": ["/полный/путь/до/HuntMe/crm-mcp/server.py"]
+      "args": ["/полный/путь/до/huntme-crm-mcp/server.py"]
     }
   }
 }
 ```
 
-Перезапусти Claude Desktop.
+Перезапусти Claude Desktop. В левом нижнем углу появится иконка 🔧 — сервер подключён.
+
+### Claude Code
+
+Добавь `.mcp.json` в корень своего проекта:
+
+```json
+{
+  "mcpServers": {
+    "huntme-crm": {
+      "command": "python3",
+      "args": ["/полный/путь/до/huntme-crm-mcp/server.py"]
+    }
+  }
+}
+```
 
 ---
 
-## Примеры использования
+## Использование
+
+После подключения просто пиши Клоду на естественном языке:
 
 **Посмотреть слоты:**
-> Show me available interview slots
+```
+Покажи доступные слоты для интервью
+```
+или
+```
+Show me available interview slots
+```
 
-**Забронировать:**
-> Book Mark Joshua G Serrano, born 15.05.1998, phone +639664469038, telegram markjoshua, slot 05.03.2026 18:00, English B2, working currently
+**Забронировать кандидата:**
+```
+Book Mark Joshua G Serrano, born 15.05.1998,
+phone +639664469038, telegram markjoshua,
+slot 05.03.2026 18:00, English B2 Upper-Intermediate,
+currently working
+```
 
-**Проверить связь:**
-> Check CRM connection
+**Проверить подключение:**
+```
+Check CRM connection
+```
+
+---
+
+## Параметры book_candidate
+
+| Параметр | Обязательный | Описание | Пример |
+|---|---|---|---|
+| `name` | ✅ | Полное имя | `Mark Joshua G Serrano` |
+| `birth_date` | ✅ | Дата рождения | `15.05.1998` |
+| `phone` | ✅ | Телефон с кодом страны | `+639664469038` |
+| `telegram` | ✅ | Ник в Telegram (без @) | `markjoshua` |
+| `slot` | ✅ | Слот из get_slots | `05.03.2026 18:00` |
+| `english_level` | — | Уровень английского | `B2 Upper-Intermediate` |
+| `experience` | — | Опыт работы | `Currently working as VA` |
+| `additional_notes` | — | Заметки для интервьюера | `Available evenings` |
+
+Слот берётся из вывода `get_slots` в формате `dd.MM.yyyy HH:mm`.
+
+---
+
+## Технические детали
+
+- Авторизация через Auth.js v5 session cookie (`__Secure-authjs.session-token`)
+- Токен кешируется на 24 часа, при 401 — автоматический реlogин
+- Форма отправляется как `multipart/form-data` (не JSON)
+- Воскресенья фильтруются из списка слотов
+- Слоты ближе 2 часов от текущего времени не показываются
+
+---
+
+## Требования
+
+- Python 3.10+
+- `mcp >= 1.0.0`
+- `aiohttp >= 3.9.0`
+- Доступ к `app.huntme.pro`

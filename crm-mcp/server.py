@@ -170,11 +170,12 @@ async def tool_check_crm() -> str:
     return f"✅ Connected. {len(slots)} days, {total} slots available."
 
 
-async def tool_get_slots(count: int = 10) -> str:
+async def tool_get_slots(count: int = 10, funnel: str = "operators") -> str:
+    funnel_key = "models" if funnel == "models" else "operators"
     data = await _get(
         "/api/backend/interview-appointments/available-dates",
         office_id=95,
-        funnel_key="operators",
+        funnel_key=funnel_key,
     )
     if not data:
         return "❌ Failed to fetch slots — run check_crm to diagnose"
@@ -206,10 +207,11 @@ async def tool_get_slots(count: int = 10) -> str:
     if not nearest:
         return "No available slots found."
 
-    lines = ["Available interview slots (Manila time, GMT+8):\n"]
+    label = "models" if funnel == "models" else "operators"
+    lines = [f"Available interview slots [{label}] (Manila time, GMT+8):\n"]
     for dt in nearest:
         lines.append(f"  • {dt.strftime('%a %d %b')} at {dt.strftime('%H:%M')}  →  {dt.strftime('%d.%m.%Y %H:%M')}")
-    lines.append(f"\nUse the dd.MM.yyyy HH:mm format when booking.")
+    lines.append(f"\nUse the dd.MM.yyyy HH:mm format when booking (funnel: {label}).")
     return "\n".join(lines)
 
 
@@ -219,6 +221,7 @@ async def tool_book_candidate(
     phone: str,
     telegram: str,
     slot: str,
+    funnel: str = "operators",
     english_level: str = "B1 Intermediate",
     experience: str = "No prior experience",
     additional_notes: str = "",
@@ -230,12 +233,19 @@ async def tool_book_candidate(
     # Normalise phone
     digits = re.sub(r"\D", "", phone)
     country = "ph"
-    if digits.startswith("63"):   country = "ph"
-    elif digits.startswith("62"): country = "id"
-    elif digits.startswith("234"):country = "ng"
+    if digits.startswith("63"):    country = "ph"
+    elif digits.startswith("62"):  country = "id"
+    elif digits.startswith("234"): country = "ng"
 
     # Strip @ from telegram
     tg = telegram.lstrip("@")
+
+    # Select endpoint and question IDs based on funnel
+    # Note: question_ids 49-52 are tied to office_id=95 (ENG+OTHER operators funnel)
+    # Models funnel uses different question_ids — update if needed
+    is_model = funnel == "models"
+    endpoint = "/api/backend/requests/create/model" if is_model else "/api/backend/requests/create/operator"
+    q_ids = {"company": "49", "english": "50", "experience": "51", "additional": "52"}
 
     form_data = aiohttp.FormData()
     form_data.add_field("category", "0")
@@ -246,13 +256,13 @@ async def tool_book_candidate(
     form_data.add_field("number", digits)
     form_data.add_field("phone_country", country)
     form_data.add_field("telegram", tg)
-    form_data.add_field("questions_and_answers.0.question_id", "49")
+    form_data.add_field("questions_and_answers.0.question_id", q_ids["company"])
     form_data.add_field("questions_and_answers.0.answer_text", "Apex Talent")
-    form_data.add_field("questions_and_answers.1.question_id", "50")
+    form_data.add_field("questions_and_answers.1.question_id", q_ids["english"])
     form_data.add_field("questions_and_answers.1.answer_text", english_level)
-    form_data.add_field("questions_and_answers.2.question_id", "51")
+    form_data.add_field("questions_and_answers.2.question_id", q_ids["experience"])
     form_data.add_field("questions_and_answers.2.answer_text", experience[:200])
-    form_data.add_field("questions_and_answers.3.question_id", "52")
+    form_data.add_field("questions_and_answers.3.question_id", q_ids["additional"])
     form_data.add_field("questions_and_answers.3.answer_text", additional_notes[:300])
 
     headers = {"User-Agent": _USER_AGENT}
@@ -261,7 +271,7 @@ async def tool_book_candidate(
     try:
         async with aiohttp.ClientSession(headers=headers, cookies=cookies) as session:
             async with session.post(
-                f"{CRM_BASE_URL}/api/backend/requests/create/operator",
+                f"{CRM_BASE_URL}{endpoint}",
                 data=form_data,
                 timeout=aiohttp.ClientTimeout(total=20),
             ) as resp:
@@ -274,6 +284,7 @@ async def tool_book_candidate(
                     return (
                         f"✅ Application submitted!\n\n"
                         f"Candidate: {name}\n"
+                        f"Funnel: {funnel}\n"
                         f"Slot: {display} (Manila time)\n"
                         f"Telegram: @{tg}\n"
                         f"Phone: {digits} ({country.upper()})"
@@ -311,7 +322,13 @@ async def list_tools() -> list[Tool]:
                         "type": "integer",
                         "description": "How many slots to return (default 10)",
                         "default": 10,
-                    }
+                    },
+                    "funnel": {
+                        "type": "string",
+                        "description": "Which funnel: 'operators' (Live Stream Operator) or 'models' (Content Creator). Default: operators",
+                        "enum": ["operators", "models"],
+                        "default": "operators",
+                    },
                 },
                 "required": [],
             },
@@ -332,6 +349,7 @@ async def list_tools() -> list[Tool]:
                     "slot":             {"type": "string", "description": "Interview slot in dd.MM.yyyy HH:mm format (e.g. 05.03.2026 18:00)"},
                     "english_level":    {"type": "string", "description": "English level (e.g. B2 Upper-Intermediate)", "default": "B1 Intermediate"},
                     "experience":       {"type": "string", "description": "Brief work/experience description", "default": "No prior experience"},
+                    "funnel":           {"type": "string", "description": "Offer type: 'operators' (Live Stream Operator) or 'models' (Content Creator). Default: operators", "enum": ["operators", "models"], "default": "operators"},
                     "additional_notes": {"type": "string", "description": "Any extra notes for the interviewer", "default": ""},
                 },
                 "required": ["name", "birth_date", "phone", "telegram", "slot"],
@@ -346,7 +364,10 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[TextContent]:
         result = await tool_check_crm()
 
     elif name == "get_slots":
-        result = await tool_get_slots(count=arguments.get("count", 10))
+        result = await tool_get_slots(
+            count=arguments.get("count", 10),
+            funnel=arguments.get("funnel", "operators"),
+        )
 
     elif name == "book_candidate":
         result = await tool_book_candidate(
@@ -355,6 +376,7 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[TextContent]:
             phone=arguments["phone"],
             telegram=arguments["telegram"],
             slot=arguments["slot"],
+            funnel=arguments.get("funnel", "operators"),
             english_level=arguments.get("english_level", "B1 Intermediate"),
             experience=arguments.get("experience", "No prior experience"),
             additional_notes=arguments.get("additional_notes", ""),
