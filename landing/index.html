@@ -1310,16 +1310,16 @@
     c = c.trim();
     if (/^\+?[\d\s\-().]{7,}$/.test(c)) {
       const digits = c.replace(/\D/g, '');
-      return `We'll message you on <a href="https://wa.me/${digits}" target="_blank" style="color:#22C55E;font-weight:700;text-decoration:underline;">WhatsApp</a> within 24 hours.`;
+      return `Expect a WhatsApp message at <a href="https://wa.me/${digits}" target="_blank" style="color:#22C55E;font-weight:700;text-decoration:underline;">${c}</a> within 24 hours.`;
     }
     if (c.startsWith('@')) {
       const username = c.slice(1);
-      return `We'll reach you on <a href="https://t.me/${username}" target="_blank" style="color:#0EA5E9;font-weight:700;text-decoration:underline;">Telegram&nbsp;${c}</a> within 24 hours.`;
+      return `We'll drop you a message on <a href="https://t.me/${username}" target="_blank" style="color:#0EA5E9;font-weight:700;text-decoration:underline;">Telegram&nbsp;${c}</a> within 24 hours.`;
     }
     if (c.includes('@') && c.includes('.')) {
-      return `We'll email you at <a href="mailto:${c}" style="color:#6366F1;font-weight:700;text-decoration:underline;">${c}</a> within 24 hours.`;
+      return `Check your inbox — we'll write to <a href="mailto:${c}" style="color:#6366F1;font-weight:700;text-decoration:underline;">${c}</a> within 24 hours.`;
     }
-    return `We'll contact you via Messenger within 24 hours.`;
+    return `We'll reach you on Messenger within 24 hours.`;
   }
 
   // ── Form submit ─────────────────────────────
