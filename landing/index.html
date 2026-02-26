@@ -226,8 +226,8 @@
     }
 
     /* Success state */
-    #successMsg { display: none; }
-    #successMsg.show { display: block; }
+    #successMsg { display: none; opacity: 0; transition: opacity 0.4s ease; }
+    #successMsg.show { display: block; opacity: 1; }
 
     /* ── Logo ── (static, no animation) */
 
@@ -1139,10 +1139,10 @@
               <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;font-family:'Plus Jakarta Sans',sans-serif;">English *</label>
               <select class="form-input" name="english" required>
                 <option value="" disabled selected>Level</option>
-                <option>B1</option>
-                <option>B2</option>
-                <option>C1</option>
-                <option>C2</option>
+                <option>B1 — Intermediate</option>
+                <option>B2 — Upper-Intermediate</option>
+                <option>C1 — Advanced</option>
+                <option>C2 — Fluent / Near-native</option>
               </select>
             </div>
             <div>
@@ -1189,17 +1189,19 @@
             </a>
           </div>
 
-        </div>
       </form>
 
       <!-- Success state -->
       <div id="successMsg">
-        <div style="text-align:center;padding:40px 20px;">
-          <div style="font-size:3.5rem;margin-bottom:16px;">🎉</div>
-          <h3 class="font-heading font-black" style="font-size:1.5rem;margin-bottom:8px;">Application Received!</h3>
-          <p style="font-size:15px;opacity:0.6;line-height:1.6;font-family:'Plus Jakarta Sans',sans-serif;">
-            We'll message you on WhatsApp within 24 hours<br>with your next steps.
+        <div style="text-align:center;padding:24px 16px 32px;">
+          <div style="display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#CCFF00 0%,#E33BC5 100%);margin-bottom:20px;">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h3 class="font-heading font-black" style="font-size:1.6rem;margin-bottom:10px;">You're In!</h3>
+          <p id="successContactLine" style="font-size:15px;line-height:1.65;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:6px;opacity:0.7;">
+            We'll contact you within 24 hours with next steps.
           </p>
+          <p style="font-size:12px;opacity:0.3;font-family:'Plus Jakarta Sans',sans-serif;">No spam — only job-related messages</p>
         </div>
       </div>
 
@@ -1303,6 +1305,23 @@
     document.getElementById('formStep1').style.display = 'flex';
   }
 
+  // ── Contact type detection ───────────────────
+  function detectContact(c) {
+    c = c.trim();
+    if (/^\+?[\d\s\-().]{7,}$/.test(c)) {
+      const digits = c.replace(/\D/g, '');
+      return `We'll message you on <a href="https://wa.me/${digits}" target="_blank" style="color:#22C55E;font-weight:700;text-decoration:underline;">WhatsApp</a> within 24 hours.`;
+    }
+    if (c.startsWith('@')) {
+      const username = c.slice(1);
+      return `We'll reach you on <a href="https://t.me/${username}" target="_blank" style="color:#0EA5E9;font-weight:700;text-decoration:underline;">Telegram&nbsp;${c}</a> within 24 hours.`;
+    }
+    if (c.includes('@') && c.includes('.')) {
+      return `We'll email you at <a href="mailto:${c}" style="color:#6366F1;font-weight:700;text-decoration:underline;">${c}</a> within 24 hours.`;
+    }
+    return `We'll contact you via Messenger within 24 hours.`;
+  }
+
   // ── Form submit ─────────────────────────────
   async function handleSubmit(e) {
     e.preventDefault();
@@ -1311,9 +1330,10 @@
     btn.disabled = true;
 
     const form = document.getElementById('applicationForm');
+    const contactVal = form.querySelector('[name="contact"]').value;
     const data = {
       name:     form.querySelector('[name="name"]').value,
-      contact:  form.querySelector('[name="contact"]').value,
+      contact:  contactVal,
       country:  form.querySelector('[name="country"]').value,
       age:      form.querySelector('[name="age"]').value,
       english:  form.querySelector('[name="english"]').value,
@@ -1336,7 +1356,10 @@
 
     setTimeout(() => {
       form.style.display = 'none';
-      document.getElementById('successMsg').classList.add('show');
+      document.getElementById('successContactLine').innerHTML = detectContact(contactVal);
+      const msg = document.getElementById('successMsg');
+      msg.style.display = 'block';
+      requestAnimationFrame(() => { msg.style.opacity = '1'; });
     }, 300);
   }
 

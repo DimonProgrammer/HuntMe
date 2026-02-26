@@ -1,8 +1,10 @@
 """HuntMe Recruitment Bot — entry point."""
 
 import asyncio
+import json
 import logging
 import os
+import re
 from typing import Optional
 
 from aiohttp import web
@@ -35,6 +37,48 @@ _CORS = {
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
 }
+
+
+def _contact_link(contact: str) -> str:
+    """Return a clickable Telegram HTML link based on contact type."""
+    c = contact.strip()
+    if re.match(r'^\+?[\d\s\-().]{7,}$', c):
+        digits = re.sub(r'\D', '', c)
+        return f' — <a href="https://wa.me/{digits}">📲 WA</a>'
+    if c.startswith('@'):
+        username = c.lstrip('@')
+        return f' — <a href="https://t.me/{username}">✈️ TG</a>'
+    if '@' in c and '.' in c:
+        return f' — <a href="mailto:{c}">📧 Email</a>'
+    return ''
+
+
+async def _score_lead(country: str, english: str, status: str) -> tuple:
+    """Quick AI lead score. Returns (score_str, note) or (None, None)."""
+    try:
+        from bot.services.claude_client import claude
+        prompt = (
+            f"Rate this streaming operator applicant 1-10. JSON only.\n"
+            f"Country: {country} | English: {english} | Status: {status}\n\n"
+            f"Output: {{\"score\": 1-10, \"verdict\": \"HOT|WARM|COLD\", \"note\": \"max 8 words\"}}\n"
+            f"HOT: Philippines/Indonesia/Nigeria + B2+ English. COLD: low English or unavailable."
+        )
+        raw = await claude.complete(
+            system="Recruitment screener. Respond with valid JSON only.",
+            user_message=prompt,
+            max_tokens=80,
+        )
+        match = re.search(r'\{.*?\}', raw, re.DOTALL)
+        if match:
+            data = json.loads(match.group())
+            score = data.get("score", 5)
+            verdict = data.get("verdict", "WARM")
+            note = data.get("note", "")
+            emoji = {"HOT": "🔥", "WARM": "✅", "COLD": "❄️"}.get(verdict, "✅")
+            return f"{emoji} {verdict} ({score}/10)", note
+    except Exception as exc:
+        logger.debug("AI scoring failed: %s", exc)
+    return None, None
 
 
 async def landing_options(_request):
@@ -83,18 +127,26 @@ async def landing_webhook(request):
     except Exception as exc:
         logger.error("Failed to save landing lead: %s", exc)
 
+    # AI scoring (best-effort)
+    score_str, score_note = await _score_lead(country, english, work_status)
+
     # Notify admin via Telegram
     if _bot:
         msg = (
             f"🌐 <b>Новый лид с сайта!</b>\n\n"
             f"👤 <b>Имя:</b> {name or '—'}\n"
-            f"📱 <b>Контакт:</b> {whatsapp or '—'}\n"
+            f"📱 <b>Контакт:</b> {whatsapp or '—'}{_contact_link(whatsapp)}\n"
             f"🌍 <b>Страна:</b> {country or '—'}\n"
             f"🎂 <b>Возраст:</b> {age or '—'}\n"
             f"🇬🇧 <b>Английский:</b> {english or '—'}\n"
             f"💼 <b>Статус:</b> {work_status or '—'}\n"
-            + (f"🆔 <b>ID в базе:</b> #{candidate_id}" if candidate_id else "")
         )
+        if score_str:
+            msg += f"🎯 <b>AI-скоринг:</b> {score_str}"
+            if score_note:
+                msg += f" — {score_note}"
+            msg += "\n"
+        msg += (f"🆔 <b>ID:</b> #{candidate_id}" if candidate_id else "")
         try:
             await _bot.send_message(config.ADMIN_CHAT_ID, msg, parse_mode="HTML")
         except Exception as exc:
