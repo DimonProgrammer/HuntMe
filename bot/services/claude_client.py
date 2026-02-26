@@ -1,7 +1,7 @@
-"""AI client — supports Gemini (primary), OpenRouter (fallback), and Anthropic API.
+"""AI client — supports Groq (primary), Gemini, OpenRouter, and Anthropic API.
 
-Priority: Gemini (GEMINI_API_KEY) → OpenRouter (OPENROUTER_API_KEY) → Anthropic (CLAUDE_API_KEY).
-Gemini 2.0 Flash is free (1500 req/day) and provides best quality for screening.
+Priority: Groq (GROQ_API_KEY) → Gemini (GEMINI_API_KEY) → OpenRouter (OPENROUTER_API_KEY) → Anthropic (CLAUDE_API_KEY).
+Groq llama-3.3-70b-versatile: free, very fast, high quality for screening.
 """
 
 import logging
@@ -15,12 +15,16 @@ logger = logging.getLogger(__name__)
 
 class AIClient:
     def __init__(self):
-        if config.GEMINI_API_KEY:
+        if config.GROQ_API_KEY:
+            self.provider = "groq"
+            self.api_key = config.GROQ_API_KEY
+            self.base_url = "https://api.groq.com/openai/v1"
+            # llama-3.3-70b-versatile: best free model on Groq, great for screening
+            self.model = "llama-3.3-70b-versatile"
+        elif config.GEMINI_API_KEY:
             self.provider = "gemini"
             self.api_key = config.GEMINI_API_KEY
-            # Gemini OpenAI-compatible endpoint
             self.base_url = "https://generativelanguage.googleapis.com/v1beta/openai"
-            # gemini-2.0-flash: free, fast, high quality
             self.model = "gemini-2.0-flash"
         elif config.OPENROUTER_API_KEY:
             self.provider = "openrouter"
@@ -43,7 +47,7 @@ class AIClient:
         if self.provider == "none":
             return '{"english_score":5,"hardware_score":5,"availability_score":5,"motivation_score":5,"experience_score":5,"overall_score":50,"recommendation":"MAYBE","reasoning":"AI screening unavailable — manual review needed","suggested_response":"Thank you for applying! Our team will review your application and get back to you within 24 hours."}'
 
-        if self.provider in ("gemini", "openrouter"):
+        if self.provider in ("groq", "gemini", "openrouter"):
             return await self._openai_compat_complete(system, user_message, max_tokens)
         else:
             return await self._anthropic_complete(system, user_message, max_tokens)
