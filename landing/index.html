@@ -209,6 +209,26 @@
       font-weight: 600;
     }
 
+    /* ── Navbar ── */
+    .nav-link {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(26,15,46,0.55);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: #1A0F2E; }
+    #navbar.scrolled {
+      background: rgba(250,248,245,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 1px 0 rgba(26,15,46,0.07);
+    }
+    @media (max-width: 640px) {
+      .nav-links { display: none !important; }
+    }
+
     /* Float animation for icons */
     @keyframes float {
       0%,100% { transform: translateY(0); }
@@ -336,14 +356,20 @@
 <!-- ═══════════════════════════════════════════
      NAVIGATION
 ════════════════════════════════════════════ -->
-<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 py-4 transition-all duration-300">
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 py-3 transition-all duration-300">
   <div class="max-w-5xl mx-auto px-5 flex items-center justify-between">
-    <div class="flex items-center gap-2">
-      <svg width="28" height="28" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+    <a href="#" class="flex items-center gap-2" style="text-decoration:none;">
+      <svg width="26" height="26" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
         <polygon points="40,16 18,62 30,62 40,38 50,62 62,62" fill="#1A0F2E"/>
       </svg>
       <span class="font-heading text-ink" style="font-size:13px;font-weight:800;letter-spacing:0.1em;">APEX TALENT</span>
-    </div>
+    </a>
+    <!-- Nav links (desktop only) -->
+    <nav class="nav-links" style="display:flex;align-items:center;gap:28px;">
+      <a href="#earnings"    class="nav-link">Earnings</a>
+      <a href="#how-it-works" class="nav-link">How It Works</a>
+      <a href="#faq"          class="nav-link">FAQ</a>
+    </nav>
     <a href="#apply"
        class="bg-ink text-white font-heading font-bold text-sm px-5 py-2.5 rounded-full transition-all duration-200 hover:bg-magenta hover:scale-105">
       Apply Now
@@ -449,6 +475,98 @@
       <div class="reveal reveal-delay-3 text-center">
         <div class="font-heading font-black text-gradient" style="font-size:2.2rem;">15+</div>
         <div style="font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;opacity:0.55;margin-top:4px;">Countries in team</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     PERKS — 4 CARDS
+════════════════════════════════════════════ -->
+<section id="earnings" style="padding:64px 20px 96px;position:relative;z-index:10;">
+  <div class="max-w-5xl mx-auto">
+
+    <div class="reveal text-center" style="margin-bottom:56px;">
+      <p class="font-serif" style="font-style:italic;color:#E33BC5;font-size:1.1rem;margin-bottom:10px;">Why this role is different</p>
+      <h2 class="font-heading font-black text-ink tracking-tighter" style="font-size:clamp(2rem,5vw,3.2rem);line-height:1.05;">
+        Unbeatable Perks &<br>Conditions
+      </h2>
+    </div>
+
+    <!-- Hero card — full width -->
+    <div class="card card-lime p-8 reveal reveal-delay-1" style="position:relative;overflow:hidden;margin-bottom:24px;">
+      <div style="position:absolute;top:16px;right:16px;">
+        <span style="background:#CCFF00;color:#1A0F2E;font-size:11px;font-weight:800;padding:4px 10px;border-radius:100px;letter-spacing:0.05em;font-family:'Outfit',sans-serif;">★ TOP PERK</span>
+      </div>
+      <div class="perk-hero-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;">
+        <div>
+          <div class="anim-growth"><div class="growth-bar"></div><div class="growth-bar"></div><div class="growth-bar"></div></div>
+          <h3 class="font-heading font-bold" style="font-size:clamp(1.3rem,3vw,1.6rem);margin-bottom:12px;">Paid in USD — Stable, Global Currency</h3>
+          <p style="font-size:14px;line-height:1.7;opacity:0.65;margin-bottom:4px;">
+            No more watching your income shrink with the peso or naira. You earn in <strong style="opacity:1;">US dollars</strong> — the world's reserve currency. Your purchasing power stays the same no matter what happens to local exchange rates.
+          </p>
+        </div>
+        <div>
+          <div class="income-tiers" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;">
+            <div style="text-align:center;background:rgba(26,15,46,0.06);border-radius:12px;padding:14px 10px;">
+              <span style="display:block;font-size:12px;font-weight:600;opacity:0.5;margin-bottom:4px;">Training</span>
+              <span class="font-heading font-black" style="font-size:1.1rem;">$150/wk</span>
+            </div>
+            <div style="text-align:center;background:rgba(26,15,46,0.06);border-radius:12px;padding:14px 10px;">
+              <span style="display:block;font-size:12px;font-weight:600;opacity:0.5;margin-bottom:4px;">Month 1+</span>
+              <span class="font-heading font-black" style="font-size:1.1rem;">$200–300</span>
+            </div>
+            <div style="text-align:center;background:rgba(26,15,46,0.04);border-radius:12px;padding:14px 10px;border:2px solid #CCFF00;">
+              <span style="display:block;font-size:12px;font-weight:600;opacity:0.5;margin-bottom:4px;">Top Performer</span>
+              <span class="font-heading font-black" style="font-size:1.1rem;color:#E33BC5;">$400+/wk</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            <span class="pay-chip">₮ USDT</span>
+            <span class="pay-chip">🌊 Wise</span>
+            <span class="pay-chip">📱 GCash (PH)</span>
+            <span class="pay-chip">🏦 OPay / Bank (NG)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 smaller cards -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;">
+
+      <!-- Card 2 — flexible shifts -->
+      <div class="card p-8 reveal reveal-delay-2">
+        <div class="anim-clock"><div class="clock-dot"></div></div>
+        <h3 class="font-heading font-bold" style="font-size:1.15rem;margin-bottom:10px;">Flexible Shifts</h3>
+        <p style="font-size:14px;line-height:1.65;opacity:0.65;margin-bottom:16px;">
+          5 days on, 2 days off. Pick your 6–8 hour slot:
+        </p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div style="background:rgba(26,15,46,0.04);border-radius:10px;padding:8px 10px;font-size:12px;font-weight:600;">🌅 6:00–12:00</div>
+          <div style="background:rgba(26,15,46,0.04);border-radius:10px;padding:8px 10px;font-size:12px;font-weight:600;">☀️ 12:00–18:00</div>
+          <div style="background:rgba(26,15,46,0.04);border-radius:10px;padding:8px 10px;font-size:12px;font-weight:600;">🌆 18:00–00:00</div>
+          <div style="background:rgba(26,15,46,0.04);border-radius:10px;padding:8px 10px;font-size:12px;font-weight:600;">🌙 00:00–06:00</div>
+        </div>
+      </div>
+
+      <!-- Card 3 — weekly payout -->
+      <div class="card p-8 reveal reveal-delay-3">
+        <div class="anim-repeat"><div class="repeat-ring"></div><div class="repeat-ring"></div><div class="repeat-ring"></div><div class="repeat-core"></div></div>
+        <h3 class="font-heading font-bold" style="font-size:1.15rem;margin-bottom:10px;">Every Sunday, No Exceptions</h3>
+        <p style="font-size:14px;line-height:1.65;opacity:0.65;">
+          Weekly payout every Sunday. Zero delays, zero hidden fees. Revenue share model — your income grows as your streamers grow.
+        </p>
+      </div>
+
+      <!-- Card 4 — paid training -->
+      <div class="card p-8 reveal reveal-delay-4">
+        <div class="anim-check"><div class="check-mark"></div></div>
+        <h3 class="font-heading font-bold" style="font-size:1.15rem;margin-bottom:10px;">Paid from Day 1</h3>
+        <p style="font-size:14px;line-height:1.65;opacity:0.65;">
+          5–7 days of onboarding with a dedicated mentor. You earn <strong style="opacity:1;">~$30 per training shift</strong>. No unpaid internship. No upfront cost. Ever.
+        </p>
       </div>
 
     </div>
@@ -579,7 +697,7 @@
 
     <div class="reveal text-center" style="margin-bottom:56px;">
       <p class="font-serif" style="font-style:italic;color:#E33BC5;font-size:1.1rem;margin-bottom:10px;">Simple process</p>
-      <h2 class="font-heading font-black text-ink tracking-tighter" style="font-size:clamp(2rem,5vw,3.2rem);line-height:1.05;">
+      <h2 id="how-it-works" class="font-heading font-black text-ink tracking-tighter" style="font-size:clamp(2rem,5vw,3.2rem);line-height:1.05;">
         Apply → Interview → Earn
       </h2>
     </div>
@@ -613,98 +731,6 @@
         </div>
         <h3 class="font-heading font-bold" style="font-size:1rem;margin-bottom:6px;">Paid Training → Earn</h3>
         <p style="font-size:13px;opacity:0.55;line-height:1.6;">5–7 day onboarding at ~$30/shift. First payout next Sunday.</p>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-
-<!-- ═══════════════════════════════════════════
-     PERKS — 4 CARDS
-════════════════════════════════════════════ -->
-<section style="padding:0 20px 96px;position:relative;z-index:10;">
-  <div class="max-w-5xl mx-auto">
-
-    <div class="reveal text-center" style="margin-bottom:56px;">
-      <p class="font-serif" style="font-style:italic;color:#E33BC5;font-size:1.1rem;margin-bottom:10px;">Why this role is different</p>
-      <h2 class="font-heading font-black text-ink tracking-tighter" style="font-size:clamp(2rem,5vw,3.2rem);line-height:1.05;">
-        Unbeatable Perks &<br>Conditions
-      </h2>
-    </div>
-
-    <!-- Hero card — full width -->
-    <div class="card card-lime p-8 reveal reveal-delay-1" style="position:relative;overflow:hidden;margin-bottom:24px;">
-      <div style="position:absolute;top:16px;right:16px;">
-        <span style="background:#CCFF00;color:#1A0F2E;font-size:11px;font-weight:800;padding:4px 10px;border-radius:100px;letter-spacing:0.05em;font-family:'Outfit',sans-serif;">★ TOP PERK</span>
-      </div>
-      <div class="perk-hero-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;">
-        <div>
-          <div class="anim-growth"><div class="growth-bar"></div><div class="growth-bar"></div><div class="growth-bar"></div></div>
-          <h3 class="font-heading font-bold" style="font-size:clamp(1.3rem,3vw,1.6rem);margin-bottom:12px;">Paid in USD — Stable, Global Currency</h3>
-          <p style="font-size:14px;line-height:1.7;opacity:0.65;margin-bottom:4px;">
-            No more watching your income shrink with the peso or naira. You earn in <strong style="opacity:1;">US dollars</strong> — the world's reserve currency. Your purchasing power stays the same no matter what happens to local exchange rates.
-          </p>
-        </div>
-        <div>
-          <div class="income-tiers" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;">
-            <div style="text-align:center;background:rgba(26,15,46,0.06);border-radius:12px;padding:14px 10px;">
-              <span style="display:block;font-size:12px;font-weight:600;opacity:0.5;margin-bottom:4px;">Training</span>
-              <span class="font-heading font-black" style="font-size:1.1rem;">$150/wk</span>
-            </div>
-            <div style="text-align:center;background:rgba(26,15,46,0.06);border-radius:12px;padding:14px 10px;">
-              <span style="display:block;font-size:12px;font-weight:600;opacity:0.5;margin-bottom:4px;">Month 1+</span>
-              <span class="font-heading font-black" style="font-size:1.1rem;">$200–300</span>
-            </div>
-            <div style="text-align:center;background:rgba(26,15,46,0.04);border-radius:12px;padding:14px 10px;border:2px solid #CCFF00;">
-              <span style="display:block;font-size:12px;font-weight:600;opacity:0.5;margin-bottom:4px;">Top Performer</span>
-              <span class="font-heading font-black" style="font-size:1.1rem;color:#E33BC5;">$400+/wk</span>
-            </div>
-          </div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;">
-            <span class="pay-chip">₮ USDT</span>
-            <span class="pay-chip">🌊 Wise</span>
-            <span class="pay-chip">📱 GCash (PH)</span>
-            <span class="pay-chip">🏦 OPay / Bank (NG)</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 3 smaller cards -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;">
-
-      <!-- Card 2 — flexible shifts -->
-      <div class="card p-8 reveal reveal-delay-2">
-        <div class="anim-clock"><div class="clock-dot"></div></div>
-        <h3 class="font-heading font-bold" style="font-size:1.15rem;margin-bottom:10px;">Flexible Shifts</h3>
-        <p style="font-size:14px;line-height:1.65;opacity:0.65;margin-bottom:16px;">
-          5 days on, 2 days off. Pick your 6–8 hour slot:
-        </p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-          <div style="background:rgba(26,15,46,0.04);border-radius:10px;padding:8px 10px;font-size:12px;font-weight:600;">🌅 6:00–12:00</div>
-          <div style="background:rgba(26,15,46,0.04);border-radius:10px;padding:8px 10px;font-size:12px;font-weight:600;">☀️ 12:00–18:00</div>
-          <div style="background:rgba(26,15,46,0.04);border-radius:10px;padding:8px 10px;font-size:12px;font-weight:600;">🌆 18:00–00:00</div>
-          <div style="background:rgba(26,15,46,0.04);border-radius:10px;padding:8px 10px;font-size:12px;font-weight:600;">🌙 00:00–06:00</div>
-        </div>
-      </div>
-
-      <!-- Card 3 — weekly payout -->
-      <div class="card p-8 reveal reveal-delay-3">
-        <div class="anim-repeat"><div class="repeat-ring"></div><div class="repeat-ring"></div><div class="repeat-ring"></div><div class="repeat-core"></div></div>
-        <h3 class="font-heading font-bold" style="font-size:1.15rem;margin-bottom:10px;">Every Sunday, No Exceptions</h3>
-        <p style="font-size:14px;line-height:1.65;opacity:0.65;">
-          Weekly payout every Sunday. Zero delays, zero hidden fees. Revenue share model — your income grows as your streamers grow.
-        </p>
-      </div>
-
-      <!-- Card 4 — paid training -->
-      <div class="card p-8 reveal reveal-delay-4">
-        <div class="anim-check"><div class="check-mark"></div></div>
-        <h3 class="font-heading font-bold" style="font-size:1.15rem;margin-bottom:10px;">Paid from Day 1</h3>
-        <p style="font-size:14px;line-height:1.65;opacity:0.65;">
-          5–7 days of onboarding with a dedicated mentor. You earn <strong style="opacity:1;">~$30 per training shift</strong>. No unpaid internship. No upfront cost. Ever.
-        </p>
       </div>
 
     </div>
@@ -933,7 +959,7 @@
 
     <div class="reveal text-center" style="margin-bottom:56px;">
       <p class="font-serif" style="font-style:italic;color:#E33BC5;font-size:1.1rem;margin-bottom:10px;">Got questions?</p>
-      <h2 class="font-heading font-black text-ink tracking-tighter" style="font-size:clamp(2rem,5vw,3.2rem);line-height:1.05;">
+      <h2 id="faq" class="font-heading font-black text-ink tracking-tighter" style="font-size:clamp(2rem,5vw,3.2rem);line-height:1.05;">
         Frequently Asked
       </h2>
     </div>
@@ -1362,6 +1388,14 @@
       requestAnimationFrame(() => { msg.style.opacity = '1'; });
     }, 300);
   }
+
+  // ── Navbar scroll effect ─────────────────────
+  (function() {
+    var nav = document.getElementById('navbar');
+    window.addEventListener('scroll', function() {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+  })();
 
   // ── Cookie banner ────────────────────────────
   (function() {
