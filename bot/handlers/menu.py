@@ -129,19 +129,18 @@ async def cb_back_main(callback: CallbackQuery, state: FSMContext):
 
 # --- Ask a Question ---
 
-@router.callback_query(MenuStates.main_menu, F.data == "menu_question")
+@router.callback_query(F.data == "menu_question")
 async def cb_menu_question(callback: CallbackQuery, state: FSMContext):
+    """Ask a question — works from any state (including Reply button on admin messages)."""
     await callback.answer()
     try:
         await callback.message.edit_text(
-            "What would you like to know? 🤔\n\n"
-            "Type your question and our team will get back to you shortly.",
+            "Type your message and our team will get back to you shortly. 💬",
             reply_markup=_back_kb(),
         )
     except Exception:
         await callback.message.answer(
-            "What would you like to know? 🤔\n\n"
-            "Type your question and our team will get back to you shortly.",
+            "Type your message and our team will get back to you shortly. 💬",
             reply_markup=_back_kb(),
         )
     await state.set_state(MenuStates.waiting_question)
@@ -339,3 +338,36 @@ async def cb_menu_company(callback: CallbackQuery, state: FSMContext):
         await callback.message.edit_text(text, reply_markup=_back_kb())
     except Exception:
         await callback.message.answer(text, reply_markup=_back_kb())
+
+
+# --- Catch-all: forward free text in main_menu to admin (enables continuous chat) ---
+
+@router.message(MenuStates.main_menu, F.text)
+async def forward_text_to_admin(message: Message, state: FSMContext):
+    """Any text typed in main menu → forwarded to admin as a message."""
+    text = message.text.strip() if message.text else ""
+    if not text or text.startswith("/"):
+        return
+
+    username = message.from_user.username or "N/A"
+    first_name = message.from_user.first_name or "Unknown"
+    admin_text = (
+        f"💬 MESSAGE from {first_name} "
+        f"(@{username}, ID: {message.from_user.id})\n\n"
+        f"{text}\n\n"
+        f"Reply to this message to answer."
+    )
+    try:
+        await message.bot.send_message(config.ADMIN_CHAT_ID, admin_text)
+    except Exception:
+        logger.exception("Failed to forward message to admin")
+        await message.answer("Sorry, something went wrong. Please try again.")
+        return
+
+    await message.answer(
+        "Message sent! Our team will reply shortly. 💬",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Apply Now", callback_data="menu_apply")],
+            [InlineKeyboardButton(text="<< Back to Menu", callback_data="back_main")],
+        ]),
+    )

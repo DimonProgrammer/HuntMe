@@ -58,7 +58,12 @@ async def admin_reply_to_candidate(message: Message):
         pass
 
     try:
-        await message.bot.send_message(user_id, message.text)
+        from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+        reply_kb = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Reply", callback_data="menu_question")],
+            [InlineKeyboardButton(text="<< Back to Menu", callback_data="back_main")],
+        ])
+        await message.bot.send_message(user_id, message.text, reply_markup=reply_kb)
         name_str = f" ({candidate_name})" if candidate_name else ""
         preview = message.text[:80] + ("..." if len(message.text) > 80 else "")
         await message.answer(
@@ -340,7 +345,12 @@ async def cmd_msg(message: Message):
         pass
 
     try:
-        await message.bot.send_message(user_id, text)
+        from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+        reply_kb = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Reply", callback_data="menu_question")],
+            [InlineKeyboardButton(text="<< Back to Menu", callback_data="back_main")],
+        ])
+        await message.bot.send_message(user_id, text, reply_markup=reply_kb)
         name_str = f" ({candidate_name})" if candidate_name else ""
         preview = text[:80] + ("..." if len(text) > 80 else "")
         await message.answer(
