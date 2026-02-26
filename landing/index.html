@@ -27,31 +27,9 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,400;1,9..144,400;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Fraunces:ital,opsz,wght@1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            ink:     '#1A0F2E',
-            magenta: '#E33BC5',
-            lime:    '#CCFF00',
-          },
-          fontFamily: {
-            heading: ['"Outfit"', 'sans-serif'],
-            serif:   ['"Fraunces"', 'serif'],
-            body:    ['"Plus Jakarta Sans"', 'sans-serif'],
-          },
-          boxShadow: {
-            card: '0 20px 40px -10px rgba(26,15,46,0.08)',
-            'card-hover': '0 32px 64px -16px rgba(26,15,46,0.16)',
-          }
-        }
-      }
-    }
-  </script>
+  <!-- Tailwind CDN removed for production — utilities inlined -->
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -62,20 +40,21 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
       color: #1A0F2E;
       background: linear-gradient(150deg, #FFF5F0 0%, #FFFAED 50%, #FFF3B0 100%);
-      background-attachment: fixed;
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── Grain overlay ── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.4;
+    /* Grain overlay — desktop only (heavy on mobile GPU) */
+    @media (min-width: 768px) {
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.4;
+      }
     }
 
     /* ── Typography ── */
@@ -350,6 +329,58 @@
     .contact-pill-wa { background: #22C55E; color: #fff; }
     .contact-pill-tg { background: #0EA5E9; color: #fff; }
     .contact-pill-email { background: #6366F1; color: #fff; }
+
+    /* ── Utility classes (replaces Tailwind CDN) ── */
+    .fixed { position: fixed; }
+    .relative { position: relative; }
+    .top-0 { top: 0; }
+    .left-0 { left: 0; }
+    .right-0 { right: 0; }
+    .z-10 { z-index: 10; }
+    .z-50 { z-index: 50; }
+    .flex { display: flex; }
+    .inline-block { display: inline-block; }
+    .inline-flex { display: inline-flex; }
+    .hidden { display: none; }
+    .min-h-screen { min-height: 100vh; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .justify-center { justify-content: center; }
+    .gap-2 { gap: 0.5rem; }
+    .gap-8 { gap: 2rem; }
+    .overflow-hidden { overflow: hidden; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
+    .max-w-5xl { max-width: 64rem; }
+    .max-w-4xl { max-width: 56rem; }
+    .max-w-2xl { max-width: 42rem; }
+    .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
+    .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+    .py-2\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
+    .p-7 { padding: 1.75rem; }
+    .p-8 { padding: 2rem; }
+    .text-center { text-align: center; }
+    .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+    .font-bold { font-weight: 700; }
+    .font-black { font-weight: 900; }
+    .tracking-tighter { letter-spacing: -0.05em; }
+    .text-ink { color: #1A0F2E; }
+    .text-white { color: #fff; }
+    .bg-ink { background-color: #1A0F2E; }
+    .bg-magenta { background-color: #E33BC5; }
+    .rounded-full { border-radius: 9999px; }
+    .rounded-2xl { border-radius: 1rem; }
+    .transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+    .duration-300 { transition-duration: 300ms; }
+    .duration-200 { transition-duration: 200ms; }
+    .hover\:bg-magenta:hover { background-color: #E33BC5; }
+    .hover\:scale-105:hover { transform: scale(1.05); }
+    .hover\:brightness-110:hover { filter: brightness(1.1); }
+
+    /* Trust bar grid — responsive 2→4 columns */
+    .trust-grid { grid-template-columns: repeat(2, 1fr); }
+    @media (min-width: 640px) {
+      .trust-grid { grid-template-columns: repeat(4, 1fr); }
+    }
   </style>
 
   <!-- Yandex.Metrika counter -->
@@ -448,6 +479,7 @@
     <div class="animate-fade-up hero-photo-wrap" style="animation-delay:0.6s;position:relative;">
       <div style="aspect-ratio:1/1;position:relative;">
         <img src="freepik__background__36230.png" alt="Remote operator working from home"
+             width="600" height="600" fetchpriority="high"
              style="width:100%;height:100%;object-fit:contain;display:block;mix-blend-mode:multiply;">
       </div>
       <!-- Decorative accent -->
@@ -473,7 +505,7 @@
 ════════════════════════════════════════════ -->
 <section class="relative z-10" style="border-top:1px solid rgba(26,15,46,0.08);border-bottom:1px solid rgba(26,15,46,0.08);padding:32px 20px;">
   <div class="max-w-4xl mx-auto">
-    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:24px;" class="sm:grid-cols-4">
+    <div style="display:grid;gap:24px;" class="trust-grid">
 
       <div class="reveal text-center">
         <div class="font-heading font-black text-gradient" style="font-size:2.2rem;">$400+</div>
