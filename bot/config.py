@@ -28,6 +28,8 @@ class Config:
     OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "")
     OPENROUTER_MODEL: str = os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3.1-8b-instruct:free")
 
+    GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
+
     DATABASE_URL: str = _fix_db_url(os.getenv("DATABASE_URL", "sqlite+aiosqlite:///huntme.db"))
 
     N8N_WEBHOOK_URL: str = os.getenv("N8N_WEBHOOK_URL", "http://n8n:5678/webhook")

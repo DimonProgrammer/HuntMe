@@ -1315,7 +1315,7 @@
     };
 
     try {
-      await fetch('/api/submit', {
+      await fetch('https://apex-talent-bot.onrender.com/webhook/landing', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),

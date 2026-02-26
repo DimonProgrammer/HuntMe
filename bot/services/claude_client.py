@@ -1,7 +1,7 @@
-"""AI client — supports OpenRouter (free tier) and Anthropic API.
+"""AI client — supports Gemini (primary), OpenRouter (fallback), and Anthropic API.
 
-Uses OpenRouter by default (OPENROUTER_API_KEY).
-Falls back to Anthropic if CLAUDE_API_KEY is set.
+Priority: Gemini (GEMINI_API_KEY) → OpenRouter (OPENROUTER_API_KEY) → Anthropic (CLAUDE_API_KEY).
+Gemini 2.0 Flash is free (1500 req/day) and provides best quality for screening.
 """
 
 import logging
@@ -15,7 +15,14 @@ logger = logging.getLogger(__name__)
 
 class AIClient:
     def __init__(self):
-        if config.OPENROUTER_API_KEY:
+        if config.GEMINI_API_KEY:
+            self.provider = "gemini"
+            self.api_key = config.GEMINI_API_KEY
+            # Gemini OpenAI-compatible endpoint
+            self.base_url = "https://generativelanguage.googleapis.com/v1beta/openai"
+            # gemini-2.0-flash: free, fast, high quality
+            self.model = "gemini-2.0-flash"
+        elif config.OPENROUTER_API_KEY:
             self.provider = "openrouter"
             self.api_key = config.OPENROUTER_API_KEY
             self.base_url = "https://openrouter.ai/api/v1"
@@ -36,19 +43,21 @@ class AIClient:
         if self.provider == "none":
             return '{"english_score":5,"hardware_score":5,"availability_score":5,"motivation_score":5,"experience_score":5,"overall_score":50,"recommendation":"MAYBE","reasoning":"AI screening unavailable — manual review needed","suggested_response":"Thank you for applying! Our team will review your application and get back to you within 24 hours."}'
 
-        if self.provider == "openrouter":
-            return await self._openrouter_complete(system, user_message, max_tokens)
+        if self.provider in ("gemini", "openrouter"):
+            return await self._openai_compat_complete(system, user_message, max_tokens)
         else:
             return await self._anthropic_complete(system, user_message, max_tokens)
 
-    async def _openrouter_complete(self, system: str, user_message: str, max_tokens: int) -> str:
-        """Call OpenRouter API (OpenAI-compatible)."""
+    async def _openai_compat_complete(self, system: str, user_message: str, max_tokens: int) -> str:
+        """Call any OpenAI-compatible API (Gemini or OpenRouter)."""
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
-            "HTTP-Referer": "https://apextalent.pro",
-            "X-Title": "Apex Talent Bot",
         }
+        if self.provider == "openrouter":
+            headers["HTTP-Referer"] = "https://apextalent.pro"
+            headers["X-Title"] = "Apex Talent Bot"
+
         payload = {
             "model": self.model,
             "max_tokens": max_tokens,
@@ -66,9 +75,13 @@ class AIClient:
             ) as resp:
                 data = await resp.json()
                 if resp.status != 200:
-                    logger.error("OpenRouter error %s: %s", resp.status, data)
-                    raise Exception(f"OpenRouter API error: {resp.status}")
+                    logger.error("%s error %s: %s", self.provider, resp.status, data)
+                    raise Exception(f"{self.provider} API error: {resp.status}")
                 return data["choices"][0]["message"]["content"]
+
+    async def _openrouter_complete(self, system: str, user_message: str, max_tokens: int) -> str:
+        """Kept for compatibility — routes to _openai_compat_complete."""
+        return await self._openai_compat_complete(system, user_message, max_tokens)
 
     async def _anthropic_complete(self, system: str, user_message: str, max_tokens: int) -> str:
         """Call Anthropic API directly."""
