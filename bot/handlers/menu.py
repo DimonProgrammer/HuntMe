@@ -64,20 +64,23 @@ MAIN_MENU_TEXT = (
 async def cmd_start(message: Message, state: FSMContext):
     await state.clear()
 
-    # Parse referral deep link: /start ref_123456
-    referrer_id = None
+    # Parse deep link: /start <param>
+    # ref_123456 → referral, anything else → UTM source
     parts = message.text.split()
-    if len(parts) > 1 and parts[1].startswith("ref_"):
-        try:
-            referrer_id = int(parts[1].removeprefix("ref_"))
-            # Don't let users refer themselves
-            if referrer_id == message.from_user.id:
-                referrer_id = None
-            else:
-                await state.update_data(referrer_tg_id=referrer_id)
-                await _track_event(message.from_user.id, "referral_click", "start", {"referrer_id": referrer_id})
-        except ValueError:
-            pass
+    if len(parts) > 1:
+        param = parts[1].strip()
+        if param.startswith("ref_"):
+            try:
+                referrer_id = int(param.removeprefix("ref_"))
+                if referrer_id != message.from_user.id:
+                    await state.update_data(referrer_tg_id=referrer_id)
+                    await _track_event(message.from_user.id, "referral_click", "start", {"referrer_id": referrer_id})
+            except ValueError:
+                pass
+        else:
+            # UTM source: fb_ph, jb_ng, landing, ig, tw, etc.
+            await state.update_data(utm_source=param)
+            await _track_event(message.from_user.id, "utm_source", "start", {"source": param})
 
     await _track_event(message.from_user.id, "bot_started", "start")
     await message.answer(MAIN_MENU_TEXT, reply_markup=_main_menu_kb())

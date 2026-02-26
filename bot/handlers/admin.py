@@ -30,29 +30,36 @@ def is_admin(message: Message) -> bool:
 
 @router.message(F.reply_to_message, F.func(is_admin))
 async def admin_reply_to_candidate(message: Message):
-    """Admin replies to a forwarded question → send answer to candidate."""
+    """Admin replies to a forwarded question or msg_ prompt → send to candidate."""
     replied = message.reply_to_message
     if not replied or not replied.text:
         return
 
-    # Only handle replies to question-forwarding messages
-    if "❓ QUESTION from" not in replied.text:
+    # Extract user ID — works for question messages, msg_ prompts, and application reports
+    user_id = None
+
+    if "❓ QUESTION from" in replied.text:
+        match = re.search(r"ID:\s*(\d+)", replied.text)
+        if match:
+            user_id = int(match.group(1))
+    elif "Reply to THIS message" in replied.text and "candidate ID" in replied.text:
+        match = re.search(r"candidate ID (\d+)", replied.text)
+        if match:
+            user_id = int(match.group(1))
+    elif "ID:" in replied.text:
+        # Catch-all for application reports
+        match = re.search(r"ID:\s*(\d+)", replied.text)
+        if match:
+            user_id = int(match.group(1))
+
+    if not user_id:
         return
 
-    # Extract user ID from the forwarded message
-    match = re.search(r"ID:\s*(\d+)", replied.text)
-    if not match:
-        return
-
-    user_id = int(match.group(1))
     try:
-        await message.bot.send_message(
-            user_id,
-            f"Reply from our team:\n\n{message.text}",
-        )
-        await message.answer("✅ Answer sent to candidate.")
+        await message.bot.send_message(user_id, message.text)
+        await message.answer(f"Sent to {user_id}.")
     except Exception:
-        await message.answer("❌ Failed to send — candidate may have blocked the bot.")
+        await message.answer("Failed — candidate may have blocked the bot.")
 
 
 # ═══ GENERATE JOB POST ═══
@@ -237,10 +244,9 @@ async def cb_reject(callback: CallbackQuery):
             "Unfortunately, we're not able to move forward with your application "
             "at this time. We'll keep your information on file for future openings.\n\n"
             "If you know anyone who might be interested in a remote moderator position, "
-            "feel free to send them our way!\n\n"
+            "feel free to send them our way: t.me/apextalent_bot\n\n"
             "Wishing you all the best! 🙂",
         )
-        # Update status in DB
         try:
             async with async_session() as session:
                 result = await session.execute(
@@ -257,6 +263,61 @@ async def cb_reject(callback: CallbackQuery):
         await callback.message.edit_text(callback.message.text + "\n\n❌ REJECTED")
     except Exception:
         await callback.answer("Failed to send")
+
+
+# ═══ MESSAGE CANDIDATE (inline button) ═══
+
+@router.callback_query(F.data.startswith("msg_"))
+async def cb_message_candidate(callback: CallbackQuery):
+    """Prompt admin to reply with a message for the candidate."""
+    user_id = callback.data.removeprefix("msg_")
+    await callback.answer()
+    await callback.message.answer(
+        f"Reply to THIS message with your text for candidate ID {user_id}.\n"
+        "The message will be sent to them directly."
+    )
+
+
+# ═══ /msg — Send direct message to any candidate ═══
+
+@router.message(Command("msg"), F.func(is_admin))
+async def cmd_msg(message: Message):
+    """Usage: /msg <user_id> <text>"""
+    parts = message.text.split(maxsplit=2)
+    if len(parts) < 3:
+        await message.answer("Usage: /msg <user_id or @username> <text>")
+        return
+
+    target = parts[1].strip()
+    text = parts[2].strip()
+
+    # Resolve @username to user_id
+    if target.startswith("@"):
+        try:
+            async with async_session() as session:
+                result = await session.execute(
+                    select(Candidate).where(Candidate.tg_username == target.lstrip("@"))
+                )
+                cand = result.scalar_one_or_none()
+                if not cand:
+                    await message.answer(f"Candidate {target} not found in DB.")
+                    return
+                user_id = cand.tg_user_id
+        except Exception:
+            await message.answer("DB error.")
+            return
+    else:
+        try:
+            user_id = int(target)
+        except ValueError:
+            await message.answer("Invalid user ID. Use a number or @username.")
+            return
+
+    try:
+        await message.bot.send_message(user_id, text)
+        await message.answer(f"Sent to {user_id}.")
+    except Exception:
+        await message.answer("Failed — user may have blocked the bot.")
 
 
 # ═══ FUNNEL ANALYTICS ═══
@@ -341,19 +402,105 @@ async def cmd_funnel(message: Message):
     await message.answer("\n".join(lines))
 
 
+# ═══ UTM SOURCE ANALYTICS ═══
+
+@router.message(Command("sources"), F.func(is_admin))
+async def cmd_sources(message: Message):
+    """Show candidate acquisition by UTM source."""
+    async with async_session() as session:
+        # From candidates table
+        result = await session.execute(
+            select(Candidate.utm_source, func.count(Candidate.id))
+            .group_by(Candidate.utm_source)
+            .order_by(func.count(Candidate.id).desc())
+        )
+        candidate_sources = result.all()
+
+        # From funnel events (includes those who didn't finish)
+        events = await session.execute(
+            select(FunnelEvent.data, func.count(func.distinct(FunnelEvent.tg_user_id)))
+            .where(FunnelEvent.event_type == "utm_source")
+            .group_by(FunnelEvent.data)
+        )
+        event_sources = events.all()
+
+    lines = ["📊 Traffic Sources\n"]
+
+    if event_sources:
+        lines.append("All visitors (from funnel events):")
+        for data_json, count in event_sources:
+            source = data_json or "unknown"
+            lines.append(f"  {source}: {count}")
+
+    lines.append("")
+    if candidate_sources:
+        lines.append("Completed applications:")
+        for source, count in candidate_sources:
+            lines.append(f"  {source or 'direct'}: {count}")
+    else:
+        lines.append("No completed applications yet.")
+
+    await message.answer("\n".join(lines))
+
+
+# ═══ /candidates — list recent candidates ═══
+
+@router.message(Command("candidates"), F.func(is_admin))
+async def cmd_candidates(message: Message):
+    """List recent candidates with status."""
+    async with async_session() as session:
+        result = await session.execute(
+            select(Candidate)
+            .order_by(Candidate.created_at.desc())
+            .limit(20)
+        )
+        candidates = result.scalars().all()
+
+    if not candidates:
+        await message.answer("No candidates yet.")
+        return
+
+    lines = ["Recent candidates:\n"]
+    for c in candidates:
+        icon = {"screened": "🟡", "interview_invited": "🟢", "active": "✅",
+                "declined": "❌", "churned": "⚫", "new": "⚪"}.get(c.status, "❓")
+        flags = []
+        if c.age and c.age < 18:
+            flags.append("U18")
+        if not c.has_pc:
+            flags.append("NoPC")
+        if c.english_level == "Beginner":
+            flags.append("LowEng")
+        if c.hardware_compatible is False:
+            flags.append("BadHW")
+        flag_str = f" [{','.join(flags)}]" if flags else ""
+        lines.append(
+            f"{icon} {c.name} | @{c.tg_username or 'N/A'} | "
+            f"{c.status} | {c.score or '-'}/100{flag_str}"
+        )
+
+    await message.answer("\n".join(lines))
+
+
 # ═══ HELP ═══
 
 @router.message(Command("help"), F.func(is_admin))
 async def cmd_help(message: Message):
     await message.answer(
         "Admin commands:\n\n"
-        "/post [ph|ng|latam] — Generate a job posting\n"
-        "/screen <text> — Screen a candidate's application\n"
-        "/pipeline — View candidate funnel\n"
+        "/pipeline — Candidate counts by status\n"
+        "/candidates — Recent candidates list\n"
         "/funnel — Step-by-step conversion analytics\n"
+        "/sources — Traffic source analytics (UTM)\n"
         "/stats — Earnings estimate\n"
-        "/ref — Show referral link\n"
+        "/msg <id> <text> — Send message to candidate\n"
+        "/post [ph|ng|latam] — Generate job posting\n"
+        "/screen <text> — AI-screen text\n"
+        "/ref — Referral link\n"
         "/help — This message\n\n"
-        "To answer candidate questions:\n"
-        "Reply to any ❓ QUESTION message to send your answer directly to the candidate."
+        "Inline buttons on each application:\n"
+        "✅ Interview — send invite\n"
+        "❌ Reject — send rejection\n"
+        "💬 Message — send custom text\n\n"
+        "Reply to any ❓ QUESTION message to answer the candidate."
     )

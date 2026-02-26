@@ -49,6 +49,7 @@ class Candidate(Base):
 
     # Referral tracking
     referrer_tg_id: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)
+    utm_source: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
 
     # Screening results
     score: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)

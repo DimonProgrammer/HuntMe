@@ -23,13 +23,6 @@ from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMar
 from bot.config import config
 from bot.database import async_session
 from bot.database.models import Candidate, FunnelEvent
-from bot.services.followup import (
-    DECLINE_ENGLISH,
-    DECLINE_HARDWARE,
-    DECLINE_NO_PC,
-    DECLINE_STUDENT_INPERSON,
-    DECLINE_UNDERAGE,
-)
 from bot.services.hardware_checker import quick_check
 from bot.services.objection_handler import detect_objection, get_response
 from bot.services.screener import ScreeningResult, screen_candidate
@@ -153,10 +146,8 @@ async def _forward_question_to_admin(message: Message, state: FSMContext, text: 
 # ═══ STEP PROMPT SENDER (used for back nav + question reminders) ═══
 
 def _progress(step: int, total: int = 11) -> str:
-    """Return a progress bar like [████░░░░░░] Step 3/11"""
-    filled = round(step / total * 10)
-    bar = "█" * filled + "░" * (10 - filled)
-    return f"[{bar}] Step {step}/{total}"
+    """Minimal step counter."""
+    return f"Step {step}/{total}"
 
 
 async def _send_step_prompt(target, state: FSMContext, set_state=False):
@@ -402,19 +393,17 @@ async def process_no_pc_followup(callback: CallbackQuery, state: FSMContext):
     choice = callback.data.removeprefix("nopc_")
     await callback.answer()
 
-    if choice == "soon":
-        await _track_event(callback.from_user.id, "declined", "no_pc_followup", {"reason": "no_pc_soon"})
-        await callback.message.answer(
-            "That's great! 🙂 Just send /start when your PC is ready "
-            "and we'll pick up where you left off.\n\n"
-            "💡 Know someone with a PC who wants remote work? "
-            "Share t.me/apextalent_bot — $150/week! 🍀"
-        )
-    else:
-        await _track_event(callback.from_user.id, "declined", "no_pc_followup", {"reason": "no_pc_no_plans"})
-        await callback.message.answer(DECLINE_NO_PC)
+    await state.update_data(no_pc_plan=choice)
+    await _track_event(callback.from_user.id, "step_completed", "no_pc_followup", {"plan": choice})
 
-    await state.clear()
+    # Continue to age instead of declining
+    await state.set_state(OperatorForm.waiting_age)
+    kb = InlineKeyboardMarkup(inline_keyboard=[_back_row()])
+    await callback.message.answer(
+        "Got it, no worries! Let's continue — we'll figure out the PC situation later.\n\n"
+        f"{_progress(3)}\n\nHow old are you?",
+        reply_markup=kb,
+    )
 
 
 # ═══ STEP 3: Age ═══
@@ -439,14 +428,6 @@ async def process_age(message: Message, state: FSMContext):
             await message.answer("Please enter your age as a number (e.g., 22).")
             return
 
-    if age < 18:
-        await state.update_data(age=age)
-        await _track_event(message.from_user.id, "declined", "age", {"age": age, "reason": "underage"})
-        await message.answer(DECLINE_UNDERAGE)
-        await _save_candidate(message, await state.get_data(), status="declined", notes="underage")
-        await state.clear()
-        return
-
     await state.update_data(age=age)
     await _track_event(message.from_user.id, "step_completed", "age", {"age": age})
     await state.set_state(OperatorForm.waiting_study_work)
@@ -467,19 +448,7 @@ async def process_study_work(callback: CallbackQuery, state: FSMContext):
     status = callback.data.removeprefix("study_")
     await callback.answer()
 
-    if status == "inperson":
-        await state.update_data(study_status="student_inperson")
-        await _track_event(callback.from_user.id, "declined", "study_work", {"status": "inperson"})
-        await callback.message.answer(DECLINE_STUDENT_INPERSON)
-        await _save_candidate(
-            callback.message, await state.get_data(),
-            status="declined", notes="in-person student",
-            user=callback.from_user,
-        )
-        await state.clear()
-        return
-
-    mapped = {"working": "working", "distance": "student_distance", "neither": "neither"}
+    mapped = {"working": "working", "distance": "student_distance", "inperson": "student_inperson", "neither": "neither"}
     study_val = mapped.get(status, status)
     await state.update_data(study_status=study_val)
     await _track_event(callback.from_user.id, "step_completed", "study_work", {"status": study_val})
@@ -512,19 +481,7 @@ async def process_english(callback: CallbackQuery, state: FSMContext):
     level = callback.data.removeprefix("eng_")
     await callback.answer()
 
-    if level == "beginner":
-        await state.update_data(english_level="beginner")
-        await _track_event(callback.from_user.id, "declined", "english", {"level": "beginner"})
-        await callback.message.answer(DECLINE_ENGLISH)
-        await _save_candidate(
-            callback.message, await state.get_data(),
-            status="declined", notes="english below B1",
-            user=callback.from_user,
-        )
-        await state.clear()
-        return
-
-    level_map = {"b1": "B1", "b2": "B2", "c1": "C1", "native": "Native"}
+    level_map = {"beginner": "Beginner", "b1": "B1", "b2": "B2", "c1": "C1", "native": "Native"}
     eng_val = level_map.get(level, level)
     await state.update_data(english_level=eng_val)
     await _track_event(callback.from_user.id, "step_completed", "english", {"level": eng_val})
@@ -742,14 +699,6 @@ async def process_contact(message: Message, state: FSMContext):
     data = await state.get_data()
     await state.clear()
 
-    # Hardware decline
-    if data.get("hardware_compatible") is False:
-        await _track_event(message.from_user.id, "declined", "final", {"reason": "hardware_incompatible"})
-        await message.answer(DECLINE_HARDWARE)
-        await _save_candidate(message, data, status="declined", notes="hardware incompatible")
-        await _notify_admin(message, data, None, declined_reason="hardware")
-        return
-
     # AI screening (with fallback if AI unavailable)
     await message.answer(
         "Thank you for completing the application! 🎉\n\n"
@@ -831,6 +780,7 @@ async def _save_candidate(message, data, status="new", score=None, recommendatio
                 start_date=data.get("start_date"),
                 contact_info=data.get("contact_info"),
                 referrer_tg_id=data.get("referrer_tg_id"),
+                utm_source=data.get("utm_source"),
                 score=score,
                 recommendation=recommendation,
                 status=status,
@@ -845,44 +795,57 @@ async def _save_candidate(message, data, status="new", score=None, recommendatio
 
 # ═══ ADMIN NOTIFICATION ═══
 
-async def _notify_admin(message, data, result, declined_reason=None):
-    if declined_reason:
-        admin_text = (
-            f"[OPERATOR — AUTO-DECLINED: {declined_reason.upper()}]\n\n"
-            f"Name: {data.get('name', 'N/A')}\n"
-            f"TG: @{message.from_user.username or 'N/A'} (ID: {message.from_user.id})\n"
-            f"Age: {data.get('age', 'N/A')}\n"
-            f"PC: {data.get('has_pc', 'N/A')} | Study: {data.get('study_status', 'N/A')}\n"
-            f"CPU: {data.get('cpu_model', 'N/A')}\n"
-            f"GPU: {data.get('gpu_model', 'N/A')}\n"
-            f"Issues: {data.get('hardware_issues', 'N/A')}"
-        )
-        keyboard = None
-    else:
-        icon = {"PASS": "🟢", "MAYBE": "🟡", "REJECT": "🔴"}.get(result.recommendation, "❓")
-        admin_text = (
-            f"[OPERATOR] {icon} {result.recommendation} — Score: {result.overall_score}/100\n\n"
-            f"Name: {data.get('name', 'N/A')}\n"
-            f"TG: @{message.from_user.username or 'N/A'} (ID: {message.from_user.id})\n"
-            f"Age: {data.get('age', 'N/A')} | English: {data.get('english_level', 'N/A')}\n"
-            f"Study/Work: {data.get('study_status', 'N/A')}\n"
-            f"CPU: {data.get('cpu_model', 'N/A')} | GPU: {data.get('gpu_model', 'N/A')}\n"
-            f"HW Compatible: {'✅' if data.get('hardware_compatible') else '❌'}\n"
-            f"Internet: {data.get('internet_speed', 'N/A')}\n"
-            f"Start: {data.get('start_date', 'N/A')}\n"
-            f"Contact: {data.get('contact_info', 'N/A')}\n"
-            f"{'Referred by: ' + str(data.get('referrer_tg_id')) if data.get('referrer_tg_id') else ''}\n\n"
-            f"Scores: HW={result.hardware_score} | Eng={result.english_score} | "
-            f"Avail={result.availability_score} | Motiv={result.motivation_score} | "
-            f"Exp={result.experience_score}\n\n"
-            f"Reasoning: {result.reasoning}"
-        )
-        keyboard = InlineKeyboardMarkup(inline_keyboard=[
-            [
-                InlineKeyboardButton(text="✅ Send Interview Invite", callback_data=f"ref_{message.from_user.id}"),
-                InlineKeyboardButton(text="❌ Reject", callback_data=f"rej_{message.from_user.id}"),
-            ],
-        ])
+async def _notify_admin(message, data, result):
+    icon = {"PASS": "🟢", "MAYBE": "🟡", "REJECT": "🔴"}.get(result.recommendation, "❓")
+
+    # Build flags for issues admin should check
+    flags = []
+    if not data.get("has_pc"):
+        flags.append("⚠️ NO PC")
+    if data.get("no_pc_plan"):
+        flags.append(f"PC plan: {data.get('no_pc_plan')}")
+    age = data.get("age")
+    if age and age < 18:
+        flags.append("⚠️ UNDERAGE")
+    if data.get("study_status") == "student_inperson":
+        flags.append("⚠️ IN-PERSON STUDENT")
+    if data.get("english_level") == "Beginner":
+        flags.append("⚠️ BASIC ENGLISH")
+    if data.get("hardware_compatible") is False:
+        flags.append("⚠️ HW INCOMPATIBLE")
+    if data.get("hardware_compatible") is None:
+        flags.append("⚠️ HW NOT VERIFIED")
+    flags_str = " | ".join(flags) if flags else "None"
+
+    admin_text = (
+        f"[OPERATOR] {icon} {result.recommendation} — Score: {result.overall_score}/100\n"
+        f"Flags: {flags_str}\n\n"
+        f"Name: {data.get('name', 'N/A')}\n"
+        f"TG: @{message.from_user.username or 'N/A'} (ID: {message.from_user.id})\n"
+        f"Age: {data.get('age', 'N/A')} | English: {data.get('english_level', 'N/A')}\n"
+        f"Study/Work: {data.get('study_status', 'N/A')}\n"
+        f"PC: {'Yes (' + data.get('pc_type', '?') + ')' if data.get('has_pc') else 'No'}\n"
+        f"CPU: {data.get('cpu_model', 'N/A')} | GPU: {data.get('gpu_model', 'N/A')}\n"
+        f"HW: {data.get('cpu_status', 'N/A')} / {data.get('gpu_status', 'N/A')}\n"
+        f"Internet: {data.get('internet_speed', 'N/A')}\n"
+        f"Start: {data.get('start_date', 'N/A')}\n"
+        f"Contact: {data.get('contact_info', 'N/A')}\n"
+        f"{'Referred by: ' + str(data.get('referrer_tg_id')) + chr(10) if data.get('referrer_tg_id') else ''}"
+        f"{'Source: ' + data.get('utm_source', '') + chr(10) if data.get('utm_source') else ''}\n"
+        f"AI: HW={result.hardware_score} Eng={result.english_score} "
+        f"Avail={result.availability_score} Motiv={result.motivation_score} "
+        f"Exp={result.experience_score}\n"
+        f"Reasoning: {result.reasoning}"
+    )
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text="✅ Interview", callback_data=f"ref_{message.from_user.id}"),
+            InlineKeyboardButton(text="❌ Reject", callback_data=f"rej_{message.from_user.id}"),
+        ],
+        [
+            InlineKeyboardButton(text="💬 Message", callback_data=f"msg_{message.from_user.id}"),
+        ],
+    ])
 
     try:
         await message.bot.send_message(config.ADMIN_CHAT_ID, admin_text, reply_markup=keyboard)
