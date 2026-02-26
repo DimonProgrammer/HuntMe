@@ -1,0 +1,32 @@
+name: Bot Tests
+
+on:
+  push:
+    branches: [main]
+    paths: ['bot/**', 'tests/**']
+  pull_request:
+    branches: [main]
+    paths: ['bot/**', 'tests/**']
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-asyncio
+
+      - name: Run tests
+        env:
+          DATABASE_URL: "sqlite+aiosqlite:///test.db"
+          BOT_TOKEN: "0:test"
+          ADMIN_CHAT_ID: "999"
+        run: pytest -v --tb=short
