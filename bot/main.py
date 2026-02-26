@@ -9,7 +9,7 @@ from typing import Optional
 
 from aiohttp import web
 from aiogram import BaseMiddleware, Bot, Dispatcher
-from aiogram.fsm.storage.memory import MemoryStorage
+from bot.services.pg_storage import PostgresStorage
 from aiogram.types import Message, TelegramObject
 
 from bot.config import config
@@ -220,7 +220,7 @@ async def main():
     global _bot
     bot = LoggingBot(token=config.BOT_TOKEN)
     _bot = bot
-    dp = Dispatcher(storage=MemoryStorage())
+    dp = Dispatcher(storage=PostgresStorage())
 
     # Live feed: init service + register incoming-message middleware
     live_feed.init(bot, channel_id=config.LIVE_FEED_CHANNEL_ID, admin_id=config.ADMIN_CHAT_ID)

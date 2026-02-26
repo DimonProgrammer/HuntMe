@@ -75,6 +75,18 @@ class FunnelEvent(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 
+class FsmState(Base):
+    """Persistent FSM storage — survives bot restarts."""
+    __tablename__ = "fsm_states"
+
+    chat_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    user_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    bot_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    state: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    data: Mapped[Optional[str]] = mapped_column(Text, nullable=True, default="{}")
+    updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
+
+
 class JobPosting(Base):
     __tablename__ = "job_postings"
 
