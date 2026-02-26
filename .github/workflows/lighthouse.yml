@@ -1,0 +1,60 @@
+name: Lighthouse Audit
+
+on:
+  push:
+    branches: [main]
+    paths: ['landing/**']
+  schedule:
+    - cron: '0 9 * * 1'  # Every Monday 9:00 UTC
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for Vercel deploy
+        if: github.event_name == 'push'
+        run: sleep 90
+
+      - name: Lighthouse — Mobile
+        id: lh_mobile
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: https://apextalent.pro/
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Check scores
+        run: |
+          echo "## Lighthouse Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Score |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+
+          # Parse manifest
+          manifest='${{ steps.lh_mobile.outputs.manifest }}'
+          perf=$(echo "$manifest" | jq -r '.[0].summary.performance // 0')
+          a11y=$(echo "$manifest" | jq -r '.[0].summary.accessibility // 0')
+          bp=$(echo "$manifest" | jq -r '.[0].summary.["best-practices"] // 0')
+          seo=$(echo "$manifest" | jq -r '.[0].summary.seo // 0')
+
+          perf_pct=$(echo "$perf * 100" | bc | cut -d. -f1)
+          a11y_pct=$(echo "$a11y * 100" | bc | cut -d. -f1)
+          bp_pct=$(echo "$bp * 100" | bc | cut -d. -f1)
+          seo_pct=$(echo "$seo * 100" | bc | cut -d. -f1)
+
+          echo "| Performance | $perf_pct |" >> $GITHUB_STEP_SUMMARY
+          echo "| Accessibility | $a11y_pct |" >> $GITHUB_STEP_SUMMARY
+          echo "| Best Practices | $bp_pct |" >> $GITHUB_STEP_SUMMARY
+          echo "| SEO | $seo_pct |" >> $GITHUB_STEP_SUMMARY
+
+          echo ""
+          echo "Performance: $perf_pct"
+          echo "Accessibility: $a11y_pct"
+          echo "Best Practices: $bp_pct"
+          echo "SEO: $seo_pct"
+
+          if [ "$perf_pct" -lt 50 ]; then
+            echo "::warning::Performance score $perf_pct is below 50!"
+          fi
