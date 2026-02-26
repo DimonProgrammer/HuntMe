@@ -30,36 +30,49 @@ def is_admin(message: Message) -> bool:
 
 @router.message(F.reply_to_message, F.func(is_admin))
 async def admin_reply_to_candidate(message: Message):
-    """Admin replies to a forwarded question or msg_ prompt → send to candidate."""
+    """Admin replies to any bot message containing a user ID → forward to candidate."""
     replied = message.reply_to_message
     if not replied or not replied.text:
         return
 
-    # Extract user ID — works for question messages, msg_ prompts, and application reports
+    # Extract user ID from any message format
     user_id = None
-
-    if "❓ QUESTION from" in replied.text:
-        match = re.search(r"ID:\s*(\d+)", replied.text)
-        if match:
-            user_id = int(match.group(1))
-    elif "Reply to THIS message" in replied.text and "candidate ID" in replied.text:
-        match = re.search(r"candidate ID (\d+)", replied.text)
-        if match:
-            user_id = int(match.group(1))
-    elif "ID:" in replied.text:
-        # Catch-all for application reports
-        match = re.search(r"ID:\s*(\d+)", replied.text)
-        if match:
-            user_id = int(match.group(1))
+    match = re.search(r"(?:ID|candidate ID)[:\s]*(\d{5,})", replied.text)
+    if match:
+        user_id = int(match.group(1))
 
     if not user_id:
         return
 
+    # Look up candidate name for confirmation
+    candidate_name = None
+    try:
+        async with async_session() as session:
+            result = await session.execute(
+                select(Candidate).where(Candidate.tg_user_id == user_id)
+            )
+            cand = result.scalar_one_or_none()
+            if cand:
+                candidate_name = cand.name
+    except Exception:
+        pass
+
     try:
         await message.bot.send_message(user_id, message.text)
-        await message.answer(f"Sent to {user_id}.")
-    except Exception:
-        await message.answer("Failed — candidate may have blocked the bot.")
+        name_str = f" ({candidate_name})" if candidate_name else ""
+        preview = message.text[:80] + ("..." if len(message.text) > 80 else "")
+        await message.answer(
+            f"✅ Delivered to {user_id}{name_str}\n"
+            f"📝 \"{preview}\""
+        )
+    except Exception as e:
+        error_str = str(e)
+        if "blocked" in error_str.lower() or "deactivated" in error_str.lower():
+            await message.answer(f"❌ Candidate {user_id} blocked the bot or deleted their account.")
+        elif "not found" in error_str.lower():
+            await message.answer(f"❌ User {user_id} not found — never started the bot.")
+        else:
+            await message.answer(f"❌ Failed to send to {user_id}: {error_str[:100]}")
 
 
 # ═══ GENERATE JOB POST ═══
@@ -313,11 +326,33 @@ async def cmd_msg(message: Message):
             await message.answer("Invalid user ID. Use a number or @username.")
             return
 
+    # Look up name
+    candidate_name = None
+    try:
+        async with async_session() as session:
+            result = await session.execute(
+                select(Candidate).where(Candidate.tg_user_id == user_id)
+            )
+            cand = result.scalar_one_or_none()
+            if cand:
+                candidate_name = cand.name
+    except Exception:
+        pass
+
     try:
         await message.bot.send_message(user_id, text)
-        await message.answer(f"Sent to {user_id}.")
-    except Exception:
-        await message.answer("Failed — user may have blocked the bot.")
+        name_str = f" ({candidate_name})" if candidate_name else ""
+        preview = text[:80] + ("..." if len(text) > 80 else "")
+        await message.answer(
+            f"✅ Delivered to {user_id}{name_str}\n"
+            f"📝 \"{preview}\""
+        )
+    except Exception as e:
+        error_str = str(e)
+        if "blocked" in error_str.lower() or "deactivated" in error_str.lower():
+            await message.answer(f"❌ Candidate {user_id} blocked the bot.")
+        else:
+            await message.answer(f"❌ Failed: {error_str[:100]}")
 
 
 # ═══ FUNNEL ANALYTICS ═══
