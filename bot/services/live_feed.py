@@ -10,6 +10,7 @@ Usage:
 import asyncio
 import logging
 from datetime import datetime, timedelta
+from typing import Optional
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +57,7 @@ def _display(user_id: int) -> str:
     return name if name else f"ID:{user_id}"
 
 
-async def log_incoming(user_id: int, username: str | None, text: str, step: str) -> None:
+async def log_incoming(user_id: int, username: Optional[str], text: str, step: str) -> None:
     """Called by middleware when a candidate sends any message."""
     now = datetime.utcnow()
     _last_cand_msg[user_id] = now
