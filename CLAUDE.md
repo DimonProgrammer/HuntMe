@@ -2,53 +2,52 @@
 
 ## Проект
 
-**Apex Talent** — международный рекрутинг операторов live-стриминга, агентов и контент-мейкеров.
-Регионы: Филиппины · Индонезия · Нигерия · LatAm.
-Монетизация: реферальные выплаты HuntMe CRM + платформенные bounty (Chaturbate, Stripchat, LiveJasmin, BongaCams).
+**Apex Talent** — рекрутинг операторов live-стриминга (PH, ID, NG).
+Бот (@apextalent_bot) собирает заявки → AI скрининг → админ approve/reject.
+Лендинг (apextalent.pro) собирает лиды → webhook → бот уведомляет админа.
 
-Ключевые документы: `STRATEGY.md` (маркетинг), `DEPLOY.md` (деплой), `fb-automation-playbook.jsx` (FB-автоматизация).
+## Правила работы
 
-## Живой контекст проекта (GitHub Issues)
+- После правок файлов → `git push` (Vercel и Render автодеплой). Используй `/ship`
+- Название роли: **Live Stream Operator** (не Moderator)
+- Approve/Reject кандидатов — ТОЛЬКО ручной (кнопка в admin-чате). AI не авто-аппрувит
+- Перед Edit файла → всегда сначала Read
+- При новой проблеме → починить + добавить строку в Gotchas ниже
+- Не класть в MEMORY.md: TODO-листы, полную документацию, историю изменений
+- Живой контекст: `gh issue view 1 --repo DimonProgrammer/HuntMe`
 
-> Актуальный контекст в issue #1. Обновляй после каждого созвона или принятого решения.
+## Gotchas (учимся на ошибках)
 
-```bash
-# Читать:
-gh issue view 1 --repo DimonProgrammer/HuntMe
+- `asyncpg` не принимает `sslmode` в URL → `config.py:_fix_db_url()` стрипает
+- Gemini API — quota=0 (региональное ограничение). Не работает
+- OpenRouter API key — невалидный (401). Не работает
+- Единственный рабочий AI: **Groq** (llama-3.3-70b-versatile, free)
+- Notion MCP OAuth ≠ Internal Integration Token. Бот использует свой токен через REST API
+- Render free tier засыпает → UptimeRobot пингует `/healthz` каждые 5 мин
+- Supabase free tier паузит БД → мигрировали на Neon
 
-# Обновить:
-gh issue edit 1 --repo DimonProgrammer/HuntMe --body "..."
+## Архитектура
 
-# Активные задачи:
-gh issue list --label in-progress --repo DimonProgrammer/HuntMe --state open
-```
+**Стек:** Python + aiogram 3.x + SQLAlchemy async + aiohttp | Neon PostgreSQL | Vercel | Render
 
-## Ключевые файлы
+**Ключевые связи (неочевидные из кода):**
+- `menu.py` /start → создаёт запись в Notion (`notion_leads.on_start`)
+- `operator_flow.py` → синхронизирует каждый шаг FSM в Notion
+- `landing/index.html` форма → POST `apex-talent-bot.onrender.com/webhook/landing`
+- AI fallback chain: Groq → Gemini → OpenRouter → Anthropic (реально работает только Groq)
+- Роутеры в `main.py`: admin → menu → operator_flow (порядок важен!)
+- `agent_flow.py`, `model_flow.py` — Phase 2, роутеры НЕ подключены
 
-- `bot/main.py` — точка входа бота
-- `bot/handlers/menu.py` — главное меню (/start, 3 кнопки → operator flow)
-- `bot/handlers/operator_flow.py` — 11-шаговый FSM оператора (активен)
-- `bot/handlers/admin.py` — approve/reject + reply на вопросы кандидатов
-- `bot/services/objection_handler.py` — 15 паттернов возражений (Acknowledge-Reframe-Bridge)
-- `bot/services/hardware_checker.py` — валидация CPU/GPU кандидатов
-- `bot/services/claude_client.py` — AI скрининг (OpenRouter / Anthropic)
-- `bot/services/followup.py` — шаблоны follow-up сообщений
-- `bot/handlers/agent_flow.py` — FSM агента (Phase 2, роутер отключён)
-- `bot/handlers/model_flow.py` — FSM модели (Phase 2, роутер отключён)
-- `landing/index.html` — лендинг
-- `landing/kb.html` — база знаний (пароль 8008)
-- `STRATEGY.md` — маркетинговая стратегия
-- `DEPLOY.md` — инструкция по деплою (Render.com)
+**Инфраструктура:**
 
-## Стек
+| Что | Где | Детали |
+|---|---|---|
+| Бот | Render | apex-talent-bot.onrender.com |
+| Лендинг | Vercel | apextalent.pro |
+| БД | Neon PostgreSQL | Singapore, pooler endpoint |
+| Notion Leads | Notion DB | `237a3a0a251941b3973c74212d6a6ee8` |
+| Notion Platforms | Notion DB | `51ad3c249dd240688c24792552cb35c8` |
+| Email | Zoho Mail | hello@apextalent.pro |
+| Аналитика | Яндекс.Метрика | 107023862 |
 
-- Python + aiogram 3.x + SQLAlchemy async (SQLite локально, PostgreSQL на Render)
-- OpenRouter (meta-llama/llama-3.1-8b-instruct:free) — AI скрининг кандидатов
-- Лендинг: static HTML/JS (Vercel, автодеплой при push)
-- Follow-up автоматизация: Phase 2 (APScheduler)
-
-## Текущая фаза: Operator-only (Phase 1)
-
-Активен только operator flow. Agent и Model flows готовы, но роутеры не подключены в main.py.
-Кандидат может в любой момент задать вопрос — бот проверяет objection_handler, если не найдено → пересылает админу.
-Админ отвечает reply на пересланное сообщение → ответ доставляется кандидату.
+**Env vars (Render):** BOT_TOKEN, ADMIN_CHAT_ID, DATABASE_URL, GROQ_API_KEY, NOTION_TOKEN, NOTION_LEADS_DB_ID, LIVE_FEED_CHANNEL_ID, PORT=10000
