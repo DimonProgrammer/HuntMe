@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apex Talent — Design System</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,400;1,9..144,400;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #FFF5F0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #1A0F2E;
+    padding: 48px;
+    width: 1440px;
+  }
+
+  /* ── Layout ── */
+  .page-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 900;
+    font-size: 48px;
+    color: #1A0F2E;
+    margin-bottom: 8px;
+  }
+  .page-subtitle {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 17px;
+    color: rgba(26,15,46,0.55);
+    margin-bottom: 64px;
+  }
+
+  .section {
+    margin-bottom: 80px;
+  }
+  .section-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(26,15,46,0.35);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(26,15,46,0.08);
+  }
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* ── Color Swatches ── */
+  .swatch-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .swatch-group-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(26,15,46,0.4);
+    margin-bottom: 4px;
+  }
+  .swatch {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .swatch-color {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    border: 1px solid rgba(26,15,46,0.08);
+    flex-shrink: 0;
+  }
+  .swatch-info {}
+  .swatch-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1A0F2E;
+  }
+  .swatch-value {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    color: rgba(26,15,46,0.45);
+    margin-top: 1px;
+  }
+
+  /* ── Typography ── */
+  .type-sample {
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 24px 28px;
+    border: 1px solid rgba(26,15,46,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 600px;
+  }
+  .type-meta {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11px;
+    color: rgba(26,15,46,0.35);
+    margin-bottom: 8px;
+  }
+
+  .type-display {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 900;
+    font-size: 67px;
+    line-height: 1.05;
+    color: #1A0F2E;
+  }
+  .type-h1 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 48px;
+    line-height: 1.1;
+    color: #1A0F2E;
+  }
+  .type-h2 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 35px;
+    line-height: 1.15;
+    color: #1A0F2E;
+  }
+  .type-h3 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 1.2;
+    color: #1A0F2E;
+  }
+  .type-label {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 1.4;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(26,15,46,0.45);
+  }
+  .type-body-lg {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 1.65;
+    color: #1A0F2E;
+  }
+  .type-body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #1A0F2E;
+  }
+  .type-body-sm {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(26,15,46,0.55);
+  }
+  .type-serif {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 24px;
+    color: #1A0F2E;
+  }
+  .text-gradient {
+    background: linear-gradient(135deg, #E33BC5 0%, #FF8C42 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    padding: 15px 32px;
+    border-radius: 100px;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-dark {
+    background: #1A0F2E;
+    color: #FFFFFF;
+  }
+  .btn-magenta {
+    background: #E33BC5;
+    color: #FFFFFF;
+  }
+  .btn-lime {
+    background: transparent;
+    color: #1A0F2E;
+    border: 2px solid #1A0F2E;
+  }
+  .btn-sm {
+    font-size: 13px;
+    padding: 10px 20px;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: #FFFFFF;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px -10px rgba(26,15,46,0.08);
+    padding: 28px;
+  }
+  .card-lime {
+    border: 2.5px solid #CCFF00;
+  }
+  .card-dark {
+    background: #1A0F2E;
+  }
+
+  /* ── Chips ── */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 100px;
+    padding: 6px 12px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .chip-default  { background: rgba(26,15,46,0.05); color: #1A0F2E; }
+  .chip-lime     { background: rgba(204,255,0,0.2); color: #1A0F2E; }
+  .chip-magenta  { background: rgba(227,59,197,0.12); color: #E33BC5; }
+  .chip-dark     { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); }
+  .chip-purple   { background: #6366F1; color: #FFFFFF; }
+
+  /* ── Inputs ── */
+  .input-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .input-label {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: #1A0F2E;
+  }
+  .input {
+    width: 280px;
+    padding: 13px 16px;
+    border: 2px solid rgba(26,15,46,0.1);
+    border-radius: 12px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    color: rgba(26,15,46,0.35);
+    background: #FAFAFA;
+    outline: none;
+  }
+  .input-focused {
+    border-color: #E33BC5;
+    background: #FFFFFF;
+    color: #1A0F2E;
+  }
+
+  /* ── Radius ── */
+  .radius-swatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .radius-box {
+    width: 72px;
+    height: 72px;
+    background: #1A0F2E;
+  }
+  .radius-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(26,15,46,0.4);
+    text-align: center;
+  }
+  .radius-value {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    color: rgba(26,15,46,0.55);
+  }
+
+  /* ── Spacing ── */
+  .spacing-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .spacing-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .spacing-bar {
+    background: linear-gradient(135deg, #E33BC5, #FF8C42);
+    width: 100%;
+    min-width: 4px;
+    border-radius: 3px;
+  }
+  .spacing-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(26,15,46,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .spacing-val {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11px;
+    color: rgba(26,15,46,0.55);
+  }
+
+  /* ── Shadows ── */
+  .shadow-card-sample {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .shadow-box {
+    width: 120px;
+    height: 80px;
+    background: #FFFFFF;
+    border-radius: 16px;
+  }
+  .shadow-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(26,15,46,0.4);
+    text-align: center;
+  }
+
+  /* ── Gradients ── */
+  .gradient-swatch {
+    width: 160px;
+    height: 80px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 10px 12px;
+  }
+  .gradient-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.9);
+    letter-spacing: 0.06em;
+  }
+
+  /* ── Success State ── */
+  .success-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #CCFF00 0%, #E33BC5 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+  }
+
+  /* ── Nav sample ── */
+  .nav-sample {
+    background: rgba(250,248,245,0.92);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 1px 0 rgba(26,15,46,0.07);
+    width: 100%;
+  }
+  .nav-logo {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 900;
+    font-size: 18px;
+    color: #1A0F2E;
+  }
+  .nav-links {
+    display: flex;
+    gap: 28px;
+  }
+  .nav-link {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(26,15,46,0.55);
+    text-decoration: none;
+  }
+
+  /* ── Stats ── */
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 20px 28px;
+    background: #FFFFFF;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px -10px rgba(26,15,46,0.08);
+  }
+  .stat-number {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 900;
+    font-size: 40px;
+    line-height: 1;
+    color: #1A0F2E;
+  }
+  .stat-label {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    color: rgba(26,15,46,0.55);
+  }
+
+  /* ── Divider ── */
+  .divider { height: 1px; background: rgba(26,15,46,0.08); margin: 8px 0; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- PAGE TITLE                                -->
+<!-- ══════════════════════════════════════════ -->
+<div style="margin-bottom: 64px;">
+  <div class="page-title">Apex Talent — Design System</div>
+  <div class="page-subtitle">Все токены, компоненты и паттерны в одном файле · apextalent.pro</div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 1. COLORS — PRIMITIVES                    -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">01 — Colors / Primitive Palette</div>
+  <div class="row">
+
+    <!-- Core Brand -->
+    <div class="swatch-group">
+      <div class="swatch-group-label">Brand</div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#1A0F2E;"></div>
+        <div class="swatch-info"><div class="swatch-name">color.ink</div><div class="swatch-value">#1A0F2E</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#E33BC5;"></div>
+        <div class="swatch-info"><div class="swatch-name">color.magenta</div><div class="swatch-value">#E33BC5</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#CCFF00;"></div>
+        <div class="swatch-info"><div class="swatch-name">color.lime</div><div class="swatch-value">#CCFF00</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#FF8C42;"></div>
+        <div class="swatch-info"><div class="swatch-name">color.orange</div><div class="swatch-value">#FF8C42</div></div>
+      </div>
+    </div>
+
+    <!-- Backgrounds -->
+    <div class="swatch-group">
+      <div class="swatch-group-label">Backgrounds</div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#FFFFFF;"></div>
+        <div class="swatch-info"><div class="swatch-name">color.white</div><div class="swatch-value">#FFFFFF</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#FFF5F0;"></div>
+        <div class="swatch-info"><div class="swatch-name">color.cream.base</div><div class="swatch-value">#FFF5F0</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#FFFAED;"></div>
+        <div class="swatch-info"><div class="swatch-name">color.cream.mid</div><div class="swatch-value">#FFFAED</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#FFF3B0;"></div>
+        <div class="swatch-info"><div class="swatch-name">color.cream.warm</div><div class="swatch-value">#FFF3B0</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#FAFAFA;"></div>
+        <div class="swatch-info"><div class="swatch-name">color.surface</div><div class="swatch-value">#FAFAFA</div></div>
+      </div>
+    </div>
+
+    <!-- Purple Alpha -->
+    <div class="swatch-group">
+      <div class="swatch-group-label">Purple Alpha</div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:rgba(26,15,46,0.05);"></div>
+        <div class="swatch-info"><div class="swatch-name">color.purple.soft</div><div class="swatch-value">rgba(26,15,46, 0.05)</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:rgba(26,15,46,0.08);"></div>
+        <div class="swatch-info"><div class="swatch-name">color.purple.muted</div><div class="swatch-value">rgba(26,15,46, 0.08)</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:rgba(26,15,46,0.15);"></div>
+        <div class="swatch-info"><div class="swatch-name">color.purple.dim</div><div class="swatch-value">rgba(26,15,46, 0.15)</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:rgba(26,15,46,0.35);"></div>
+        <div class="swatch-info"><div class="swatch-name">color.purple.mid</div><div class="swatch-value">rgba(26,15,46, 0.35)</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:rgba(26,15,46,0.55);"></div>
+        <div class="swatch-info"><div class="swatch-name">color.purple.sub</div><div class="swatch-value">rgba(26,15,46, 0.55)</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:rgba(26,15,46,0.65);"></div>
+        <div class="swatch-info"><div class="swatch-name">color.purple.secondary</div><div class="swatch-value">rgba(26,15,46, 0.65)</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 2. GRADIENTS                              -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">02 — Gradients</div>
+  <div class="row">
+
+    <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
+      <div class="gradient-swatch" style="background:linear-gradient(135deg,#E33BC5 0%,#FF8C42 100%);">
+        <div class="gradient-name">gradient.text</div>
+      </div>
+      <div style="font-family:'Plus Jakarta Sans';font-size:11px;color:rgba(26,15,46,0.45);">135° Magenta → Orange</div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
+      <div class="gradient-swatch" style="background:linear-gradient(150deg,#FFF5F0 0%,#FFFAED 50%,#FFF3B0 100%);">
+        <div class="gradient-name" style="color:rgba(26,15,46,0.5);">gradient.hero.bg</div>
+      </div>
+      <div style="font-family:'Plus Jakarta Sans';font-size:11px;color:rgba(26,15,46,0.45);">150° Cream → Warm</div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
+      <div class="gradient-swatch" style="background:linear-gradient(90deg,rgba(227,59,197,0.3),rgba(204,255,0,0.3));">
+        <div class="gradient-name">gradient.step.line</div>
+      </div>
+      <div style="font-family:'Plus Jakarta Sans';font-size:11px;color:rgba(26,15,46,0.45);">90° Magenta → Lime (30%)</div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
+      <div class="gradient-swatch" style="background:linear-gradient(135deg,#CCFF00 0%,#E33BC5 100%);">
+        <div class="gradient-name">gradient.success.icon</div>
+      </div>
+      <div style="font-family:'Plus Jakarta Sans';font-size:11px;color:rgba(26,15,46,0.45);">135° Lime → Magenta</div>
+    </div>
+
+    <!-- Text gradient demo -->
+    <div style="display:flex; flex-direction:column; gap:8px; align-items:flex-start; padding: 20px 24px; background:#fff; border-radius:16px; border:1px solid rgba(26,15,46,0.08);">
+      <div style="font-family:'Outfit';font-weight:700;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(26,15,46,0.35);margin-bottom:4px;">Text Gradient Usage</div>
+      <div style="font-family:'Outfit';font-weight:900;font-size:32px;line-height:1.1;">Earn <span class="text-gradient">More</span> Live</div>
+      <div style="font-family:'Outfit';font-weight:900;font-size:32px;line-height:1.1;"><span class="text-gradient">Stream</span> &amp; Win</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 3. TYPOGRAPHY                             -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">03 — Typography Scale</div>
+  <div class="col">
+
+    <div class="type-sample">
+      <div class="type-meta">type.display · Outfit 900 · 67px / 1.05</div>
+      <div class="type-display">Earn More <span class="text-gradient">Streaming</span></div>
+    </div>
+
+    <div class="type-sample">
+      <div class="type-meta">type.h1 · Outfit 800 · 48px / 1.1</div>
+      <div class="type-h1">Join the <span class="text-gradient">Global</span> Network</div>
+    </div>
+
+    <div class="type-sample">
+      <div class="type-meta">type.h2 · Outfit 800 · 35px / 1.15</div>
+      <div class="type-h2">How It <span class="text-gradient">Works</span></div>
+    </div>
+
+    <div class="type-sample">
+      <div class="type-meta">type.h3 · Outfit 700 · 22px / 1.2</div>
+      <div class="type-h3">Fast Onboarding Process</div>
+    </div>
+
+    <div class="type-sample">
+      <div class="type-meta">type.label · Outfit 700 · 12px · 0.12em tracking · UPPERCASE</div>
+      <div class="type-label">How to get started</div>
+    </div>
+
+    <div class="type-sample">
+      <div class="type-meta">type.body.lg · Plus Jakarta Sans 400 · 17px / 1.65</div>
+      <div class="type-body-lg">We connect operators from Philippines, Nigeria, and Indonesia with top live streaming platforms. Apply once — earn from anywhere.</div>
+    </div>
+
+    <div class="type-sample">
+      <div class="type-meta">type.body · Plus Jakarta Sans 400 · 15px / 1.6</div>
+      <div class="type-body">Fill out the application form, pass our quick technical check, and get matched with a platform within 48 hours.</div>
+    </div>
+
+    <div class="type-sample">
+      <div class="type-meta">type.body.sm · Plus Jakarta Sans 400 · 13px / 1.5</div>
+      <div class="type-body-sm">Platform fees, hardware requirements, and earning estimates vary by region and experience level.</div>
+    </div>
+
+    <div class="type-sample">
+      <div class="type-meta">type.serif.accent · Fraunces 400 italic · Editorial use</div>
+      <div class="type-serif">"The fastest path from zero to your first streaming paycheck."</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 4. BUTTONS                                -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">04 — Buttons</div>
+  <div class="row" style="align-items: center;">
+
+    <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
+      <button class="btn btn-dark">Apply Now</button>
+      <div style="font-family:'Plus Jakarta Sans';font-size:11px;color:rgba(26,15,46,0.45);">btn-dark · Primary</div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
+      <button class="btn btn-magenta">Start Earning →</button>
+      <div style="font-family:'Plus Jakarta Sans';font-size:11px;color:rgba(26,15,46,0.45);">btn-magenta · Emotional CTA</div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
+      <button class="btn btn-lime">Learn More</button>
+      <div style="font-family:'Plus Jakarta Sans';font-size:11px;color:rgba(26,15,46,0.45);">btn-lime · Secondary</div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
+      <button class="btn btn-dark btn-sm">Apply Now</button>
+      <div style="font-family:'Plus Jakarta Sans';font-size:11px;color:rgba(26,15,46,0.45);">btn-dark-sm</div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
+      <button class="btn btn-magenta btn-sm">Join Free</button>
+      <div style="font-family:'Plus Jakarta Sans';font-size:11px;color:rgba(26,15,46,0.45);">btn-magenta-sm</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 5. CARDS                                  -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">05 — Cards</div>
+  <div class="row" style="align-items:flex-start;">
+
+    <!-- Default Card -->
+    <div class="card" style="width:280px;">
+      <div class="type-label" style="margin-bottom:12px;">STEP 01</div>
+      <div class="type-h3" style="margin-bottom:8px;">Apply Online</div>
+      <div class="type-body" style="color:rgba(26,15,46,0.65);">Fill out our 2-minute form. No CV required — just your device and internet connection.</div>
+    </div>
+
+    <!-- Lime Accent Card -->
+    <div class="card card-lime" style="width:280px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+        <div class="chip chip-lime">⚡ FEATURED</div>
+      </div>
+      <div class="type-h3" style="margin-bottom:8px;">Top Earners</div>
+      <div class="type-body" style="color:rgba(26,15,46,0.65);">Operators in our network earn an average of $800–$2,400/month. Top performers reach $5k+.</div>
+      <div style="margin-top:20px; padding-top:16px; border-top:1px solid rgba(26,15,46,0.08);">
+        <div class="stat-number" style="font-size:32px;">$2,400</div>
+        <div class="stat-label">avg / month</div>
+      </div>
+    </div>
+
+    <!-- Dark Card -->
+    <div class="card card-dark" style="width:280px;">
+      <div class="type-label" style="color:rgba(255,255,255,0.4); margin-bottom:12px;">BONUS</div>
+      <div class="type-h3" style="color:#FFFFFF; margin-bottom:8px;">Refer a Friend</div>
+      <div class="type-body" style="color:rgba(255,255,255,0.65);">Earn $50 for every friend you refer who completes their first week of streaming.</div>
+      <div style="margin-top:20px;">
+        <div class="chip chip-dark">🎁 +$50 per referral</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 6. CHIPS / BADGES                         -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">06 — Chips & Badges</div>
+  <div class="row" style="align-items:center; flex-wrap:wrap; gap:12px;">
+
+    <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
+      <div class="chip chip-default">🇵🇭 Philippines</div>
+      <div style="font-family:'Plus Jakarta Sans';font-size:11px;color:rgba(26,15,46,0.45);">chip-default</div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
+      <div class="chip chip-lime">⚡ Active Now</div>
+      <div style="font-family:'Plus Jakarta Sans';font-size:11px;color:rgba(26,15,46,0.45);">chip-lime</div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
+      <div class="chip chip-magenta">✦ New</div>
+      <div style="font-family:'Plus Jakarta Sans';font-size:11px;color:rgba(26,15,46,0.45);">chip-magenta</div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:8px; align-items:center; background:#1A0F2E; padding:12px; border-radius:12px;">
+      <div class="chip chip-dark">🌍 Global</div>
+      <div style="font-family:'Plus Jakarta Sans';font-size:11px;color:rgba(255,255,255,0.4);">chip-dark</div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
+      <div class="chip chip-purple">hello@apextalent.pro</div>
+      <div style="font-family:'Plus Jakarta Sans';font-size:11px;color:rgba(26,15,46,0.45);">chip-purple (email)</div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
+      <div class="chip chip-default">🇳🇬 Nigeria</div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
+      <div class="chip chip-default">🇮🇩 Indonesia</div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
+      <div class="chip chip-lime">✓ Verified</div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
+      <div class="chip chip-magenta">🔥 Hot</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 7. FORM INPUTS                            -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">07 — Form Inputs</div>
+  <div class="row">
+
+    <div class="input-wrap">
+      <div class="input-label">Full Name</div>
+      <input class="input" placeholder="Maria Santos" disabled />
+      <div style="font-family:'Plus Jakarta Sans';font-size:11px;color:rgba(26,15,46,0.45);">Default state</div>
+    </div>
+
+    <div class="input-wrap">
+      <div class="input-label">Email Address</div>
+      <input class="input input-focused" value="maria@example.com" disabled />
+      <div style="font-family:'Plus Jakarta Sans';font-size:11px;color:rgba(26,15,46,0.45);">Focused state (border: magenta)</div>
+    </div>
+
+    <div class="input-wrap">
+      <div class="input-label">Country</div>
+      <input class="input" value="Philippines 🇵🇭" disabled />
+      <div style="font-family:'Plus Jakarta Sans';font-size:11px;color:rgba(26,15,46,0.45);">Filled state</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 8. BORDER RADIUS                          -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">08 — Border Radius</div>
+  <div class="row" style="align-items:flex-end;">
+
+    <div class="radius-swatch">
+      <div class="radius-box" style="border-radius:8px;"></div>
+      <div class="radius-label">radius.sm</div>
+      <div class="radius-value">8px</div>
+    </div>
+
+    <div class="radius-swatch">
+      <div class="radius-box" style="border-radius:12px;"></div>
+      <div class="radius-label">radius.md</div>
+      <div class="radius-value">12px</div>
+    </div>
+
+    <div class="radius-swatch">
+      <div class="radius-box" style="border-radius:16px;"></div>
+      <div class="radius-label">radius.lg</div>
+      <div class="radius-value">16px</div>
+    </div>
+
+    <div class="radius-swatch">
+      <div class="radius-box" style="border-radius:20px;"></div>
+      <div class="radius-label">radius.xl</div>
+      <div class="radius-value">20px</div>
+    </div>
+
+    <div class="radius-swatch">
+      <div class="radius-box" style="border-radius:100px; width:120px;"></div>
+      <div class="radius-label">radius.full</div>
+      <div class="radius-value">100px</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 9. SPACING                                -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">09 — Spacing Scale</div>
+  <div class="spacing-row">
+
+    <div class="spacing-item">
+      <div class="spacing-bar" style="width:4px; height:4px; border-radius:50%;"></div>
+      <div class="spacing-label">1</div>
+      <div class="spacing-val">4px</div>
+    </div>
+    <div class="spacing-item">
+      <div class="spacing-bar" style="width:8px; height:8px; border-radius:50%;"></div>
+      <div class="spacing-label">2</div>
+      <div class="spacing-val">8px</div>
+    </div>
+    <div class="spacing-item">
+      <div class="spacing-bar" style="width:12px; height:12px; border-radius:50%;"></div>
+      <div class="spacing-label">3</div>
+      <div class="spacing-val">12px</div>
+    </div>
+    <div class="spacing-item">
+      <div class="spacing-bar" style="width:16px; height:16px; border-radius:50%;"></div>
+      <div class="spacing-label">4</div>
+      <div class="spacing-val">16px</div>
+    </div>
+    <div class="spacing-item">
+      <div class="spacing-bar" style="width:20px; height:20px; border-radius:50%;"></div>
+      <div class="spacing-label">5</div>
+      <div class="spacing-val">20px</div>
+    </div>
+    <div class="spacing-item">
+      <div class="spacing-bar" style="width:24px; height:24px; border-radius:50%;"></div>
+      <div class="spacing-label">6</div>
+      <div class="spacing-val">24px</div>
+    </div>
+    <div class="spacing-item">
+      <div class="spacing-bar" style="width:32px; height:32px; border-radius:50%;"></div>
+      <div class="spacing-label">8</div>
+      <div class="spacing-val">32px</div>
+    </div>
+    <div class="spacing-item">
+      <div class="spacing-bar" style="width:40px; height:40px; border-radius:50%;"></div>
+      <div class="spacing-label">10</div>
+      <div class="spacing-val">40px</div>
+    </div>
+    <div class="spacing-item">
+      <div class="spacing-bar" style="width:48px; height:48px; border-radius:50%;"></div>
+      <div class="spacing-label">12</div>
+      <div class="spacing-val">48px</div>
+    </div>
+    <div class="spacing-item">
+      <div class="spacing-bar" style="width:64px; height:64px; border-radius:50%;"></div>
+      <div class="spacing-label">16</div>
+      <div class="spacing-val">64px</div>
+    </div>
+    <div class="spacing-item">
+      <div class="spacing-bar" style="width:96px; height:96px; border-radius:50%;"></div>
+      <div class="spacing-label">24</div>
+      <div class="spacing-val">96px</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 10. SHADOWS                               -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">10 — Elevation / Shadows</div>
+  <div class="row" style="align-items:flex-end; gap:40px;">
+
+    <div class="shadow-card-sample">
+      <div class="shadow-box" style="box-shadow: none; border: 1px solid rgba(26,15,46,0.08);"></div>
+      <div class="shadow-label">No Shadow</div>
+    </div>
+    <div class="shadow-card-sample">
+      <div class="shadow-box" style="box-shadow: 0 20px 40px -10px rgba(26,15,46,0.08);"></div>
+      <div class="shadow-label">shadow.card</div>
+    </div>
+    <div class="shadow-card-sample">
+      <div class="shadow-box" style="box-shadow: 0 32px 64px -16px rgba(26,15,46,0.15);"></div>
+      <div class="shadow-label">shadow.card-hover</div>
+    </div>
+    <div class="shadow-card-sample">
+      <div class="shadow-box" style="box-shadow: 0 8px 32px rgba(26,15,46,0.22);"></div>
+      <div class="shadow-label">shadow.cookie</div>
+    </div>
+    <div class="shadow-card-sample">
+      <div class="shadow-box" style="box-shadow: 0 1px 24px rgba(26,15,46,0.07);"></div>
+      <div class="shadow-label">shadow.nav-full</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 11. COMPONENTS IN CONTEXT                 -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">11 — Components in Context</div>
+  <div class="col" style="gap:24px;">
+
+    <!-- Navbar -->
+    <div>
+      <div class="type-label" style="margin-bottom:12px;">Navbar — Scrolled State</div>
+      <div class="nav-sample">
+        <div class="nav-logo">Apex Talent</div>
+        <div class="nav-links">
+          <a class="nav-link" href="#">How it Works</a>
+          <a class="nav-link" href="#">Earnings</a>
+          <a class="nav-link" href="#">FAQ</a>
+          <a class="nav-link" href="#">Contact</a>
+        </div>
+        <button class="btn btn-dark btn-sm">Apply Now</button>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div>
+      <div class="type-label" style="margin-bottom:12px;">Stats / Trust Row</div>
+      <div class="row">
+        <div class="stat-item">
+          <div class="stat-number">1,200+</div>
+          <div class="stat-label">Active operators</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">$800</div>
+          <div class="stat-label">Avg. monthly earning</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">48h</div>
+          <div class="stat-label">Time to first payout</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">3</div>
+          <div class="stat-label">Regions active</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success State -->
+    <div>
+      <div class="type-label" style="margin-bottom:12px;">Success State</div>
+      <div class="card" style="max-width:400px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:16px; padding:40px;">
+        <div class="success-icon">✓</div>
+        <div class="type-h2">Application Sent!</div>
+        <div class="type-body" style="color:rgba(26,15,46,0.65);">We'll review your application and reach out within 24 hours via Telegram.</div>
+        <button class="btn btn-dark">Back to Home</button>
+      </div>
+    </div>
+
+    <!-- Section Header Pattern -->
+    <div>
+      <div class="type-label" style="margin-bottom:12px;">Standard Section Header</div>
+      <div class="card" style="max-width:600px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:12px; padding:40px;">
+        <div class="type-label">HOW IT WORKS</div>
+        <div class="type-h1">Three Steps to <span class="text-gradient">Your First Payout</span></div>
+        <div class="type-body" style="color:rgba(26,15,46,0.65); max-width:420px;">No experience needed. Just a PC, internet, and the drive to earn from anywhere in the world.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 12. MOTION TOKENS (Reference)             -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">12 — Motion Tokens (Reference)</div>
+  <div class="row" style="gap:24px; flex-wrap:wrap;">
+
+    <div class="card" style="min-width:200px;">
+      <div class="type-label" style="margin-bottom:12px;">Duration</div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="type-body-sm" style="color:rgba(26,15,46,0.65);">fast</span>
+          <div style="font-family:'Outfit';font-weight:700;font-size:13px;color:#E33BC5;">150ms</div>
+        </div>
+        <div class="divider"></div>
+        <div style="display:flex; justify-content:space-between;">
+          <span class="type-body-sm" style="color:rgba(26,15,46,0.65);">base</span>
+          <div style="font-family:'Outfit';font-weight:700;font-size:13px;color:#E33BC5;">200ms</div>
+        </div>
+        <div class="divider"></div>
+        <div style="display:flex; justify-content:space-between;">
+          <span class="type-body-sm" style="color:rgba(26,15,46,0.65);">normal</span>
+          <div style="font-family:'Outfit';font-weight:700;font-size:13px;color:#E33BC5;">300ms</div>
+        </div>
+        <div class="divider"></div>
+        <div style="display:flex; justify-content:space-between;">
+          <span class="type-body-sm" style="color:rgba(26,15,46,0.65);">slow</span>
+          <div style="font-family:'Outfit';font-weight:700;font-size:13px;color:#E33BC5;">450ms</div>
+        </div>
+        <div class="divider"></div>
+        <div style="display:flex; justify-content:space-between;">
+          <span class="type-body-sm" style="color:rgba(26,15,46,0.65);">entrance</span>
+          <div style="font-family:'Outfit';font-weight:700;font-size:13px;color:#E33BC5;">750ms</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="min-width:340px;">
+      <div class="type-label" style="margin-bottom:12px;">Easing</div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:16px;">
+          <span class="type-body-sm" style="color:rgba(26,15,46,0.65); white-space:nowrap;">spring</span>
+          <div style="font-family:'Outfit';font-weight:600;font-size:12px;color:#1A0F2E;text-align:right;">cubic-bezier(0.16, 1, 0.3, 1)</div>
+        </div>
+        <div class="divider"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:16px;">
+          <span class="type-body-sm" style="color:rgba(26,15,46,0.65);">standard</span>
+          <div style="font-family:'Outfit';font-weight:600;font-size:12px;color:#1A0F2E;">ease</div>
+        </div>
+        <div class="divider"></div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:16px;">
+          <span class="type-body-sm" style="color:rgba(26,15,46,0.65); white-space:nowrap;">accordion</span>
+          <div style="font-family:'Outfit';font-weight:600;font-size:12px;color:#1A0F2E;text-align:right;">cubic-bezier(0.4, 0, 0.2, 1)</div>
+        </div>
+        <div class="divider"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:16px;">
+          <span class="type-body-sm" style="color:rgba(26,15,46,0.65);">linear</span>
+          <div style="font-family:'Outfit';font-weight:600;font-size:12px;color:#1A0F2E;">linear</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 13. DO / DON'T                            -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">13 — Do / Don't</div>
+  <div class="row" style="gap:24px; align-items:flex-start;">
+
+    <div class="card" style="min-width:340px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
+        <div style="width:28px;height:28px;border-radius:50%;background:#CCFF00;display:flex;align-items:center;justify-content:center;font-size:14px;">✓</div>
+        <div style="font-family:'Outfit';font-weight:800;font-size:16px;">DO</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="type-body-sm">· Use Outfit for ALL headings, numbers, labels</div>
+        <div class="type-body-sm">· Use .text-gradient for 1–2 key words per section max</div>
+        <div class="type-body-sm">· Apply card + hover lift to all surface containers</div>
+        <div class="type-body-sm">· Use rgba(26,15,46, N) for all tints — never grey hex</div>
+        <div class="type-body-sm">· Keep backgrounds always warm (cream gradient)</div>
+      </div>
+    </div>
+
+    <div class="card" style="min-width:340px; border: 2px solid rgba(227,59,197,0.2);">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
+        <div style="width:28px;height:28px;border-radius:50%;background:rgba(227,59,197,0.12);display:flex;align-items:center;justify-content:center;font-size:14px;">✗</div>
+        <div style="font-family:'Outfit';font-weight:800;font-size:16px;">DON'T</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="type-body-sm">· Don't use Inter or system fonts — always load Outfit</div>
+        <div class="type-body-sm">· Don't use pure #000 or #FFF for text — use ink (#1A0F2E)</div>
+        <div class="type-body-sm">· Don't invent new accents outside ink/magenta/lime/orange</div>
+        <div class="type-body-sm">· Don't use border-radius less than 8px on interactive elements</div>
+        <div class="type-body-sm">· Don't add animation durations over 800ms for UI interactions</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

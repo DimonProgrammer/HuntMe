@@ -1,0 +1,262 @@
+{
+  "color": {
+    "primitive": {
+      "ink":     { "value": "#1A0F2E", "type": "color", "description": "Deep dark purple — primary text, backgrounds" },
+      "magenta": { "value": "#E33BC5", "type": "color", "description": "Hot pink — primary CTA, interactive, emotional" },
+      "lime":    { "value": "#CCFF00", "type": "color", "description": "Electric yellow-green — accent, success, energy" },
+      "orange":  { "value": "#FF8C42", "type": "color", "description": "Warm orange — gradient pair with magenta" },
+      "white":   { "value": "#FFFFFF", "type": "color", "description": "Card surfaces" },
+      "cream": {
+        "base": { "value": "#FFF5F0", "type": "color", "description": "Background start" },
+        "mid":  { "value": "#FFFAED", "type": "color", "description": "Background middle" },
+        "warm": { "value": "#FFF3B0", "type": "color", "description": "Background end" }
+      },
+      "surface": { "value": "#FAFAFA", "type": "color", "description": "Input background" },
+      "purple": {
+        "soft":      { "value": "rgba(26,15,46,0.05)", "type": "color", "description": "Chip/tag backgrounds" },
+        "muted":     { "value": "rgba(26,15,46,0.08)", "type": "color", "description": "Borders, dividers" },
+        "dim":       { "value": "rgba(26,15,46,0.15)", "type": "color", "description": "Stronger borders" },
+        "mid":       { "value": "rgba(26,15,46,0.35)", "type": "color", "description": "Placeholder text" },
+        "sub":       { "value": "rgba(26,15,46,0.55)", "type": "color", "description": "Secondary text" },
+        "secondary": { "value": "rgba(26,15,46,0.65)", "type": "color", "description": "Body text secondary" }
+      }
+    },
+    "bg": {
+      "card":        { "value": "#FFFFFF", "type": "color" },
+      "input":       { "value": "#FAFAFA", "type": "color" },
+      "input-focus": { "value": "#FFFFFF", "type": "color" },
+      "dark":        { "value": "#1A0F2E", "type": "color", "description": "Inverted sections, cookie banner" }
+    },
+    "text": {
+      "primary":     { "value": "#1A0F2E", "type": "color" },
+      "secondary":   { "value": "rgba(26,15,46,0.65)", "type": "color" },
+      "placeholder": { "value": "rgba(26,15,46,0.35)", "type": "color" },
+      "muted":       { "value": "rgba(26,15,46,0.55)", "type": "color", "description": "Nav links, footnotes" },
+      "inverted":    { "value": "rgba(255,255,255,0.65)", "type": "color", "description": "Text on dark backgrounds" }
+    },
+    "border": {
+      "default":     { "value": "rgba(26,15,46,0.08)", "type": "color", "description": "Card borders, FAQ lines" },
+      "input":       { "value": "rgba(26,15,46,0.10)", "type": "color" },
+      "input-focus": { "value": "#E33BC5", "type": "color" },
+      "accent":      { "value": "#CCFF00", "type": "color", "description": "Highlighted card borders" }
+    },
+    "interactive": {
+      "primary": { "value": "#E33BC5", "type": "color", "description": "Primary buttons, CTAs" },
+      "accent":  { "value": "#CCFF00", "type": "color", "description": "Secondary accent, badges" }
+    }
+  },
+
+  "typography": {
+    "fontFamily": {
+      "heading": { "value": "Outfit",            "type": "fontFamilies", "description": "All headings, CTAs, labels, numbers" },
+      "serif":   { "value": "Fraunces",          "type": "fontFamilies", "description": "Editorial accents, pull quotes" },
+      "body":    { "value": "Plus Jakarta Sans", "type": "fontFamilies", "description": "Body text, UI, inputs, nav" }
+    },
+    "fontWeight": {
+      "regular":   { "value": "Regular",     "type": "fontWeights" },
+      "medium":    { "value": "Medium",      "type": "fontWeights" },
+      "semibold":  { "value": "SemiBold",    "type": "fontWeights" },
+      "bold":      { "value": "Bold",        "type": "fontWeights" },
+      "extrabold": { "value": "ExtraBold",   "type": "fontWeights" },
+      "black":     { "value": "Black",       "type": "fontWeights" }
+    },
+    "lineHeight": {
+      "tight":    { "value": "105%", "type": "lineHeights" },
+      "snug":     { "value": "110%", "type": "lineHeights" },
+      "snug-2":   { "value": "115%", "type": "lineHeights" },
+      "normal":   { "value": "120%", "type": "lineHeights" },
+      "relaxed":  { "value": "150%", "type": "lineHeights" },
+      "loose":    { "value": "160%", "type": "lineHeights" },
+      "loose-2":  { "value": "165%", "type": "lineHeights" }
+    },
+    "fontSize": {
+      "display": { "value": "67",  "type": "fontSizes", "description": "clamp(2.8rem→4.2rem) — 67px desktop max" },
+      "h1":      { "value": "48",  "type": "fontSizes", "description": "clamp(2rem→3rem) — 48px desktop" },
+      "h2":      { "value": "35",  "type": "fontSizes", "description": "clamp(1.5rem→2.2rem) — 35px desktop" },
+      "h3":      { "value": "22",  "type": "fontSizes", "description": "1.2–1.4rem" },
+      "label":   { "value": "12",  "type": "fontSizes" },
+      "body-lg": { "value": "17",  "type": "fontSizes" },
+      "body":    { "value": "15",  "type": "fontSizes" },
+      "body-sm": { "value": "13",  "type": "fontSizes" }
+    },
+    "letterSpacing": {
+      "label": { "value": "12%", "type": "letterSpacing", "description": "0.12em overline labels" },
+      "none":  { "value": "0%",  "type": "letterSpacing" }
+    },
+    "textCase": {
+      "uppercase": { "value": "UPPER", "type": "textCase" },
+      "none":      { "value": "none",  "type": "textCase" }
+    },
+    "textStyle": {
+      "display": {
+        "value": {
+          "fontFamily":    "{typography.fontFamily.heading}",
+          "fontWeight":    "{typography.fontWeight.black}",
+          "fontSize":      "{typography.fontSize.display}",
+          "lineHeight":    "{typography.lineHeight.tight}",
+          "letterSpacing": "{typography.letterSpacing.none}",
+          "textCase":      "{typography.textCase.none}"
+        },
+        "type": "typography",
+        "description": "Hero headline"
+      },
+      "h1": {
+        "value": {
+          "fontFamily":    "{typography.fontFamily.heading}",
+          "fontWeight":    "{typography.fontWeight.extrabold}",
+          "fontSize":      "{typography.fontSize.h1}",
+          "lineHeight":    "{typography.lineHeight.snug}",
+          "letterSpacing": "{typography.letterSpacing.none}",
+          "textCase":      "{typography.textCase.none}"
+        },
+        "type": "typography",
+        "description": "Section titles"
+      },
+      "h2": {
+        "value": {
+          "fontFamily":    "{typography.fontFamily.heading}",
+          "fontWeight":    "{typography.fontWeight.extrabold}",
+          "fontSize":      "{typography.fontSize.h2}",
+          "lineHeight":    "{typography.lineHeight.snug-2}",
+          "letterSpacing": "{typography.letterSpacing.none}",
+          "textCase":      "{typography.textCase.none}"
+        },
+        "type": "typography",
+        "description": "Sub-section titles"
+      },
+      "h3": {
+        "value": {
+          "fontFamily":    "{typography.fontFamily.heading}",
+          "fontWeight":    "{typography.fontWeight.bold}",
+          "fontSize":      "{typography.fontSize.h3}",
+          "lineHeight":    "{typography.lineHeight.normal}",
+          "letterSpacing": "{typography.letterSpacing.none}",
+          "textCase":      "{typography.textCase.none}"
+        },
+        "type": "typography",
+        "description": "Card titles"
+      },
+      "label": {
+        "value": {
+          "fontFamily":    "{typography.fontFamily.heading}",
+          "fontWeight":    "{typography.fontWeight.bold}",
+          "fontSize":      "{typography.fontSize.label}",
+          "lineHeight":    "{typography.lineHeight.normal}",
+          "letterSpacing": "{typography.letterSpacing.label}",
+          "textCase":      "{typography.textCase.uppercase}"
+        },
+        "type": "typography",
+        "description": "Overlines, badges"
+      },
+      "body-lg": {
+        "value": {
+          "fontFamily":    "{typography.fontFamily.body}",
+          "fontWeight":    "{typography.fontWeight.regular}",
+          "fontSize":      "{typography.fontSize.body-lg}",
+          "lineHeight":    "{typography.lineHeight.loose-2}",
+          "letterSpacing": "{typography.letterSpacing.none}",
+          "textCase":      "{typography.textCase.none}"
+        },
+        "type": "typography",
+        "description": "Hero body"
+      },
+      "body": {
+        "value": {
+          "fontFamily":    "{typography.fontFamily.body}",
+          "fontWeight":    "{typography.fontWeight.regular}",
+          "fontSize":      "{typography.fontSize.body}",
+          "lineHeight":    "{typography.lineHeight.loose}",
+          "letterSpacing": "{typography.letterSpacing.none}",
+          "textCase":      "{typography.textCase.none}"
+        },
+        "type": "typography",
+        "description": "Default body"
+      },
+      "body-sm": {
+        "value": {
+          "fontFamily":    "{typography.fontFamily.body}",
+          "fontWeight":    "{typography.fontWeight.regular}",
+          "fontSize":      "{typography.fontSize.body-sm}",
+          "lineHeight":    "{typography.lineHeight.relaxed}",
+          "letterSpacing": "{typography.letterSpacing.none}",
+          "textCase":      "{typography.textCase.none}"
+        },
+        "type": "typography",
+        "description": "Captions, nav, chips"
+      }
+    }
+  },
+
+  "spacing": {
+    "1":  { "value": "4",  "type": "spacing", "description": "Tight gaps — icon + label" },
+    "2":  { "value": "8",  "type": "spacing", "description": "Small internal padding" },
+    "3":  { "value": "12", "type": "spacing", "description": "Chip padding horizontal" },
+    "4":  { "value": "16", "type": "spacing", "description": "Input padding, small gaps" },
+    "5":  { "value": "20", "type": "spacing", "description": "Section horizontal padding" },
+    "6":  { "value": "24", "type": "spacing", "description": "Card internal padding (small)" },
+    "8":  { "value": "32", "type": "spacing", "description": "Between related elements" },
+    "10": { "value": "40", "type": "spacing", "description": "Between sections (mobile)" },
+    "12": { "value": "48", "type": "spacing", "description": "Component groups" },
+    "16": { "value": "64", "type": "spacing", "description": "Section padding top" },
+    "24": { "value": "96", "type": "spacing", "description": "Section padding bottom" }
+  },
+
+  "borderRadius": {
+    "sm":   { "value": "8",   "type": "borderRadius", "description": "Cookie accept button, small pills" },
+    "md":   { "value": "12",  "type": "borderRadius", "description": "Form inputs, small cards" },
+    "lg":   { "value": "16",  "type": "borderRadius", "description": "Cookie banner, modals" },
+    "xl":   { "value": "20",  "type": "borderRadius", "description": "Main cards" },
+    "full": { "value": "100", "type": "borderRadius", "description": "Chips, pay badges, avatars" }
+  },
+
+  "borderWidth": {
+    "default":    { "value": "1",   "type": "borderWidth", "description": "FAQ rows, light dividers" },
+    "input":      { "value": "2",   "type": "borderWidth", "description": "Inputs" },
+    "card-accent": { "value": "2.5", "type": "borderWidth", "description": ".card-lime highlighted card" },
+    "strong":     { "value": "2.5", "type": "borderWidth", "description": "Clock, checkmark ring" }
+  },
+
+  "boxShadow": {
+    "card": {
+      "value": { "x": "0", "y": "20", "blur": "40", "spread": "-10", "color": "rgba(26,15,46,0.08)", "type": "dropShadow" },
+      "type": "boxShadow",
+      "description": "Default card"
+    },
+    "card-hover": {
+      "value": { "x": "0", "y": "32", "blur": "64", "spread": "-16", "color": "rgba(26,15,46,0.15)", "type": "dropShadow" },
+      "type": "boxShadow",
+      "description": "Card on hover"
+    },
+    "cookie": {
+      "value": { "x": "0", "y": "8", "blur": "32", "spread": "0", "color": "rgba(26,15,46,0.22)", "type": "dropShadow" },
+      "type": "boxShadow",
+      "description": "Cookie banner, floating elements"
+    },
+    "nav": {
+      "value": { "x": "0", "y": "1", "blur": "0", "spread": "0", "color": "rgba(26,15,46,0.07)", "type": "dropShadow" },
+      "type": "boxShadow",
+      "description": "Scrolled navbar border"
+    },
+    "nav-full": {
+      "value": { "x": "0", "y": "1", "blur": "24", "spread": "0", "color": "rgba(26,15,46,0.07)", "type": "dropShadow" },
+      "type": "boxShadow",
+      "description": ".nav-solid variant"
+    }
+  },
+
+  "motion": {
+    "duration": {
+      "fast":     { "value": "150ms", "type": "other", "description": "Button hover, filter" },
+      "base":     { "value": "200ms", "type": "other", "description": "Color transitions (input border, nav links)" },
+      "normal":   { "value": "300ms", "type": "other", "description": "Card hover transform, FAQ icon rotate" },
+      "slow":     { "value": "450ms", "type": "other", "description": "FAQ accordion, scroll reveal, fade-up" },
+      "entrance": { "value": "750ms", "type": "other", "description": "Word reveal animation (hero)" }
+    },
+    "easing": {
+      "spring":    { "value": "cubic-bezier(0.16, 1, 0.3, 1)",    "type": "other", "description": "Entrance animations" },
+      "standard":  { "value": "ease",                              "type": "other", "description": "Scroll reveal, card hover" },
+      "accordion": { "value": "cubic-bezier(0.4, 0, 0.2, 1)",     "type": "other", "description": "FAQ max-height transition" },
+      "linear":    { "value": "linear",                            "type": "other", "description": "Clock animations" }
+    }
+  }
+}

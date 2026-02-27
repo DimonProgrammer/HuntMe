@@ -1,0 +1,818 @@
+{
+  "version": "1",
+  "children": [
+    {
+      "id": "fb-cover",
+      "name": "Facebook Cover — Apex Talent (1640×624)",
+      "type": "frame",
+      "x": 0,
+      "y": 0,
+      "width": 1640,
+      "height": 624,
+      "fills": [
+        {
+          "type": "color",
+          "color": "#1A0F2E"
+        }
+      ],
+      "clip": true,
+      "children": [
+        {
+          "id": "r1",
+          "name": "bg",
+          "type": "rectangle",
+          "x": 0,
+          "y": 0,
+          "width": 1640,
+          "height": 624,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#1A0F2E"
+            }
+          ]
+        },
+        {
+          "id": "e2",
+          "name": "glow-lime",
+          "type": "ellipse",
+          "x": 900,
+          "y": -100,
+          "width": 900,
+          "height": 900,
+          "fills": [
+            {
+              "type": "gradient",
+              "gradientType": "radial",
+              "colors": [
+                {
+                  "color": "#CCFF0014",
+                  "position": 0
+                },
+                {
+                  "color": "#CCFF0000",
+                  "position": 0.7
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "e3",
+          "name": "glow-magenta",
+          "type": "ellipse",
+          "x": 1200,
+          "y": 300,
+          "width": 700,
+          "height": 700,
+          "fills": [
+            {
+              "type": "gradient",
+              "gradientType": "radial",
+              "colors": [
+                {
+                  "color": "#E33BC50F",
+                  "position": 0
+                },
+                {
+                  "color": "#E33BC500",
+                  "position": 0.6
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "r4",
+          "name": "bar-top",
+          "type": "rectangle",
+          "x": 0,
+          "y": 0,
+          "width": 1640,
+          "height": 4,
+          "fills": [
+            {
+              "type": "gradient",
+              "gradientType": "linear",
+              "rotation": 90,
+              "colors": [
+                {
+                  "color": "#E33BC5FF",
+                  "position": 0
+                },
+                {
+                  "color": "#CCFF00FF",
+                  "position": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "r5",
+          "name": "bar-bottom",
+          "type": "rectangle",
+          "x": 0,
+          "y": 620,
+          "width": 1640,
+          "height": 4,
+          "fills": [
+            {
+              "type": "gradient",
+              "gradientType": "linear",
+              "rotation": 90,
+              "colors": [
+                {
+                  "color": "#CCFF00FF",
+                  "position": 0
+                },
+                {
+                  "color": "#E33BC5FF",
+                  "position": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "e6",
+          "name": "ring-xl",
+          "type": "ellipse",
+          "x": 1140,
+          "y": -180,
+          "width": 560,
+          "height": 560,
+          "innerRadius": 0.88,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#CCFF0014"
+            }
+          ]
+        },
+        {
+          "id": "e7",
+          "name": "ring-md",
+          "type": "ellipse",
+          "x": 1360,
+          "y": 360,
+          "width": 280,
+          "height": 280,
+          "innerRadius": 0.82,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#CCFF001F"
+            }
+          ]
+        },
+        {
+          "id": "e8",
+          "name": "dot-lime-1",
+          "type": "ellipse",
+          "x": 880,
+          "y": 260,
+          "width": 10,
+          "height": 10,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#CCFF0080"
+            }
+          ]
+        },
+        {
+          "id": "e9",
+          "name": "dot-lime-2",
+          "type": "ellipse",
+          "x": 940,
+          "y": 380,
+          "width": 6,
+          "height": 6,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#CCFF0059"
+            }
+          ]
+        },
+        {
+          "id": "e10",
+          "name": "dot-magenta",
+          "type": "ellipse",
+          "x": 900,
+          "y": 180,
+          "width": 8,
+          "height": 8,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#E33BC580"
+            }
+          ]
+        },
+        {
+          "id": "e11",
+          "name": "dot-r1",
+          "type": "ellipse",
+          "x": 1560,
+          "y": 80,
+          "width": 5,
+          "height": 5,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#CCFF0066"
+            }
+          ]
+        },
+        {
+          "id": "e12",
+          "name": "dot-r2",
+          "type": "ellipse",
+          "x": 1480,
+          "y": 520,
+          "width": 4,
+          "height": 4,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#E33BC566"
+            }
+          ]
+        },
+        {
+          "id": "e13",
+          "name": "dot-r3",
+          "type": "ellipse",
+          "x": 1040,
+          "y": 560,
+          "width": 6,
+          "height": 6,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#CCFF004D"
+            }
+          ]
+        },
+        {
+          "id": "r14",
+          "name": "divider",
+          "type": "rectangle",
+          "x": 920,
+          "y": 60,
+          "width": 1,
+          "height": 504,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#FFFFFF0F"
+            }
+          ]
+        },
+        {
+          "id": "t15",
+          "name": "logo",
+          "type": "text",
+          "x": 80,
+          "y": 32,
+          "width": 260,
+          "height": 26,
+          "textGrowth": "fixed-width",
+          "content": "APEX TALENT",
+          "fontFamily": "Outfit",
+          "fontSize": 20,
+          "fontWeight": 900,
+          "lineHeight": 1.3,
+          "letterSpacing": 2.4,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#FFFFFF"
+            }
+          ]
+        },
+        {
+          "id": "e16",
+          "name": "logo-dot",
+          "type": "ellipse",
+          "x": 68,
+          "y": 40,
+          "width": 6,
+          "height": 6,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#CCFF00"
+            }
+          ]
+        },
+        {
+          "id": "t17",
+          "name": "url",
+          "type": "text",
+          "x": 1400,
+          "y": 36,
+          "width": 160,
+          "height": 16,
+          "textGrowth": "fixed-width",
+          "content": "apextalent.pro",
+          "fontFamily": "Plus Jakarta Sans",
+          "fontSize": 13,
+          "fontWeight": 500,
+          "lineHeight": 1.3,
+          "textAlign": "right",
+          "fills": [
+            {
+              "type": "color",
+              "color": "#FFFFFF73"
+            }
+          ]
+        },
+        {
+          "id": "r18",
+          "name": "badge-bg",
+          "type": "rectangle",
+          "x": 80,
+          "y": 96,
+          "width": 248,
+          "height": 28,
+          "cornerRadius": 100,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#FFFFFF12"
+            }
+          ]
+        },
+        {
+          "id": "e19",
+          "name": "live-dot",
+          "type": "ellipse",
+          "x": 92,
+          "y": 105,
+          "width": 10,
+          "height": 10,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#FF3B30"
+            }
+          ]
+        },
+        {
+          "id": "t20",
+          "name": "badge-text",
+          "type": "text",
+          "x": 108,
+          "y": 103,
+          "width": 210,
+          "height": 14,
+          "textGrowth": "fixed-width",
+          "content": "LIVE · OPERATOR RECRUITMENT",
+          "fontFamily": "Outfit",
+          "fontSize": 10,
+          "fontWeight": 700,
+          "lineHeight": 1.3,
+          "letterSpacing": 1.2,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#FFFFFFCC"
+            }
+          ]
+        },
+        {
+          "id": "t21",
+          "name": "hl-1",
+          "type": "text",
+          "x": 80,
+          "y": 144,
+          "width": 800,
+          "height": 80,
+          "textGrowth": "fixed-width",
+          "content": "Stream.",
+          "fontFamily": "Outfit",
+          "fontSize": 80,
+          "fontWeight": 900,
+          "lineHeight": 1.02,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#FFFFFF"
+            }
+          ]
+        },
+        {
+          "id": "t22",
+          "name": "hl-2",
+          "type": "text",
+          "x": 80,
+          "y": 232,
+          "width": 800,
+          "height": 80,
+          "textGrowth": "fixed-width",
+          "content": "Earn More.",
+          "fontFamily": "Outfit",
+          "fontSize": 80,
+          "fontWeight": 900,
+          "lineHeight": 1.02,
+          "fills": [
+            {
+              "type": "gradient",
+              "gradientType": "linear",
+              "rotation": 125,
+              "colors": [
+                {
+                  "color": "#E33BC5FF",
+                  "position": 0
+                },
+                {
+                  "color": "#FF8C42FF",
+                  "position": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "t23",
+          "name": "hl-3",
+          "type": "text",
+          "x": 80,
+          "y": 320,
+          "width": 800,
+          "height": 80,
+          "textGrowth": "fixed-width",
+          "content": "Live.",
+          "fontFamily": "Outfit",
+          "fontSize": 80,
+          "fontWeight": 900,
+          "lineHeight": 1.02,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#FFFFFF"
+            }
+          ]
+        },
+        {
+          "id": "t24",
+          "name": "tagline",
+          "type": "text",
+          "x": 80,
+          "y": 422,
+          "width": 800,
+          "height": 36,
+          "textGrowth": "fixed-width",
+          "content": "International opportunities\nfor live streaming operators",
+          "fontFamily": "Plus Jakarta Sans",
+          "fontSize": 16,
+          "fontWeight": 400,
+          "lineHeight": 1.5,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#FFFFFF99"
+            }
+          ]
+        },
+        {
+          "id": "r25",
+          "name": "chip-Philippines-bg",
+          "type": "rectangle",
+          "x": 80,
+          "y": 474,
+          "width": 148,
+          "height": 32,
+          "cornerRadius": 100,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#FFFFFF14"
+            }
+          ]
+        },
+        {
+          "id": "t26",
+          "name": "chip-Philippines-t",
+          "type": "text",
+          "x": 90,
+          "y": 482,
+          "width": 128,
+          "height": 16,
+          "textGrowth": "fixed-width",
+          "content": "🇵🇭 Philippines",
+          "fontFamily": "Plus Jakarta Sans",
+          "fontSize": 13,
+          "fontWeight": 600,
+          "lineHeight": 1.3,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#FFFFFFD9"
+            }
+          ]
+        },
+        {
+          "id": "r27",
+          "name": "chip-Nigeria-bg",
+          "type": "rectangle",
+          "x": 238,
+          "y": 474,
+          "width": 128,
+          "height": 32,
+          "cornerRadius": 100,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#FFFFFF14"
+            }
+          ]
+        },
+        {
+          "id": "t28",
+          "name": "chip-Nigeria-t",
+          "type": "text",
+          "x": 248,
+          "y": 482,
+          "width": 108,
+          "height": 16,
+          "textGrowth": "fixed-width",
+          "content": "🇳🇬 Nigeria",
+          "fontFamily": "Plus Jakarta Sans",
+          "fontSize": 13,
+          "fontWeight": 600,
+          "lineHeight": 1.3,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#FFFFFFD9"
+            }
+          ]
+        },
+        {
+          "id": "r29",
+          "name": "chip-Indonesia-bg",
+          "type": "rectangle",
+          "x": 376,
+          "y": 474,
+          "width": 140,
+          "height": 32,
+          "cornerRadius": 100,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#FFFFFF14"
+            }
+          ]
+        },
+        {
+          "id": "t30",
+          "name": "chip-Indonesia-t",
+          "type": "text",
+          "x": 386,
+          "y": 482,
+          "width": 120,
+          "height": 16,
+          "textGrowth": "fixed-width",
+          "content": "🇮🇩 Indonesia",
+          "fontFamily": "Plus Jakarta Sans",
+          "fontSize": 13,
+          "fontWeight": 600,
+          "lineHeight": 1.3,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#FFFFFFD9"
+            }
+          ]
+        },
+        {
+          "id": "r31",
+          "name": "cta-bg",
+          "type": "rectangle",
+          "x": 80,
+          "y": 544,
+          "width": 192,
+          "height": 48,
+          "cornerRadius": 100,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#CCFF00"
+            }
+          ]
+        },
+        {
+          "id": "t32",
+          "name": "cta-text",
+          "type": "text",
+          "x": 104,
+          "y": 557,
+          "width": 148,
+          "height": 22,
+          "textGrowth": "fixed-width",
+          "content": "Apply Free →",
+          "fontFamily": "Outfit",
+          "fontSize": 16,
+          "fontWeight": 800,
+          "lineHeight": 1.3,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#1A0F2E"
+            }
+          ]
+        },
+        {
+          "id": "t33",
+          "name": "stat-num",
+          "type": "text",
+          "x": 980,
+          "y": 100,
+          "width": 580,
+          "height": 200,
+          "textGrowth": "fixed-width",
+          "content": "$2,400",
+          "fontFamily": "Outfit",
+          "fontSize": 160,
+          "fontWeight": 900,
+          "lineHeight": 1,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#CCFF00"
+            }
+          ]
+        },
+        {
+          "id": "t34",
+          "name": "stat-sub",
+          "type": "text",
+          "x": 980,
+          "y": 308,
+          "width": 120,
+          "height": 40,
+          "textGrowth": "fixed-width",
+          "content": "/mo",
+          "fontFamily": "Outfit",
+          "fontSize": 32,
+          "fontWeight": 700,
+          "lineHeight": 1,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#CCFF0099"
+            }
+          ]
+        },
+        {
+          "id": "t35",
+          "name": "stat-label",
+          "type": "text",
+          "x": 980,
+          "y": 358,
+          "width": 580,
+          "height": 22,
+          "textGrowth": "fixed-width",
+          "content": "avg. monthly earning",
+          "fontFamily": "Outfit",
+          "fontSize": 16,
+          "fontWeight": 600,
+          "lineHeight": 1.3,
+          "letterSpacing": 0.4,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#FFFFFF80"
+            }
+          ]
+        },
+        {
+          "id": "r36",
+          "name": "stat-line",
+          "type": "rectangle",
+          "x": 980,
+          "y": 386,
+          "width": 120,
+          "height": 2,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#CCFF0059"
+            }
+          ]
+        },
+        {
+          "id": "t37",
+          "name": "stat2-num",
+          "type": "text",
+          "x": 980,
+          "y": 430,
+          "width": 580,
+          "height": 56,
+          "textGrowth": "fixed-width",
+          "content": "1,200+",
+          "fontFamily": "Outfit",
+          "fontSize": 48,
+          "fontWeight": 900,
+          "lineHeight": 1,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#FFFFFF"
+            }
+          ]
+        },
+        {
+          "id": "t38",
+          "name": "stat2-label",
+          "type": "text",
+          "x": 980,
+          "y": 482,
+          "width": 580,
+          "height": 18,
+          "textGrowth": "fixed-width",
+          "content": "active operators worldwide",
+          "fontFamily": "Outfit",
+          "fontSize": 13,
+          "fontWeight": 600,
+          "lineHeight": 1.3,
+          "letterSpacing": 0.3,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#FFFFFF73"
+            }
+          ]
+        },
+        {
+          "id": "t39",
+          "name": "stat3-num",
+          "type": "text",
+          "x": 1220,
+          "y": 430,
+          "width": 200,
+          "height": 56,
+          "textGrowth": "fixed-width",
+          "content": "48h",
+          "fontFamily": "Outfit",
+          "fontSize": 48,
+          "fontWeight": 900,
+          "lineHeight": 1,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#E33BC5E6"
+            }
+          ]
+        },
+        {
+          "id": "t40",
+          "name": "stat3-label",
+          "type": "text",
+          "x": 1220,
+          "y": 482,
+          "width": 200,
+          "height": 18,
+          "textGrowth": "fixed-width",
+          "content": "time to first payout",
+          "fontFamily": "Outfit",
+          "fontSize": 13,
+          "fontWeight": 600,
+          "lineHeight": 1.3,
+          "letterSpacing": 0.3,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#FFFFFF73"
+            }
+          ]
+        },
+        {
+          "id": "t41",
+          "name": "platforms",
+          "type": "text",
+          "x": 980,
+          "y": 572,
+          "width": 580,
+          "height": 16,
+          "textGrowth": "fixed-width",
+          "content": "Chaturbate · Stripchat · LiveJasmin · BongaCams",
+          "fontFamily": "Plus Jakarta Sans",
+          "fontSize": 12,
+          "fontWeight": 500,
+          "lineHeight": 1.3,
+          "fills": [
+            {
+              "type": "color",
+              "color": "#FFFFFF40"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
