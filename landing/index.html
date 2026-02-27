@@ -1382,5 +1382,37 @@
   }
 </script>
 
+<!-- Hero parallax on mouse move -->
+<script>
+(function(){
+  var wrap = document.querySelector('.hero-photo-wrap');
+  if (!wrap || window.innerWidth < 768) return;
+  var img = wrap.querySelector('img');
+  var accents = wrap.querySelectorAll('[style*="position:absolute"]');
+  var hero = wrap.closest('section') || wrap.parentElement;
+  var rAF = null;
+  hero.addEventListener('mousemove', function(e){
+    if (rAF) return;
+    rAF = requestAnimationFrame(function(){
+      var rect = hero.getBoundingClientRect();
+      var cx = (e.clientX - rect.left) / rect.width  - 0.5; // -0.5..0.5
+      var cy = (e.clientY - rect.top)  / rect.height - 0.5;
+      img.style.transform = 'translate(' + (cx * 15) + 'px,' + (cy * 10) + 'px)';
+      accents.forEach(function(el, i){
+        var f = i === 0 ? -20 : -12;
+        el.style.transform = 'translate(' + (cx * f) + 'px,' + (cy * f) + 'px)';
+      });
+      rAF = null;
+    });
+  });
+  hero.addEventListener('mouseleave', function(){
+    img.style.transition = 'transform 0.5s ease';
+    img.style.transform = 'translate(0,0)';
+    accents.forEach(function(el){ el.style.transition = 'transform 0.5s ease'; el.style.transform = 'translate(0,0)'; });
+    setTimeout(function(){ img.style.transition = ''; accents.forEach(function(el){ el.style.transition = ''; }); }, 500);
+  });
+})();
+</script>
+
 </body>
 </html>
