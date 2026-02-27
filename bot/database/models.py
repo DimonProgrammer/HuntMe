@@ -111,6 +111,16 @@ class SlotReservation(Base):
     reserved_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 
+class ChatwootMapping(Base):
+    """Maps Telegram user IDs to Chatwoot contact + conversation IDs."""
+    __tablename__ = "chatwoot_mappings"
+
+    tg_user_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    contact_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    conversation_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+
 class JobPosting(Base):
     __tablename__ = "job_postings"
 

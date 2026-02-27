@@ -20,6 +20,7 @@ from sqlalchemy import select
 from bot.handlers import admin, interview_booking, menu, operator_flow
 from bot.services import live_feed
 from bot.services import reminder
+from bot.services import chatwoot_client
 
 logging.basicConfig(
     level=logging.INFO,
@@ -41,6 +42,7 @@ class LoggingBot(Bot):
         skip = {config.ADMIN_CHAT_ID, config.LIVE_FEED_CHANNEL_ID}
         if text and cid not in skip:
             asyncio.create_task(live_feed.log_outgoing(cid, str(text)))
+            asyncio.create_task(chatwoot_client.mirror_outgoing(cid, str(text)))
         return result
 
 
@@ -58,6 +60,10 @@ class LiveFeedMiddleware(BaseMiddleware):
             text = event.text or f"[{event.content_type}]"
             asyncio.create_task(
                 live_feed.log_incoming(user.id, user.username, text, step)
+            )
+            name = user.full_name or user.username or str(user.id)
+            asyncio.create_task(
+                chatwoot_client.mirror_incoming(user.id, name, user.username, text, step)
             )
         elif isinstance(event, CallbackQuery) and event.from_user and event.data:
             user = event.from_user
@@ -77,6 +83,10 @@ class LiveFeedMiddleware(BaseMiddleware):
                     step = current.split(":")[-1]
             asyncio.create_task(
                 live_feed.log_incoming(user.id, user.username, f"🔘 {button_text}", step)
+            )
+            name = user.full_name or user.username or str(user.id)
+            asyncio.create_task(
+                chatwoot_client.mirror_incoming(user.id, name, user.username, f"🔘 {button_text}", step)
             )
         return await handler(event, data)
 
@@ -204,12 +214,57 @@ async def _check_landing_lead_entered_bot(candidate_id: int, name: str, tg_link:
         logger.error("Landing lead check failed: %s", exc)
 
 
+async def chatwoot_webhook(request):
+    """Receive Chatwoot events; forward agent replies back to candidate in Telegram."""
+    try:
+        payload = await request.json()
+    except Exception:
+        return web.Response(status=400, text="Bad JSON")
+
+    # Only handle new outgoing messages (agent → customer)
+    if payload.get("event") != "message_created":
+        return web.Response(text="ok")
+
+    # message_type: 1 = outgoing (agent to customer), 0 = incoming
+    msg_type = payload.get("message_type")
+    if msg_type not in (1, "outgoing"):
+        return web.Response(text="ok")
+
+    content = (payload.get("content") or "").strip()
+    if not content:
+        return web.Response(text="ok")
+
+    # Skip echo: messages created by our bot agent (avoid loop)
+    sender = payload.get("sender") or {}
+    sender_id = sender.get("id")
+    if config.CHATWOOT_BOT_AGENT_ID and sender_id == config.CHATWOOT_BOT_AGENT_ID:
+        return web.Response(text="ok")
+
+    # Look up Telegram user from conversation_id
+    conv_id = (payload.get("conversation") or {}).get("id")
+    if not conv_id:
+        return web.Response(text="ok")
+
+    tg_user_id = await chatwoot_client.conversation_to_tg_user(conv_id)
+    if not tg_user_id or not _bot:
+        return web.Response(text="ok")
+
+    try:
+        await _bot.send_message(tg_user_id, content)
+        logger.info("Chatwoot reply forwarded to TG user %s", tg_user_id)
+    except Exception as exc:
+        logger.warning("Failed to forward Chatwoot reply to %s: %s", tg_user_id, exc)
+
+    return web.Response(text="ok")
+
+
 async def start_health_server():
     app = web.Application()
     app.router.add_get("/", health)
     app.router.add_get("/healthz", health)
     app.router.add_post("/webhook/landing", landing_webhook)
     app.router.add_route("OPTIONS", "/webhook/landing", landing_options)
+    app.router.add_post("/webhook/chatwoot", chatwoot_webhook)
     port = int(os.getenv("PORT", "10000"))
     runner = web.AppRunner(app)
     await runner.setup()
