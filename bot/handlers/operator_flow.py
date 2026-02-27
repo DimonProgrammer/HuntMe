@@ -1048,6 +1048,9 @@ async def process_contact(message: Message, state: FSMContext):
         "I'm reviewing your information now..."
     )
 
+    import asyncio
+    await asyncio.sleep(10)
+
     try:
         result = await screen_candidate(
             name=data.get("name", "N/A"),
