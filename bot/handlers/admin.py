@@ -11,7 +11,7 @@ import re
 
 from aiogram import F, Router
 from aiogram.filters import Command
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 from sqlalchemy import func, select
 
 from bot.config import config
@@ -272,8 +272,16 @@ async def cb_reject(callback: CallbackQuery):
     except Exception:
         pass
     m = msg(cand_lang)
+    share_url = (
+        "https://t.me/share/url?url=https://apextalent.pro/ru"
+        if cand_lang == "ru"
+        else "https://t.me/share/url?url=https://apextalent.pro"
+    )
+    share_kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=m.BTN_SHARE_REFERRAL, url=share_url)],
+    ])
     try:
-        await callback.bot.send_message(user_id, m.REJECTION_MESSAGE)
+        await callback.bot.send_message(user_id, m.REJECTION_MESSAGE, reply_markup=share_kb)
         try:
             async with async_session() as session:
                 result = await session.execute(

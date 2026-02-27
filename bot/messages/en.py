@@ -472,8 +472,12 @@ REJECTION_MESSAGE = (
     "Thank you for your interest in our team! 🙏\n\n"
     "Unfortunately, we're not able to move forward with your application at this time.\n\n"
     "If anything changes in the future, feel free to reach out again. "
-    "We wish you all the best! 🙂"
+    "We wish you all the best! 🙂\n\n"
+    "——\n"
+    "If you know someone with free time during the day, a gaming PC, and decent English — "
+    "this could be a great fit for them. Pass it along and they'll thank you for it. 🙌"
 )
+BTN_SHARE_REFERRAL = "🔗 Share with a friend"
 
 # ═══ OBJECTION RESPONSES ═══
 

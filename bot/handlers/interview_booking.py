@@ -388,9 +388,10 @@ async def _request_crm_approval(message: Message, state: FSMContext, slot_str: s
     data = await state.get_data()
     lang = data.get("language", "en")
     m = msg(lang)
-    tg_user_id = data.get("booking_tg_user_id")
+    # Fallback to chat ID if booking_tg_user_id somehow missing from FSM
+    tg_user_id = data.get("booking_tg_user_id") or message.chat.id
 
-    # Load candidate from DB
+    # Load candidate from DB; create from FSM data if _save_candidate failed earlier
     candidate = None
     try:
         async with async_session() as session:
@@ -398,8 +399,25 @@ async def _request_crm_approval(message: Message, state: FSMContext, slot_str: s
                 select(Candidate).where(Candidate.tg_user_id == tg_user_id)
             )
             candidate = result.scalar_one_or_none()
+            if not candidate:
+                logger.warning(
+                    "Candidate %s not found in DB during booking — creating from FSM data",
+                    tg_user_id,
+                )
+                candidate = Candidate(
+                    tg_user_id=tg_user_id,
+                    name=data.get("name", "Unknown"),
+                    candidate_type=data.get("candidate_type", "operator"),
+                    language=data.get("language", "en"),
+                    status="screened",
+                    score=data.get("ai_score"),
+                    recommendation=data.get("ai_recommendation"),
+                    hardware_compatible=data.get("hardware_compatible"),
+                )
+                session.add(candidate)
+                await session.commit()
     except Exception:
-        logger.exception("Failed to load candidate for CRM approval")
+        logger.exception("Failed to load/create candidate for CRM approval")
 
     if not candidate:
         await message.answer(m.BOOKING_DATA_ERROR)
