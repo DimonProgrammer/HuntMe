@@ -1,13 +1,8 @@
 {
   "mcpServers": {
     "huntme-crm": {
-      "command": "python3",
-      "args": ["crm-mcp/server.py"],
-      "env": {
-        "HUNTME_CRM_BASE_URL": "https://app.huntme.pro",
-        "HUNTME_CRM_LOGIN": "",
-        "HUNTME_CRM_PASSWORD": ""
-      }
+      "command": "crm-mcp/.venv/bin/python3",
+      "args": ["crm-mcp/server.py"]
     }
   }
 }

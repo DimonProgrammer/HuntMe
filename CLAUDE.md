@@ -25,6 +25,12 @@
 - Notion MCP OAuth ≠ Internal Integration Token. Бот использует свой токен через REST API
 - Render free tier засыпает → UptimeRobot пингует `/healthz` каждые 5 мин
 - Supabase free tier паузит БД → мигрировали на Neon
+- HuntMe CRM session token ~30 дней, auto-relogin при 401
+- HuntMe CRM за CloudFront — обязательно реалистичный User-Agent
+- CRM form — multipart/form-data, НЕ JSON. Слот строго `dd.MM.yyyy HH:mm`
+- CRM question_id (49-52) привязаны к office_id=95. При смене офиса могут измениться
+- CRM cookie = `__Secure-authjs.session-token` (Auth.js v5, НЕ next-auth)
+- CRM create returns 201 (не 200). Telegram поле — без `@`
 
 ## Архитектура
 
@@ -37,6 +43,8 @@
 - AI fallback chain: Groq → Gemini → OpenRouter → Anthropic (реально работает только Groq)
 - Роутеры в `main.py`: admin → menu → operator_flow (порядок важен!)
 - `agent_flow.py`, `model_flow.py` — Phase 2, роутеры НЕ подключены
+- `interview_booking.py` — CRM auto-booking flow, роутер НЕ подключён (тестирование)
+- `huntme_crm.py` → авторизация через NextAuth session cookie → fetch слотов + submit заявки
 
 **Инфраструктура:**
 
@@ -50,4 +58,4 @@
 | Email | Zoho Mail | hello@apextalent.pro |
 | Аналитика | Яндекс.Метрика | 107023862 |
 
-**Env vars (Render):** BOT_TOKEN, ADMIN_CHAT_ID, DATABASE_URL, GROQ_API_KEY, NOTION_TOKEN, NOTION_LEADS_DB_ID, LIVE_FEED_CHANNEL_ID, PORT=10000
+**Env vars (Render):** BOT_TOKEN, ADMIN_CHAT_ID, DATABASE_URL, GROQ_API_KEY, NOTION_TOKEN, NOTION_LEADS_DB_ID, LIVE_FEED_CHANNEL_ID, HUNTME_CRM_LOGIN, HUNTME_CRM_PASSWORD, PORT=10000

@@ -17,8 +17,9 @@ from bot.database import init_db
 from bot.database.connection import async_session
 from bot.database.models import Candidate
 from sqlalchemy import select
-from bot.handlers import admin, menu, operator_flow
+from bot.handlers import admin, interview_booking, menu, operator_flow
 from bot.services import live_feed
+from bot.services import reminder
 
 logging.basicConfig(
     level=logging.INFO,
@@ -240,11 +241,17 @@ async def main():
 
     # Register routers (order matters):
     # admin first — so admin commands + reply handler take priority
-    # menu second — handles /start, /menu, info pages, back_main
+    # interview_booking — CRM booking FSM states
+    # menu — handles /start, /menu, info pages, back_main
     # operator flow last — handles FSM states only
     dp.include_router(admin.router)
+    dp.include_router(interview_booking.router)
     dp.include_router(menu.router)
     dp.include_router(operator_flow.router)
+
+    # Background tasks
+    asyncio.create_task(reminder.run_reminder_checker(bot))
+    logger.info("Reminder checker started")
 
     logger.info("Bot is running. Admin ID: %s", config.ADMIN_CHAT_ID)
 

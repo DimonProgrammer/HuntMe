@@ -31,16 +31,16 @@ class MenuStates(StatesGroup):
 
 def _main_menu_kb() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Apply Now", callback_data="menu_apply")],
-        [InlineKeyboardButton(text="About the Vacancy", callback_data="menu_vacancy")],
-        [InlineKeyboardButton(text="About the Company", callback_data="menu_company")],
-        [InlineKeyboardButton(text="Ask a Question", callback_data="menu_question")],
+        [InlineKeyboardButton(text="🚀 Apply Now", callback_data="menu_apply")],
+        [InlineKeyboardButton(text="💼 About the Vacancy", callback_data="menu_vacancy")],
+        [InlineKeyboardButton(text="🏢 About the Company", callback_data="menu_company")],
+        [InlineKeyboardButton(text="❓ Ask a Question", callback_data="menu_question")],
     ])
 
 
 def _back_kb() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="<< Back to Menu", callback_data="back_main")],
+        [InlineKeyboardButton(text="⬅️ Back to Menu", callback_data="back_main")],
     ])
 
 
@@ -231,9 +231,9 @@ async def process_question(message: Message, state: FSMContext):
         logger.exception("Failed to forward question to admin")
 
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Ask another question", callback_data="menu_question")],
-        [InlineKeyboardButton(text="Apply Now", callback_data="menu_apply")],
-        [InlineKeyboardButton(text="<< Back to Menu", callback_data="back_main")],
+        [InlineKeyboardButton(text="❓ Ask another question", callback_data="menu_question")],
+        [InlineKeyboardButton(text="🚀 Apply Now", callback_data="menu_apply")],
+        [InlineKeyboardButton(text="⬅️ Back to Menu", callback_data="back_main")],
     ])
     await message.answer(
         "Thanks for your question! 🙂\n\n"
@@ -270,8 +270,8 @@ async def cb_menu_apply(callback: CallbackQuery, state: FSMContext):
             }
             status_text = status_labels.get(existing.status, existing.status)
             keyboard = InlineKeyboardMarkup(inline_keyboard=[
-                [InlineKeyboardButton(text="Start new application", callback_data="reapply")],
-                [InlineKeyboardButton(text="<< Back to Menu", callback_data="back_main")],
+                [InlineKeyboardButton(text="🔄 Start new application", callback_data="reapply")],
+                [InlineKeyboardButton(text="⬅️ Back to Menu", callback_data="back_main")],
             ])
             try:
                 await callback.message.edit_text(
@@ -369,8 +369,8 @@ async def cb_menu_vacancy(callback: CallbackQuery, state: FSMContext):
         "  • Age: 18+"
     )
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Apply Now", callback_data="apply_from_info")],
-        [InlineKeyboardButton(text="<< Back to Menu", callback_data="back_main")],
+        [InlineKeyboardButton(text="🚀 Apply Now", callback_data="apply_from_info")],
+        [InlineKeyboardButton(text="⬅️ Back to Menu", callback_data="back_main")],
     ])
     try:
         await callback.message.edit_text(text, reply_markup=keyboard)
@@ -432,7 +432,7 @@ async def forward_text_to_admin(message: Message, state: FSMContext):
     await message.answer(
         "Message sent! Our team will reply shortly. 💬",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Apply Now", callback_data="menu_apply")],
-            [InlineKeyboardButton(text="<< Back to Menu", callback_data="back_main")],
+            [InlineKeyboardButton(text="🚀 Apply Now", callback_data="menu_apply")],
+            [InlineKeyboardButton(text="⬅️ Back to Menu", callback_data="back_main")],
         ]),
     )

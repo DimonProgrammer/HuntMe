@@ -109,7 +109,7 @@ STEP_BACK = {
 
 def _back_row():
     """Single back button row to append to any keyboard."""
-    return [InlineKeyboardButton(text="<< Back", callback_data="go_back")]
+    return [InlineKeyboardButton(text="⬅️ Back", callback_data="go_back")]
 
 
 # ═══ QUESTION / OBJECTION HANDLING ═══
@@ -190,10 +190,10 @@ async def _send_step_prompt(target, state: FSMContext, set_state=False):
     elif current == OperatorForm.waiting_has_pc.state:
         kb = InlineKeyboardMarkup(inline_keyboard=[
             [
-                InlineKeyboardButton(text="Yes, PC/Desktop", callback_data="pc_desktop"),
-                InlineKeyboardButton(text="Yes, Laptop", callback_data="pc_laptop"),
+                InlineKeyboardButton(text="🖥️ Yes, PC/Desktop", callback_data="pc_desktop"),
+                InlineKeyboardButton(text="💻 Yes, Laptop", callback_data="pc_laptop"),
             ],
-            [InlineKeyboardButton(text="No", callback_data="pc_no")],
+            [InlineKeyboardButton(text="❌ No", callback_data="pc_no")],
             _back_row(),
         ])
         await send(
@@ -205,8 +205,8 @@ async def _send_step_prompt(target, state: FSMContext, set_state=False):
     elif current == OperatorForm.waiting_no_pc_followup.state:
         kb = InlineKeyboardMarkup(inline_keyboard=[
             [
-                InlineKeyboardButton(text="Yes, within 1-2 weeks", callback_data="nopc_soon"),
-                InlineKeyboardButton(text="No plans yet", callback_data="nopc_no"),
+                InlineKeyboardButton(text="✅ Yes, within 1-2 weeks", callback_data="nopc_soon"),
+                InlineKeyboardButton(text="🤷 No plans yet", callback_data="nopc_no"),
             ],
             _back_row(),
         ])
@@ -218,10 +218,10 @@ async def _send_step_prompt(target, state: FSMContext, set_state=False):
 
     elif current == OperatorForm.waiting_study_work.state:
         kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Working", callback_data="study_working")],
-            [InlineKeyboardButton(text="Student (online classes)", callback_data="study_distance")],
-            [InlineKeyboardButton(text="Student (on campus)", callback_data="study_inperson")],
-            [InlineKeyboardButton(text="Neither", callback_data="study_neither")],
+            [InlineKeyboardButton(text="💼 Working", callback_data="study_working")],
+            [InlineKeyboardButton(text="🎓 Student (online classes)", callback_data="study_distance")],
+            [InlineKeyboardButton(text="🏫 Student (on campus)", callback_data="study_inperson")],
+            [InlineKeyboardButton(text="🏠 Neither", callback_data="study_neither")],
             _back_row(),
         ])
         await send(f"{_progress(4)}\n\nAre you currently studying or working?", reply_markup=kb)
@@ -229,20 +229,21 @@ async def _send_step_prompt(target, state: FSMContext, set_state=False):
     elif current == OperatorForm.waiting_english.state:
         kb = InlineKeyboardMarkup(inline_keyboard=[
             [
-                InlineKeyboardButton(text="Basic", callback_data="eng_beginner"),
-                InlineKeyboardButton(text="Can hold a conversation", callback_data="eng_b1"),
+                InlineKeyboardButton(text="📗 Basic", callback_data="eng_beginner"),
+                InlineKeyboardButton(text="📘 Can hold a conversation", callback_data="eng_b1"),
             ],
             [
-                InlineKeyboardButton(text="Comfortable", callback_data="eng_b2"),
-                InlineKeyboardButton(text="Fluent", callback_data="eng_c1"),
+                InlineKeyboardButton(text="📙 Comfortable", callback_data="eng_b2"),
+                InlineKeyboardButton(text="📕 Fluent", callback_data="eng_c1"),
             ],
-            [InlineKeyboardButton(text="Native speaker", callback_data="eng_native")],
+            [InlineKeyboardButton(text="🌟 Native speaker", callback_data="eng_native")],
             _back_row(),
         ])
         await send(
             f"{_progress(5)}\n\n"
             "How well do you speak English?\n\n"
-            "We need at least conversational level — you'll be moderating English chats.",
+            "We need at least conversational level — you'll be moderating English chats.\n\n"
+            "You can also rate yourself from 1 to 10.",
             reply_markup=kb,
         )
 
@@ -251,13 +252,14 @@ async def _send_step_prompt(target, state: FSMContext, set_state=False):
         await send(
             f"{_progress(6)}\n\n"
             "How comfortable are you with Windows?\n\n"
-            "For example: installing programs, troubleshooting, changing settings?",
+            "For example: installing programs, troubleshooting, changing settings?\n\n"
+            "You can rate yourself from 1 to 10.",
             reply_markup=kb,
         )
 
     elif current == OperatorForm.waiting_cpu.state:
         kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Not sure", callback_data="cpu_skip")],
+            [InlineKeyboardButton(text="🤔 Not sure", callback_data="cpu_skip")],
             _back_row(),
         ])
         await send(
@@ -272,10 +274,10 @@ async def _send_step_prompt(target, state: FSMContext, set_state=False):
 
     elif current == OperatorForm.waiting_cpu_simple_age.state:
         kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Less than 2 years", callback_data="pcage_new")],
-            [InlineKeyboardButton(text="2-4 years", callback_data="pcage_mid")],
-            [InlineKeyboardButton(text="5+ years", callback_data="pcage_old")],
-            [InlineKeyboardButton(text="Not sure", callback_data="pcage_unsure")],
+            [InlineKeyboardButton(text="🆕 Less than 2 years", callback_data="pcage_new")],
+            [InlineKeyboardButton(text="📅 2-4 years", callback_data="pcage_mid")],
+            [InlineKeyboardButton(text="📆 5+ years", callback_data="pcage_old")],
+            [InlineKeyboardButton(text="🤔 Not sure", callback_data="pcage_unsure")],
             _back_row(),
         ])
         await send(
@@ -286,17 +288,17 @@ async def _send_step_prompt(target, state: FSMContext, set_state=False):
 
     elif current == OperatorForm.waiting_cpu_simple_usage.state:
         kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Gaming", callback_data="pcuse_gaming")],
-            [InlineKeyboardButton(text="Work / Office", callback_data="pcuse_work")],
-            [InlineKeyboardButton(text="Browsing / Social media", callback_data="pcuse_browsing")],
-            [InlineKeyboardButton(text="Video editing / Design", callback_data="pcuse_creative")],
+            [InlineKeyboardButton(text="🎮 Gaming", callback_data="pcuse_gaming")],
+            [InlineKeyboardButton(text="💼 Work / Office", callback_data="pcuse_work")],
+            [InlineKeyboardButton(text="🌐 Browsing / Social media", callback_data="pcuse_browsing")],
+            [InlineKeyboardButton(text="🎨 Video editing / Design", callback_data="pcuse_creative")],
             _back_row(),
         ])
         await send(f"{_progress(7)}\n\nWhat do you mainly use your computer for?", reply_markup=kb)
 
     elif current == OperatorForm.waiting_gpu.state:
         kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Not sure", callback_data="gpu_skip")],
+            [InlineKeyboardButton(text="🤔 Not sure", callback_data="gpu_skip")],
             _back_row(),
         ])
         await send(
@@ -311,10 +313,10 @@ async def _send_step_prompt(target, state: FSMContext, set_state=False):
 
     elif current == OperatorForm.waiting_gpu_simple_gaming.state:
         kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Yes, modern games (GTA, Fortnite)", callback_data="game_modern")],
-            [InlineKeyboardButton(text="Yes, but only simple/old games", callback_data="game_basic")],
-            [InlineKeyboardButton(text="No / Never tried", callback_data="game_no")],
-            [InlineKeyboardButton(text="Not sure", callback_data="game_unsure")],
+            [InlineKeyboardButton(text="🎮 Yes, modern games (GTA, Fortnite)", callback_data="game_modern")],
+            [InlineKeyboardButton(text="🕹️ Yes, but only simple/old games", callback_data="game_basic")],
+            [InlineKeyboardButton(text="❌ No / Never tried", callback_data="game_no")],
+            [InlineKeyboardButton(text="🤔 Not sure", callback_data="game_unsure")],
             _back_row(),
         ])
         await send(
@@ -381,12 +383,45 @@ async def cb_go_back(callback: CallbackQuery, state: FSMContext):
     await _send_step_prompt(callback, state)
 
 
+# ═══ REMINDER CALLBACKS ═══
+
+@router.callback_query(F.data.startswith("remind_"))
+async def on_reminder_choice(callback: CallbackQuery, state: FSMContext):
+    """Handle reminder time selection."""
+    if callback.data == "remind_continue":
+        await callback.answer()
+        # Reset reminder tracking + re-send current step prompt
+        await state.update_data(reminder_prompt_sent_at=None, reminder_scheduled_at=None)
+        await _send_step_prompt(callback, state)
+        return
+
+    # Parse minutes from callback: remind_30, remind_60, remind_180, remind_720
+    try:
+        minutes = int(callback.data.removeprefix("remind_"))
+    except ValueError:
+        await callback.answer("Invalid option")
+        return
+
+    from datetime import datetime, timedelta
+    remind_at = (datetime.utcnow() + timedelta(minutes=minutes)).isoformat()
+    await state.update_data(reminder_scheduled_at=remind_at)
+    await callback.answer("Got it! I'll remind you then 🔔")
+
+    labels = {30: "30 minutes", 60: "1 hour", 180: "3 hours", 720: "12 hours"}
+    label = labels.get(minutes, f"{minutes} minutes")
+    try:
+        await callback.message.edit_text(
+            f"No problem! I'll send you a reminder in {label}. See you soon! 👋"
+        )
+    except Exception:
+        pass
+
+
 # ═══ CATCH-ALL: text in callback-based states ═══
 
 @router.message(OperatorForm.waiting_has_pc)
 @router.message(OperatorForm.waiting_no_pc_followup)
 @router.message(OperatorForm.waiting_study_work)
-@router.message(OperatorForm.waiting_english)
 @router.message(OperatorForm.waiting_cpu_simple_age)
 @router.message(OperatorForm.waiting_cpu_simple_usage)
 @router.message(OperatorForm.waiting_gpu_simple_gaming)
@@ -395,6 +430,65 @@ async def catch_text_in_button_states(message: Message, state: FSMContext):
     handled = await _handle_possible_question(message, state)
     if not handled:
         await message.answer("Please use the buttons above to answer. 👆")
+
+
+@router.message(OperatorForm.waiting_english)
+async def process_english_text(message: Message, state: FSMContext):
+    """Accept numeric 1-10 rating for English level."""
+    if await _handle_possible_question(message, state):
+        return
+
+    text = (message.text or "").strip()
+    # Try to parse a number 1-10
+    num = None
+    for word in text.split():
+        if word.isdigit():
+            num = int(word)
+            break
+    if num is None:
+        try:
+            num = int(text)
+        except ValueError:
+            pass
+
+    if num is not None and 1 <= num <= 10:
+        # Map number to level: 1-3 = Beginner, 4-5 = B1, 6-7 = B2, 8-9 = C1, 10 = Native
+        if num <= 3:
+            eng_val = "Beginner"
+        elif num <= 5:
+            eng_val = "B1"
+        elif num <= 7:
+            eng_val = "B2"
+        elif num <= 9:
+            eng_val = "C1"
+        else:
+            eng_val = "Native"
+
+        await state.update_data(english_level=eng_val)
+        await _track_event(message.from_user.id, "step_completed", "english", {"level": eng_val, "raw": num})
+        data = await state.get_data()
+        await notion_leads.on_english(data.get("notion_page_id"), eng_val)
+
+        await message.answer(
+            "You're doing great! Almost halfway there.\n\n"
+            "People like you are already earning with us:\n"
+            "  Maria from Manila — $250/week after 2 months\n"
+            "  Emeka from Lagos — started from zero, now $200/week\n\n"
+            "Just a few more questions about your setup!"
+        )
+
+        await state.set_state(OperatorForm.waiting_pc_confidence)
+        kb = InlineKeyboardMarkup(inline_keyboard=[_back_row()])
+        await message.answer(
+            f"{_progress(6)}\n\n"
+            "How comfortable are you with Windows?\n\n"
+            "For example: installing programs, troubleshooting, changing settings?\n\n"
+            "You can rate yourself from 1 to 10.",
+            reply_markup=kb,
+        )
+        return
+
+    await message.answer("Please use the buttons above or rate yourself 1-10. 👆")
 
 
 # ═══ STEP 1: Name ═══
@@ -417,10 +511,10 @@ async def process_name(message: Message, state: FSMContext):
     await state.set_state(OperatorForm.waiting_has_pc)
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [
-            InlineKeyboardButton(text="Yes, PC/Desktop", callback_data="pc_desktop"),
-            InlineKeyboardButton(text="Yes, Laptop", callback_data="pc_laptop"),
+            InlineKeyboardButton(text="🖥️ Yes, PC/Desktop", callback_data="pc_desktop"),
+            InlineKeyboardButton(text="💻 Yes, Laptop", callback_data="pc_laptop"),
         ],
-        [InlineKeyboardButton(text="No", callback_data="pc_no")],
+        [InlineKeyboardButton(text="❌ No", callback_data="pc_no")],
         _back_row(),
     ])
     await message.answer(
@@ -443,8 +537,8 @@ async def process_has_pc(callback: CallbackQuery, state: FSMContext):
         await _track_event(callback.from_user.id, "step_completed", "has_pc", {"has_pc": False})
         kb = InlineKeyboardMarkup(inline_keyboard=[
             [
-                InlineKeyboardButton(text="Yes, within 1-2 weeks", callback_data="nopc_soon"),
-                InlineKeyboardButton(text="No plans yet", callback_data="nopc_no"),
+                InlineKeyboardButton(text="✅ Yes, within 1-2 weeks", callback_data="nopc_soon"),
+                InlineKeyboardButton(text="🤷 No plans yet", callback_data="nopc_no"),
             ],
             _back_row(),
         ])
@@ -511,10 +605,10 @@ async def process_age(message: Message, state: FSMContext):
     await notion_leads.on_age(data.get("notion_page_id"), age)
     await state.set_state(OperatorForm.waiting_study_work)
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Working", callback_data="study_working")],
-        [InlineKeyboardButton(text="Student (online classes)", callback_data="study_distance")],
-        [InlineKeyboardButton(text="Student (on campus)", callback_data="study_inperson")],
-        [InlineKeyboardButton(text="Neither", callback_data="study_neither")],
+        [InlineKeyboardButton(text="💼 Working", callback_data="study_working")],
+        [InlineKeyboardButton(text="🎓 Student (online classes)", callback_data="study_distance")],
+        [InlineKeyboardButton(text="🏫 Student (on campus)", callback_data="study_inperson")],
+        [InlineKeyboardButton(text="🏠 Neither", callback_data="study_neither")],
         _back_row(),
     ])
     await message.answer(f"{_progress(4)}\n\nAre you currently studying or working?", reply_markup=kb)
@@ -535,20 +629,21 @@ async def process_study_work(callback: CallbackQuery, state: FSMContext):
     await state.set_state(OperatorForm.waiting_english)
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [
-            InlineKeyboardButton(text="Basic", callback_data="eng_beginner"),
-            InlineKeyboardButton(text="Can hold a conversation", callback_data="eng_b1"),
+            InlineKeyboardButton(text="📗 Basic", callback_data="eng_beginner"),
+            InlineKeyboardButton(text="📘 Can hold a conversation", callback_data="eng_b1"),
         ],
         [
-            InlineKeyboardButton(text="Comfortable", callback_data="eng_b2"),
-            InlineKeyboardButton(text="Fluent", callback_data="eng_c1"),
+            InlineKeyboardButton(text="📙 Comfortable", callback_data="eng_b2"),
+            InlineKeyboardButton(text="📕 Fluent", callback_data="eng_c1"),
         ],
-        [InlineKeyboardButton(text="Native speaker", callback_data="eng_native")],
+        [InlineKeyboardButton(text="🌟 Native speaker", callback_data="eng_native")],
         _back_row(),
     ])
     await callback.message.answer(
         f"{_progress(5)}\n\n"
         "How well do you speak English?\n\n"
-        "We need at least conversational level — you'll be moderating English chats.",
+        "We need at least conversational level — you'll be moderating English chats.\n\n"
+        "You can also rate yourself from 1 to 10.",
         reply_markup=kb,
     )
 
@@ -581,7 +676,8 @@ async def process_english(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(
         f"{_progress(6)}\n\n"
         "How comfortable are you with Windows?\n\n"
-        "For example: installing programs, troubleshooting, changing settings?",
+        "For example: installing programs, troubleshooting, changing settings?\n\n"
+        "You can rate yourself from 1 to 10.",
         reply_markup=kb,
     )
 
@@ -598,7 +694,7 @@ async def process_pc_confidence(message: Message, state: FSMContext):
     await _track_event(message.from_user.id, "step_completed", "pc_confidence", {"value": confidence})
     await state.set_state(OperatorForm.waiting_cpu)
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Not sure", callback_data="cpu_skip")],
+        [InlineKeyboardButton(text="🤔 Not sure", callback_data="cpu_skip")],
         _back_row(),
     ])
     await message.answer(
@@ -620,10 +716,10 @@ async def process_cpu_skip(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
     await state.set_state(OperatorForm.waiting_cpu_simple_age)
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Less than 2 years", callback_data="pcage_new")],
-        [InlineKeyboardButton(text="2-4 years", callback_data="pcage_mid")],
-        [InlineKeyboardButton(text="5+ years", callback_data="pcage_old")],
-        [InlineKeyboardButton(text="Not sure", callback_data="pcage_unsure")],
+        [InlineKeyboardButton(text="🆕 Less than 2 years", callback_data="pcage_new")],
+        [InlineKeyboardButton(text="📅 2-4 years", callback_data="pcage_mid")],
+        [InlineKeyboardButton(text="📆 5+ years", callback_data="pcage_old")],
+        [InlineKeyboardButton(text="🤔 Not sure", callback_data="pcage_unsure")],
         _back_row(),
     ])
     await callback.message.answer(
@@ -645,10 +741,10 @@ async def process_cpu_simple_age(callback: CallbackQuery, state: FSMContext):
 
     await state.set_state(OperatorForm.waiting_cpu_simple_usage)
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Gaming", callback_data="pcuse_gaming")],
-        [InlineKeyboardButton(text="Work / Office", callback_data="pcuse_work")],
-        [InlineKeyboardButton(text="Browsing / Social media", callback_data="pcuse_browsing")],
-        [InlineKeyboardButton(text="Video editing / Design", callback_data="pcuse_creative")],
+        [InlineKeyboardButton(text="🎮 Gaming", callback_data="pcuse_gaming")],
+        [InlineKeyboardButton(text="💼 Work / Office", callback_data="pcuse_work")],
+        [InlineKeyboardButton(text="🌐 Browsing / Social media", callback_data="pcuse_browsing")],
+        [InlineKeyboardButton(text="🎨 Video editing / Design", callback_data="pcuse_creative")],
         _back_row(),
     ])
     await callback.message.answer(
@@ -679,7 +775,7 @@ async def process_cpu_simple_usage(callback: CallbackQuery, state: FSMContext):
     # Proceed to GPU
     await state.set_state(OperatorForm.waiting_gpu)
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Not sure", callback_data="gpu_skip")],
+        [InlineKeyboardButton(text="🤔 Not sure", callback_data="gpu_skip")],
         _back_row(),
     ])
     await callback.message.answer(
@@ -721,7 +817,7 @@ async def process_cpu(message: Message, state: FSMContext):
     await _track_event(message.from_user.id, "step_completed", "cpu", {"cpu_model": cpu})
     await state.set_state(OperatorForm.waiting_gpu)
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="I'm not sure / skip", callback_data="gpu_skip")],
+        [InlineKeyboardButton(text="🤔 I'm not sure / skip", callback_data="gpu_skip")],
         _back_row(),
     ])
     await message.answer(
@@ -743,10 +839,10 @@ async def process_gpu_skip(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
     await state.set_state(OperatorForm.waiting_gpu_simple_gaming)
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Yes, modern games (GTA, Fortnite)", callback_data="game_modern")],
-        [InlineKeyboardButton(text="Yes, but only simple/old games", callback_data="game_basic")],
-        [InlineKeyboardButton(text="No / Never tried", callback_data="game_no")],
-        [InlineKeyboardButton(text="Not sure", callback_data="game_unsure")],
+        [InlineKeyboardButton(text="🎮 Yes, modern games (GTA, Fortnite)", callback_data="game_modern")],
+        [InlineKeyboardButton(text="🕹️ Yes, but only simple/old games", callback_data="game_basic")],
+        [InlineKeyboardButton(text="❌ No / Never tried", callback_data="game_no")],
+        [InlineKeyboardButton(text="🤔 Not sure", callback_data="game_unsure")],
         _back_row(),
     ])
     await callback.message.answer(
@@ -945,7 +1041,6 @@ async def process_contact(message: Message, state: FSMContext):
     await state.update_data(contact_info=contact)
     await _track_event(message.from_user.id, "step_completed", "contact", {"value": contact})
     data = await state.get_data()
-    await state.clear()
 
     # AI screening (with fallback if AI unavailable)
     await message.answer(
@@ -986,18 +1081,6 @@ async def process_contact(message: Message, state: FSMContext):
             ),
         )
 
-    # For PASS — don't auto-send an invite, admin approves manually via button.
-    # For MAYBE/REJECT — AI's message is appropriate (clarifying questions / polite decline).
-    if result.recommendation == "PASS":
-        await message.answer(
-            "Thank you for completing the application! 🎉\n\n"
-            "Our team is reviewing your profile and will get back to you "
-            "within 24 hours.\n\n"
-            "Talk to you soon! 😊"
-        )
-    else:
-        await message.answer(result.suggested_response)
-
     await _track_event(message.from_user.id, "completed", "screening", {
         "score": result.overall_score,
         "recommendation": result.recommendation,
@@ -1020,6 +1103,15 @@ async def process_contact(message: Message, state: FSMContext):
         score=result.overall_score,
         notes=result.reasoning,
     )
+
+    # PASS → auto-start interview booking (AI decided to invite)
+    # MAYBE/REJECT → admin decides via button
+    if result.recommendation == "PASS":
+        from bot.handlers.interview_booking import start_booking
+        await start_booking(message, state, message.from_user.id)
+    else:
+        await state.clear()
+        await message.answer(result.suggested_response)
 
     await _notify_admin(message, data, result)
     await _send_to_n8n(message, data, result)
@@ -1108,15 +1200,26 @@ async def _notify_admin(message, data, result):
         f"Exp={result.experience_score}\n"
         f"Reasoning: {result.reasoning}"
     )
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton(text="✅ Interview", callback_data=f"ref_{message.from_user.id}"),
-            InlineKeyboardButton(text="❌ Reject", callback_data=f"rej_{message.from_user.id}"),
-        ],
-        [
-            InlineKeyboardButton(text="💬 Message", callback_data=f"msg_{message.from_user.id}"),
-        ],
-    ])
+    # PASS: booking auto-started, no Interview button needed
+    # MAYBE/REJECT: admin can manually invite via Interview button
+    if result.recommendation == "PASS":
+        buttons = [
+            [
+                InlineKeyboardButton(text="❌ Reject", callback_data=f"rej_{message.from_user.id}"),
+                InlineKeyboardButton(text="💬 Message", callback_data=f"msg_{message.from_user.id}"),
+            ],
+        ]
+    else:
+        buttons = [
+            [
+                InlineKeyboardButton(text="✅ Interview", callback_data=f"ref_{message.from_user.id}"),
+                InlineKeyboardButton(text="❌ Reject", callback_data=f"rej_{message.from_user.id}"),
+            ],
+            [
+                InlineKeyboardButton(text="💬 Message", callback_data=f"msg_{message.from_user.id}"),
+            ],
+        ]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
 
     try:
         await message.bot.send_message(config.ADMIN_CHAT_ID, admin_text, reply_markup=keyboard)

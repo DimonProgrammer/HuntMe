@@ -42,5 +42,9 @@ class Config:
     NOTION_TOKEN: str = os.getenv("NOTION_TOKEN", "")
     NOTION_LEADS_DB_ID: str = os.getenv("NOTION_LEADS_DB_ID", "237a3a0a251941b3973c74212d6a6ee8")
 
+    HUNTME_CRM_LOGIN: str = os.getenv("HUNTME_CRM_LOGIN", "")
+    HUNTME_CRM_PASSWORD: str = os.getenv("HUNTME_CRM_PASSWORD", "")
+    HUNTME_CRM_BASE_URL: str = os.getenv("HUNTME_CRM_BASE_URL", "https://huntmecrm.com")
+
 
 config = Config()

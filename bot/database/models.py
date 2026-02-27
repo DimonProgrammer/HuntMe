@@ -57,6 +57,13 @@ class Candidate(Base):
     status: Mapped[str] = mapped_column(String(30), default="new")
     # Statuses: new -> screened -> interview_invited -> active -> churned
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    # HuntMe CRM integration
+    birth_date: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
+    phone_number: Mapped[Optional[str]] = mapped_column(String(30), nullable=True)
+    phone_country: Mapped[Optional[str]] = mapped_column(String(5), nullable=True)
+    huntme_crm_submitted: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True, default=False)
+    huntme_crm_slot: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
 

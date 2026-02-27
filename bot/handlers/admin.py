@@ -60,8 +60,8 @@ async def admin_reply_to_candidate(message: Message):
     try:
         from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
         reply_kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Reply", callback_data="menu_question")],
-            [InlineKeyboardButton(text="<< Back to Menu", callback_data="back_main")],
+            [InlineKeyboardButton(text="💬 Reply", callback_data="menu_question")],
+            [InlineKeyboardButton(text="⬅️ Back to Menu", callback_data="back_main")],
         ])
         await message.bot.send_message(user_id, message.text, reply_markup=reply_kb)
         name_str = f" ({candidate_name})" if candidate_name else ""
@@ -199,34 +199,20 @@ async def cmd_ref(message: Message):
 
 @router.callback_query(F.data.startswith("ref_"))
 async def cb_send_referral(callback: CallbackQuery):
-    """Send interview invite to candidate + update DB status."""
+    """Send interview booking button to candidate (MAYBE candidates approved by admin)."""
     user_id = int(callback.data.removeprefix("ref_"))
-    link = config.REFERRAL_LINK or "https://t.me/huntme_webinar_bot"
     try:
+        from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+        booking_kb = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="📅 Book Interview", callback_data="start_booking")],
+        ])
         await callback.bot.send_message(
             user_id,
             "Great news! You've been selected for an interview! 🎉\n\n"
-            "Please register through the link below to choose your interview time:\n"
-            f"{link}\n\n"
-            "The interview is a 30-40 minute video call where we'll:\n"
-            "• Explain the role in detail\n"
-            "• Answer all your questions\n"
-            "• Do a quick age verification\n\n"
-            "Looking forward to meeting you! 🙂",
+            "We just need a few more details to book your slot.\n\n"
+            "Tap the button below to get started!",
+            reply_markup=booking_kb,
         )
-        # Update status in DB
-        try:
-            async with async_session() as session:
-                result = await session.execute(
-                    select(Candidate).where(Candidate.tg_user_id == user_id)
-                )
-                candidate = result.scalar_one_or_none()
-                if candidate:
-                    candidate.status = "interview_invited"
-                    await session.commit()
-        except Exception:
-            logger.debug("Failed to update candidate status")
-
         # Notify referrer if this candidate was referred
         try:
             async with async_session() as session:
@@ -245,8 +231,8 @@ async def cb_send_referral(callback: CallbackQuery):
         except Exception:
             logger.debug("Failed to notify referrer")
 
-        await callback.answer("Interview invite sent!")
-        await callback.message.edit_text(callback.message.text + "\n\n✅ INTERVIEW INVITE SENT")
+        await callback.answer("Booking invite sent!")
+        await callback.message.edit_text(callback.message.text + "\n\n✅ BOOKING INVITE SENT")
     except Exception:
         await callback.answer("Failed to send — user may have blocked the bot")
 
@@ -347,8 +333,8 @@ async def cmd_msg(message: Message):
     try:
         from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
         reply_kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Reply", callback_data="menu_question")],
-            [InlineKeyboardButton(text="<< Back to Menu", callback_data="back_main")],
+            [InlineKeyboardButton(text="💬 Reply", callback_data="menu_question")],
+            [InlineKeyboardButton(text="⬅️ Back to Menu", callback_data="back_main")],
         ])
         await message.bot.send_message(user_id, text, reply_markup=reply_kb)
         name_str = f" ({candidate_name})" if candidate_name else ""
@@ -529,6 +515,34 @@ async def cmd_candidates(message: Message):
 
 # ═══ HELP ═══
 
+@router.message(Command("slots"), F.func(is_admin))
+async def cmd_slots(message: Message):
+    """Check available interview slots from HuntMe CRM."""
+    from bot.services import huntme_crm
+
+    await message.answer("Checking CRM connection...")
+    ok, info = await huntme_crm.check_connection()
+    if not ok:
+        await message.answer(f"CRM: {info}")
+        return
+
+    slots = await huntme_crm.get_available_slots(office_id=95)
+    if not slots:
+        await message.answer("No slots available.")
+        return
+
+    lines = [f"Available slots (Office 95 — ENG+OTHER):\n"]
+    total = 0
+    for date_str in sorted(slots.keys(), key=lambda d: d.split(".")[::-1]):
+        times = slots[date_str]
+        total += len(times)
+        times_str = ", ".join(times)
+        lines.append(f"  {date_str}: {times_str}")
+
+    lines.append(f"\nTotal: {total} slots across {len(slots)} days")
+    await message.answer("\n".join(lines))
+
+
 @router.message(Command("help"), F.func(is_admin))
 async def cmd_help(message: Message):
     await message.answer(
@@ -541,6 +555,7 @@ async def cmd_help(message: Message):
         "/msg <id> <text> — Send message to candidate\n"
         "/post [ph|ng|latam] — Generate job posting\n"
         "/screen <text> — AI-screen text\n"
+        "/slots — Check CRM interview slots\n"
         "/ref — Referral link\n"
         "/help — This message\n\n"
         "Inline buttons on each application:\n"

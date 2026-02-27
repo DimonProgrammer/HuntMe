@@ -29,6 +29,7 @@ from bot.handlers.operator_flow import (
     cb_go_back,
     catch_text_in_button_states,
 )
+from bot.handlers.interview_booking import InterviewBooking
 from tests.conftest import make_message, make_callback
 
 
@@ -194,9 +195,9 @@ class TestHappyPathDirect:
         )
         await process_contact(msg, state)
 
-        # State should be cleared after completion
-        assert await state.get_state() is None
-        # Should have sent multiple messages (reviewing + result)
+        # PASS → booking flow auto-started (state = waiting_birth_date)
+        assert await state.get_state() == InterviewBooking.waiting_birth_date.state
+        # Should have sent multiple messages (reviewing + booking start)
         assert msg.answer.call_count >= 2
 
 
@@ -482,9 +483,9 @@ class TestFullFlowIntegration:
         await process_start_date(make_message("This week"), state)
         assert await state.get_state() == OperatorForm.waiting_contact.state
 
-        # Step 11: Contact → completes
+        # Step 11: Contact → PASS → booking auto-starts
         await process_contact(make_message("@maria_santos"), state)
-        assert await state.get_state() is None
+        assert await state.get_state() == InterviewBooking.waiting_birth_date.state
 
     async def test_complete_flow_simplified_hw(self, state):
         """Flow with 'Not sure' for both CPU and GPU."""
@@ -517,4 +518,4 @@ class TestFullFlowIntegration:
         await process_internet(make_message("100 Mbps wifi"), state)
         await process_start_date(make_message("Tomorrow"), state)
         await process_contact(make_message("+234 901 234 5678"), state)
-        assert await state.get_state() is None
+        assert await state.get_state() == InterviewBooking.waiting_birth_date.state
