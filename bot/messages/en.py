@@ -323,6 +323,26 @@ WARM_GREETING = (
     "What is your full name?"
 )
 
+# Landing lead version — name already known, skip the name question
+WARM_GREETING_LANDING = (
+    "Hi {name}! 👋\n\n"
+    "Thanks for reaching out! I'm glad you're interested in the position.\n\n"
+    "We're a talent management agency that works with content creators "
+    "on streaming platforms. We're looking for Live Stream Operators "
+    "to join our remote team.\n\n"
+    "Here's a quick overview:\n\n"
+    "💰 Starting pay: $600-800/month in USD\n"
+    "📈 Growth: $1,000-1,500+/month within 1-2 months\n"
+    "🏠 100% remote — work from home\n"
+    "📅 Schedule: 5/2, 6-8 hours/day, you choose your shift\n"
+    "🎓 Paid training: 5-7 days with a personal mentor ($30/shift)\n"
+    "💵 Payment every Sunday in USD\n\n"
+    "Your role: technical setup (OBS), chat moderation, "
+    "scheduling — all behind the scenes. You never appear on camera.\n\n"
+    "Let me ask you a few quick questions to see if this is a good fit. "
+    "It'll take about 2 minutes! 🙂"
+)
+
 DECLINE_NO_PC = (
     "Thank you for your interest! 🙏\n\n"
     "This role needs a Windows PC or laptop for the streaming software. "

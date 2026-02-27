@@ -161,8 +161,8 @@ async def _handle_landing_deeplink(
         await state.update_data(notion_page_id=notion_page_id)
         await notion_leads.on_name(notion_page_id, name)
 
-    # Greeting → skip to has_pc (name already known)
-    greeting = m.WARM_GREETING.format(name=name)
+    # Greeting → skip to has_pc (name already known, no name question)
+    greeting = m.WARM_GREETING_LANDING.format(name=name)
     await message.answer(greeting)
     await state.set_state(OperatorForm.waiting_has_pc)
     from bot.handlers.operator_flow import _send_step_prompt
