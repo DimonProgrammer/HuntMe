@@ -14,6 +14,7 @@ import re
 from typing import Optional
 
 from aiogram import F, Router
+from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
@@ -34,6 +35,10 @@ class InterviewBooking(StatesGroup):
     waiting_birth_date = State()
     waiting_phone = State()
     waiting_experience = State()
+    waiting_hw_cpu = State()       # exact CPU — only if missing from screening
+    waiting_hw_gpu = State()       # exact GPU — only if missing from screening
+    waiting_hw_internet = State()  # exact internet — only if missing from screening
+    waiting_hw_remind = State()    # candidate can't answer now — pick reminder time
     waiting_slot_choice = State()
     waiting_slot_preferred = State()
     waiting_crm_approval = State()  # slot chosen, pending admin approval
@@ -114,8 +119,145 @@ async def on_experience(message: Message, state: FSMContext):
     experience = message.text.strip()
     await state.update_data(experience=experience)
 
+    await _start_hw_collection(message, state)
+
+
+# ═══ HARDWARE COLLECTION (pre-slot) ═══
+
+
+def _cant_now_kb(m) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=m.BTN_HW_CANT_NOW, callback_data="hw_cant_now")],
+    ])
+
+
+async def _start_hw_collection(message: Message, state: FSMContext):
+    """Check which hardware fields are missing and ask for them one by one.
+
+    Only triggered for candidates who used the 'not sure' path during screening
+    (cpu_model / gpu_model / internet_speed will be None).
+    When all fields are present, proceed directly to slot selection.
+    """
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
+
+    if not data.get("cpu_model"):
+        await state.set_state(InterviewBooking.waiting_hw_cpu)
+        await message.answer(m.BOOKING_HW_INTRO, reply_markup=_cant_now_kb(m))
+        await message.answer(m.BOOKING_HW_CPU)
+        return
+
+    if not data.get("gpu_model"):
+        await state.set_state(InterviewBooking.waiting_hw_gpu)
+        await message.answer(m.BOOKING_HW_GPU, reply_markup=_cant_now_kb(m))
+        return
+
+    if not data.get("internet_speed"):
+        await state.set_state(InterviewBooking.waiting_hw_internet)
+        await message.answer(m.BOOKING_HW_INTERNET, reply_markup=_cant_now_kb(m))
+        return
+
+    # All hardware present — proceed to slot selection
     await message.answer(m.BOOKING_FETCHING_SLOTS)
     await _show_slots(message, state)
+
+
+@router.callback_query(
+    F.data == "hw_cant_now",
+    StateFilter(InterviewBooking.waiting_hw_cpu, InterviewBooking.waiting_hw_gpu, InterviewBooking.waiting_hw_internet),
+)
+async def on_hw_cant_now(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
+
+    current = await state.get_state()
+    if current == InterviewBooking.waiting_hw_cpu.state:
+        step = "cpu"
+    elif current == InterviewBooking.waiting_hw_gpu.state:
+        step = "gpu"
+    else:
+        step = "internet"
+
+    await state.update_data(hw_remind_step=step)
+    await state.set_state(InterviewBooking.waiting_hw_remind)
+    await callback.message.answer(m.BOOKING_HW_CANT_NOW)
+
+
+@router.message(InterviewBooking.waiting_hw_cpu, F.text)
+async def on_hw_cpu(message: Message, state: FSMContext):
+    cpu = message.text.strip()
+    await state.update_data(cpu_model=cpu)
+    await _start_hw_collection(message, state)
+
+
+@router.message(InterviewBooking.waiting_hw_gpu, F.text)
+async def on_hw_gpu(message: Message, state: FSMContext):
+    gpu = message.text.strip()
+    await state.update_data(gpu_model=gpu)
+    await _start_hw_collection(message, state)
+
+
+@router.message(InterviewBooking.waiting_hw_internet, F.text)
+async def on_hw_internet(message: Message, state: FSMContext):
+    speed = message.text.strip()
+    await state.update_data(internet_speed=speed)
+    await _start_hw_collection(message, state)
+
+
+def _parse_reminder_delta(text: str) -> Optional[_dt.timedelta]:
+    """Parse free-text reminder offset. Returns timedelta or None if unrecognised."""
+    import re
+    text = text.lower().strip()
+
+    # "через N минут/минуту/мин" or "in N minutes/mins"
+    m = re.search(r"через\s+(\d+)\s*(мин|минут|минуту|минуты)", text)
+    if not m:
+        m = re.search(r"in\s+(\d+)\s*(min|mins|minutes)", text)
+    if m:
+        return _dt.timedelta(minutes=int(m.group(1)))
+
+    # "через N час/часов/часа" or "in N hour(s)"
+    m = re.search(r"через\s+(\d+)\s*(час|часа|часов)", text)
+    if not m:
+        m = re.search(r"in\s+(\d+)\s*(hour|hours|hr|hrs)", text)
+    if m:
+        return _dt.timedelta(hours=int(m.group(1)))
+
+    # "завтра" / "tomorrow"
+    if "завтра" in text or "tomorrow" in text:
+        return _dt.timedelta(hours=12)
+
+    return None
+
+
+def _format_reminder_time(remind_at: _dt.datetime, lang: str) -> str:
+    """Format reminder time for confirmation message."""
+    # Show as local approximation (UTC+3 for RU, UTC for EN)
+    offset = _dt.timedelta(hours=3) if lang == "ru" else _dt.timedelta(0)
+    local = remind_at + offset
+    if lang == "ru":
+        return f"в {local.strftime('%H:%M')} (московское время)"
+    return f"at {local.strftime('%H:%M')} UTC"
+
+
+@router.message(InterviewBooking.waiting_hw_remind, F.text)
+async def on_hw_remind_text(message: Message, state: FSMContext):
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
+
+    delta = _parse_reminder_delta(message.text)
+    if delta is None:
+        await message.answer(m.BOOKING_HW_REMIND_PARSE_FAIL)
+        return
+
+    remind_at = _dt.datetime.utcnow() + delta
+    time_str = _format_reminder_time(remind_at, lang)
+    await state.update_data(hw_remind_at=remind_at.isoformat())
+    await message.answer(m.BOOKING_HW_REMIND_SET.format(time=time_str))
 
 
 # ═══ SLOT SELECTION ═══
