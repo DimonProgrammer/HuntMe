@@ -36,6 +36,7 @@ class InterviewBooking(StatesGroup):
     waiting_experience = State()
     waiting_slot_choice = State()
     waiting_slot_preferred = State()
+    waiting_crm_approval = State()  # slot chosen, pending admin approval
 
 
 # ═══ ENTRY POINT ═══
@@ -425,8 +426,12 @@ async def _request_crm_approval(message: Message, state: FSMContext, slot_str: s
 
     # Tell candidate — admin will review manually
     display = _format_slot_display(slot_str)
-    await message.answer(m.BOOKING_SLOT_CHOSEN.format(display=display))
-    await state.clear()
+    change_kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=m.BTN_CHANGE_SLOT, callback_data="change_slot")],
+    ])
+    await message.answer(m.BOOKING_SLOT_CHOSEN.format(display=display), reply_markup=change_kb)
+    # Keep state (don't clear) so candidate can change slot before admin approval
+    await state.set_state(InterviewBooking.waiting_crm_approval)
 
     # Same-day urgency check
     now_manila = _dt.datetime.now(_MANILA_TZ)
@@ -444,30 +449,34 @@ async def _request_crm_approval(message: Message, state: FSMContext, slot_str: s
         pass
 
     # Send admin the full preview + approve/reject buttons
+    # Use FSM state data as fallback for screening fields (in case DB wasn't updated)
     tg_handle = candidate.tg_username or str(tg_user_id)
+    score_val = candidate.score or data.get("ai_score") or 0
+    rec_val = candidate.recommendation or data.get("ai_recommendation") or "N/A"
+    hw_compatible = candidate.hardware_compatible
     hw_icon = (
-        "Compatible" if candidate.hardware_compatible
-        else "Incompatible" if candidate.hardware_compatible is False
+        "Compatible" if hw_compatible is True
+        else "Incompatible" if hw_compatible is False
         else "Not checked"
     )
     preview = (
         f"📋 CRM SUBMISSION — APPROVAL NEEDED\n\n"
         f"Candidate: {candidate.name} (@{tg_handle})\n"
         f"ID: {tg_user_id}\n"
-        f"Score: {candidate.score or 0}/100 ({candidate.recommendation or 'N/A'})\n\n"
+        f"Score: {score_val}/100 ({rec_val})\n\n"
         f"📝 Form data for CRM:\n"
         f"  Birth date: {data.get('birth_date', 'N/A')}\n"
         f"  Phone: {data.get('phone_number', 'N/A')} ({data.get('phone_country', 'N/A')})\n"
         f"  Slot: {display}\n\n"
         f"📊 Screening data:\n"
-        f"  English: {candidate.english_level or 'N/A'}\n"
-        f"  Study/Work: {candidate.study_status or 'N/A'}\n"
-        f"  PC confidence: {candidate.pc_confidence or 'N/A'}\n"
+        f"  English: {candidate.english_level or data.get('english_level') or 'N/A'}\n"
+        f"  Study/Work: {candidate.study_status or data.get('study_status') or 'N/A'}\n"
+        f"  PC confidence: {candidate.pc_confidence or data.get('pc_confidence') or 'N/A'}\n"
         f"  Hardware: {hw_icon}\n"
-        f"  CPU: {candidate.cpu_model or 'N/A'}\n"
-        f"  GPU: {candidate.gpu_model or 'N/A'}\n"
-        f"  Internet: {candidate.internet_speed or 'N/A'}\n"
-        f"  Start: {candidate.start_date or 'N/A'}\n"
+        f"  CPU: {candidate.cpu_model or data.get('cpu_model') or 'N/A'}\n"
+        f"  GPU: {candidate.gpu_model or data.get('gpu_model') or 'N/A'}\n"
+        f"  Internet: {candidate.internet_speed or data.get('internet_speed') or 'N/A'}\n"
+        f"  Start: {candidate.start_date or data.get('start_date') or 'N/A'}\n"
         f"  Experience: {data.get('experience', 'N/A')}"
         f"{urgency_block}"
     )
@@ -686,6 +695,54 @@ async def on_crm_reject(callback: CallbackQuery):
     await callback.message.edit_text(
         callback.message.text + "\n\n❌ REJECTED — not submitted to CRM"
     )
+
+
+# ═══ CHANGE SLOT (candidate re-picks before admin approval) ═══
+
+
+@router.callback_query(InterviewBooking.waiting_crm_approval, F.data == "change_slot")
+async def on_change_slot(callback: CallbackQuery, state: FSMContext):
+    """Candidate clicked 'Change slot' before admin approved — re-show slot picker."""
+    await callback.answer()
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
+    tg_user_id = callback.from_user.id
+
+    slot_to_release = None
+    try:
+        async with async_session() as session:
+            result = await session.execute(
+                select(Candidate).where(Candidate.tg_user_id == tg_user_id)
+            )
+            cand = result.scalar_one_or_none()
+            if cand and cand.status == "pending_crm_approval":
+                slot_to_release = cand.huntme_crm_slot
+                cand.huntme_crm_slot = None
+                cand.status = "screened"
+                await session.commit()
+            elif cand:
+                # Admin already acted — don't allow re-pick
+                await callback.answer(
+                    "Your booking is already confirmed!" if lang == "en"
+                    else "Бронирование уже подтверждено!",
+                    show_alert=True,
+                )
+                return
+    except Exception:
+        logger.exception("Failed to release slot on change request")
+        return
+
+    await _release_slot(slot_to_release)
+
+    # Remove the Change slot button from the confirmation message
+    try:
+        await callback.message.edit_reply_markup(reply_markup=None)
+    except Exception:
+        pass
+
+    await callback.message.answer(m.BOOKING_CHANGE_SLOT_PROMPT)
+    await _show_slots(callback.message, state)
 
 
 # ═══ REBOOK (slot disappeared after admin delay) ═══

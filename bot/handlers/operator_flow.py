@@ -997,6 +997,8 @@ async def process_contact(message: Message, state: FSMContext):
     # PASS → auto-start interview booking (AI decided to invite)
     # MAYBE/REJECT → admin decides via button
     if result.recommendation == "PASS":
+        # Save to FSM so booking flow can show correct score in admin card
+        await state.update_data(ai_score=result.overall_score, ai_recommendation=result.recommendation)
         from bot.handlers.interview_booking import start_booking
         await start_booking(message, state, message.from_user.id)
     else:

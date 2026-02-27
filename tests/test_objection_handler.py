@@ -97,6 +97,6 @@ class TestGetResponse:
         response = get_response("adult_content")
         assert "behind the scenes" in response.lower()
 
-    def test_payment_response_contains_sunday(self):
+    def test_payment_response_contains_monday(self):
         response = get_response("payment_trust")
-        assert "sunday" in response.lower()
+        assert "monday" in response.lower()
