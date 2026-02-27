@@ -1126,30 +1126,59 @@ async def _save_candidate(message, data, status="new", score=None, recommendatio
     from_user = user or message.from_user
     try:
         async with async_session() as session:
-            candidate = Candidate(
-                tg_user_id=from_user.id,
-                tg_username=from_user.username,
-                name=data.get("name", "Unknown"),
-                candidate_type=data.get("candidate_type", "operator"),
-                has_pc=data.get("has_pc"),
-                age=data.get("age"),
-                study_status=data.get("study_status"),
-                english_level=data.get("english_level"),
-                pc_confidence=data.get("pc_confidence"),
-                cpu_model=data.get("cpu_model"),
-                gpu_model=data.get("gpu_model"),
-                hardware_compatible=data.get("hardware_compatible"),
-                internet_speed=data.get("internet_speed"),
-                start_date=data.get("start_date"),
-                contact_info=data.get("contact_info"),
-                referrer_tg_id=data.get("referrer_tg_id"),
-                utm_source=data.get("utm_source"),
-                score=score,
-                recommendation=recommendation,
-                status=status,
-                notes=notes,
+            # Upsert: update existing candidate or create new
+            result = await session.execute(
+                select(Candidate).where(Candidate.tg_user_id == from_user.id)
             )
-            session.add(candidate)
+            candidate = result.scalar_one_or_none()
+
+            if candidate:
+                # Update existing record
+                candidate.tg_username = from_user.username
+                candidate.name = data.get("name", "Unknown")
+                candidate.candidate_type = data.get("candidate_type", "operator")
+                candidate.has_pc = data.get("has_pc")
+                candidate.age = data.get("age")
+                candidate.study_status = data.get("study_status")
+                candidate.english_level = data.get("english_level")
+                candidate.pc_confidence = data.get("pc_confidence")
+                candidate.cpu_model = data.get("cpu_model")
+                candidate.gpu_model = data.get("gpu_model")
+                candidate.hardware_compatible = data.get("hardware_compatible")
+                candidate.internet_speed = data.get("internet_speed")
+                candidate.start_date = data.get("start_date")
+                candidate.contact_info = data.get("contact_info")
+                candidate.score = score
+                candidate.recommendation = recommendation
+                candidate.status = status
+                candidate.notes = notes
+            else:
+                # Create new record
+                candidate = Candidate(
+                    tg_user_id=from_user.id,
+                    tg_username=from_user.username,
+                    name=data.get("name", "Unknown"),
+                    candidate_type=data.get("candidate_type", "operator"),
+                    has_pc=data.get("has_pc"),
+                    age=data.get("age"),
+                    study_status=data.get("study_status"),
+                    english_level=data.get("english_level"),
+                    pc_confidence=data.get("pc_confidence"),
+                    cpu_model=data.get("cpu_model"),
+                    gpu_model=data.get("gpu_model"),
+                    hardware_compatible=data.get("hardware_compatible"),
+                    internet_speed=data.get("internet_speed"),
+                    start_date=data.get("start_date"),
+                    contact_info=data.get("contact_info"),
+                    referrer_tg_id=data.get("referrer_tg_id"),
+                    utm_source=data.get("utm_source"),
+                    score=score,
+                    recommendation=recommendation,
+                    status=status,
+                    notes=notes,
+                )
+                session.add(candidate)
+
             await session.commit()
             logger.info("Saved candidate %s (tg_id=%s, status=%s)", data.get("name"), from_user.id, status)
     except Exception:
