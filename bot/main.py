@@ -253,6 +253,15 @@ async def main():
     asyncio.create_task(reminder.run_reminder_checker(bot))
     logger.info("Reminder checker started")
 
+    # Set Telegram command menu (blue button near keyboard)
+    from aiogram.types import BotCommand
+    await bot.set_my_commands([
+        BotCommand(command="start", description="Start / Main menu"),
+        BotCommand(command="ask", description="Ask a question"),
+        BotCommand(command="menu", description="Back to main menu"),
+    ])
+    logger.info("Bot commands registered")
+
     logger.info("Bot is running. Admin ID: %s", config.ADMIN_CHAT_ID)
 
     try:

@@ -388,7 +388,7 @@ async def submit_application(
                             data=form_data2,
                             timeout=aiohttp.ClientTimeout(total=20),
                         ) as resp2:
-                            if resp2.status == 200:
+                            if resp2.status in (200, 201):
                                 result = await resp2.json()
                                 logger.info(
                                     "CRM application submitted (retry): %s",

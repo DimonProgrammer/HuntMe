@@ -1013,6 +1013,10 @@ async def process_internet(message: Message, state: FSMContext):
 
 @router.message(OperatorForm.waiting_start_date)
 async def process_start_date(message: Message, state: FSMContext):
+    if not message.text:
+        await message.answer("Please type when you'd be ready to start.")
+        return
+
     if await _handle_possible_question(message, state):
         return
 
@@ -1034,6 +1038,14 @@ async def process_start_date(message: Message, state: FSMContext):
 
 @router.message(OperatorForm.waiting_contact)
 async def process_contact(message: Message, state: FSMContext):
+    if not message.text:
+        await message.answer(
+            "Please type your contact info:\n"
+            "• Telegram @username (preferred)\n"
+            "• Or WhatsApp number"
+        )
+        return
+
     if await _handle_possible_question(message, state):
         return
 
@@ -1041,6 +1053,9 @@ async def process_contact(message: Message, state: FSMContext):
     await state.update_data(contact_info=contact)
     await _track_event(message.from_user.id, "step_completed", "contact", {"value": contact})
     data = await state.get_data()
+
+    # Prevent duplicate processing: clear state before the 10s wait
+    await state.set_state(None)
 
     # AI screening (with fallback if AI unavailable)
     await message.answer(

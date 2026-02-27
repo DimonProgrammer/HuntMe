@@ -60,6 +60,7 @@ async def admin_reply_to_candidate(message: Message):
     try:
         from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
         reply_kb = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="▶️ Continue filling", callback_data="resume_form")],
             [InlineKeyboardButton(text="💬 Reply", callback_data="menu_question")],
             [InlineKeyboardButton(text="⬅️ Back to Menu", callback_data="back_main")],
         ])
@@ -333,6 +334,7 @@ async def cmd_msg(message: Message):
     try:
         from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
         reply_kb = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="▶️ Continue filling", callback_data="resume_form")],
             [InlineKeyboardButton(text="💬 Reply", callback_data="menu_question")],
             [InlineKeyboardButton(text="⬅️ Back to Menu", callback_data="back_main")],
         ])

@@ -135,11 +135,17 @@ async def _show_slots(
     """Fetch fresh slots from CRM and show as inline buttons."""
     slots = await huntme_crm.get_available_slots(office_id=95)
 
+    retry_kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🔄 Try Again", callback_data="retry_slots")],
+        [InlineKeyboardButton(text="⬅️ Back to Menu", callback_data="back_main")],
+    ])
+
     if slots is None:
         # API error (auth / network) — not "no slots"
         await message.answer(
             "Sorry, I couldn't connect to the scheduling system right now.\n"
-            "Our team will reach out to you to schedule the interview manually. 🙏"
+            "Our team will reach out to you to schedule the interview manually. 🙏",
+            reply_markup=retry_kb,
         )
         await state.set_state(InterviewBooking.waiting_slot_choice)
         return
@@ -147,7 +153,8 @@ async def _show_slots(
     if not slots:
         await message.answer(
             "No interview slots are available right now.\n"
-            "We'll notify you as soon as new times open up. Hang tight! 🙏"
+            "We'll notify you as soon as new times open up. Hang tight! 🙏",
+            reply_markup=retry_kb,
         )
         await state.set_state(InterviewBooking.waiting_slot_choice)
         return
@@ -157,7 +164,8 @@ async def _show_slots(
     if not nearest:
         await message.answer(
             "All available slots are too soon to book.\n"
-            "New slots should appear tomorrow. We'll be in touch! 🙏"
+            "New slots should appear tomorrow. We'll be in touch! 🙏",
+            reply_markup=retry_kb,
         )
         await state.set_state(InterviewBooking.waiting_slot_choice)
         return
@@ -221,6 +229,17 @@ async def on_slot_chosen(callback: CallbackQuery, state: FSMContext):
     # Slot is available — request admin approval before submitting
     await callback.message.edit_text("Confirming your slot...")
     await _request_crm_approval(callback.message, state, slot_str)
+
+
+@router.callback_query(InterviewBooking.waiting_slot_choice, F.data == "retry_slots")
+async def on_retry_slots(callback: CallbackQuery, state: FSMContext):
+    """Retry fetching slots after an error."""
+    await callback.answer()
+    try:
+        await callback.message.edit_text("Looking for available interview times...")
+    except Exception:
+        pass
+    await _show_slots(callback.message, state)
 
 
 @router.message(InterviewBooking.waiting_slot_preferred, F.text)
@@ -340,8 +359,16 @@ async def _request_crm_approval(message: Message, state: FSMContext, slot_str: s
 @router.callback_query(F.data.startswith("crm_ok_"))
 async def on_crm_approve(callback: CallbackQuery):
     """Admin approved — verify slot still exists, then submit to HuntMe CRM."""
-    await callback.answer("Checking slot availability...")
     tg_user_id = int(callback.data.removeprefix("crm_ok_"))
+
+    # Immediately disable buttons to prevent double-click
+    try:
+        await callback.message.edit_text(
+            callback.message.text + "\n\n⏳ Processing..."
+        )
+    except Exception:
+        pass
+    await callback.answer("Processing CRM submission...")
 
     # Load candidate
     candidate = None
@@ -356,12 +383,37 @@ async def on_crm_approve(callback: CallbackQuery):
 
     if not candidate or not candidate.huntme_crm_slot:
         await callback.message.edit_text(
-            callback.message.text + "\n\n❌ ERROR: candidate or slot data not found"
+            callback.message.text.replace("\n\n⏳ Processing...", "")
+            + "\n\n❌ ERROR: candidate or slot data not found"
+        )
+        return
+
+    # Guard: prevent double submission
+    if candidate.huntme_crm_submitted:
+        await callback.message.edit_text(
+            callback.message.text.replace("\n\n⏳ Processing...", "")
+            + "\n\n⚠️ Already submitted to CRM"
+        )
+        return
+
+    # Guard: prevent submitting for declined candidates
+    if candidate.status == "declined":
+        await callback.message.edit_text(
+            callback.message.text.replace("\n\n⏳ Processing...", "")
+            + "\n\n❌ Candidate was already declined"
         )
         return
 
     slot_str = candidate.huntme_crm_slot
     tg_handle = candidate.tg_username or str(tg_user_id)
+
+    # Safe slot parsing
+    if " " not in slot_str:
+        await callback.message.edit_text(
+            callback.message.text.replace("\n\n⏳ Processing...", "")
+            + "\n\n❌ ERROR: invalid slot format"
+        )
+        return
 
     # ── Verify slot is still available before submitting ──
     try:
@@ -449,12 +501,14 @@ async def on_crm_approve(callback: CallbackQuery):
             logger.debug("Failed to notify candidate about confirmed booking")
 
         await callback.message.edit_text(
-            callback.message.text + f"\n\n✅ SUBMITTED TO CRM — {display}"
+            callback.message.text.replace("\n\n⏳ Processing...", "")
+            + f"\n\n✅ SUBMITTED TO CRM — {display}"
         )
     else:
         logger.warning("CRM submit failed for %s: %s", tg_user_id, error)
         await callback.message.edit_text(
-            callback.message.text + f"\n\n⚠️ CRM SUBMIT FAILED: {error}"
+            callback.message.text.replace("\n\n⏳ Processing...", "")
+            + f"\n\n⚠️ CRM SUBMIT FAILED: {error}"
         )
 
 

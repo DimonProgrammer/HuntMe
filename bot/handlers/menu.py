@@ -6,7 +6,10 @@ Operator-only flow (Phase 1). Agent and Model flows disabled.
 import logging
 import re
 
+from datetime import datetime, timedelta
+
 from aiogram import F, Router
+from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
@@ -191,21 +194,59 @@ async def cb_back_main(callback: CallbackQuery, state: FSMContext):
     await state.set_state(MenuStates.main_menu)
 
 
+# --- /ask — pause flow and ask a question (works from any state) ---
+
+@router.message(Command("ask"))
+async def cmd_ask(message: Message, state: FSMContext):
+    """Pause current flow, let candidate ask a question via /ask menu command."""
+    current = await state.get_state()
+    # Save current state so we can resume later
+    if current and current != MenuStates.waiting_question.state:
+        await state.update_data(paused_state=current)
+
+    resume_kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="▶️ Continue filling", callback_data="resume_form")],
+        [InlineKeyboardButton(text="⬅️ Back to Menu", callback_data="back_main")],
+    ])
+    await state.set_state(MenuStates.waiting_question)
+    await message.answer(
+        "Type your question and our team will get back to you shortly. 💬\n\n"
+        "When you're done, tap 'Continue filling' to resume your application.",
+        reply_markup=resume_kb,
+    )
+
+
 # --- Ask a Question ---
 
 @router.callback_query(F.data == "menu_question")
 async def cb_menu_question(callback: CallbackQuery, state: FSMContext):
     """Ask a question — works from any state (including Reply button on admin messages)."""
     await callback.answer()
+    current = await state.get_state()
+    # Save current state so we can resume later (if in a form)
+    if current and current != MenuStates.waiting_question.state:
+        await state.update_data(paused_state=current)
+
+    data = await state.get_data()
+    has_form = data.get("paused_state") is not None
+
+    if has_form:
+        kb = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="▶️ Continue filling", callback_data="resume_form")],
+            [InlineKeyboardButton(text="⬅️ Back to Menu", callback_data="back_main")],
+        ])
+    else:
+        kb = _back_kb()
+
     try:
         await callback.message.edit_text(
             "Type your message and our team will get back to you shortly. 💬",
-            reply_markup=_back_kb(),
+            reply_markup=kb,
         )
     except Exception:
         await callback.message.answer(
             "Type your message and our team will get back to you shortly. 💬",
-            reply_markup=_back_kb(),
+            reply_markup=kb,
         )
     await state.set_state(MenuStates.waiting_question)
 
@@ -230,18 +271,140 @@ async def process_question(message: Message, state: FSMContext):
     except Exception:
         logger.exception("Failed to forward question to admin")
 
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="❓ Ask another question", callback_data="menu_question")],
-        [InlineKeyboardButton(text="🚀 Apply Now", callback_data="menu_apply")],
-        [InlineKeyboardButton(text="⬅️ Back to Menu", callback_data="back_main")],
-    ])
-    await message.answer(
-        "Thanks for your question! 🙂\n\n"
-        "Our team will get back to you shortly. "
-        "You'll receive a reply right here in this chat.",
-        reply_markup=keyboard,
-    )
+    data = await state.get_data()
+    if data.get("paused_state"):
+        # They were in a form — offer to resume
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="▶️ Continue filling", callback_data="resume_form")],
+            [InlineKeyboardButton(text="❓ Ask another question", callback_data="menu_question")],
+        ])
+        await message.answer(
+            "Thanks! Our team will reply shortly. 🙂\n\n"
+            "Tap 'Continue filling' to resume your application.",
+            reply_markup=keyboard,
+        )
+    else:
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="❓ Ask another question", callback_data="menu_question")],
+            [InlineKeyboardButton(text="🚀 Apply Now", callback_data="menu_apply")],
+            [InlineKeyboardButton(text="⬅️ Back to Menu", callback_data="back_main")],
+        ])
+        await message.answer(
+            "Thanks for your question! 🙂\n\n"
+            "Our team will get back to you shortly. "
+            "You'll receive a reply right here in this chat.",
+            reply_markup=keyboard,
+        )
     await state.set_state(MenuStates.main_menu)
+
+
+# --- Resume form from /ask or reminder ---
+
+@router.callback_query(F.data == "resume_form")
+async def cb_resume_form(callback: CallbackQuery, state: FSMContext):
+    """Resume the paused form flow."""
+    await callback.answer()
+    data = await state.get_data()
+    paused = data.get("paused_state")
+
+    if not paused:
+        # No saved state — go to main menu
+        await state.clear()
+        try:
+            await callback.message.edit_text(MAIN_MENU_TEXT, reply_markup=_main_menu_kb())
+        except Exception:
+            await callback.message.answer(MAIN_MENU_TEXT, reply_markup=_main_menu_kb())
+        await state.set_state(MenuStates.main_menu)
+        return
+
+    # Restore the saved state
+    await state.update_data(paused_state=None)
+    await state.set_state(paused)
+
+    try:
+        await callback.message.edit_text("Great, let's continue! 🙂")
+    except Exception:
+        pass
+
+    if paused.startswith("OperatorForm:"):
+        from bot.handlers.operator_flow import _send_step_prompt
+        await _send_step_prompt(callback, state)
+    elif paused.startswith("InterviewBooking:"):
+        step = paused.split(":")[-1]
+        prompts = {
+            "waiting_birth_date": (
+                "What is your date of birth?\n"
+                "Please enter in format: DD.MM.YYYY (e.g. 15.05.1998)"
+            ),
+            "waiting_phone": (
+                "What is your phone number (with country code)?\n"
+                "For example: +639171234567"
+            ),
+            "waiting_experience": (
+                "Do you have any experience with live streaming, "
+                "moderation, customer service, or other remote work?\n\n"
+                "If yes, briefly describe. If no, say 'no experience'."
+            ),
+        }
+        prompt = prompts.get(step, "Please continue with the question above.")
+        await callback.message.answer(prompt)
+    else:
+        await callback.message.answer("Let's continue from where you left off!")
+
+
+# --- Reminder callbacks (from reminder.py background task) ---
+
+@router.callback_query(F.data.startswith("remind_"))
+async def on_reminder_choice(callback: CallbackQuery, state: FSMContext):
+    """Handle reminder time choice or 'Continue filling' from reminder prompt."""
+    await callback.answer()
+    choice = callback.data.removeprefix("remind_")
+
+    if choice == "continue":
+        # Resume current step
+        current = await state.get_state()
+        await state.update_data(
+            reminder_prompt_sent_at=None,
+            reminder_scheduled_at=None,
+        )
+        try:
+            await callback.message.edit_text("Great, let's continue! 🙂")
+        except Exception:
+            pass
+        if current and current.startswith("OperatorForm:"):
+            from bot.handlers.operator_flow import _send_step_prompt
+            await _send_step_prompt(callback, state)
+        elif current and current.startswith("InterviewBooking:"):
+            step = current.split(":")[-1]
+            prompts = {
+                "waiting_birth_date": "What is your date of birth? (DD.MM.YYYY)",
+                "waiting_phone": "What is your phone number with country code?",
+                "waiting_experience": "Any experience with streaming, moderation, or remote work?",
+            }
+            prompt = prompts.get(step, "Please continue with the question above.")
+            await callback.message.answer(prompt)
+        else:
+            await callback.message.answer("Let's continue!")
+        return
+
+    # Time choice: remind_30, remind_60, remind_180, remind_720
+    try:
+        minutes = int(choice)
+    except ValueError:
+        return
+
+    remind_at = datetime.utcnow() + timedelta(minutes=minutes)
+    await state.update_data(reminder_scheduled_at=remind_at.isoformat())
+
+    time_labels = {30: "30 minutes", 60: "1 hour", 180: "3 hours", 720: "12 hours"}
+    label = time_labels.get(minutes, f"{minutes} minutes")
+
+    try:
+        await callback.message.edit_text(
+            f"Got it! I'll remind you in {label}. See you soon! 👋"
+        )
+    except Exception:
+        pass
 
 
 # --- Apply Now → check duplicate → operator flow ---
