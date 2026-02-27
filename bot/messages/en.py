@@ -728,6 +728,14 @@ BOOKING_SLOTS_HEADER = (
     "Here are the nearest available interview times (Manila time, GMT+8):\n\n"
     "Pick one that works best for you:"
 )
+BOOKING_PREF_MATCH = (
+    "Here are slots matching your preference (Manila time, GMT+8):\n\n"
+    "Pick one that works for you:"
+)
+BOOKING_PREF_NOMATCH = (
+    "No exact match for that time — here are the nearest available slots (Manila time, GMT+8):\n\n"
+    "Pick one that works for you:"
+)
 BTN_OTHER_TIME = "Other time ⏰"
 BOOKING_OTHER_TIME = (
     "No problem! What days and times would work better for you?\n"

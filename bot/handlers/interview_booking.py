@@ -151,6 +151,72 @@ async def _release_slot(slot_str: str):
         logger.debug("Failed to release slot %s", slot_str)
 
 
+def _filter_slots_by_preference(
+    slots: dict, preferred: str
+) -> tuple[list[str], bool]:
+    """Filter/reorder available slots based on free-text preference (EN + RU).
+
+    Returns (filtered_slots, preference_was_matched).
+    Falls back to nearest slots if nothing matches.
+    """
+    text = preferred.lower()
+
+    day_keywords: dict[int, list[str]] = {
+        0: ["monday", "mon", "понедельник", "пн"],
+        1: ["tuesday", "tue", "вторник", "вт"],
+        2: ["wednesday", "wed", "среда", "среду", "ср"],
+        3: ["thursday", "thu", "четверг", "чт"],
+        4: ["friday", "fri", "пятница", "пятницу", "пт"],
+        5: ["saturday", "sat", "суббота", "субботу", "сб"],
+        6: ["sunday", "sun", "воскресенье", "вс"],
+    }
+    time_keywords: dict[tuple[int, int], list[str]] = {
+        (6, 12):  ["morning", "утро", "утром", "утра"],
+        (12, 17): ["afternoon", "noon", "день", "дня", "днём", "днем"],
+        (17, 24): ["evening", "вечер", "вечером", "вечера"],
+        (21, 24): ["night", "late", "ночь", "ночью"],
+    }
+
+    preferred_day: Optional[int] = None
+    preferred_hours: Optional[tuple[int, int]] = None
+
+    for day_num, keywords in day_keywords.items():
+        if any(kw in text for kw in keywords):
+            preferred_day = day_num
+            break
+
+    for (h_min, h_max), keywords in time_keywords.items():
+        if any(kw in text for kw in keywords):
+            preferred_hours = (h_min, h_max)
+            break
+
+    all_slots = huntme_crm.pick_nearest_slots(slots, count=20)
+
+    if preferred_day is None and preferred_hours is None:
+        return all_slots[:5], False  # nothing parsed
+
+    matched = []
+    partial = []
+
+    for slot_str in all_slots:
+        try:
+            dt = _dt.datetime.strptime(slot_str, "%d.%m.%Y %H:%M")
+            day_ok = preferred_day is None or dt.weekday() == preferred_day
+            time_ok = preferred_hours is None or preferred_hours[0] <= dt.hour < preferred_hours[1]
+            if day_ok and time_ok:
+                matched.append(slot_str)
+            elif day_ok or time_ok:
+                partial.append(slot_str)
+        except Exception:
+            continue
+
+    if matched:
+        return matched[:5], True
+    if partial:
+        return partial[:5], False
+    return all_slots[:5], False
+
+
 async def _show_slots(
     message: Message, state: FSMContext, preferred_text: str = None
 ):
@@ -200,9 +266,29 @@ async def _show_slots(
     except Exception:
         logger.debug("Failed to fetch slot reservations")
 
-    # Filter out reserved slots
-    all_nearest = huntme_crm.pick_nearest_slots(slots, count=7)
-    nearest = [s for s in all_nearest if s not in reserved][:5]
+    # Also filter slots held by pending/invited candidates (SlotReservation expires in 30m,
+    # but candidates.huntme_crm_slot persists until admin approve/reject)
+    try:
+        async with async_session() as session:
+            cand_result = await session.execute(
+                select(Candidate.huntme_crm_slot)
+                .where(Candidate.huntme_crm_slot.isnot(None))
+                .where(Candidate.status.in_(["pending_crm_approval", "interview_invited"]))
+                .where(Candidate.tg_user_id != tg_user_id)
+            )
+            reserved.update(row[0] for row in cand_result if row[0])
+    except Exception:
+        logger.debug("Failed to fetch candidate slot reservations")
+
+    # Filter slots based on preference or pick nearest
+    if preferred_text:
+        filtered, pref_matched = _filter_slots_by_preference(slots, preferred_text)
+        nearest = [s for s in filtered if s not in reserved][:5]
+        header = m.BOOKING_PREF_MATCH if pref_matched else m.BOOKING_PREF_NOMATCH
+    else:
+        all_nearest = huntme_crm.pick_nearest_slots(slots, count=7)
+        nearest = [s for s in all_nearest if s not in reserved][:5]
+        header = m.BOOKING_SLOTS_HEADER
 
     if not nearest:
         await message.answer(m.BOOKING_SLOTS_TOO_SOON, reply_markup=retry_kb)
@@ -220,7 +306,7 @@ async def _show_slots(
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
 
     await state.set_state(InterviewBooking.waiting_slot_choice)
-    await message.answer(m.BOOKING_SLOTS_HEADER, reply_markup=keyboard)
+    await message.answer(header, reply_markup=keyboard)
 
 
 @router.callback_query(InterviewBooking.waiting_slot_choice, F.data.startswith("book_"))
@@ -232,6 +318,11 @@ async def on_slot_chosen(callback: CallbackQuery, state: FSMContext):
 
     if callback.data == "book_other":
         await state.set_state(InterviewBooking.waiting_slot_preferred)
+        # Remove slot buttons so they can't be clicked after choosing "Other time"
+        try:
+            await callback.message.edit_reply_markup(reply_markup=None)
+        except Exception:
+            pass
         await callback.message.answer(m.BOOKING_OTHER_TIME)
         return
 
