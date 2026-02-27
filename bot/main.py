@@ -122,6 +122,7 @@ async def landing_webhook(request):
     name = data.get("name", "").strip()
     telegram = data.get("telegram", "").strip().lstrip("@")
     backup_contact = data.get("contact", "").strip()
+    language = data.get("language", "en").strip() or "en"
 
     # Save to Neon database
     candidate_id = None
@@ -133,6 +134,7 @@ async def landing_webhook(request):
                 platform="landing",
                 candidate_type="operator",
                 status="pending_bot",
+                language=language,
             )
             session.add(candidate)
             await session.commit()
@@ -145,18 +147,22 @@ async def landing_webhook(request):
     if _bot:
         tg_link = f'<a href="https://t.me/{telegram}">@{telegram}</a>' if telegram else "—"
         backup_line = f"\n📱 Backup: {backup_contact}" if backup_contact else ""
-        deep = f"https://t.me/apextalent_bot?start=land_{candidate_id}" if candidate_id else ""
-        msg = (
+        # Build deep link: land_ru_<id> for Russian, land_<id> for English
+        dl_prefix = "land_ru_" if language == "ru" else "land_"
+        deep = f"https://t.me/apextalent_bot?start={dl_prefix}{candidate_id}" if candidate_id else ""
+        lang_flag = "🇷🇺 RU" if language == "ru" else "🇬🇧 EN"
+        admin_msg = (
             f"🌐 <b>Новый лид с сайта</b>\n\n"
             f"👤 <b>Имя:</b> {name or '—'}\n"
             f"✈️ <b>Telegram:</b> {tg_link}{backup_line}\n"
+            f"🌍 <b>Язык:</b> {lang_flag}\n"
             f"🆔 #{candidate_id or '?'}\n\n"
             f"⏳ Ждём в боте для скрининга"
         )
         if deep:
-            msg += f"\n🔗 <a href=\"{deep}\">Deep link</a>"
+            admin_msg += f"\n🔗 <a href=\"{deep}\">Deep link</a>"
         try:
-            await _bot.send_message(config.ADMIN_CHAT_ID, msg, parse_mode="HTML")
+            await _bot.send_message(config.ADMIN_CHAT_ID, admin_msg, parse_mode="HTML")
         except Exception as exc:
             logger.error("Failed to notify admin about landing lead: %s", exc)
 

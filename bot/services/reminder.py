@@ -17,6 +17,7 @@ from sqlalchemy import select
 
 from bot.database.connection import async_session
 from bot.database.models import FsmState
+from bot.messages import msg
 
 logger = logging.getLogger(__name__)
 
@@ -25,18 +26,24 @@ _MONITORED_PREFIXES = ("OperatorForm:", "InterviewBooking:")
 _MAX_REMINDERS = 3
 _INACTIVITY_MINUTES = 10
 
-# Reminder keyboard: 4 options in one row + Continue
-REMINDER_KB = InlineKeyboardMarkup(inline_keyboard=[
-    [
-        InlineKeyboardButton(text="⏰ 30m", callback_data="remind_30"),
-        InlineKeyboardButton(text="⏰ 1h", callback_data="remind_60"),
-        InlineKeyboardButton(text="⏰ 3h", callback_data="remind_180"),
-        InlineKeyboardButton(text="⏰ 12h", callback_data="remind_720"),
-    ],
-    [
-        InlineKeyboardButton(text="▶️ Continue filling", callback_data="remind_continue"),
-    ],
-])
+
+def _reminder_kb(lang: str = "en") -> InlineKeyboardMarkup:
+    m = msg(lang)
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text="⏰ 30m", callback_data="remind_30"),
+            InlineKeyboardButton(text="⏰ 1h", callback_data="remind_60"),
+            InlineKeyboardButton(text="⏰ 3h", callback_data="remind_180"),
+            InlineKeyboardButton(text="⏰ 12h", callback_data="remind_720"),
+        ],
+        [
+            InlineKeyboardButton(text=m.BTN_CONTINUE, callback_data="remind_continue"),
+        ],
+    ])
+
+
+# Keep legacy reference for any imports
+REMINDER_KB = _reminder_kb("en")
 
 
 async def run_reminder_checker(bot: Bot):
@@ -97,6 +104,8 @@ async def _send_reminder_prompt(bot: Bot, fsm: FsmState, data: dict):
     """Send 'choose reminder time' message to candidate."""
     chat_id = fsm.chat_id
     now = datetime.utcnow()
+    lang = data.get("language", "en")
+    m = msg(lang)
 
     # Determine progress for personalized message
     step = (fsm.state or "").split(":")[-1]
@@ -104,18 +113,12 @@ async def _send_reminder_prompt(bot: Bot, fsm: FsmState, data: dict):
                   "waiting_birth_date", "waiting_phone", "waiting_experience",
                   "waiting_slot_choice"}
     if step in late_steps:
-        text = (
-            "Hey! You're almost done — just a couple more steps! 🏁\n\n"
-            "If now's not a good time, pick when you'd like a reminder:"
-        )
+        text = m.REMINDER_LATE_STEP
     else:
-        text = (
-            "Hey! 👋 No rush — if now's not a good time, "
-            "pick when you'd like a reminder:"
-        )
+        text = m.REMINDER_EARLY_STEP
 
     try:
-        await bot.send_message(chat_id, text, reply_markup=REMINDER_KB)
+        await bot.send_message(chat_id, text, reply_markup=_reminder_kb(lang))
     except Exception:
         logger.debug("Failed to send reminder prompt to %s", chat_id)
         return
@@ -129,10 +132,10 @@ async def _send_follow_up(bot: Bot, fsm: FsmState, data: dict):
     """Send a follow-up reminder and re-prompt the current step."""
     chat_id = fsm.chat_id
     count = data.get("reminder_count", 0) + 1
+    lang = data.get("language", "en")
+    m = msg(lang)
 
-    from bot.services.followup import FOLLOWUP_TEMPLATES
-    template = FOLLOWUP_TEMPLATES.get("silent_after_questions", {})
-    text = template.get("message", "Hey! Just checking in — ready to continue? 🙂")
+    text = m.REMINDER_FALLBACK
 
     try:
         await bot.send_message(chat_id, text)

@@ -17,6 +17,7 @@ class Candidate(Base):
     tg_username: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     name: Mapped[str] = mapped_column(String(255))
     region: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    language: Mapped[Optional[str]] = mapped_column(String(5), nullable=True, default="en")
     platform: Mapped[Optional[str]] = mapped_column(String(100), nullable=True, default="telegram")
     candidate_type: Mapped[str] = mapped_column(String(20))  # operator, model, agent
 

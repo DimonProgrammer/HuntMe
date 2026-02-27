@@ -12,6 +12,7 @@ import json
 import logging
 from dataclasses import dataclass
 
+from bot.messages import msg
 from bot.services.claude_client import claude
 
 logger = logging.getLogger(__name__)
@@ -103,6 +104,7 @@ async def screen_candidate(
     start_date: str = "N/A",
     contact_info: str = "N/A",
     tg_username: str = "N/A",
+    language: str = "en",
 ) -> ScreeningResult:
     prompt = SCREENING_USER_TEMPLATE.format(
         name=name,
@@ -122,8 +124,12 @@ async def screen_candidate(
         tg_username=tg_username,
     )
 
+    # Append language instruction so AI responds in the candidate's language
+    m = msg(language)
+    system = SCREENING_SYSTEM_PROMPT + "\n\n" + m.SCREENER_RESPONSE_LANG
+
     raw = await claude.complete(
-        system=SCREENING_SYSTEM_PROMPT,
+        system=system,
         user_message=prompt,
         max_tokens=600,
     )

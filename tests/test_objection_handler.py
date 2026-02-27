@@ -2,7 +2,7 @@
 
 import pytest
 
-from bot.services.objection_handler import detect_objection, get_response, OBJECTIONS
+from bot.services.objection_handler import detect_objection, get_response, _OBJ_ATTR
 
 
 class TestDetectObjection:
@@ -81,7 +81,7 @@ class TestGetResponse:
 
     def test_all_objections_have_responses(self):
         """Every objection type must have a non-empty response."""
-        for key in OBJECTIONS:
+        for key in _OBJ_ATTR:
             response = get_response(key)
             assert response is not None, f"No response for {key}"
             assert len(response) > 50, f"Response too short for {key}"

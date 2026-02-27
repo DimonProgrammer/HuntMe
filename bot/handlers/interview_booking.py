@@ -22,6 +22,7 @@ from sqlalchemy import select
 from bot.config import config
 from bot.database import async_session
 from bot.database.models import Candidate
+from bot.messages import msg
 from bot.services import huntme_crm
 
 logger = logging.getLogger(__name__)
@@ -51,14 +52,12 @@ async def start_booking(message: Message, state: FSMContext, tg_user_id: int):
 
     Called from operator_flow after screening. Sets FSM state and asks first question.
     """
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
     await state.update_data(booking_tg_user_id=tg_user_id)
     await state.set_state(InterviewBooking.waiting_birth_date)
-    await message.answer(
-        "Great news! You've been selected for an interview! 🎉\n\n"
-        "We just need a couple more details to book your slot.\n\n"
-        "What is your date of birth?\n"
-        "Please enter in format: DD.MM.YYYY (e.g. 15.05.1998)"
-    )
+    await message.answer(m.BOOKING_START)
 
 
 # ═══ BIRTH DATE ═══
@@ -66,23 +65,19 @@ async def start_booking(message: Message, state: FSMContext, tg_user_id: int):
 
 @router.message(InterviewBooking.waiting_birth_date, F.text)
 async def on_birth_date(message: Message, state: FSMContext):
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
     raw = message.text.strip()
 
-    # Parse various date formats
     birth_date = _parse_date(raw)
     if not birth_date:
-        await message.answer(
-            "I couldn't understand that date format.\n"
-            "Please enter your date of birth as DD.MM.YYYY (e.g. 15.05.1998)"
-        )
+        await message.answer(m.BOOKING_DATE_FAIL)
         return
 
     await state.update_data(birth_date=birth_date)
     await state.set_state(InterviewBooking.waiting_phone)
-    await message.answer(
-        "What is your phone number (with country code)?\n"
-        "For example: +639171234567 or +2348012345678"
-    )
+    await message.answer(m.BOOKING_PHONE)
 
 
 # ═══ PHONE ═══
@@ -90,27 +85,20 @@ async def on_birth_date(message: Message, state: FSMContext):
 
 @router.message(InterviewBooking.waiting_phone, F.text)
 async def on_phone(message: Message, state: FSMContext):
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
     raw = message.text.strip()
     digits, country = huntme_crm.parse_phone(raw)
 
     if len(digits) < 7:
-        await message.answer(
-            "That doesn't look like a valid phone number.\n"
-            "Please enter your full phone number with country code (e.g. +639171234567)"
-        )
+        await message.answer(m.BOOKING_PHONE_FAIL)
         return
 
     await state.update_data(phone_number=digits, phone_country=country)
 
-    # Ask about experience before showing slots
     await state.set_state(InterviewBooking.waiting_experience)
-    await message.answer(
-        "One last question! Do you have any experience with:\n"
-        "- Live streaming / content moderation\n"
-        "- Customer service / virtual assistant\n"
-        "- Any other online/remote work\n\n"
-        "If yes, please briefly describe. If no, just say 'no experience'."
-    )
+    await message.answer(m.BOOKING_EXPERIENCE)
 
 
 # ═══ EXPERIENCE ═══
@@ -118,11 +106,13 @@ async def on_phone(message: Message, state: FSMContext):
 
 @router.message(InterviewBooking.waiting_experience, F.text)
 async def on_experience(message: Message, state: FSMContext):
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
     experience = message.text.strip()
     await state.update_data(experience=experience)
 
-    # Now fetch slots and show them
-    await message.answer("Looking for available interview times...")
+    await message.answer(m.BOOKING_FETCHING_SLOTS)
     await _show_slots(message, state)
 
 
@@ -133,101 +123,78 @@ async def _show_slots(
     message: Message, state: FSMContext, preferred_text: str = None
 ):
     """Fetch fresh slots from CRM and show as inline buttons."""
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
+
     slots = await huntme_crm.get_available_slots(office_id=95)
 
     retry_kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="🔄 Try Again", callback_data="retry_slots")],
-        [InlineKeyboardButton(text="⬅️ Back to Menu", callback_data="back_main")],
+        [InlineKeyboardButton(text=m.BTN_BACK_MENU, callback_data="back_main")],
     ])
 
     if slots is None:
-        # API error (auth / network) — not "no slots"
-        await message.answer(
-            "Sorry, I couldn't connect to the scheduling system right now.\n"
-            "Our team will reach out to you to schedule the interview manually. 🙏",
-            reply_markup=retry_kb,
-        )
+        await message.answer(m.BOOKING_SLOTS_ERROR, reply_markup=retry_kb)
         await state.set_state(InterviewBooking.waiting_slot_choice)
         return
 
     if not slots:
-        await message.answer(
-            "No interview slots are available right now.\n"
-            "We'll notify you as soon as new times open up. Hang tight! 🙏",
-            reply_markup=retry_kb,
-        )
+        await message.answer(m.BOOKING_NO_SLOTS, reply_markup=retry_kb)
         await state.set_state(InterviewBooking.waiting_slot_choice)
         return
 
     nearest = huntme_crm.pick_nearest_slots(slots, count=5)
 
     if not nearest:
-        await message.answer(
-            "All available slots are too soon to book.\n"
-            "New slots should appear tomorrow. We'll be in touch! 🙏",
-            reply_markup=retry_kb,
-        )
+        await message.answer(m.BOOKING_SLOTS_TOO_SOON, reply_markup=retry_kb)
         await state.set_state(InterviewBooking.waiting_slot_choice)
         return
 
-    # Build inline keyboard with slot buttons
     buttons = []
     for slot_str in nearest:
-        # Display friendly format: "Fri, Feb 28 at 18:00"
         display = _format_slot_display(slot_str)
-        # Callback data: slot_<encoded>
         cb_data = f"book_{slot_str.replace('.', '-').replace(' ', '_')}"
         buttons.append([InlineKeyboardButton(text=display, callback_data=cb_data)])
 
-    buttons.append([InlineKeyboardButton(text="Other time ⏰", callback_data="book_other")])
+    buttons.append([InlineKeyboardButton(text=m.BTN_OTHER_TIME, callback_data="book_other")])
 
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
 
-    text = "Here are the nearest available interview times (Manila time, GMT+8):\n\n"
-    text += "Pick one that works best for you:"
-
     await state.set_state(InterviewBooking.waiting_slot_choice)
-    await message.answer(text, reply_markup=keyboard)
+    await message.answer(m.BOOKING_SLOTS_HEADER, reply_markup=keyboard)
 
 
 @router.callback_query(InterviewBooking.waiting_slot_choice, F.data.startswith("book_"))
 async def on_slot_chosen(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
 
     if callback.data == "book_other":
         await state.set_state(InterviewBooking.waiting_slot_preferred)
-        await callback.message.answer(
-            "No problem! What days and times would work better for you?\n"
-            "For example: 'weekday evenings' or 'March 3-5, any time'"
-        )
+        await callback.message.answer(m.BOOKING_OTHER_TIME)
         return
 
-    # Decode slot from callback data: book_02-03-2026_16:00 → 02.03.2026 16:00
     encoded = callback.data.removeprefix("book_")
     slot_str = encoded.replace("-", ".").replace("_", " ")
 
-    # Fresh check: verify slot is still available
-    await callback.message.edit_text("Checking availability...")
+    await callback.message.edit_text(m.BOOKING_CHECKING)
 
     slots = await huntme_crm.get_available_slots(office_id=95)
     if not slots:
-        await callback.message.edit_text(
-            "Couldn't verify slot availability. Let me try again..."
-        )
+        await callback.message.edit_text(m.BOOKING_RETRY)
         await _show_slots(callback.message, state)
         return
 
-    # Check if the selected slot is still in the available list
     date_part, time_part = slot_str.split(" ", 1)
     if date_part not in slots or time_part not in slots[date_part]:
-        await callback.message.edit_text(
-            "That slot was just taken! Here are updated options:"
-        )
+        await callback.message.edit_text(m.BOOKING_SLOT_TAKEN)
         await _show_slots(callback.message, state)
         return
 
-    # Slot is available — request admin approval before submitting
-    await callback.message.edit_text("Confirming your slot...")
+    await callback.message.edit_text(m.BOOKING_CONFIRMING)
     await _request_crm_approval(callback.message, state, slot_str)
 
 
@@ -245,11 +212,13 @@ async def on_retry_slots(callback: CallbackQuery, state: FSMContext):
 @router.message(InterviewBooking.waiting_slot_preferred, F.text)
 async def on_slot_preferred(message: Message, state: FSMContext):
     """Candidate specified preferred times — re-fetch and filter."""
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
     preferred = message.text.strip()
     await state.update_data(preferred_time=preferred)
 
-    await message.answer(f"Got it! Let me check what's available around that time...")
-    # For now, just re-show all slots (AI-based time matching can be added later)
+    await message.answer(m.BOOKING_PREFERRED_ACK)
     await _show_slots(message, state, preferred_text=preferred)
 
 
@@ -259,6 +228,8 @@ async def on_slot_preferred(message: Message, state: FSMContext):
 async def _request_crm_approval(message: Message, state: FSMContext, slot_str: str):
     """Save booking data to DB and send admin a preview for approval."""
     data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
     tg_user_id = data.get("booking_tg_user_id")
 
     # Load candidate from DB
@@ -273,10 +244,7 @@ async def _request_crm_approval(message: Message, state: FSMContext, slot_str: s
         logger.exception("Failed to load candidate for CRM approval")
 
     if not candidate:
-        await message.answer(
-            "Something went wrong loading your data. "
-            "Our team will contact you to schedule the interview manually. 🙏"
-        )
+        await message.answer(m.BOOKING_DATA_ERROR)
         await state.clear()
         return
 
@@ -300,11 +268,7 @@ async def _request_crm_approval(message: Message, state: FSMContext, slot_str: s
 
     # Tell candidate — admin will review manually
     display = _format_slot_display(slot_str)
-    await message.answer(
-        f"You've chosen: {display} (Manila time) ✅\n\n"
-        f"Our admin will review and confirm your booking shortly.\n"
-        f"You'll receive a confirmation message once it's approved. 🙏"
-    )
+    await message.answer(m.BOOKING_SLOT_CHOSEN.format(display=display))
     await state.clear()
 
     # Send admin the full preview + approve/reject buttons
@@ -483,19 +447,13 @@ async def on_crm_approve(callback: CallbackQuery):
         except Exception:
             logger.exception("Failed to update CRM status")
 
-        # Notify candidate
+        # Notify candidate — get language from DB
+        cand_lang = cand.language if cand else "en"
+        cm = msg(cand_lang)
         try:
             await callback.bot.send_message(
                 tg_user_id,
-                f"Your interview is confirmed! ✅\n\n"
-                f"📅 {display}\n"
-                f"🕐 Manila time (GMT+8)\n\n"
-                f"The interview is a 30-40 minute video call where we'll:\n"
-                f"• Explain the role in detail\n"
-                f"• Answer all your questions\n"
-                f"• Do a quick age verification\n\n"
-                f"No additional registration needed — your slot is booked.\n"
-                f"Looking forward to meeting you! 🙂"
+                cm.BOOKING_CONFIRMED.format(display=display),
             )
         except Exception:
             logger.debug("Failed to notify candidate about confirmed booking")
@@ -532,13 +490,11 @@ async def on_crm_reject(callback: CallbackQuery):
     except Exception:
         logger.exception("Failed to update candidate after CRM rejection")
 
-    # Notify candidate
+    # Notify candidate — get language from candidate record
+    cand_lang = cand.language if cand else "en"
+    cm = msg(cand_lang)
     try:
-        await callback.bot.send_message(
-            tg_user_id,
-            "Thank you for your patience! Our team will contact you "
-            "within 24 hours to confirm your interview time. 🙏"
-        )
+        await callback.bot.send_message(tg_user_id, cm.BOOKING_SOFT_REJECT)
     except Exception:
         logger.debug("Failed to notify candidate about CRM rejection")
 
@@ -552,15 +508,24 @@ async def on_crm_reject(callback: CallbackQuery):
 
 async def _rebook_candidate(bot, tg_user_id: int, fresh_slots: dict):
     """Slot disappeared — notify candidate and show fresh slots to pick from."""
+    # Get candidate language from DB
+    cand_lang = "en"
+    try:
+        async with async_session() as session:
+            result = await session.execute(
+                select(Candidate).where(Candidate.tg_user_id == tg_user_id)
+            )
+            cand = result.scalar_one_or_none()
+            if cand:
+                cand_lang = cand.language or "en"
+    except Exception:
+        pass
+    m = msg(cand_lang)
+
     nearest = huntme_crm.pick_nearest_slots(fresh_slots, count=5) if fresh_slots else []
 
     if not nearest:
-        await bot.send_message(
-            tg_user_id,
-            "Sorry, the interview slot you selected is no longer available, "
-            "and there are no other open times right now.\n"
-            "We'll notify you as soon as new slots open up. 🙏"
-        )
+        await bot.send_message(tg_user_id, m.REBOOK_NO_SLOTS)
         return
 
     buttons = []
@@ -571,12 +536,7 @@ async def _rebook_candidate(bot, tg_user_id: int, fresh_slots: dict):
 
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
 
-    await bot.send_message(
-        tg_user_id,
-        "Sorry, the slot you picked was just taken! 😔\n\n"
-        "Here are the currently available times — please pick a new one:",
-        reply_markup=keyboard,
-    )
+    await bot.send_message(tg_user_id, m.REBOOK_PICK_NEW, reply_markup=keyboard)
 
 
 @router.callback_query(F.data.startswith("rebook_"))
@@ -595,15 +555,27 @@ async def on_rebook_slot(callback: CallbackQuery):
     try:
         slots = await huntme_crm.get_available_slots(office_id=95)
     except Exception:
-        await callback.message.edit_text("Failed to check availability. Please try again later.")
+        await callback.message.edit_text(msg("en").REBOOK_CHECK_FAIL)
         return
+
+    # Get candidate language
+    cand_lang = "en"
+    try:
+        async with async_session() as session:
+            result = await session.execute(
+                select(Candidate).where(Candidate.tg_user_id == tg_user_id)
+            )
+            c = result.scalar_one_or_none()
+            if c:
+                cand_lang = c.language or "en"
+    except Exception:
+        pass
+    m = msg(cand_lang)
 
     if slots:
         date_part, time_part = slot_str.split(" ", 1)
         if date_part not in slots or time_part not in slots[date_part]:
-            await callback.message.edit_text(
-                "That slot was just taken too! Let me refresh..."
-            )
+            await callback.message.edit_text(m.REBOOK_SLOT_TAKEN_AGAIN)
             await _rebook_candidate(callback.bot, tg_user_id, slots)
             return
 
@@ -622,10 +594,7 @@ async def on_rebook_slot(callback: CallbackQuery):
         logger.exception("Failed to update rebook slot")
 
     display = _format_slot_display(slot_str)
-    await callback.message.edit_text(
-        f"New slot selected: {display} (Manila time) ✅\n"
-        f"Our admin will review and confirm your booking shortly. 🙏"
-    )
+    await callback.message.edit_text(m.REBOOK_CONFIRMED.format(display=display))
 
     # Send new approval request to admin
     candidate = None

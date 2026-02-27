@@ -16,6 +16,7 @@ from sqlalchemy import func, select
 
 from bot.config import config
 from bot.database import Candidate, FunnelEvent, async_session
+from bot.messages import msg
 from bot.services.post_generator import generate_post
 
 logger = logging.getLogger(__name__)
@@ -44,8 +45,9 @@ async def admin_reply_to_candidate(message: Message):
     if not user_id:
         return
 
-    # Look up candidate name for confirmation
+    # Look up candidate for name + language
     candidate_name = None
+    cand = None
     try:
         async with async_session() as session:
             result = await session.execute(
@@ -57,12 +59,15 @@ async def admin_reply_to_candidate(message: Message):
     except Exception:
         pass
 
+    cand_lang = cand.language if cand and cand.language else "en"
+    m = msg(cand_lang)
+
     try:
         from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
         reply_kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="▶️ Continue filling", callback_data="resume_form")],
-            [InlineKeyboardButton(text="💬 Reply", callback_data="menu_question")],
-            [InlineKeyboardButton(text="⬅️ Back to Menu", callback_data="back_main")],
+            [InlineKeyboardButton(text=m.BTN_CONTINUE, callback_data="resume_form")],
+            [InlineKeyboardButton(text=m.BTN_QUESTION, callback_data="menu_question")],
+            [InlineKeyboardButton(text=m.BTN_BACK_MENU, callback_data="back_main")],
         ])
         await message.bot.send_message(user_id, message.text, reply_markup=reply_kb)
         name_str = f" ({candidate_name})" if candidate_name else ""
@@ -202,6 +207,20 @@ async def cmd_ref(message: Message):
 async def cb_send_referral(callback: CallbackQuery):
     """Send interview booking button to candidate (MAYBE candidates approved by admin)."""
     user_id = int(callback.data.removeprefix("ref_"))
+    # Get candidate language
+    cand_lang = "en"
+    cand = None
+    try:
+        async with async_session() as session:
+            result = await session.execute(
+                select(Candidate).where(Candidate.tg_user_id == user_id)
+            )
+            cand = result.scalar_one_or_none()
+            if cand and cand.language:
+                cand_lang = cand.language
+    except Exception:
+        pass
+    m = msg(cand_lang)
     try:
         from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
         booking_kb = InlineKeyboardMarkup(inline_keyboard=[
@@ -209,9 +228,7 @@ async def cb_send_referral(callback: CallbackQuery):
         ])
         await callback.bot.send_message(
             user_id,
-            "Great news! You've been selected for an interview! 🎉\n\n"
-            "We just need a few more details to book your slot.\n\n"
-            "Tap the button below to get started!",
+            m.BOOKING_START,
             reply_markup=booking_kb,
         )
         # Notify referrer if this candidate was referred
@@ -242,16 +259,21 @@ async def cb_send_referral(callback: CallbackQuery):
 async def cb_reject(callback: CallbackQuery):
     """Send rejection to candidate + update DB status."""
     user_id = int(callback.data.removeprefix("rej_"))
+    # Get candidate language
+    cand_lang = "en"
     try:
-        await callback.bot.send_message(
-            user_id,
-            "Thank you for your interest in our team! 🙏\n\n"
-            "Unfortunately, we're not able to move forward with your application "
-            "at this time. We'll keep your information on file for future openings.\n\n"
-            "If you know anyone who might be interested in a remote moderator position, "
-            "feel free to send them our way: t.me/apextalent_bot\n\n"
-            "Wishing you all the best! 🙂",
-        )
+        async with async_session() as session:
+            result = await session.execute(
+                select(Candidate).where(Candidate.tg_user_id == user_id)
+            )
+            cand = result.scalar_one_or_none()
+            if cand and cand.language:
+                cand_lang = cand.language
+    except Exception:
+        pass
+    m = msg(cand_lang)
+    try:
+        await callback.bot.send_message(user_id, m.REJECTION_MESSAGE)
         try:
             async with async_session() as session:
                 result = await session.execute(
@@ -318,8 +340,9 @@ async def cmd_msg(message: Message):
             await message.answer("Invalid user ID. Use a number or @username.")
             return
 
-    # Look up name
+    # Look up name + language
     candidate_name = None
+    cand = None
     try:
         async with async_session() as session:
             result = await session.execute(
@@ -331,12 +354,15 @@ async def cmd_msg(message: Message):
     except Exception:
         pass
 
+    cand_lang = cand.language if cand and cand.language else "en"
+    cm = msg(cand_lang)
+
     try:
         from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
         reply_kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="▶️ Continue filling", callback_data="resume_form")],
-            [InlineKeyboardButton(text="💬 Reply", callback_data="menu_question")],
-            [InlineKeyboardButton(text="⬅️ Back to Menu", callback_data="back_main")],
+            [InlineKeyboardButton(text=cm.BTN_CONTINUE, callback_data="resume_form")],
+            [InlineKeyboardButton(text=cm.BTN_QUESTION, callback_data="menu_question")],
+            [InlineKeyboardButton(text=cm.BTN_BACK_MENU, callback_data="back_main")],
         ])
         await message.bot.send_message(user_id, text, reply_markup=reply_kb)
         name_str = f" ({candidate_name})" if candidate_name else ""

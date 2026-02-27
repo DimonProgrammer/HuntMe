@@ -28,6 +28,7 @@ from bot.config import config
 from bot.database import async_session
 from bot.database.models import Candidate, FunnelEvent
 from bot.services.hardware_checker import quick_check
+from bot.messages import msg
 from bot.services.objection_handler import detect_objection, get_response
 from bot.services.screener import ScreeningResult, screen_candidate
 from bot.services import notion_leads
@@ -107,9 +108,9 @@ STEP_BACK = {
 }
 
 
-def _back_row():
+def _back_row(lang: str = "en"):
     """Single back button row to append to any keyboard."""
-    return [InlineKeyboardButton(text="⬅️ Back", callback_data="go_back")]
+    return [InlineKeyboardButton(text=msg(lang).BTN_BACK, callback_data="go_back")]
 
 
 # ═══ QUESTION / OBJECTION HANDLING ═══
@@ -120,13 +121,16 @@ async def _handle_possible_question(message: Message, state: FSMContext) -> bool
     if not text:
         return False
 
+    data = await state.get_data()
+    lang = data.get("language", "en")
+
     has_question_mark = "?" in text
     is_conversational = len(text) > 40
 
     if has_question_mark or is_conversational:
-        objection = detect_objection(text)
+        objection = detect_objection(text, lang)
         if objection:
-            response = get_response(objection)
+            response = get_response(objection, lang)
             if response:
                 current = await state.get_state()
                 await _track_event(message.from_user.id, "objection_detected", current, {"objection": objection, "text": text[:200]})
@@ -146,6 +150,8 @@ async def _handle_possible_question(message: Message, state: FSMContext) -> bool
 async def _forward_question_to_admin(message: Message, state: FSMContext, text: str):
     """Forward candidate's question to admin for manual reply."""
     data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
     current = await state.get_state()
     name = data.get("name", "Unknown")
     username = message.from_user.username or "N/A"
@@ -162,11 +168,7 @@ async def _forward_question_to_admin(message: Message, state: FSMContext, text: 
     except Exception:
         logger.exception("Failed to forward question to admin")
 
-    await message.answer(
-        "Great question! I've forwarded it to our team — "
-        "they'll get back to you shortly. 🙂\n\n"
-        "In the meantime, let's continue with the application."
-    )
+    await message.answer(m.QUESTION_FORWARDED)
     await _send_step_prompt(message, state)
 
 
@@ -181,177 +183,123 @@ async def _send_step_prompt(target, state: FSMContext, set_state=False):
     """Send the prompt for the current state. target: Message or CallbackQuery."""
     current = await state.get_state()
     data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
     send = target.message.answer if isinstance(target, CallbackQuery) else target.answer
 
     if current == OperatorForm.waiting_name.state:
-        kb = InlineKeyboardMarkup(inline_keyboard=[_back_row()])
-        await send(f"{_progress(1)}\n\nWhat is your full name?", reply_markup=kb)
+        kb = InlineKeyboardMarkup(inline_keyboard=[_back_row(lang)])
+        await send(f"{_progress(1)}\n\n{m.STEP_NAME}", reply_markup=kb)
 
     elif current == OperatorForm.waiting_has_pc.state:
         kb = InlineKeyboardMarkup(inline_keyboard=[
             [
-                InlineKeyboardButton(text="🖥️ Yes, PC/Desktop", callback_data="pc_desktop"),
-                InlineKeyboardButton(text="💻 Yes, Laptop", callback_data="pc_laptop"),
+                InlineKeyboardButton(text=m.BTN_PC_DESKTOP, callback_data="pc_desktop"),
+                InlineKeyboardButton(text=m.BTN_PC_LAPTOP, callback_data="pc_laptop"),
             ],
-            [InlineKeyboardButton(text="❌ No", callback_data="pc_no")],
-            _back_row(),
+            [InlineKeyboardButton(text=m.BTN_PC_NO, callback_data="pc_no")],
+            _back_row(lang),
         ])
-        await send(
-            f"{_progress(2)}\n\n"
-            "Do you have a Windows PC or laptop?",
-            reply_markup=kb,
-        )
+        await send(f"{_progress(2)}\n\n{m.STEP_PC}", reply_markup=kb)
 
     elif current == OperatorForm.waiting_no_pc_followup.state:
         kb = InlineKeyboardMarkup(inline_keyboard=[
             [
-                InlineKeyboardButton(text="✅ Yes, within 1-2 weeks", callback_data="nopc_soon"),
-                InlineKeyboardButton(text="🤷 No plans yet", callback_data="nopc_no"),
+                InlineKeyboardButton(text=m.BTN_NOPC_SOON, callback_data="nopc_soon"),
+                InlineKeyboardButton(text=m.BTN_NOPC_NO, callback_data="nopc_no"),
             ],
-            _back_row(),
+            _back_row(lang),
         ])
-        await send("Are you planning to get a Windows PC in the near future?", reply_markup=kb)
+        await send(m.STEP_NO_PC_QUESTION, reply_markup=kb)
 
     elif current == OperatorForm.waiting_age.state:
-        kb = InlineKeyboardMarkup(inline_keyboard=[_back_row()])
-        await send(f"{_progress(3)}\n\nHow old are you?", reply_markup=kb)
+        kb = InlineKeyboardMarkup(inline_keyboard=[_back_row(lang)])
+        await send(f"{_progress(3)}\n\n{m.STEP_AGE}", reply_markup=kb)
 
     elif current == OperatorForm.waiting_study_work.state:
         kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="💼 Working", callback_data="study_working")],
-            [InlineKeyboardButton(text="🎓 Student (online classes)", callback_data="study_distance")],
-            [InlineKeyboardButton(text="🏫 Student (on campus)", callback_data="study_inperson")],
-            [InlineKeyboardButton(text="🏠 Neither", callback_data="study_neither")],
-            _back_row(),
+            [InlineKeyboardButton(text=m.BTN_WORKING, callback_data="study_working")],
+            [InlineKeyboardButton(text=m.BTN_STUDENT_ONLINE, callback_data="study_distance")],
+            [InlineKeyboardButton(text=m.BTN_STUDENT_CAMPUS, callback_data="study_inperson")],
+            [InlineKeyboardButton(text=m.BTN_NEITHER, callback_data="study_neither")],
+            _back_row(lang),
         ])
-        await send(f"{_progress(4)}\n\nAre you currently studying or working?", reply_markup=kb)
+        await send(f"{_progress(4)}\n\n{m.STEP_STUDY}", reply_markup=kb)
 
     elif current == OperatorForm.waiting_english.state:
         kb = InlineKeyboardMarkup(inline_keyboard=[
             [
-                InlineKeyboardButton(text="📗 Basic", callback_data="eng_beginner"),
-                InlineKeyboardButton(text="📘 Can hold a conversation", callback_data="eng_b1"),
+                InlineKeyboardButton(text=m.BTN_ENG_BASIC, callback_data="eng_beginner"),
+                InlineKeyboardButton(text=m.BTN_ENG_B1, callback_data="eng_b1"),
             ],
             [
-                InlineKeyboardButton(text="📙 Comfortable", callback_data="eng_b2"),
-                InlineKeyboardButton(text="📕 Fluent", callback_data="eng_c1"),
+                InlineKeyboardButton(text=m.BTN_ENG_B2, callback_data="eng_b2"),
+                InlineKeyboardButton(text=m.BTN_ENG_C1, callback_data="eng_c1"),
             ],
-            [InlineKeyboardButton(text="🌟 Native speaker", callback_data="eng_native")],
-            _back_row(),
+            [InlineKeyboardButton(text=m.BTN_ENG_NATIVE, callback_data="eng_native")],
+            _back_row(lang),
         ])
-        await send(
-            f"{_progress(5)}\n\n"
-            "How well do you speak English?\n\n"
-            "We need at least conversational level — you'll be moderating English chats.\n\n"
-            "You can also rate yourself from 1 to 10.",
-            reply_markup=kb,
-        )
+        await send(f"{_progress(5)}\n\n{m.STEP_ENGLISH}", reply_markup=kb)
 
     elif current == OperatorForm.waiting_pc_confidence.state:
-        kb = InlineKeyboardMarkup(inline_keyboard=[_back_row()])
-        await send(
-            f"{_progress(6)}\n\n"
-            "How comfortable are you with Windows?\n\n"
-            "For example: installing programs, troubleshooting, changing settings?\n\n"
-            "You can rate yourself from 1 to 10.",
-            reply_markup=kb,
-        )
+        kb = InlineKeyboardMarkup(inline_keyboard=[_back_row(lang)])
+        await send(f"{_progress(6)}\n\n{m.STEP_PC_CONFIDENCE}", reply_markup=kb)
 
     elif current == OperatorForm.waiting_cpu.state:
         kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="🤔 Not sure", callback_data="cpu_skip")],
-            _back_row(),
+            [InlineKeyboardButton(text=m.BTN_NOT_SURE, callback_data="cpu_skip")],
+            _back_row(lang),
         ])
-        await send(
-            f"{_progress(7)}\n\n"
-            "What is your processor (CPU)?\n\n"
-            "How to check:\n"
-            "Settings > System > About > look for 'Processor'\n\n"
-            "Example: Intel Core i5-12400 or AMD Ryzen 5 5600\n\n"
-            "Not sure? Tap the button — we'll ask a few simple questions instead.",
-            reply_markup=kb,
-        )
+        await send(f"{_progress(7)}\n\n{m.STEP_CPU}", reply_markup=kb)
 
     elif current == OperatorForm.waiting_cpu_simple_age.state:
         kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="🆕 Less than 2 years", callback_data="pcage_new")],
-            [InlineKeyboardButton(text="📅 2-4 years", callback_data="pcage_mid")],
-            [InlineKeyboardButton(text="📆 5+ years", callback_data="pcage_old")],
-            [InlineKeyboardButton(text="🤔 Not sure", callback_data="pcage_unsure")],
-            _back_row(),
+            [InlineKeyboardButton(text=m.BTN_PC_NEW, callback_data="pcage_new")],
+            [InlineKeyboardButton(text=m.BTN_PC_MID, callback_data="pcage_mid")],
+            [InlineKeyboardButton(text=m.BTN_PC_OLD, callback_data="pcage_old")],
+            [InlineKeyboardButton(text=m.BTN_NOT_SURE, callback_data="pcage_unsure")],
+            _back_row(lang),
         ])
-        await send(
-            f"{_progress(7)} — No worries! A few quick questions instead.\n\n"
-            "How old is your computer?",
-            reply_markup=kb,
-        )
+        await send(f"{_progress(7)} — {m.STEP_CPU_AGE_INTRO}\n\n{m.STEP_CPU_AGE}", reply_markup=kb)
 
     elif current == OperatorForm.waiting_cpu_simple_usage.state:
         kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="🎮 Gaming", callback_data="pcuse_gaming")],
-            [InlineKeyboardButton(text="💼 Work / Office", callback_data="pcuse_work")],
-            [InlineKeyboardButton(text="🌐 Browsing / Social media", callback_data="pcuse_browsing")],
-            [InlineKeyboardButton(text="🎨 Video editing / Design", callback_data="pcuse_creative")],
-            _back_row(),
+            [InlineKeyboardButton(text=m.BTN_GAMING, callback_data="pcuse_gaming")],
+            [InlineKeyboardButton(text=m.BTN_WORK, callback_data="pcuse_work")],
+            [InlineKeyboardButton(text=m.BTN_BROWSING, callback_data="pcuse_browsing")],
+            [InlineKeyboardButton(text=m.BTN_CREATIVE, callback_data="pcuse_creative")],
+            _back_row(lang),
         ])
-        await send(f"{_progress(7)}\n\nWhat do you mainly use your computer for?", reply_markup=kb)
+        await send(f"{_progress(7)}\n\n{m.STEP_CPU_USAGE}", reply_markup=kb)
 
     elif current == OperatorForm.waiting_gpu.state:
         kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="🤔 Not sure", callback_data="gpu_skip")],
-            _back_row(),
+            [InlineKeyboardButton(text=m.BTN_NOT_SURE, callback_data="gpu_skip")],
+            _back_row(lang),
         ])
-        await send(
-            f"{_progress(8)}\n\n"
-            "What is your graphics card (GPU)?\n\n"
-            "How to check:\n"
-            "Settings > System > Display > Advanced display > look for GPU info\n\n"
-            "Example: NVIDIA GeForce RTX 3060 or AMD Radeon RX 6600\n\n"
-            "Not sure? Tap the button below.",
-            reply_markup=kb,
-        )
+        await send(f"{_progress(8)}\n\n{m.STEP_GPU}", reply_markup=kb)
 
     elif current == OperatorForm.waiting_gpu_simple_gaming.state:
         kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="🎮 Yes, modern games (GTA, Fortnite)", callback_data="game_modern")],
-            [InlineKeyboardButton(text="🕹️ Yes, but only simple/old games", callback_data="game_basic")],
-            [InlineKeyboardButton(text="❌ No / Never tried", callback_data="game_no")],
-            [InlineKeyboardButton(text="🤔 Not sure", callback_data="game_unsure")],
-            _back_row(),
+            [InlineKeyboardButton(text=m.BTN_GAME_MODERN, callback_data="game_modern")],
+            [InlineKeyboardButton(text=m.BTN_GAME_BASIC, callback_data="game_basic")],
+            [InlineKeyboardButton(text=m.BTN_GAME_NO, callback_data="game_no")],
+            [InlineKeyboardButton(text=m.BTN_NOT_SURE, callback_data="game_unsure")],
+            _back_row(lang),
         ])
-        await send(
-            f"{_progress(8)} — One more quick question.\n\n"
-            "Can your computer run video games?",
-            reply_markup=kb,
-        )
+        await send(f"{_progress(8)} — {m.STEP_GPU_GAMING_INTRO}\n\n{m.STEP_GPU_GAMING}", reply_markup=kb)
 
     elif current == OperatorForm.waiting_internet.state:
-        kb = InlineKeyboardMarkup(inline_keyboard=[_back_row()])
-        await send(
-            f"{_progress(9)}\n\n"
-            "What is your internet speed?\n\n"
-            "You can check at speedtest.net\n\n"
-            "Also — are you on WiFi or plugged in with a cable?",
-            reply_markup=kb,
-        )
+        kb = InlineKeyboardMarkup(inline_keyboard=[_back_row(lang)])
+        await send(f"{_progress(9)}\n\n{m.STEP_INTERNET}", reply_markup=kb)
 
     elif current == OperatorForm.waiting_start_date.state:
-        kb = InlineKeyboardMarkup(inline_keyboard=[_back_row()])
-        await send(
-            f"{_progress(10)}\n\n"
-            "When would you be ready to start?\n\n"
-            "We can schedule your interview and start training the same day!",
-            reply_markup=kb,
-        )
+        kb = InlineKeyboardMarkup(inline_keyboard=[_back_row(lang)])
+        await send(f"{_progress(10)}\n\n{m.STEP_START_DATE}", reply_markup=kb)
 
     elif current == OperatorForm.waiting_contact.state:
-        kb = InlineKeyboardMarkup(inline_keyboard=[_back_row()])
-        await send(
-            f"{_progress(11)} — Last one!\n\n"
-            "Please share your contact for the interview:\n"
-            "• Telegram @username (preferred)\n• Or WhatsApp number",
-            reply_markup=kb,
-        )
+        kb = InlineKeyboardMarkup(inline_keyboard=[_back_row(lang)])
+        await send(f"{_progress(11)} — {m.STEP_CONTACT}", reply_markup=kb)
 
 
 # ═══ UNIVERSAL BACK HANDLER ═══
@@ -370,12 +318,15 @@ async def cb_go_back(callback: CallbackQuery, state: FSMContext):
 
     if prev_state is None:
         # Back to main menu
-        from bot.handlers.menu import MAIN_MENU_TEXT, MenuStates, _main_menu_kb
+        from bot.handlers.menu import MenuStates, _main_menu_kb
+        lang = data.get("language", "en")
+        m = msg(lang)
         await state.clear()
+        await state.update_data(language=lang)
         try:
-            await callback.message.edit_text(MAIN_MENU_TEXT, reply_markup=_main_menu_kb())
+            await callback.message.edit_text(m.MAIN_MENU_TEXT, reply_markup=_main_menu_kb(lang))
         except Exception:
-            await callback.message.answer(MAIN_MENU_TEXT, reply_markup=_main_menu_kb())
+            await callback.message.answer(m.MAIN_MENU_TEXT, reply_markup=_main_menu_kb(lang))
         await state.set_state(MenuStates.main_menu)
         return
 
@@ -395,7 +346,9 @@ async def catch_text_in_button_states(message: Message, state: FSMContext):
     """Handle free text when buttons are expected."""
     handled = await _handle_possible_question(message, state)
     if not handled:
-        await message.answer("Please use the buttons above to answer. 👆")
+        data = await state.get_data()
+        m = msg(data.get("language", "en"))
+        await message.answer(m.USE_BUTTONS)
 
 
 @router.message(OperatorForm.waiting_english)
@@ -433,28 +386,20 @@ async def process_english_text(message: Message, state: FSMContext):
         await state.update_data(english_level=eng_val)
         await _track_event(message.from_user.id, "step_completed", "english", {"level": eng_val, "raw": num})
         data = await state.get_data()
+        lang = data.get("language", "en")
+        m = msg(lang)
         await notion_leads.on_english(data.get("notion_page_id"), eng_val)
 
-        await message.answer(
-            "You're doing great! Almost halfway there.\n\n"
-            "People like you are already earning with us:\n"
-            "  Maria from Manila — $250/week after 2 months\n"
-            "  Emeka from Lagos — started from zero, now $200/week\n\n"
-            "Just a few more questions about your setup!"
-        )
+        await message.answer(m.SOCIAL_PROOF)
 
         await state.set_state(OperatorForm.waiting_pc_confidence)
-        kb = InlineKeyboardMarkup(inline_keyboard=[_back_row()])
-        await message.answer(
-            f"{_progress(6)}\n\n"
-            "How comfortable are you with Windows?\n\n"
-            "For example: installing programs, troubleshooting, changing settings?\n\n"
-            "You can rate yourself from 1 to 10.",
-            reply_markup=kb,
-        )
+        kb = InlineKeyboardMarkup(inline_keyboard=[_back_row(lang)])
+        await message.answer(f"{_progress(6)}\n\n{m.STEP_PC_CONFIDENCE}", reply_markup=kb)
         return
 
-    await message.answer("Please use the buttons above or rate yourself 1-10. 👆")
+    data = await state.get_data()
+    m = msg(data.get("language", "en"))
+    await message.answer(m.ENGLISH_VALIDATION)
 
 
 # ═══ STEP 1: Name ═══
@@ -466,8 +411,12 @@ async def process_name(message: Message, state: FSMContext):
     if await _handle_possible_question(message, state):
         return
 
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
+
     if len(name) < 2 or len(name) > 100:
-        await message.answer("Please enter your full name (e.g., John Smith).")
+        await message.answer(m.STEP_NAME_VALIDATION)
         return
 
     await state.update_data(name=name)
@@ -477,16 +426,16 @@ async def process_name(message: Message, state: FSMContext):
     await state.set_state(OperatorForm.waiting_has_pc)
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [
-            InlineKeyboardButton(text="🖥️ Yes, PC/Desktop", callback_data="pc_desktop"),
-            InlineKeyboardButton(text="💻 Yes, Laptop", callback_data="pc_laptop"),
+            InlineKeyboardButton(text=m.BTN_PC_DESKTOP, callback_data="pc_desktop"),
+            InlineKeyboardButton(text=m.BTN_PC_LAPTOP, callback_data="pc_laptop"),
         ],
-        [InlineKeyboardButton(text="❌ No", callback_data="pc_no")],
-        _back_row(),
+        [InlineKeyboardButton(text=m.BTN_PC_NO, callback_data="pc_no")],
+        _back_row(lang),
     ])
     await message.answer(
-        f"Nice to meet you, {name.split()[0]}! 🙂\n\n"
+        f"{m.STEP_NAME_GREETING.format(name=name.split()[0])}\n\n"
         f"{_progress(2)}\n\n"
-        "Do you have a Windows PC or laptop?",
+        f"{m.STEP_PC}",
         reply_markup=kb,
     )
 
@@ -498,21 +447,21 @@ async def process_has_pc(callback: CallbackQuery, state: FSMContext):
     choice = callback.data.removeprefix("pc_")
     await callback.answer()
 
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
+
     if choice == "no":
         await state.update_data(has_pc=False)
         await _track_event(callback.from_user.id, "step_completed", "has_pc", {"has_pc": False})
         kb = InlineKeyboardMarkup(inline_keyboard=[
             [
-                InlineKeyboardButton(text="✅ Yes, within 1-2 weeks", callback_data="nopc_soon"),
-                InlineKeyboardButton(text="🤷 No plans yet", callback_data="nopc_no"),
+                InlineKeyboardButton(text=m.BTN_NOPC_SOON, callback_data="nopc_soon"),
+                InlineKeyboardButton(text=m.BTN_NOPC_NO, callback_data="nopc_no"),
             ],
-            _back_row(),
+            _back_row(lang),
         ])
-        await callback.message.answer(
-            "I see. This role requires a Windows PC or laptop for the streaming software.\n\n"
-            "Are you planning to get one in the near future?",
-            reply_markup=kb,
-        )
+        await callback.message.answer(m.STEP_NO_PC, reply_markup=kb)
         await state.set_state(OperatorForm.waiting_no_pc_followup)
         return
 
@@ -521,8 +470,8 @@ async def process_has_pc(callback: CallbackQuery, state: FSMContext):
     data = await state.get_data()
     await notion_leads.on_has_pc(data.get("notion_page_id"), True)
     await state.set_state(OperatorForm.waiting_age)
-    kb = InlineKeyboardMarkup(inline_keyboard=[_back_row()])
-    await callback.message.answer(f"Great! 👍\n\n{_progress(3)}\n\nHow old are you?", reply_markup=kb)
+    kb = InlineKeyboardMarkup(inline_keyboard=[_back_row(lang)])
+    await callback.message.answer(f"{m.PC_GREAT}\n\n{_progress(3)}\n\n{m.STEP_AGE}", reply_markup=kb)
 
 
 @router.callback_query(OperatorForm.waiting_no_pc_followup, F.data.startswith("nopc_"))
@@ -532,13 +481,15 @@ async def process_no_pc_followup(callback: CallbackQuery, state: FSMContext):
 
     await state.update_data(no_pc_plan=choice)
     await _track_event(callback.from_user.id, "step_completed", "no_pc_followup", {"plan": choice})
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
 
     # Continue to age instead of declining
     await state.set_state(OperatorForm.waiting_age)
-    kb = InlineKeyboardMarkup(inline_keyboard=[_back_row()])
+    kb = InlineKeyboardMarkup(inline_keyboard=[_back_row(lang)])
     await callback.message.answer(
-        "Got it, no worries! Let's continue — we'll figure out the PC situation later.\n\n"
-        f"{_progress(3)}\n\nHow old are you?",
+        f"{m.NO_PC_CONTINUE}\n\n{_progress(3)}\n\n{m.STEP_AGE}",
         reply_markup=kb,
     )
 
@@ -558,11 +509,15 @@ async def process_age(message: Message, state: FSMContext):
             age = int(word)
             break
 
+    data_pre = await state.get_data()
+    lang = data_pre.get("language", "en")
+    m = msg(lang)
+
     if age is None:
         try:
             age = int(text)
         except ValueError:
-            await message.answer("Please enter your age as a number (e.g., 22).")
+            await message.answer(m.STEP_AGE_VALIDATION)
             return
 
     await state.update_data(age=age)
@@ -571,13 +526,13 @@ async def process_age(message: Message, state: FSMContext):
     await notion_leads.on_age(data.get("notion_page_id"), age)
     await state.set_state(OperatorForm.waiting_study_work)
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="💼 Working", callback_data="study_working")],
-        [InlineKeyboardButton(text="🎓 Student (online classes)", callback_data="study_distance")],
-        [InlineKeyboardButton(text="🏫 Student (on campus)", callback_data="study_inperson")],
-        [InlineKeyboardButton(text="🏠 Neither", callback_data="study_neither")],
-        _back_row(),
+        [InlineKeyboardButton(text=m.BTN_WORKING, callback_data="study_working")],
+        [InlineKeyboardButton(text=m.BTN_STUDENT_ONLINE, callback_data="study_distance")],
+        [InlineKeyboardButton(text=m.BTN_STUDENT_CAMPUS, callback_data="study_inperson")],
+        [InlineKeyboardButton(text=m.BTN_NEITHER, callback_data="study_neither")],
+        _back_row(lang),
     ])
-    await message.answer(f"{_progress(4)}\n\nAre you currently studying or working?", reply_markup=kb)
+    await message.answer(f"{_progress(4)}\n\n{m.STEP_STUDY}", reply_markup=kb)
 
 
 # ═══ STEP 4: Study/Work Status ═══
@@ -592,26 +547,23 @@ async def process_study_work(callback: CallbackQuery, state: FSMContext):
     await state.update_data(study_status=study_val)
     await _track_event(callback.from_user.id, "step_completed", "study_work", {"status": study_val})
 
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
     await state.set_state(OperatorForm.waiting_english)
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [
-            InlineKeyboardButton(text="📗 Basic", callback_data="eng_beginner"),
-            InlineKeyboardButton(text="📘 Can hold a conversation", callback_data="eng_b1"),
+            InlineKeyboardButton(text=m.BTN_ENG_BASIC, callback_data="eng_beginner"),
+            InlineKeyboardButton(text=m.BTN_ENG_B1, callback_data="eng_b1"),
         ],
         [
-            InlineKeyboardButton(text="📙 Comfortable", callback_data="eng_b2"),
-            InlineKeyboardButton(text="📕 Fluent", callback_data="eng_c1"),
+            InlineKeyboardButton(text=m.BTN_ENG_B2, callback_data="eng_b2"),
+            InlineKeyboardButton(text=m.BTN_ENG_C1, callback_data="eng_c1"),
         ],
-        [InlineKeyboardButton(text="🌟 Native speaker", callback_data="eng_native")],
-        _back_row(),
+        [InlineKeyboardButton(text=m.BTN_ENG_NATIVE, callback_data="eng_native")],
+        _back_row(lang),
     ])
-    await callback.message.answer(
-        f"{_progress(5)}\n\n"
-        "How well do you speak English?\n\n"
-        "We need at least conversational level — you'll be moderating English chats.\n\n"
-        "You can also rate yourself from 1 to 10.",
-        reply_markup=kb,
-    )
+    await callback.message.answer(f"{_progress(5)}\n\n{m.STEP_ENGLISH}", reply_markup=kb)
 
 
 # ═══ STEP 5: English Level ═══
@@ -626,26 +578,16 @@ async def process_english(callback: CallbackQuery, state: FSMContext):
     await state.update_data(english_level=eng_val)
     await _track_event(callback.from_user.id, "step_completed", "english", {"level": eng_val})
     data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
     await notion_leads.on_english(data.get("notion_page_id"), eng_val)
 
     # Social proof — rebuild trust before hardware steps
-    await callback.message.answer(
-        "You're doing great! Almost halfway there.\n\n"
-        "People like you are already earning with us:\n"
-        "  Maria from Manila — $250/week after 2 months\n"
-        "  Emeka from Lagos — started from zero, now $200/week\n\n"
-        "Just a few more questions about your setup!"
-    )
+    await callback.message.answer(m.SOCIAL_PROOF)
 
     await state.set_state(OperatorForm.waiting_pc_confidence)
-    kb = InlineKeyboardMarkup(inline_keyboard=[_back_row()])
-    await callback.message.answer(
-        f"{_progress(6)}\n\n"
-        "How comfortable are you with Windows?\n\n"
-        "For example: installing programs, troubleshooting, changing settings?\n\n"
-        "You can rate yourself from 1 to 10.",
-        reply_markup=kb,
-    )
+    kb = InlineKeyboardMarkup(inline_keyboard=[_back_row(lang)])
+    await callback.message.answer(f"{_progress(6)}\n\n{m.STEP_PC_CONFIDENCE}", reply_markup=kb)
 
 
 # ═══ STEP 6: PC Confidence ═══
@@ -658,20 +600,15 @@ async def process_pc_confidence(message: Message, state: FSMContext):
     confidence = message.text.strip()
     await state.update_data(pc_confidence=confidence)
     await _track_event(message.from_user.id, "step_completed", "pc_confidence", {"value": confidence})
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
     await state.set_state(OperatorForm.waiting_cpu)
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="🤔 Not sure", callback_data="cpu_skip")],
-        _back_row(),
+        [InlineKeyboardButton(text=m.BTN_NOT_SURE, callback_data="cpu_skip")],
+        _back_row(lang),
     ])
-    await message.answer(
-        f"{_progress(7)}\n\n"
-        "What is your processor (CPU)?\n\n"
-        "How to check:\n"
-        "Settings > System > About > look for 'Processor'\n\n"
-        "Example: Intel Core i5-12400 or AMD Ryzen 5 5600\n\n"
-        "Not sure? Tap the button — we'll ask a few simple questions instead.",
-        reply_markup=kb,
-    )
+    await message.answer(f"{_progress(7)}\n\n{m.STEP_CPU}", reply_markup=kb)
 
 
 # ═══ STEP 7: CPU ═══
@@ -680,17 +617,19 @@ async def process_pc_confidence(message: Message, state: FSMContext):
 async def process_cpu_skip(callback: CallbackQuery, state: FSMContext):
     """CPU skip → ask simplified questions instead."""
     await callback.answer()
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
     await state.set_state(OperatorForm.waiting_cpu_simple_age)
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="🆕 Less than 2 years", callback_data="pcage_new")],
-        [InlineKeyboardButton(text="📅 2-4 years", callback_data="pcage_mid")],
-        [InlineKeyboardButton(text="📆 5+ years", callback_data="pcage_old")],
-        [InlineKeyboardButton(text="🤔 Not sure", callback_data="pcage_unsure")],
-        _back_row(),
+        [InlineKeyboardButton(text=m.BTN_PC_NEW, callback_data="pcage_new")],
+        [InlineKeyboardButton(text=m.BTN_PC_MID, callback_data="pcage_mid")],
+        [InlineKeyboardButton(text=m.BTN_PC_OLD, callback_data="pcage_old")],
+        [InlineKeyboardButton(text=m.BTN_NOT_SURE, callback_data="pcage_unsure")],
+        _back_row(lang),
     ])
     await callback.message.answer(
-        f"{_progress(7)} — No worries! A few quick questions instead.\n\n"
-        "How old is your computer?",
+        f"{_progress(7)} — {m.STEP_CPU_AGE_INTRO}\n\n{m.STEP_CPU_AGE}",
         reply_markup=kb,
     )
 
@@ -705,19 +644,18 @@ async def process_cpu_simple_age(callback: CallbackQuery, state: FSMContext):
     age_labels = {"new": "Less than 2 years", "mid": "2-4 years", "old": "5+ years", "unsure": "Not sure"}
     await state.update_data(pc_age_estimate=age_labels.get(choice, choice))
 
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
     await state.set_state(OperatorForm.waiting_cpu_simple_usage)
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="🎮 Gaming", callback_data="pcuse_gaming")],
-        [InlineKeyboardButton(text="💼 Work / Office", callback_data="pcuse_work")],
-        [InlineKeyboardButton(text="🌐 Browsing / Social media", callback_data="pcuse_browsing")],
-        [InlineKeyboardButton(text="🎨 Video editing / Design", callback_data="pcuse_creative")],
-        _back_row(),
+        [InlineKeyboardButton(text=m.BTN_GAMING, callback_data="pcuse_gaming")],
+        [InlineKeyboardButton(text=m.BTN_WORK, callback_data="pcuse_work")],
+        [InlineKeyboardButton(text=m.BTN_BROWSING, callback_data="pcuse_browsing")],
+        [InlineKeyboardButton(text=m.BTN_CREATIVE, callback_data="pcuse_creative")],
+        _back_row(lang),
     ])
-    await callback.message.answer(
-        f"{_progress(7)}\n\n"
-        "What do you mainly use your computer for?",
-        reply_markup=kb,
-    )
+    await callback.message.answer(f"{_progress(7)}\n\n{m.STEP_CPU_USAGE}", reply_markup=kb)
 
 
 # ═══ STEP 7b: Simplified CPU — Usage → proceed to GPU ═══
@@ -739,20 +677,14 @@ async def process_cpu_simple_usage(callback: CallbackQuery, state: FSMContext):
     await _track_event(callback.from_user.id, "step_completed", "cpu", {"cpu_model": cpu_desc, "method": "simplified"})
 
     # Proceed to GPU
+    lang = data.get("language", "en")
+    m = msg(lang)
     await state.set_state(OperatorForm.waiting_gpu)
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="🤔 Not sure", callback_data="gpu_skip")],
-        _back_row(),
+        [InlineKeyboardButton(text=m.BTN_NOT_SURE, callback_data="gpu_skip")],
+        _back_row(lang),
     ])
-    await callback.message.answer(
-        f"{_progress(8)}\n\n"
-        "What is your graphics card (GPU)?\n\n"
-        "How to check:\n"
-        "Settings > System > Display > Advanced display > look for GPU info\n\n"
-        "Example: NVIDIA GeForce RTX 3060 or AMD Radeon RX 6600\n\n"
-        "Not sure? Tap the button below.",
-        reply_markup=kb,
-    )
+    await callback.message.answer(f"{_progress(8)}\n\n{m.STEP_GPU}", reply_markup=kb)
 
 
 @router.message(OperatorForm.waiting_cpu)
@@ -760,41 +692,34 @@ async def process_cpu(message: Message, state: FSMContext):
     if await _handle_possible_question(message, state):
         return
 
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
+
     if message.photo:
-        await message.answer("📸 Reading your screenshot...")
+        await message.answer(m.PHOTO_READING)
         cpu = await _extract_from_photo(
             message,
             "This is a screenshot showing CPU/processor info (Task Manager, System Info, or About PC). "
             "Extract the CPU model name. Reply with just the CPU model, e.g. 'Intel Core i7-12700K' or 'AMD Ryzen 5 5600X'.",
         )
         if cpu is None:
-            await message.answer(
-                "Sorry, I couldn't read that. Could you type your CPU model instead?\n\n"
-                "Example: Intel Core i5-12400 or AMD Ryzen 5 5600X"
-            )
+            await message.answer(m.PHOTO_CPU_FAIL)
             return
-        await message.answer(f"Got it: {cpu}")
+        await message.answer(m.PHOTO_EXTRACTED.format(value=cpu))
     elif message.text:
         cpu = message.text.strip()
     else:
-        await message.answer("Please type your CPU model or send a screenshot from Task Manager / System Info.")
+        await message.answer(m.CPU_INPUT_PROMPT)
         return
     await state.update_data(cpu_model=cpu)
     await _track_event(message.from_user.id, "step_completed", "cpu", {"cpu_model": cpu})
     await state.set_state(OperatorForm.waiting_gpu)
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="🤔 I'm not sure / skip", callback_data="gpu_skip")],
-        _back_row(),
+        [InlineKeyboardButton(text=m.BTN_SKIP, callback_data="gpu_skip")],
+        _back_row(lang),
     ])
-    await message.answer(
-        f"{_progress(8)}\n\n"
-        "What is your graphics card (GPU)?\n\n"
-        "How to check:\n"
-        "Settings > System > Display > Advanced display\n\n"
-        "Example: NVIDIA GeForce RTX 3060 or AMD Radeon RX 6600\n\n"
-        "Not sure? Tap 'skip' — we'll check during your interview.",
-        reply_markup=kb,
-    )
+    await message.answer(f"{_progress(8)}\n\n{m.STEP_GPU}", reply_markup=kb)
 
 
 # ═══ STEP 8: GPU ═══
@@ -803,17 +728,19 @@ async def process_cpu(message: Message, state: FSMContext):
 async def process_gpu_skip(callback: CallbackQuery, state: FSMContext):
     """GPU skip → ask simplified gaming question."""
     await callback.answer()
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
     await state.set_state(OperatorForm.waiting_gpu_simple_gaming)
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="🎮 Yes, modern games (GTA, Fortnite)", callback_data="game_modern")],
-        [InlineKeyboardButton(text="🕹️ Yes, but only simple/old games", callback_data="game_basic")],
-        [InlineKeyboardButton(text="❌ No / Never tried", callback_data="game_no")],
-        [InlineKeyboardButton(text="🤔 Not sure", callback_data="game_unsure")],
-        _back_row(),
+        [InlineKeyboardButton(text=m.BTN_GAME_MODERN, callback_data="game_modern")],
+        [InlineKeyboardButton(text=m.BTN_GAME_BASIC, callback_data="game_basic")],
+        [InlineKeyboardButton(text=m.BTN_GAME_NO, callback_data="game_no")],
+        [InlineKeyboardButton(text=m.BTN_NOT_SURE, callback_data="game_unsure")],
+        _back_row(lang),
     ])
     await callback.message.answer(
-        f"{_progress(8)} — One more quick question.\n\n"
-        "Can your computer run video games?",
+        f"{_progress(8)} — {m.STEP_GPU_GAMING_INTRO}\n\n{m.STEP_GPU_GAMING}",
         reply_markup=kb,
     )
 
@@ -867,15 +794,11 @@ async def process_gpu_simple_gaming(callback: CallbackQuery, state: FSMContext):
     await _track_event(callback.from_user.id, "step_completed", "gpu", {"gpu_model": gpu_desc, "method": "simplified"})
 
     # Proceed to internet
+    lang = data.get("language", "en")
+    m_lang = msg(lang)
     await state.set_state(OperatorForm.waiting_internet)
-    kb = InlineKeyboardMarkup(inline_keyboard=[_back_row()])
-    await callback.message.answer(
-        f"{_progress(9)}\n\n"
-        "What is your internet speed?\n\n"
-        "You can check at speedtest.net\n\n"
-        "Also — are you on WiFi or plugged in with a cable?",
-        reply_markup=kb,
-    )
+    kb = InlineKeyboardMarkup(inline_keyboard=[_back_row(lang)])
+    await callback.message.answer(f"{_progress(9)}\n\n{m_lang.STEP_INTERNET}", reply_markup=kb)
 
 
 @router.message(OperatorForm.waiting_gpu)
@@ -883,24 +806,25 @@ async def process_gpu(message: Message, state: FSMContext):
     if await _handle_possible_question(message, state):
         return
 
+    data_pre = await state.get_data()
+    lang = data_pre.get("language", "en")
+    m = msg(lang)
+
     if message.photo:
-        await message.answer("📸 Reading your screenshot...")
+        await message.answer(m.PHOTO_READING)
         gpu = await _extract_from_photo(
             message,
             "This is a screenshot showing GPU/graphics card info (Task Manager, Device Manager, or Display settings). "
             "Extract the GPU model name. Reply with just the GPU model, e.g. 'NVIDIA GeForce RTX 3060' or 'AMD Radeon RX 6600'.",
         )
         if gpu is None:
-            await message.answer(
-                "Sorry, I couldn't read that. Could you type your GPU model instead?\n\n"
-                "Example: NVIDIA GeForce GTX 1650 or AMD Radeon RX 580"
-            )
+            await message.answer(m.PHOTO_GPU_FAIL)
             return
-        await message.answer(f"Got it: {gpu}")
+        await message.answer(m.PHOTO_EXTRACTED.format(value=gpu))
     elif message.text:
         gpu = message.text.strip()
     else:
-        await message.answer("Please type your GPU model or send a screenshot.")
+        await message.answer(m.GPU_INPUT_PROMPT)
         return
     await state.update_data(gpu_model=gpu)
 
@@ -925,13 +849,8 @@ async def process_gpu(message: Message, state: FSMContext):
         await state.update_data(hardware_issues="\n".join(issues))
 
     await state.set_state(OperatorForm.waiting_internet)
-    kb = InlineKeyboardMarkup(inline_keyboard=[_back_row()])
-    await message.answer(
-        "What is your internet speed? (minimum 100 Mbps required)\n\n"
-        "You can check at speedtest.net\n\n"
-        "Also — do you have a LAN (ethernet) connection or Wi-Fi only?",
-        reply_markup=kb,
-    )
+    kb = InlineKeyboardMarkup(inline_keyboard=[_back_row(lang)])
+    await message.answer(f"{_progress(9)}\n\n{m.STEP_INTERNET_ALT}", reply_markup=kb)
 
 
 # ═══ STEP 9: Internet Speed ═══
@@ -941,8 +860,12 @@ async def process_internet(message: Message, state: FSMContext):
     if await _handle_possible_question(message, state):
         return
 
+    data_pre = await state.get_data()
+    lang = data_pre.get("language", "en")
+    m = msg(lang)
+
     if message.photo:
-        await message.answer("📸 Reading your speed test screenshot...")
+        await message.answer(m.PHOTO_READING)
         inet = await _extract_from_photo(
             message,
             "This is a screenshot of an internet speed test. "
@@ -951,36 +874,32 @@ async def process_internet(message: Message, state: FSMContext):
             "Add ISP name and connection type if visible. Only return extracted data.",
         )
         if inet is None:
-            await message.answer(
-                "Sorry, I couldn't read that screenshot.\n"
-                "Could you type your internet speed instead?\n\n"
-                "For example: Download 150 Mbps, Upload 50 Mbps, Wi-Fi"
-            )
+            await message.answer(m.PHOTO_SPEED_FAIL)
             return
-        await message.answer(f"Got it: {inet}")
+        await message.answer(m.PHOTO_EXTRACTED.format(value=inet))
     elif message.text:
         inet = message.text.strip()
     else:
-        await message.answer("Please type your internet speed or send a screenshot of your speed test.")
+        await message.answer(m.SPEED_INPUT_PROMPT)
         return
 
     await state.update_data(internet_speed=inet)
     await _track_event(message.from_user.id, "step_completed", "internet", {"value": inet})
     await state.set_state(OperatorForm.waiting_start_date)
-    kb = InlineKeyboardMarkup(inline_keyboard=[_back_row()])
-    await message.answer(
-        "When would you be ready to start?\n\n"
-        "We can schedule your interview and start training the same day!",
-        reply_markup=kb,
-    )
+    kb = InlineKeyboardMarkup(inline_keyboard=[_back_row(lang)])
+    await message.answer(f"{_progress(10)}\n\n{m.STEP_START_DATE}", reply_markup=kb)
 
 
 # ═══ STEP 10: Start Date ═══
 
 @router.message(OperatorForm.waiting_start_date)
 async def process_start_date(message: Message, state: FSMContext):
+    data_pre = await state.get_data()
+    lang = data_pre.get("language", "en")
+    m = msg(lang)
+
     if not message.text:
-        await message.answer("Please type when you'd be ready to start.")
+        await message.answer(m.START_DATE_PROMPT)
         return
 
     if await _handle_possible_question(message, state):
@@ -990,26 +909,20 @@ async def process_start_date(message: Message, state: FSMContext):
     await state.update_data(start_date=sdate)
     await _track_event(message.from_user.id, "step_completed", "start_date", {"value": sdate})
     await state.set_state(OperatorForm.waiting_contact)
-    kb = InlineKeyboardMarkup(inline_keyboard=[_back_row()])
-    await message.answer(
-        "Last question! 🙂\n\n"
-        "Please share your contact for the interview:\n"
-        "• Telegram @username (preferred)\n"
-        "• Or WhatsApp number",
-        reply_markup=kb,
-    )
+    kb = InlineKeyboardMarkup(inline_keyboard=[_back_row(lang)])
+    await message.answer(f"{_progress(11)} — {m.STEP_CONTACT_LAST}", reply_markup=kb)
 
 
 # ═══ STEP 11: Contact → Screening ═══
 
 @router.message(OperatorForm.waiting_contact)
 async def process_contact(message: Message, state: FSMContext):
+    data_pre = await state.get_data()
+    lang = data_pre.get("language", "en")
+    m = msg(lang)
+
     if not message.text:
-        await message.answer(
-            "Please type your contact info:\n"
-            "• Telegram @username (preferred)\n"
-            "• Or WhatsApp number"
-        )
+        await message.answer(m.CONTACT_VALIDATION)
         return
 
     if await _handle_possible_question(message, state):
@@ -1024,10 +937,7 @@ async def process_contact(message: Message, state: FSMContext):
     await state.set_state(None)
 
     # AI screening (with fallback if AI unavailable)
-    await message.answer(
-        "Thank you for completing the application! 🎉\n\n"
-        "I'm reviewing your information now..."
-    )
+    await message.answer(m.APPLICATION_COMPLETE)
 
     import asyncio
     await asyncio.sleep(10)
@@ -1049,6 +959,7 @@ async def process_contact(message: Message, state: FSMContext):
             start_date=data.get("start_date", "N/A"),
             contact_info=data.get("contact_info", "N/A"),
             tg_username=message.from_user.username or "N/A",
+            language=lang,
         )
     except Exception:
         logger.exception("AI screening failed — using fallback")
@@ -1057,12 +968,7 @@ async def process_contact(message: Message, state: FSMContext):
             motivation_score=0, experience_score=0, overall_score=0,
             recommendation="MAYBE",
             reasoning="AI screening unavailable — manual review needed",
-            suggested_response=(
-                "Thank you for applying! 🎉\n\n"
-                "Our team will review your application and get back to you "
-                "within 24 hours to schedule your interview.\n\n"
-                "Talk to you soon!"
-            ),
+            suggested_response=m.APPLICATION_FALLBACK,
         )
 
     await _track_event(message.from_user.id, "completed", "screening", {
@@ -1113,11 +1019,16 @@ async def _save_candidate(message, data, status="new", score=None, recommendatio
             )
             candidate = result.scalar_one_or_none()
 
+            lang = data.get("language", "en")
+            region = "cis" if lang == "ru" else data.get("region")
+
             if candidate:
                 # Update existing record
                 candidate.tg_username = from_user.username
                 candidate.name = data.get("name", "Unknown")
                 candidate.candidate_type = data.get("candidate_type", "operator")
+                candidate.language = lang
+                candidate.region = region
                 candidate.has_pc = data.get("has_pc")
                 candidate.age = data.get("age")
                 candidate.study_status = data.get("study_status")
@@ -1140,6 +1051,8 @@ async def _save_candidate(message, data, status="new", score=None, recommendatio
                     tg_username=from_user.username,
                     name=data.get("name", "Unknown"),
                     candidate_type=data.get("candidate_type", "operator"),
+                    language=lang,
+                    region=region,
                     has_pc=data.get("has_pc"),
                     age=data.get("age"),
                     study_status=data.get("study_status"),
@@ -1207,7 +1120,9 @@ async def _notify_admin(message, data, result):
         f"Start: {data.get('start_date', 'N/A')}\n"
         f"Contact: {data.get('contact_info', 'N/A')}\n"
         f"{'Referred by: ' + str(data.get('referrer_tg_id')) + chr(10) if data.get('referrer_tg_id') else ''}"
-        f"{'Source: ' + data.get('utm_source', '') + chr(10) if data.get('utm_source') else ''}\n"
+        f"{'Source: ' + data.get('utm_source', '') + chr(10) if data.get('utm_source') else ''}"
+        f"Lang: {data.get('language', 'en').upper()}"
+        f"{' | Region: CIS' if data.get('language') == 'ru' else ''}\n\n"
         f"AI: HW={result.hardware_score} Eng={result.english_score} "
         f"Avail={result.availability_score} Motiv={result.motivation_score} "
         f"Exp={result.experience_score}\n"

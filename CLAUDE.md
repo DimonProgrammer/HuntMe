@@ -16,6 +16,18 @@
 - Не класть в MEMORY.md: TODO-листы, полную документацию, историю изменений
 - Живой контекст: `gh issue view 1 --repo DimonProgrammer/HuntMe`
 
+## Двуязычность (EN/RU)
+
+**Лендинг**: две версии — `landing/index.html` (EN) и `landing/ru/index.html` (RU).
+**Бот**: модуль `bot/messages/` с `en.py` и `ru.py`. Язык определяется из deep link (`land_ru_*`) или TG locale.
+
+**Правило**: любые правки контента вносить сразу на обе версии (EN + RU), учитывая грамотный перевод и региональную специфику. Исключение — если явно сказано, что правка только для одной версии.
+
+- EN-версия — универсальная, без привязки к конкретным странам/платёжным системам
+- RU-версия — для СНГ-рынка, social proof с СНГ-именами
+- Оплата на обеих версиях: только **$USD** (без GCash, OPay, Wise, USDT и др.)
+- Deep link формат: `land_{id}` (EN), `land_ru_{id}` (RU)
+
 ## Gotchas (учимся на ошибках)
 
 - `asyncpg` не принимает `sslmode` в URL → `config.py:_fix_db_url()` стрипает
@@ -41,9 +53,10 @@
 - `operator_flow.py` → синхронизирует каждый шаг FSM в Notion
 - `landing/index.html` форма → POST `apex-talent-bot.onrender.com/webhook/landing`
 - AI fallback chain: Groq → Gemini → OpenRouter → Anthropic (реально работает только Groq)
-- Роутеры в `main.py`: admin → menu → operator_flow (порядок важен!)
+- Роутеры в `main.py`: admin → interview_booking → menu → operator_flow (порядок важен!)
+- `bot/messages/` — i18n модуль: `en.py` (англ.), `ru.py` (рус.). Все user-facing строки здесь
 - `agent_flow.py`, `model_flow.py` — Phase 2, роутеры НЕ подключены
-- `interview_booking.py` — CRM auto-booking flow, роутер НЕ подключён (тестирование)
+- `interview_booking.py` — CRM auto-booking flow, роутер подключён
 - `huntme_crm.py` → авторизация через NextAuth session cookie → fetch слотов + submit заявки
 
 **Инфраструктура:**
