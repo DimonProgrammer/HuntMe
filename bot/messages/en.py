@@ -292,14 +292,22 @@ QUESTION_FORWARDED = (
 REMINDER_SET = "Got it! I'll remind you in {label}. See you soon! 👋"
 REMINDER_LABELS = {30: "30 minutes", 60: "1 hour", 180: "3 hours", 720: "12 hours"}
 
-REMINDER_LATE_STEP = (
-    "Hey! You're almost done — just a couple more steps! 🏁\n\n"
-    "If now's not a good time, pick when you'd like a reminder:"
+REMINDER_FIRST_LATE = (
+    "Just a couple of steps left 🏁\n"
+    "If you're busy — pick a time, I'll remind you:"
 )
-REMINDER_EARLY_STEP = (
-    "Hey! 👋 No rush — if now's not a good time, pick when you'd like a reminder:"
+REMINDER_FIRST_EARLY = (
+    "If you're busy — pick a time, I'll remind you:"
 )
-REMINDER_FALLBACK = "Hey! Just checking in — ready to continue? 🙂"
+REMINDER_SECOND_LATE = (
+    "Hey again! You almost finished your application — would be a shame to stop halfway.\n"
+    "Ready to continue? Or pick a convenient time:"
+)
+REMINDER_SECOND_EARLY = (
+    "Hey again! Your application is still waiting.\n"
+    "Continue? Or pick when to remind you:"
+)
+REMINDER_FOLLOWUP = "Here's your reminder! Ready to pick up where you left off? 🙂"
 
 # ═══ FOLLOWUP TEMPLATES ═══
 

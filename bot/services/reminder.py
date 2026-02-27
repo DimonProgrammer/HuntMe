@@ -1,8 +1,10 @@
 """Inactivity reminder system for candidates in the screening flow.
 
 Background task checks every 60s for candidates stuck in OperatorForm states.
-After 10 min inactivity → sends "choose reminder time" prompt.
-If no response → auto-reminds at 1h, then 3h, then stops (max 3 reminders).
+Two reminder prompts max:
+  1st at 10 min inactivity → "pick a time" with buttons
+  2nd at 6h after 1st (if ignored) → different text, same buttons
+If user picks a time → follow-up fires at that time, then stops.
 
 Also runs interview day reminders:
 - Morning at 09:00 Manila → confirmation prompt with Yes/No buttons
@@ -28,8 +30,9 @@ logger = logging.getLogger(__name__)
 
 # FSM state prefixes we monitor for inactivity
 _MONITORED_PREFIXES = ("OperatorForm:", "InterviewBooking:")
-_MAX_REMINDERS = 3
+_MAX_PROMPTS = 2
 _INACTIVITY_MINUTES = 10
+_SECOND_PROMPT_HOURS = 6
 
 
 def _reminder_kb(lang: str = "en") -> InlineKeyboardMarkup:
@@ -95,44 +98,49 @@ async def _process_reminders(bot: Bot):
             except Exception:
                 logger.debug("Failed to parse hw_remind_at for %s", fsm.chat_id)
 
-        reminder_count = data.get("reminder_count", 0)
-        if reminder_count >= _MAX_REMINDERS:
-            continue
-
+        prompt_count = data.get("reminder_count", 0)
         prompt_sent = data.get("reminder_prompt_sent_at")
         scheduled = data.get("reminder_scheduled_at")
 
-        if not prompt_sent:
-            # First contact: send "choose time" prompt
-            await _send_reminder_prompt(bot, fsm, data)
-        elif scheduled:
-            # User chose a time — check if it's due
+        # User chose a time — check if it's due (works regardless of count)
+        if scheduled:
             remind_at = datetime.fromisoformat(scheduled)
             if remind_at <= now:
                 await _send_follow_up(bot, fsm, data)
+            continue
+
+        if prompt_count >= _MAX_PROMPTS:
+            continue  # both prompts exhausted, stop
+
+        if not prompt_sent:
+            # No prompt yet → send 1st prompt
+            await _send_reminder_prompt(bot, fsm, data)
         else:
-            # User didn't respond to prompt — auto-remind after 1h
+            # Prompt sent but ignored → send 2nd prompt after 6h
             prompt_time = datetime.fromisoformat(prompt_sent)
-            if prompt_time + timedelta(hours=1) <= now:
-                await _send_follow_up(bot, fsm, data)
+            if prompt_time + timedelta(hours=_SECOND_PROMPT_HOURS) <= now:
+                await _send_reminder_prompt(bot, fsm, data)
 
 
 async def _send_reminder_prompt(bot: Bot, fsm: FsmState, data: dict):
-    """Send 'choose reminder time' message to candidate."""
+    """Send 'choose reminder time' prompt (1st or 2nd based on count)."""
     chat_id = fsm.chat_id
     now = datetime.utcnow()
     lang = data.get("language", "en")
     m = msg(lang)
+    count = data.get("reminder_count", 0)
 
     # Determine progress for personalized message
     step = (fsm.state or "").split(":")[-1]
     late_steps = {"waiting_internet", "waiting_start_date", "waiting_contact",
                   "waiting_birth_date", "waiting_phone", "waiting_experience",
                   "waiting_slot_choice"}
-    if step in late_steps:
-        text = m.REMINDER_LATE_STEP
+    is_late = step in late_steps
+
+    if count == 0:
+        text = m.REMINDER_FIRST_LATE if is_late else m.REMINDER_FIRST_EARLY
     else:
-        text = m.REMINDER_EARLY_STEP
+        text = m.REMINDER_SECOND_LATE if is_late else m.REMINDER_SECOND_EARLY
 
     try:
         await bot.send_message(chat_id, text, reply_markup=_reminder_kb(lang))
@@ -140,30 +148,27 @@ async def _send_reminder_prompt(bot: Bot, fsm: FsmState, data: dict):
         logger.debug("Failed to send reminder prompt to %s", chat_id)
         return
 
-    # Update FSM data
     data["reminder_prompt_sent_at"] = now.isoformat()
+    data["reminder_count"] = count + 1
     await _update_fsm_data(fsm, data)
 
 
 async def _send_follow_up(bot: Bot, fsm: FsmState, data: dict):
-    """Send a follow-up reminder and re-prompt the current step."""
+    """Send follow-up when user's scheduled reminder time arrives, then stop."""
     chat_id = fsm.chat_id
-    count = data.get("reminder_count", 0) + 1
     lang = data.get("language", "en")
     m = msg(lang)
 
-    text = m.REMINDER_FALLBACK
-
     try:
-        await bot.send_message(chat_id, text)
+        await bot.send_message(chat_id, m.REMINDER_FOLLOWUP)
     except Exception:
         logger.debug("Failed to send follow-up to %s", chat_id)
         return
 
-    # Update: increment count, clear scheduled
-    data["reminder_count"] = count
+    # Done — set count to max so no more prompts fire
+    data["reminder_count"] = _MAX_PROMPTS
     data["reminder_scheduled_at"] = None
-    data["reminder_prompt_sent_at"] = None  # allow re-prompt after next inactivity
+    data["reminder_prompt_sent_at"] = None
     await _update_fsm_data(fsm, data)
 
 
