@@ -139,23 +139,15 @@ async def landing_options(_request):
 
 
 async def landing_webhook(request):
-    """Save landing page lead to DB and notify admin."""
+    """Save landing lead (name + telegram) and return candidate_id for deep link."""
     try:
         data = await request.json()
     except Exception:
         return web.Response(status=400, text="Bad request")
 
     name = data.get("name", "").strip()
-    whatsapp = data.get("contact", data.get("whatsapp", "")).strip()
-    country = data.get("country", "").strip()
-    age_raw = data.get("age", "")
-    english = data.get("english", "").strip()
-    work_status = data.get("status", "").strip()
-
-    try:
-        age = int(age_raw) if age_raw else None
-    except (ValueError, TypeError):
-        age = None
+    telegram = data.get("telegram", "").strip().lstrip("@")
+    backup_contact = data.get("contact", "").strip()
 
     # Save to Neon database
     candidate_id = None
@@ -163,14 +155,10 @@ async def landing_webhook(request):
         async with async_session() as session:
             candidate = Candidate(
                 name=name,
-                contact_info=whatsapp,
-                region=country,
-                age=age,
-                english_level=english,
-                study_status=work_status,
+                contact_info=f"@{telegram}" if telegram else backup_contact,
                 platform="landing",
                 candidate_type="operator",
-                status="new",
+                status="pending_bot",
             )
             session.add(candidate)
             await session.commit()
@@ -179,33 +167,25 @@ async def landing_webhook(request):
     except Exception as exc:
         logger.error("Failed to save landing lead: %s", exc)
 
-    # AI scoring (best-effort)
-    score_str, score_note = await _score_lead(country, english, work_status)
-
-    # Notify admin via Telegram
+    # Notify admin — brief, full screening happens in bot
     if _bot:
+        tg_link = f' (<a href="https://t.me/{telegram}">@{telegram}</a>)' if telegram else ""
         msg = (
-            f"🌐 <b>Новый лид с сайта!</b>\n\n"
-            f"👤 <b>Имя:</b> {name or '—'}\n"
-            f"📱 <b>Контакт:</b> {whatsapp or '—'}{_contact_link(whatsapp)}\n"
-            f"🌍 <b>Страна:</b> {country or '—'}\n"
-            f"🎂 <b>Возраст:</b> {age or '—'}\n"
-            f"🇬🇧 <b>Английский:</b> {english or '—'}\n"
-            f"💼 <b>Статус:</b> {work_status or '—'}\n"
+            f"🌐 <b>Новый лид с сайта → бот</b>\n\n"
+            f"👤 {name or '—'}{tg_link}\n"
+            f"🆔 #{candidate_id or '?'}\n"
+            f"⏳ Ждём в боте для скрининга"
         )
-        if score_str:
-            msg += f"🎯 <b>AI-скоринг:</b> {score_str}"
-            if score_note:
-                msg += f" — {score_note}"
-            msg += "\n"
-        msg += (f"🆔 <b>ID:</b> #{candidate_id}" if candidate_id else "")
         try:
             await _bot.send_message(config.ADMIN_CHAT_ID, msg, parse_mode="HTML")
         except Exception as exc:
             logger.error("Failed to notify admin about landing lead: %s", exc)
 
+    resp = {"ok": True}
+    if candidate_id:
+        resp["id"] = candidate_id
     return web.Response(
-        text='{"ok":true}',
+        text=json.dumps(resp),
         content_type="application/json",
         headers=_CORS,
     )

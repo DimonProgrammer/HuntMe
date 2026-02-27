@@ -66,11 +66,15 @@ async def cmd_start(message: Message, state: FSMContext):
     await state.clear()
 
     # Parse deep link: /start <param>
-    # ref_123456 → referral, anything else → UTM source
+    # land_42 → landing lead, ref_123456 → referral, anything else → UTM source
     parts = message.text.split()
     if len(parts) > 1:
         param = parts[1].strip()
-        if param.startswith("ref_"):
+        if param.startswith("land_"):
+            # Landing lead → auto-start operator flow (skip menu + name)
+            await _handle_landing_deeplink(message, state, param)
+            return
+        elif param.startswith("ref_"):
             try:
                 referrer_id = int(param.removeprefix("ref_"))
                 if referrer_id != message.from_user.id:
@@ -97,6 +101,54 @@ async def cmd_start(message: Message, state: FSMContext):
 
     await message.answer(MAIN_MENU_TEXT, reply_markup=_main_menu_kb())
     await state.set_state(MenuStates.main_menu)
+
+
+async def _handle_landing_deeplink(message: Message, state: FSMContext, param: str):
+    """Landing lead clicked deep link → load name from DB → auto-start screening."""
+    from bot.services.followup import WARM_GREETING
+
+    candidate_name = None
+    try:
+        cid = int(param.removeprefix("land_"))
+        async with async_session() as session:
+            result = await session.execute(
+                select(Candidate).where(Candidate.id == cid)
+            )
+            candidate = result.scalar_one_or_none()
+            if candidate:
+                candidate_name = candidate.name
+                # Link TG user to existing candidate row
+                candidate.tg_user_id = message.from_user.id
+                candidate.status = "in_bot"
+                await session.commit()
+    except (ValueError, Exception) as exc:
+        logger.debug("Landing deep link parse error: %s", exc)
+
+    name = candidate_name or message.from_user.first_name or "there"
+
+    await state.update_data(
+        utm_source="landing",
+        candidate_type="operator",
+        name=name,
+    )
+    await _track_event(message.from_user.id, "bot_started", "start", {"source": "landing"})
+
+    # Track in Notion
+    notion_page_id = await notion_leads.on_start(
+        tg_id=message.from_user.id,
+        tg_username=message.from_user.username,
+        utm_source="landing",
+    )
+    if notion_page_id:
+        await state.update_data(notion_page_id=notion_page_id)
+        await notion_leads.on_name(notion_page_id, name)
+
+    # Greeting → skip to has_pc (name already known)
+    greeting = WARM_GREETING.format(name=name)
+    await message.answer(greeting)
+    await state.set_state(OperatorForm.waiting_has_pc)
+    from bot.handlers.operator_flow import _send_step_prompt
+    await _send_step_prompt(message, state)
 
 
 # --- /referral — generate unique referral link ---

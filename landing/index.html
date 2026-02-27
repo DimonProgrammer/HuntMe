@@ -1123,7 +1123,7 @@
         Start Your<br>Application
       </h2>
       <p class="font-serif" style="font-style:italic;opacity:0.6;font-size:1rem;">
-        Takes less than 60 seconds. No resume needed.
+        15 seconds here, then 2 minutes in Telegram. No resume needed.
       </p>
     </div>
 
@@ -1132,15 +1132,8 @@
       <!-- Multi-step Form -->
       <form id="applicationForm" onsubmit="handleSubmit(event)">
 
-        <!-- Progress indicator -->
-        <div id="formProgress" style="display:flex;align-items:center;gap:8px;margin-bottom:24px;">
-          <div style="flex:1;height:4px;border-radius:2px;background:#E33BC5;transition:all 0.3s;" id="prog1"></div>
-          <div style="flex:1;height:4px;border-radius:2px;background:#e0d8e8;transition:all 0.3s;" id="prog2"></div>
-        </div>
-
-        <!-- STEP 1: Name + WhatsApp (visible by default) -->
+        <!-- Single-step form: Name + Telegram -->
         <div id="formStep1" style="display:flex;flex-direction:column;gap:18px;">
-          <p style="font-size:14px;opacity:0.5;font-family:'Plus Jakarta Sans',sans-serif;margin:0;">Step 1 of 2 — Contact info</p>
 
           <div>
             <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;font-family:'Plus Jakarta Sans',sans-serif;">Full Name *</label>
@@ -1148,133 +1141,51 @@
           </div>
 
           <div>
-            <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;font-family:'Plus Jakarta Sans',sans-serif;">Contact *</label>
-            <p style="font-size:12px;opacity:0.4;margin-bottom:8px;font-family:'Plus Jakarta Sans',sans-serif;line-height:1.4;">WhatsApp, Telegram, or Messenger</p>
-            <input type="text" class="form-input" name="contact" placeholder="e.g. +63 917 123 4567 or @username" required>
+            <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;font-family:'Plus Jakarta Sans',sans-serif;">Telegram Username *</label>
+            <p style="font-size:12px;opacity:0.4;margin-bottom:8px;font-family:'Plus Jakarta Sans',sans-serif;line-height:1.4;">We'll continue your screening in Telegram — fast & convenient</p>
+            <input type="text" class="form-input" name="telegram" placeholder="@yourusername" required>
           </div>
-
-          <button type="button" onclick="goToStep2()"
-                  class="btn-pulse font-heading font-black text-white rounded-2xl transition-all hover:brightness-110 hover:scale-105"
-                  style="background:#E33BC5;font-size:1.1rem;padding:18px 24px;width:100%;margin-top:4px;border:none;cursor:pointer;letter-spacing:-0.01em;">
-            Continue →
-          </button>
-        </div>
-
-        <!-- STEP 2: Qualification (hidden, revealed after step 1) -->
-        <div id="formStep2" style="display:none;flex-direction:column;gap:18px;">
-          <p style="font-size:14px;opacity:0.5;font-family:'Plus Jakarta Sans',sans-serif;margin:0;">Step 2 of 2 — A few quick questions</p>
 
           <div>
-            <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;font-family:'Plus Jakarta Sans',sans-serif;">Country *</label>
-            <select class="form-input" name="country" required>
-              <option value="" disabled selected>Select your country</option>
-              <option value="PH">🇵🇭 Philippines</option>
-              <option value="NG">🇳🇬 Nigeria</option>
-              <option value="IN">🇮🇳 India</option>
-              <option value="PK">🇵🇰 Pakistan</option>
-              <option value="BD">🇧🇩 Bangladesh</option>
-              <option value="ID">🇮🇩 Indonesia</option>
-              <option value="VN">🇻🇳 Vietnam</option>
-              <option value="TH">🇹🇭 Thailand</option>
-              <option value="MY">🇲🇾 Malaysia</option>
-              <option value="KE">🇰🇪 Kenya</option>
-              <option value="GH">🇬🇭 Ghana</option>
-              <option value="ZA">🇿🇦 South Africa</option>
-              <option value="EG">🇪🇬 Egypt</option>
-              <option value="MA">🇲🇦 Morocco</option>
-              <option value="CM">🇨🇲 Cameroon</option>
-              <option value="BR">🇧🇷 Brazil</option>
-              <option value="CO">🇨🇴 Colombia</option>
-              <option value="MX">🇲🇽 Mexico</option>
-              <option value="AR">🇦🇷 Argentina</option>
-              <option value="PE">🇵🇪 Peru</option>
-              <option value="UA">🇺🇦 Ukraine</option>
-              <option value="RO">🇷🇴 Romania</option>
-              <option value="PL">🇵🇱 Poland</option>
-              <option value="TR">🇹🇷 Turkey</option>
-              <option value="GE">🇬🇪 Georgia</option>
-              <option value="RS">🇷🇸 Serbia</option>
-              <option value="LK">🇱🇰 Sri Lanka</option>
-              <option value="NP">🇳🇵 Nepal</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
-            <div>
-              <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;font-family:'Plus Jakarta Sans',sans-serif;">Age *</label>
-              <select class="form-input" name="age" required>
-                <option value="" disabled selected>Confirm</option>
-                <option value="yes">Yes, 18+</option>
-              </select>
-            </div>
-            <div>
-              <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;font-family:'Plus Jakarta Sans',sans-serif;">English *</label>
-              <select class="form-input" name="english" required>
-                <option value="" disabled selected>Level</option>
-                <option>B1 — Intermediate</option>
-                <option>B2 — Upper-Intermediate</option>
-                <option>C1 — Advanced</option>
-                <option>C2 — Fluent / Near-native</option>
-              </select>
-            </div>
-            <div>
-              <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;font-family:'Plus Jakarta Sans',sans-serif;">Status *</label>
-              <select class="form-input" name="status" required>
-                <option value="" disabled selected>Now</option>
-                <option>Working</option>
-                <option>Student (online)</option>
-                <option>Unemployed</option>
-              </select>
-            </div>
+            <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;font-family:'Plus Jakarta Sans',sans-serif;">Backup Contact <span style="opacity:0.5;font-weight:400;">(optional)</span></label>
+            <input type="text" class="form-input" name="contact" placeholder="Phone or email — in case you don't have Telegram">
           </div>
 
           <button type="submit"
                   class="btn-pulse font-heading font-black text-white rounded-2xl transition-all hover:brightness-110 hover:scale-105"
                   style="background:#E33BC5;font-size:1.1rem;padding:18px 24px;width:100%;margin-top:4px;border:none;cursor:pointer;letter-spacing:-0.01em;">
-            Submit Application →
-          </button>
-
-          <button type="button" onclick="goBackToStep1()"
-                  style="background:none;border:none;cursor:pointer;font-size:13px;opacity:0.5;font-family:'Plus Jakarta Sans',sans-serif;padding:4px 0;width:100%;text-align:center;">
-            ← Back to step 1
+            Start Screening →
           </button>
 
           <p style="text-align:center;font-size:12px;opacity:0.35;font-family:'Plus Jakarta Sans',sans-serif;line-height:1.5;">
-            By submitting you agree to be contacted via the channel you provide.<br>No spam — only job-related messages.
+            By submitting you agree to be contacted via Telegram.<br>No spam — only job-related messages.
           </p>
         </div>
 
-          <!-- Contact alternatives (always visible) -->
-          <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;padding-top:28px;">
-            <span style="font-size:12px;opacity:0.35;font-family:'Plus Jakarta Sans',sans-serif;width:100%;text-align:center;">or reach us directly:</span>
-            <a href="https://wa.me/79196427664" target="_blank" rel="noopener" class="contact-pill contact-pill-wa">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-              WhatsApp
-            </a>
-            <a href="https://t.me/apextalent_bot" target="_blank" rel="noopener" class="contact-pill contact-pill-tg">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-              Telegram
-            </a>
-            <a href="mailto:hello@apextalent.pro" class="contact-pill contact-pill-email">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
-              Email
-            </a>
-          </div>
-
       </form>
 
-      <!-- Success state -->
+      <!-- Success state: redirect to Telegram bot -->
       <div id="successMsg">
         <div style="text-align:center;padding:24px 16px 32px;">
           <div style="display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#CCFF00 0%,#E33BC5 100%);margin-bottom:20px;">
             <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
-          <h3 class="font-heading font-black" style="font-size:1.6rem;margin-bottom:10px;">You're In!</h3>
-          <p id="successContactLine" style="font-size:15px;line-height:1.65;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:6px;opacity:0.7;">
-            We'll contact you within 24 hours with next steps.
+          <h3 class="font-heading font-black" style="font-size:1.6rem;margin-bottom:10px;">Almost there!</h3>
+          <p style="font-size:15px;line-height:1.65;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:20px;opacity:0.7;">
+            Complete your 2-minute screening in Telegram<br>to get your interview slot:
           </p>
-          <p style="font-size:12px;opacity:0.3;font-family:'Plus Jakarta Sans',sans-serif;">No spam — only job-related messages</p>
+          <a id="tgDeepLink" href="https://t.me/apextalent_bot" target="_blank" rel="noopener"
+             class="btn-pulse font-heading font-black text-white rounded-2xl"
+             style="display:inline-block;background:#0EA5E9;font-size:1.15rem;padding:18px 36px;border:none;cursor:pointer;text-decoration:none;letter-spacing:-0.01em;transition:all 0.2s;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:8px;margin-top:-2px;"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+            Open Telegram
+          </a>
+          <p style="font-size:13px;opacity:0.45;font-family:'Plus Jakarta Sans',sans-serif;margin-top:16px;line-height:1.5;">
+            Don't have Telegram? Download free:
+            <a href="https://apps.apple.com/app/telegram-messenger/id686449807" target="_blank" style="color:#0EA5E9;text-decoration:underline;">iOS</a> /
+            <a href="https://play.google.com/store/apps/details?id=org.telegram.messenger" target="_blank" style="color:#0EA5E9;text-decoration:underline;">Android</a>
+          </p>
+          <p style="font-size:12px;opacity:0.3;font-family:'Plus Jakarta Sans',sans-serif;margin-top:8px;">No Telegram? We'll reach out via your backup contact.</p>
         </div>
       </div>
 
@@ -1361,41 +1272,7 @@
     if (!isOpen) item.classList.add('open');
   }
 
-  // ── Multi-step form navigation ──────────────
-  function goToStep2() {
-    const name = document.querySelector('[name="name"]').value.trim();
-    const contact = document.querySelector('[name="contact"]').value.trim();
-
-    if (!name) { document.querySelector('[name="name"]').focus(); return; }
-    if (!contact) { document.querySelector('[name="contact"]').focus(); return; }
-
-    document.getElementById('formStep1').style.display = 'none';
-    document.getElementById('formStep2').style.display = 'flex';
-  }
-
-  function goBackToStep1() {
-    document.getElementById('formStep2').style.display = 'none';
-    document.getElementById('formStep1').style.display = 'flex';
-  }
-
-  // ── Contact type detection ───────────────────
-  function detectContact(c) {
-    c = c.trim();
-    if (/^\+?[\d\s\-().]{7,}$/.test(c)) {
-      const digits = c.replace(/\D/g, '');
-      return `Expect a WhatsApp message at <a href="https://wa.me/${digits}" target="_blank" style="color:#22C55E;font-weight:700;text-decoration:underline;">${c}</a> within 24 hours.`;
-    }
-    if (c.startsWith('@')) {
-      const username = c.slice(1);
-      return `We'll drop you a message on <a href="https://t.me/${username}" target="_blank" style="color:#0EA5E9;font-weight:700;text-decoration:underline;">Telegram&nbsp;${c}</a> within 24 hours.`;
-    }
-    if (c.includes('@') && c.includes('.')) {
-      return `Check your inbox — we'll write to <a href="mailto:${c}" style="color:#6366F1;font-weight:700;text-decoration:underline;">${c}</a> within 24 hours.`;
-    }
-    return `We'll reach you on Messenger within 24 hours.`;
-  }
-
-  // ── Form submit ─────────────────────────────
+  // ── Form submit → webhook → deep link to TG bot ──
   async function handleSubmit(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button[type="submit"]');
@@ -1403,25 +1280,28 @@
     btn.disabled = true;
 
     const form = document.getElementById('applicationForm');
-    const contactVal = form.querySelector('[name="contact"]').value;
     const data = {
-      name:     form.querySelector('[name="name"]').value,
-      contact:  contactVal,
-      country:  form.querySelector('[name="country"]').value,
-      age:      form.querySelector('[name="age"]').value,
-      english:  form.querySelector('[name="english"]').value,
-      status:   form.querySelector('[name="status"]').value,
+      name:     form.querySelector('[name="name"]').value.trim(),
+      telegram: form.querySelector('[name="telegram"]').value.trim(),
+      contact:  form.querySelector('[name="contact"]').value.trim(),
     };
 
+    let candidateId = null;
     try {
-      await fetch('https://apex-talent-bot.onrender.com/webhook/landing', {
+      const res = await fetch('https://apex-talent-bot.onrender.com/webhook/landing', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-    } catch (_) {
-      // Still show success — network errors don't block UX
-    }
+      const json = await res.json();
+      candidateId = json.id;
+    } catch (_) {}
+
+    // Build deep link with candidate ID
+    const deepLink = candidateId
+      ? `https://t.me/apextalent_bot?start=land_${candidateId}`
+      : 'https://t.me/apextalent_bot?start=landing';
+    document.getElementById('tgDeepLink').href = deepLink;
 
     form.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
     form.style.opacity = '0';
@@ -1429,7 +1309,6 @@
 
     setTimeout(() => {
       form.style.display = 'none';
-      document.getElementById('successContactLine').innerHTML = detectContact(contactVal);
       const msg = document.getElementById('successMsg');
       msg.style.display = 'block';
       requestAnimationFrame(() => { msg.style.opacity = '1'; });

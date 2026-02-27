@@ -359,7 +359,12 @@ async def cb_go_back(callback: CallbackQuery, state: FSMContext):
     """Go back to the previous step."""
     await callback.answer()
     current = await state.get_state()
+    data = await state.get_data()
     prev_state = STEP_BACK.get(current)
+
+    # Landing leads skip the name step — go straight to menu
+    if prev_state == OperatorForm.waiting_name.state and data.get("utm_source") == "landing":
+        prev_state = None
 
     if prev_state is None:
         # Back to main menu
