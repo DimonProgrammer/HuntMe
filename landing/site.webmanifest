@@ -1,0 +1,11 @@
+{
+  "name": "Apex Talent",
+  "short_name": "Apex Talent",
+  "icons": [
+    { "src": "/favicon-32x32.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ],
+  "theme_color": "#1A0F2E",
+  "background_color": "#FFF5F0",
+  "display": "browser"
+}
