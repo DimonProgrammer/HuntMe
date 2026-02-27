@@ -289,16 +289,19 @@ async def main():
     _bot = bot
     dp = Dispatcher(storage=PostgresStorage())
 
-    # Live feed: init service + register incoming-message middleware
+    # Live feed + Chatwoot: register middleware if either is enabled
     live_feed.init(bot, channel_id=config.LIVE_FEED_CHANNEL_ID, admin_id=config.ADMIN_CHAT_ID)
-    if config.LIVE_FEED_CHANNEL_ID:
+    if config.LIVE_FEED_CHANNEL_ID or config.CHATWOOT_BASE_URL:
         _lf_mw = LiveFeedMiddleware()
         dp.message.outer_middleware(_lf_mw)
         dp.callback_query.outer_middleware(_lf_mw)
-        asyncio.create_task(live_feed.run_inactivity_checker())
-        logger.info("Live feed enabled → channel %s", config.LIVE_FEED_CHANNEL_ID)
+        if config.LIVE_FEED_CHANNEL_ID:
+            asyncio.create_task(live_feed.run_inactivity_checker())
+            logger.info("Live feed enabled → channel %s", config.LIVE_FEED_CHANNEL_ID)
+        if config.CHATWOOT_BASE_URL:
+            logger.info("Chatwoot mirroring enabled → %s", config.CHATWOOT_BASE_URL)
     else:
-        logger.info("Live feed disabled (LIVE_FEED_CHANNEL_ID not set)")
+        logger.info("Live feed and Chatwoot disabled")
 
     # Register routers (order matters):
     # admin first — so admin commands + reply handler take priority
