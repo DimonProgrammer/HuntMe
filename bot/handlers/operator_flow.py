@@ -11,6 +11,10 @@ Features:
 - AI screening via OpenRouter / fallback
 """
 
+from __future__ import annotations
+
+import base64
+import io
 import json
 import logging
 
@@ -27,9 +31,25 @@ from bot.services.hardware_checker import quick_check
 from bot.services.objection_handler import detect_objection, get_response
 from bot.services.screener import ScreeningResult, screen_candidate
 from bot.services import notion_leads
+from bot.services.claude_client import claude as ai_client
 
 logger = logging.getLogger(__name__)
 router = Router()
+
+
+async def _extract_from_photo(message: Message, prompt: str) -> str | None:
+    """Download photo from Telegram, send to vision AI, return extracted text or None."""
+    try:
+        photo = message.photo[-1]  # highest resolution
+        file = await message.bot.get_file(photo.file_id)
+        buf = io.BytesIO()
+        await message.bot.download_file(file.file_path, buf)
+        image_b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
+        result = await ai_client.vision_complete(prompt=prompt, image_base64=image_b64)
+        return result.strip() if result and result.strip() else None
+    except Exception:
+        logger.exception("Vision extraction failed")
+        return None
 
 
 async def _track_event(tg_user_id: int, event_type: str, step_name: str = None, data: dict = None):
@@ -673,7 +693,25 @@ async def process_cpu(message: Message, state: FSMContext):
     if await _handle_possible_question(message, state):
         return
 
-    cpu = message.text.strip()
+    if message.photo:
+        await message.answer("📸 Reading your screenshot...")
+        cpu = await _extract_from_photo(
+            message,
+            "This is a screenshot showing CPU/processor info (Task Manager, System Info, or About PC). "
+            "Extract the CPU model name. Reply with just the CPU model, e.g. 'Intel Core i7-12700K' or 'AMD Ryzen 5 5600X'.",
+        )
+        if cpu is None:
+            await message.answer(
+                "Sorry, I couldn't read that. Could you type your CPU model instead?\n\n"
+                "Example: Intel Core i5-12400 or AMD Ryzen 5 5600X"
+            )
+            return
+        await message.answer(f"Got it: {cpu}")
+    elif message.text:
+        cpu = message.text.strip()
+    else:
+        await message.answer("Please type your CPU model or send a screenshot from Task Manager / System Info.")
+        return
     await state.update_data(cpu_model=cpu)
     await _track_event(message.from_user.id, "step_completed", "cpu", {"cpu_model": cpu})
     await state.set_state(OperatorForm.waiting_gpu)
@@ -778,7 +816,25 @@ async def process_gpu(message: Message, state: FSMContext):
     if await _handle_possible_question(message, state):
         return
 
-    gpu = message.text.strip()
+    if message.photo:
+        await message.answer("📸 Reading your screenshot...")
+        gpu = await _extract_from_photo(
+            message,
+            "This is a screenshot showing GPU/graphics card info (Task Manager, Device Manager, or Display settings). "
+            "Extract the GPU model name. Reply with just the GPU model, e.g. 'NVIDIA GeForce RTX 3060' or 'AMD Radeon RX 6600'.",
+        )
+        if gpu is None:
+            await message.answer(
+                "Sorry, I couldn't read that. Could you type your GPU model instead?\n\n"
+                "Example: NVIDIA GeForce GTX 1650 or AMD Radeon RX 580"
+            )
+            return
+        await message.answer(f"Got it: {gpu}")
+    elif message.text:
+        gpu = message.text.strip()
+    else:
+        await message.answer("Please type your GPU model or send a screenshot.")
+        return
     await state.update_data(gpu_model=gpu)
 
     data = await state.get_data()
@@ -818,7 +874,29 @@ async def process_internet(message: Message, state: FSMContext):
     if await _handle_possible_question(message, state):
         return
 
-    inet = message.text.strip()
+    if message.photo:
+        await message.answer("📸 Reading your speed test screenshot...")
+        inet = await _extract_from_photo(
+            message,
+            "This is a screenshot of an internet speed test. "
+            "Extract download speed, upload speed, and ping. "
+            "Reply in format: 'Download: X Mbps, Upload: Y Mbps, Ping: Z ms'. "
+            "Add ISP name and connection type if visible. Only return extracted data.",
+        )
+        if inet is None:
+            await message.answer(
+                "Sorry, I couldn't read that screenshot.\n"
+                "Could you type your internet speed instead?\n\n"
+                "For example: Download 150 Mbps, Upload 50 Mbps, Wi-Fi"
+            )
+            return
+        await message.answer(f"Got it: {inet}")
+    elif message.text:
+        inet = message.text.strip()
+    else:
+        await message.answer("Please type your internet speed or send a screenshot of your speed test.")
+        return
+
     await state.update_data(internet_speed=inet)
     await _track_event(message.from_user.id, "step_completed", "internet", {"value": inet})
     await state.set_state(OperatorForm.waiting_start_date)

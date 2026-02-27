@@ -103,4 +103,47 @@ class AIClient:
         return message.content[0].text
 
 
+    async def vision_complete(
+        self, prompt: str, image_base64: str, mime_type: str = "image/jpeg", max_tokens: int = 512
+    ) -> str:
+        """Extract text from an image using Groq vision model."""
+        if self.provider != "groq":
+            raise Exception("Vision is only supported with Groq provider")
+
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        }
+        payload = {
+            "model": "llama-3.2-11b-vision-preview",
+            "max_tokens": max_tokens,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": prompt},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:{mime_type};base64,{image_base64}",
+                            },
+                        },
+                    ],
+                }
+            ],
+        }
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                f"{self.base_url}/chat/completions",
+                headers=headers,
+                json=payload,
+                timeout=aiohttp.ClientTimeout(total=30),
+            ) as resp:
+                data = await resp.json()
+                if resp.status != 200:
+                    logger.error("Vision API error %s: %s", resp.status, data)
+                    raise Exception(f"Vision API error: {resp.status}")
+                return data["choices"][0]["message"]["content"]
+
+
 claude = AIClient()

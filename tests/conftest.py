@@ -18,6 +18,7 @@ def make_message(text="", user_id=123456, username="testuser", first_name="Test"
     """Create a mocked aiogram Message."""
     msg = MagicMock()
     msg.text = text
+    msg.photo = None
     msg.content_type = "text"
     msg.from_user = MagicMock()
     msg.from_user.id = user_id
