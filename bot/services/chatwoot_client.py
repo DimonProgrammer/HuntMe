@@ -105,7 +105,9 @@ async def _find_or_create_contact(tg_user_id: int, name: str, username: Optional
         async with s.post(url, json=payload, headers=_headers()) as resp:
             if resp.status in (200, 201):
                 data = await resp.json()
-                return data.get("id")
+                # Response: {"payload": {"contact": {"id": ...}}} or {"id": ...}
+                contact = data.get("payload", {}).get("contact") or data
+                return contact.get("id")
             if resp.status == 422:
                 # Contact already exists — search by identifier
                 return await _search_contact(identifier)
