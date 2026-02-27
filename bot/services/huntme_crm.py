@@ -195,7 +195,7 @@ async def get_available_slots(office_id: int = 95) -> Optional[dict]:
     data = await _request(
         "GET",
         "/api/backend/interview-appointments/available-dates",
-        params={"office_id": office_id},
+        params={"office_id": office_id, "funnel_key": "operators"},
     )
     if data is None:
         logger.warning("CRM slots: API request failed (auth or network)")
