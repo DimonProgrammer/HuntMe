@@ -16,6 +16,7 @@ from bot.config import config
 from bot.database import init_db
 from bot.database.connection import async_session
 from bot.database.models import Candidate
+from sqlalchemy import select
 from bot.handlers import admin, menu, operator_flow
 from bot.services import live_feed
 
@@ -105,34 +106,6 @@ def _contact_link(contact: str) -> str:
     return ''
 
 
-async def _score_lead(country: str, english: str, status: str) -> tuple:
-    """Quick AI lead score. Returns (score_str, note) or (None, None)."""
-    try:
-        from bot.services.claude_client import claude
-        prompt = (
-            f"Rate this streaming operator applicant 1-10. JSON only.\n"
-            f"Country: {country} | English: {english} | Status: {status}\n\n"
-            f"Output: {{\"score\": 1-10, \"verdict\": \"HOT|WARM|COLD\", \"note\": \"max 8 words\"}}\n"
-            f"HOT: Philippines/Indonesia/Nigeria + B2+ English. COLD: low English or unavailable."
-        )
-        raw = await claude.complete(
-            system="Recruitment screener. Respond with valid JSON only.",
-            user_message=prompt,
-            max_tokens=80,
-        )
-        match = re.search(r'\{.*?\}', raw, re.DOTALL)
-        if match:
-            data = json.loads(match.group())
-            score = data.get("score", 5)
-            verdict = data.get("verdict", "WARM")
-            note = data.get("note", "")
-            emoji = {"HOT": "🔥", "WARM": "✅", "COLD": "❄️"}.get(verdict, "✅")
-            return f"{emoji} {verdict} ({score}/10)", note
-    except Exception as exc:
-        logger.debug("AI scoring failed: %s", exc)
-    return None, None
-
-
 async def landing_options(_request):
     """CORS preflight for landing form."""
     return web.Response(headers=_CORS)
@@ -169,17 +142,31 @@ async def landing_webhook(request):
 
     # Notify admin — brief, full screening happens in bot
     if _bot:
-        tg_link = f' (<a href="https://t.me/{telegram}">@{telegram}</a>)' if telegram else ""
+        tg_link = f'<a href="https://t.me/{telegram}">@{telegram}</a>' if telegram else "—"
+        backup_line = f"\n📱 Backup: {backup_contact}" if backup_contact else ""
+        deep = f"https://t.me/apextalent_bot?start=land_{candidate_id}" if candidate_id else ""
         msg = (
-            f"🌐 <b>Новый лид с сайта → бот</b>\n\n"
-            f"👤 {name or '—'}{tg_link}\n"
-            f"🆔 #{candidate_id or '?'}\n"
+            f"🌐 <b>Новый лид с сайта</b>\n\n"
+            f"👤 <b>Имя:</b> {name or '—'}\n"
+            f"✈️ <b>Telegram:</b> {tg_link}{backup_line}\n"
+            f"🆔 #{candidate_id or '?'}\n\n"
             f"⏳ Ждём в боте для скрининга"
         )
+        if deep:
+            msg += f"\n🔗 <a href=\"{deep}\">Deep link</a>"
         try:
             await _bot.send_message(config.ADMIN_CHAT_ID, msg, parse_mode="HTML")
         except Exception as exc:
             logger.error("Failed to notify admin about landing lead: %s", exc)
+
+        # Schedule reminder if lead doesn't enter bot within 30 min
+        if candidate_id:
+            asyncio.get_event_loop().call_later(
+                1800,  # 30 minutes
+                lambda cid=candidate_id, n=name, tg=tg_link: asyncio.ensure_future(
+                    _check_landing_lead_entered_bot(cid, n, tg)
+                ),
+            )
 
     resp = {"ok": True}
     if candidate_id:
@@ -189,6 +176,25 @@ async def landing_webhook(request):
         content_type="application/json",
         headers=_CORS,
     )
+
+
+async def _check_landing_lead_entered_bot(candidate_id: int, name: str, tg_link: str):
+    """Remind admin if a landing lead hasn't started the bot flow after 30 min."""
+    try:
+        async with async_session() as session:
+            result = await session.execute(
+                select(Candidate).where(Candidate.id == candidate_id)
+            )
+            candidate = result.scalar_one_or_none()
+            if candidate and candidate.status == "pending_bot":
+                msg = (
+                    f"⚠️ <b>Лид #{candidate_id} не зашёл в бота</b>\n\n"
+                    f"👤 {name} — {tg_link}\n"
+                    f"Прошло 30 мин. Свяжитесь вручную."
+                )
+                await _bot.send_message(config.ADMIN_CHAT_ID, msg, parse_mode="HTML")
+    except Exception as exc:
+        logger.error("Landing lead check failed: %s", exc)
 
 
 async def start_health_server():
