@@ -383,40 +383,6 @@ async def cb_go_back(callback: CallbackQuery, state: FSMContext):
     await _send_step_prompt(callback, state)
 
 
-# ═══ REMINDER CALLBACKS ═══
-
-@router.callback_query(F.data.startswith("remind_"))
-async def on_reminder_choice(callback: CallbackQuery, state: FSMContext):
-    """Handle reminder time selection."""
-    if callback.data == "remind_continue":
-        await callback.answer()
-        # Reset reminder tracking + re-send current step prompt
-        await state.update_data(reminder_prompt_sent_at=None, reminder_scheduled_at=None)
-        await _send_step_prompt(callback, state)
-        return
-
-    # Parse minutes from callback: remind_30, remind_60, remind_180, remind_720
-    try:
-        minutes = int(callback.data.removeprefix("remind_"))
-    except ValueError:
-        await callback.answer("Invalid option")
-        return
-
-    from datetime import datetime, timedelta
-    remind_at = (datetime.utcnow() + timedelta(minutes=minutes)).isoformat()
-    await state.update_data(reminder_scheduled_at=remind_at)
-    await callback.answer("Got it! I'll remind you then 🔔")
-
-    labels = {30: "30 minutes", 60: "1 hour", 180: "3 hours", 720: "12 hours"}
-    label = labels.get(minutes, f"{minutes} minutes")
-    try:
-        await callback.message.edit_text(
-            f"No problem! I'll send you a reminder in {label}. See you soon! 👋"
-        )
-    except Exception:
-        pass
-
-
 # ═══ CATCH-ALL: text in callback-based states ═══
 
 @router.message(OperatorForm.waiting_has_pc)

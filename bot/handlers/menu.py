@@ -399,6 +399,7 @@ async def on_reminder_choice(callback: CallbackQuery, state: FSMContext):
     time_labels = {30: "30 minutes", 60: "1 hour", 180: "3 hours", 720: "12 hours"}
     label = time_labels.get(minutes, f"{minutes} minutes")
 
+    await callback.answer(f"Got it! I'll remind you in {label} 🔔")
     try:
         await callback.message.edit_text(
             f"Got it! I'll remind you in {label}. See you soon! 👋"
