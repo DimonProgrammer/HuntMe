@@ -124,7 +124,9 @@ async def _search_contact(identifier: str) -> Optional[int]:
         async with s.get(url, params={"q": identifier}, headers=_headers()) as resp:
             if resp.status == 200:
                 data = await resp.json()
-                contacts = (data.get("payload") or {}).get("contacts") or data.get("payload") or []
+                # API returns {"payload": [...]} (list) or {"payload": {"contacts": [...]}}
+                payload = data.get("payload") or []
+                contacts = payload.get("contacts", []) if isinstance(payload, dict) else payload
                 for c in contacts:
                     if str(c.get("identifier", "")) == identifier:
                         return c["id"]
