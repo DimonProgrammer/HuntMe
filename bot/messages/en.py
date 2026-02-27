@@ -98,7 +98,7 @@ VACANCY_TEXT = (
     "  • GPU: NVIDIA GTX 1060 6GB+ or AMD RX 5500+\n"
     "  • Internet: 100 Mbps+\n"
     "  • English: B1 (Intermediate) minimum\n"
-    "  • Age: 18+"
+    "  • Age: 18–30"
 )
 
 COMPANY_TEXT = (
@@ -362,6 +362,14 @@ DECLINE_UNDERAGE = (
     "💡 In the meantime, know anyone 18+ who's looking for remote work? "
     "Share this link: t.me/apextalent_bot — they'll thank you! 🙂\n\n"
     "Best of luck with your studies! 📚"
+)
+
+DECLINE_OVERAGE = (
+    "Thank you for your interest! 🙏\n\n"
+    "We're currently hiring candidates up to 30 years old — this is a platform requirement. "
+    "Unfortunately, we can't move forward with your application at this time.\n\n"
+    "💡 Know someone aged 18–30 looking for remote work ($600-800/month)? "
+    "Share this link: t.me/apextalent_bot 🙂"
 )
 
 DECLINE_STUDENT_INPERSON = (
@@ -714,6 +722,40 @@ BOOKING_EXPERIENCE = (
     "- Customer service / virtual assistant\n"
     "- Any other online/remote work\n\n"
     "If yes, briefly describe. If no, just say 'no experience'."
+)
+BOOKING_HW_INTRO = (
+    "Almost there! Before picking a time, we need to confirm your hardware.\n\n"
+    "This is required for the application — HR fills out a form before the interview.\n\n"
+    "If you can't check right now, tap the button below and I'll remind you."
+)
+BTN_HW_CANT_NOW = "⏰ Remind me later"
+BOOKING_HW_CPU = (
+    "What is your processor (CPU)?\n\n"
+    "How to check:\n"
+    "Settings → System → About → look for 'Processor'\n\n"
+    "Example: Intel Core i5-12400 or AMD Ryzen 5 5600"
+)
+BOOKING_HW_GPU = (
+    "What is your graphics card (GPU)?\n\n"
+    "How to check:\n"
+    "Settings → System → Display → Advanced display settings\n\n"
+    "Example: NVIDIA GeForce RTX 3060 or AMD Radeon RX 6600"
+)
+BOOKING_HW_INTERNET = (
+    "Last one! What's your internet speed?\n\n"
+    "Check at speedtest.net and tell us:\n"
+    "• Download speed (Mbps)\n"
+    "• Connection type: cable (LAN) or Wi-Fi\n\n"
+    "Example: 150 Mbps, LAN"
+)
+BOOKING_HW_CANT_NOW = (
+    "Got it. Tell me when to remind you.\n\n"
+    "For example: 'in 2 hours', 'in 30 minutes', 'tomorrow morning'"
+)
+BOOKING_HW_REMIND_SET = "I'll remind you {time}. We'll continue from this question when you're ready."
+BOOKING_HW_REMIND_PARSE_FAIL = (
+    "Couldn't understand that. Try a different format, e.g.:\n"
+    "'in 1 hour', 'in 30 minutes', 'tomorrow'"
 )
 BOOKING_FETCHING_SLOTS = "Looking for available interview times..."
 BOOKING_SLOTS_ERROR = (

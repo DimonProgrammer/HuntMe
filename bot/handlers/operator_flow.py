@@ -524,6 +524,16 @@ async def process_age(message: Message, state: FSMContext):
     await _track_event(message.from_user.id, "step_completed", "age", {"age": age})
     data = await state.get_data()
     await notion_leads.on_age(data.get("notion_page_id"), age)
+
+    if age > 30:
+        await message.answer(m.DECLINE_OVERAGE)
+        await state.clear()
+        return
+    if age < 18:
+        await message.answer(m.DECLINE_UNDERAGE)
+        await state.clear()
+        return
+
     await state.set_state(OperatorForm.waiting_study_work)
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text=m.BTN_WORKING, callback_data="study_working")],

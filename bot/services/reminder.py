@@ -83,6 +83,18 @@ async def _process_reminders(bot: Bot):
             continue
 
         data = json.loads(fsm.data or "{}")
+
+        # Hardware reminder: candidate postponed hardware question during booking
+        hw_remind_at = data.get("hw_remind_at")
+        if hw_remind_at and fsm.state == "InterviewBooking:waiting_hw_remind":
+            try:
+                remind_dt = datetime.fromisoformat(hw_remind_at)
+                if remind_dt <= now:
+                    await _send_hw_reminder(bot, fsm, data)
+                    continue  # skip general inactivity logic for this candidate
+            except Exception:
+                logger.debug("Failed to parse hw_remind_at for %s", fsm.chat_id)
+
         reminder_count = data.get("reminder_count", 0)
         if reminder_count >= _MAX_REMINDERS:
             continue
@@ -153,6 +165,48 @@ async def _send_follow_up(bot: Bot, fsm: FsmState, data: dict):
     data["reminder_scheduled_at"] = None
     data["reminder_prompt_sent_at"] = None  # allow re-prompt after next inactivity
     await _update_fsm_data(fsm, data)
+
+
+async def _send_hw_reminder(bot: Bot, fsm: FsmState, data: dict):
+    """Send hardware reminder and re-ask the pending hardware question."""
+    from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+    chat_id = fsm.chat_id
+    lang = data.get("language", "en")
+    m = msg(lang)
+    step = data.get("hw_remind_step", "cpu")
+
+    step_texts = {
+        "cpu": m.BOOKING_HW_CPU,
+        "gpu": m.BOOKING_HW_GPU,
+        "internet": m.BOOKING_HW_INTERNET,
+    }
+    hw_text = step_texts.get(step, m.BOOKING_HW_CPU)
+    cant_now_kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=m.BTN_HW_CANT_NOW, callback_data="hw_cant_now")],
+    ])
+
+    # Update FSM state back to the appropriate waiting_hw_* state
+    new_state_map = {
+        "cpu": "InterviewBooking:waiting_hw_cpu",
+        "gpu": "InterviewBooking:waiting_hw_gpu",
+        "internet": "InterviewBooking:waiting_hw_internet",
+    }
+    new_state = new_state_map.get(step, "InterviewBooking:waiting_hw_cpu")
+
+    try:
+        await bot.send_message(chat_id, hw_text, reply_markup=cant_now_kb)
+    except Exception:
+        logger.debug("Failed to send hw reminder to %s", chat_id)
+        return
+
+    # Update FSM: restore hw_* waiting state and clear hw_remind_at
+    data.pop("hw_remind_at", None)
+    async with async_session() as session:
+        row = await session.get(FsmState, (fsm.chat_id, fsm.user_id, fsm.bot_id))
+        if row:
+            row.state = new_state
+            row.data = __import__("json").dumps(data, ensure_ascii=False)
+            await session.commit()
 
 
 async def _update_fsm_data(fsm: FsmState, data: dict):
