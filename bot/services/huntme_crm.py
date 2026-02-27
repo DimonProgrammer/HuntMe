@@ -49,7 +49,7 @@ async def _login() -> Optional[str]:
     Returns session token string or None.
     """
     if not config.HUNTME_CRM_LOGIN or not config.HUNTME_CRM_PASSWORD:
-        logger.debug("HuntMe CRM credentials not configured — skipping")
+        logger.warning("HuntMe CRM credentials not configured (HUNTME_CRM_LOGIN=%s)", bool(config.HUNTME_CRM_LOGIN))
         return None
 
     base = _base_url()
@@ -190,18 +190,21 @@ async def get_available_slots(office_id: int = 95) -> Optional[dict]:
     """Fetch available interview slots. Filters out Sundays.
 
     Returns: {"28.02.2026": ["18:00", "19:00"], ...} or None on error.
+    Empty dict {} means "connected OK but genuinely no slots".
     """
     data = await _request(
         "GET",
         "/api/backend/interview-appointments/available-dates",
-        params={"office_id": office_id, "funnel_key": "operators"},
+        params={"office_id": office_id},
     )
-    if not data:
+    if data is None:
+        logger.warning("CRM slots: API request failed (auth or network)")
         return None
 
     slots = data.get("data")
     if not slots:
-        return None
+        logger.info("CRM slots: API returned empty data (response keys: %s)", list(data.keys()))
+        return {}
 
     # Filter out Sundays
     filtered = {}
@@ -214,7 +217,8 @@ async def get_available_slots(office_id: int = 95) -> Optional[dict]:
         except ValueError:
             continue
 
-    return filtered if filtered else None
+    logger.info("CRM slots: %d days, %d total slots available", len(filtered), sum(len(t) for t in filtered.values()))
+    return filtered
 
 
 def pick_nearest_slots(
@@ -555,9 +559,11 @@ async def check_connection() -> tuple:
 
     slots = await get_available_slots()
     if slots is None:
-        return False, "Login OK but slots fetch failed"
+        return False, "Login OK but slots API request failed"
 
     total_slots = sum(len(times) for times in slots.values())
+    if total_slots == 0:
+        return True, "Connected. No slots available right now"
     return True, "Connected. %d days, %d slots available" % (
         len(slots),
         total_slots,

@@ -135,6 +135,15 @@ async def _show_slots(
     """Fetch fresh slots from CRM and show as inline buttons."""
     slots = await huntme_crm.get_available_slots(office_id=95)
 
+    if slots is None:
+        # API error (auth / network) — not "no slots"
+        await message.answer(
+            "Sorry, I couldn't connect to the scheduling system right now.\n"
+            "Our team will reach out to you to schedule the interview manually. 🙏"
+        )
+        await state.set_state(InterviewBooking.waiting_slot_choice)
+        return
+
     if not slots:
         await message.answer(
             "No interview slots are available right now.\n"
