@@ -257,7 +257,8 @@ async def main():
 
     # Background tasks
     asyncio.create_task(reminder.run_reminder_checker(bot))
-    logger.info("Reminder checker started")
+    asyncio.create_task(reminder.run_interview_reminder_checker(bot))
+    logger.info("Reminder checkers started")
 
     # Set Telegram command menu (blue button near keyboard)
     from aiogram.types import BotCommand

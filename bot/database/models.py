@@ -65,6 +65,9 @@ class Candidate(Base):
     huntme_crm_submitted: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True, default=False)
     huntme_crm_slot: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
 
+    interview_morning_sent: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True, default=False)
+    interview_reminder_sent: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True, default=False)
+
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
 
@@ -93,6 +96,19 @@ class FsmState(Base):
     state: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     data: Mapped[Optional[str]] = mapped_column(Text, nullable=True, default="{}")
     updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
+
+
+class SlotReservation(Base):
+    """Temporary slot lock while candidate is in booking flow or pending admin approval.
+
+    Expires after 30 min (cleaned up in _show_slots).
+    Deleted on: admin approve, admin reject, rebook.
+    """
+    __tablename__ = "slot_reservations"
+
+    slot_str: Mapped[str] = mapped_column(String(20), primary_key=True)
+    tg_user_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    reserved_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 
 class JobPosting(Base):

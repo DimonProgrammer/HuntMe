@@ -716,6 +716,10 @@ BOOKING_OTHER_TIME = (
 BOOKING_CHECKING = "Checking availability..."
 BOOKING_RETRY = "Couldn't verify slot availability. Let me try again..."
 BOOKING_SLOT_TAKEN = "That slot was just taken! Here are updated options:"
+BOOKING_SLOT_RESERVED = (
+    "⚡ That slot was just taken by someone else!\n"
+    "Let me show you the next available times. 👇"
+)
 BOOKING_CONFIRMING = "Confirming your slot..."
 BOOKING_PREFERRED_ACK = "Got it! Let me check what's available around that time..."
 BOOKING_DATA_ERROR = "Something went wrong loading your data. Our team will contact you directly."
@@ -732,6 +736,33 @@ BOOKING_CONFIRMED = (
     "• Answer any questions you have\n"
     "• Do a quick age verification\n\n"
     "Please be ready 2-3 minutes before your slot. See you there! 🙂"
+)
+BOOKING_INVITE = (
+    "Invitation to work remotely as a live stream moderator:\n\n"
+    "📅 {display}\n\n"
+    "🕒 Time zone: GMT +8 (Manila)\n"
+    "Please check that the time zone matches your local time.\n\n"
+    "💻 Format: Our manager will contact you on the day of your interview. "
+    "Please stay in touch and reply to the message.\n"
+    "Zoom or Discord app.\n\n"
+    "Contacts: @hr_helper31 (Telegram)\n"
+    "👉 Send \"+\"  wa.me/14433037260  (WhatsApp)\n\n"
+    "If your plans change, please notify the manager who scheduled you.\n\n"
+    "See you there!"
+)
+INTERVIEW_MORNING_CONFIRM = (
+    "👋 Hey {name}! Just a reminder — your interview is today at {time} (Manila time, GMT+8).\n\n"
+    "Will you be there?"
+)
+BTN_INTERVIEW_YES = "✅ I'll be there!"
+BTN_INTERVIEW_NO = "❌ Can't make it"
+INTERVIEW_CONFIRMED_REPLY = "✅ Great, see you soon!"
+INTERVIEW_CANCEL_REPLY = (
+    "Got it. Please contact @hr_helper31 or send \"+\" to wa.me/14433037260 (WhatsApp) to reschedule."
+)
+INTERVIEW_1H_REMINDER = (
+    "⏰ Your interview starts in 1 hour — {time} Manila time!\n\n"
+    "@hr_helper31 will reach out to you via Telegram or WhatsApp. Stay online! 📞"
 )
 BOOKING_SOFT_REJECT = (
     "Thank you for your patience! Our team will contact you within 24 hours "

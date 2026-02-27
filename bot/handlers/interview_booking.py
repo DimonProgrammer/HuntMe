@@ -17,13 +17,14 @@ from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
-from sqlalchemy import select
+from sqlalchemy import delete, select
 
 from bot.config import config
 from bot.database import async_session
-from bot.database.models import Candidate
+from bot.database.models import Candidate, SlotReservation
 from bot.messages import msg
 from bot.services import huntme_crm
+from bot.services.huntme_crm import _MANILA_TZ
 
 logger = logging.getLogger(__name__)
 router = Router()
@@ -119,6 +120,37 @@ async def on_experience(message: Message, state: FSMContext):
 # ═══ SLOT SELECTION ═══
 
 
+async def _try_reserve_slot(slot_str: str, tg_user_id: int) -> bool:
+    """Claim a slot. Returns False if another user has it (non-expired within 30 min)."""
+    async with async_session() as session:
+        existing = await session.get(SlotReservation, slot_str)
+        now = _dt.datetime.utcnow()
+        if existing:
+            age_min = (now - existing.reserved_at).total_seconds() / 60
+            if age_min < 30 and existing.tg_user_id != tg_user_id:
+                return False
+            existing.tg_user_id = tg_user_id
+            existing.reserved_at = now
+        else:
+            session.add(SlotReservation(slot_str=slot_str, tg_user_id=tg_user_id, reserved_at=now))
+        await session.commit()
+        return True
+
+
+async def _release_slot(slot_str: str):
+    """Release a slot reservation (on reject or re-book)."""
+    if not slot_str:
+        return
+    try:
+        async with async_session() as session:
+            await session.execute(
+                delete(SlotReservation).where(SlotReservation.slot_str == slot_str)
+            )
+            await session.commit()
+    except Exception:
+        logger.debug("Failed to release slot %s", slot_str)
+
+
 async def _show_slots(
     message: Message, state: FSMContext, preferred_text: str = None
 ):
@@ -126,6 +158,7 @@ async def _show_slots(
     data = await state.get_data()
     lang = data.get("language", "en")
     m = msg(lang)
+    tg_user_id = data.get("booking_tg_user_id", 0)
 
     slots = await huntme_crm.get_available_slots(office_id=95)
 
@@ -144,7 +177,32 @@ async def _show_slots(
         await state.set_state(InterviewBooking.waiting_slot_choice)
         return
 
-    nearest = huntme_crm.pick_nearest_slots(slots, count=5)
+    # Cleanup expired reservations
+    try:
+        async with async_session() as session:
+            await session.execute(
+                delete(SlotReservation).where(
+                    SlotReservation.reserved_at < _dt.datetime.utcnow() - _dt.timedelta(minutes=30)
+                )
+            )
+            await session.commit()
+    except Exception:
+        logger.debug("Failed to cleanup expired slot reservations")
+
+    # Fetch active reservations (not mine)
+    reserved: set = set()
+    try:
+        async with async_session() as session:
+            result = await session.execute(
+                select(SlotReservation.slot_str).where(SlotReservation.tg_user_id != tg_user_id)
+            )
+            reserved = {row[0] for row in result}
+    except Exception:
+        logger.debug("Failed to fetch slot reservations")
+
+    # Filter out reserved slots
+    all_nearest = huntme_crm.pick_nearest_slots(slots, count=7)
+    nearest = [s for s in all_nearest if s not in reserved][:5]
 
     if not nearest:
         await message.answer(m.BOOKING_SLOTS_TOO_SOON, reply_markup=retry_kb)
@@ -191,6 +249,14 @@ async def on_slot_chosen(callback: CallbackQuery, state: FSMContext):
     date_part, time_part = slot_str.split(" ", 1)
     if date_part not in slots or time_part not in slots[date_part]:
         await callback.message.edit_text(m.BOOKING_SLOT_TAKEN)
+        await _show_slots(callback.message, state)
+        return
+
+    # Try to reserve the slot (race condition protection)
+    tg_user_id = data.get("booking_tg_user_id", callback.from_user.id)
+    claimed = await _try_reserve_slot(slot_str, tg_user_id)
+    if not claimed:
+        await callback.message.edit_text(m.BOOKING_SLOT_RESERVED)
         await _show_slots(callback.message, state)
         return
 
@@ -271,6 +337,21 @@ async def _request_crm_approval(message: Message, state: FSMContext, slot_str: s
     await message.answer(m.BOOKING_SLOT_CHOSEN.format(display=display))
     await state.clear()
 
+    # Same-day urgency check
+    now_manila = _dt.datetime.now(_MANILA_TZ)
+    urgency_block = ""
+    try:
+        slot_dt = _dt.datetime.strptime(slot_str, "%d.%m.%Y %H:%M").replace(tzinfo=_MANILA_TZ)
+        is_same_day = slot_dt.date() == now_manila.date()
+        hours_until = (slot_dt - now_manila).total_seconds() / 3600
+        if is_same_day:
+            urgency_block = (
+                f"\n\n⚡ SAME-DAY BOOKING — {hours_until:.1f}h until slot!\n"
+                f"📩 Contact @HuntMeHelp BEFORE approving so they confirm faster."
+            )
+    except Exception:
+        pass
+
     # Send admin the full preview + approve/reject buttons
     tg_handle = candidate.tg_username or str(tg_user_id)
     hw_icon = (
@@ -297,6 +378,7 @@ async def _request_crm_approval(message: Message, state: FSMContext, slot_str: s
         f"  Internet: {candidate.internet_speed or 'N/A'}\n"
         f"  Start: {candidate.start_date or 'N/A'}\n"
         f"  Experience: {data.get('experience', 'N/A')}"
+        f"{urgency_block}"
     )
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [
@@ -447,13 +529,21 @@ async def on_crm_approve(callback: CallbackQuery):
         except Exception:
             logger.exception("Failed to update CRM status")
 
-        # Notify candidate — get language from DB
+        # Release slot reservation (no longer needed after successful submit)
+        await _release_slot(slot_str)
+
+        # Notify candidate with full invite message
         cand_lang = cand.language if cand else "en"
         cm = msg(cand_lang)
+        cal_link = _google_calendar_link(slot_str, display)
+        invite_text = cm.BOOKING_INVITE.format(display=display)
+        if cal_link:
+            invite_text += f"\n\n📆 [Add to Google Calendar]({cal_link})"
         try:
             await callback.bot.send_message(
                 tg_user_id,
-                cm.BOOKING_CONFIRMED.format(display=display),
+                invite_text,
+                parse_mode="Markdown",
             )
         except Exception:
             logger.debug("Failed to notify candidate about confirmed booking")
@@ -476,7 +566,8 @@ async def on_crm_reject(callback: CallbackQuery):
     await callback.answer("Rejected")
     tg_user_id = int(callback.data.removeprefix("crm_no_"))
 
-    # Revert status
+    # Revert status and release slot
+    slot_to_release = None
     try:
         async with async_session() as session:
             result = await session.execute(
@@ -484,11 +575,14 @@ async def on_crm_reject(callback: CallbackQuery):
             )
             cand = result.scalar_one_or_none()
             if cand:
+                slot_to_release = cand.huntme_crm_slot
                 cand.status = "screened"
                 cand.huntme_crm_slot = None
                 await session.commit()
     except Exception:
         logger.exception("Failed to update candidate after CRM rejection")
+
+    await _release_slot(slot_to_release)
 
     # Notify candidate — get language from candidate record
     cand_lang = cand.language if cand else "en"
@@ -579,7 +673,27 @@ async def on_rebook_slot(callback: CallbackQuery):
             await _rebook_candidate(callback.bot, tg_user_id, slots)
             return
 
-    # Update candidate's slot in DB
+    # Try to reserve the new slot
+    claimed = await _try_reserve_slot(slot_str, tg_user_id)
+    if not claimed:
+        # Get language for message
+        cand_lang_rb = "en"
+        try:
+            async with async_session() as session:
+                rb_result = await session.execute(
+                    select(Candidate).where(Candidate.tg_user_id == tg_user_id)
+                )
+                rb_cand = rb_result.scalar_one_or_none()
+                if rb_cand:
+                    cand_lang_rb = rb_cand.language or "en"
+        except Exception:
+            pass
+        await callback.message.edit_text(msg(cand_lang_rb).BOOKING_SLOT_RESERVED)
+        await _rebook_candidate(callback.bot, tg_user_id, slots)
+        return
+
+    # Update candidate's slot in DB (release old, set new)
+    old_slot = None
     try:
         async with async_session() as session:
             result = await session.execute(
@@ -587,11 +701,15 @@ async def on_rebook_slot(callback: CallbackQuery):
             )
             cand = result.scalar_one_or_none()
             if cand:
+                old_slot = cand.huntme_crm_slot
                 cand.huntme_crm_slot = slot_str
                 cand.status = "pending_crm_approval"
                 await session.commit()
     except Exception:
         logger.exception("Failed to update rebook slot")
+
+    if old_slot and old_slot != slot_str:
+        await _release_slot(old_slot)
 
     display = _format_slot_display(slot_str)
     await callback.message.edit_text(m.REBOOK_CONFIRMED.format(display=display))
@@ -655,6 +773,33 @@ async def on_rebook_slot(callback: CallbackQuery):
 # ═══ HELPERS ═══
 
 
+def _google_calendar_link(slot_str: str, display: str) -> Optional[str]:
+    """Generate Google Calendar 'Add to Calendar' link for the interview slot.
+
+    slot_str: '28.02.2026 19:00' (Manila time, UTC+8)
+    Returns URL string or None on error.
+    """
+    try:
+        import urllib.parse
+        slot_dt = _dt.datetime.strptime(slot_str, "%d.%m.%Y %H:%M")
+        # Manila is UTC+8 → subtract 8h to get UTC
+        slot_utc = slot_dt - _dt.timedelta(hours=8)
+        end_utc = slot_utc + _dt.timedelta(hours=1)
+        fmt = "%Y%m%dT%H%M%SZ"
+        title = urllib.parse.quote("Interview — Apex Talent (Live Stream Operator)")
+        details = urllib.parse.quote(
+            "Join via Zoom or Discord.\n"
+            "Manager contact: @hr_helper31 (Telegram) or wa.me/14433037260 (WhatsApp)"
+        )
+        dates = f"{slot_utc.strftime(fmt)}/{end_utc.strftime(fmt)}"
+        return (
+            f"https://calendar.google.com/calendar/render"
+            f"?action=TEMPLATE&text={title}&dates={dates}&details={details}"
+        )
+    except Exception:
+        return None
+
+
 def _parse_date(raw: str) -> Optional[str]:
     """Parse birth date from various formats. Returns dd.MM.yyyy or None."""
     raw = raw.strip()
@@ -669,6 +814,55 @@ def _parse_date(raw: str) -> Optional[str]:
         except ValueError:
             continue
     return None
+
+
+# ═══ INTERVIEW DAY CALLBACKS ═══
+
+
+@router.callback_query(F.data == "interview_confirm")
+async def on_interview_confirm(callback: CallbackQuery):
+    """Candidate confirmed they'll attend the interview."""
+    await callback.answer()
+    tg_user_id = callback.from_user.id
+    cand_lang = "en"
+    try:
+        async with async_session() as session:
+            result = await session.execute(
+                select(Candidate).where(Candidate.tg_user_id == tg_user_id)
+            )
+            cand = result.scalar_one_or_none()
+            if cand:
+                cand_lang = cand.language or "en"
+    except Exception:
+        pass
+    m = msg(cand_lang)
+    try:
+        await callback.message.edit_text(m.INTERVIEW_CONFIRMED_REPLY)
+    except Exception:
+        pass
+
+
+@router.callback_query(F.data == "interview_cancel")
+async def on_interview_cancel(callback: CallbackQuery):
+    """Candidate said they can't make it."""
+    await callback.answer()
+    tg_user_id = callback.from_user.id
+    cand_lang = "en"
+    try:
+        async with async_session() as session:
+            result = await session.execute(
+                select(Candidate).where(Candidate.tg_user_id == tg_user_id)
+            )
+            cand = result.scalar_one_or_none()
+            if cand:
+                cand_lang = cand.language or "en"
+    except Exception:
+        pass
+    m = msg(cand_lang)
+    try:
+        await callback.message.edit_text(m.INTERVIEW_CANCEL_REPLY)
+    except Exception:
+        pass
 
 
 def _format_slot_display(slot_str: str) -> str:

@@ -217,8 +217,24 @@ async def get_available_slots(office_id: int = 95) -> Optional[dict]:
         except ValueError:
             continue
 
-    logger.info("CRM slots: %d days, %d total slots available", len(filtered), sum(len(t) for t in filtered.values()))
-    return filtered
+    # Filter out past time slots for today (Manila timezone)
+    now_manila = datetime.now(_MANILA_TZ)
+    today_str = now_manila.strftime("%d.%m.%Y")
+    clean: dict = {}
+    for date_str, times in filtered.items():
+        if date_str == today_str:
+            valid = [
+                t for t in times
+                if datetime.strptime(f"{date_str} {t}", "%d.%m.%Y %H:%M")
+                   .replace(tzinfo=_MANILA_TZ) > now_manila
+            ]
+            if valid:
+                clean[date_str] = valid
+        else:
+            clean[date_str] = times
+
+    logger.info("CRM slots: %d days, %d total slots available", len(clean), sum(len(t) for t in clean.values()))
+    return clean
 
 
 def pick_nearest_slots(

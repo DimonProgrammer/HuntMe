@@ -3,21 +3,26 @@
 Background task checks every 60s for candidates stuck in OperatorForm states.
 After 10 min inactivity → sends "choose reminder time" prompt.
 If no response → auto-reminds at 1h, then 3h, then stops (max 3 reminders).
+
+Also runs interview day reminders:
+- Morning at 09:00 Manila → confirmation prompt with Yes/No buttons
+- 1h before slot → reminder to stay online
 """
 
 from __future__ import annotations
 
 import json
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from aiogram import Bot
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from sqlalchemy import select
+from sqlalchemy import select, update
 
 from bot.database.connection import async_session
-from bot.database.models import FsmState
+from bot.database.models import Candidate, FsmState
 from bot.messages import msg
+from bot.services.huntme_crm import _MANILA_TZ
 
 logger = logging.getLogger(__name__)
 
@@ -157,3 +162,111 @@ async def _update_fsm_data(fsm: FsmState, data: dict):
         if row:
             row.data = json.dumps(data, ensure_ascii=False)
             await session.commit()
+
+
+# ═══ INTERVIEW DAY REMINDERS ═══
+
+
+async def run_interview_reminder_checker(bot: Bot):
+    """Background loop: every 60s check for upcoming interviews."""
+    import asyncio
+    while True:
+        await asyncio.sleep(60)
+        try:
+            await _process_interview_reminders(bot)
+        except Exception:
+            logger.exception("Interview reminder check failed")
+
+
+async def _process_interview_reminders(bot: Bot):
+    """Send morning confirmation and 1h-before reminders for upcoming interviews."""
+    now_manila = datetime.now(_MANILA_TZ)
+
+    async with async_session() as session:
+        result = await session.execute(
+            select(Candidate)
+            .where(Candidate.status == "interview_invited")
+            .where(Candidate.huntme_crm_submitted.is_(True))
+            .where(Candidate.huntme_crm_slot.isnot(None))
+            .where(Candidate.tg_user_id.isnot(None))
+        )
+        candidates = result.scalars().all()
+
+    for cand in candidates:
+        try:
+            slot_dt = datetime.strptime(cand.huntme_crm_slot, "%d.%m.%Y %H:%M")
+            slot_dt = slot_dt.replace(tzinfo=_MANILA_TZ)
+        except Exception:
+            continue
+
+        # Skip if slot already passed
+        if slot_dt <= now_manila:
+            continue
+
+        m = msg(cand.language or "en")
+        time_str = slot_dt.strftime("%H:%M")
+
+        # Morning reminder: 09:00 Manila on interview day, slot still > 1h away
+        morning_time = slot_dt.replace(hour=9, minute=0, second=0, microsecond=0)
+        if (
+            not cand.interview_morning_sent
+            and slot_dt.date() == now_manila.date()
+            and now_manila >= morning_time
+            and (slot_dt - now_manila).total_seconds() > 3600
+        ):
+            await _send_interview_morning(bot, cand, m, time_str)
+
+        # 1-hour reminder
+        one_hour_before = slot_dt - timedelta(hours=1)
+        if (
+            not cand.interview_reminder_sent
+            and now_manila >= one_hour_before
+        ):
+            await _send_interview_1h(bot, cand, m, time_str)
+
+
+async def _send_interview_morning(bot: Bot, cand: Candidate, m, time_str: str):
+    """Send morning confirmation prompt with Yes/No buttons."""
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text=m.BTN_INTERVIEW_YES, callback_data="interview_confirm"),
+            InlineKeyboardButton(text=m.BTN_INTERVIEW_NO, callback_data="interview_cancel"),
+        ]
+    ])
+    try:
+        await bot.send_message(
+            cand.tg_user_id,
+            m.INTERVIEW_MORNING_CONFIRM.format(name=cand.name or "there", time=time_str),
+            reply_markup=kb,
+        )
+        # Mark as sent
+        async with async_session() as session:
+            await session.execute(
+                update(Candidate)
+                .where(Candidate.tg_user_id == cand.tg_user_id)
+                .values(interview_morning_sent=True)
+            )
+            await session.commit()
+        logger.info("Interview morning reminder sent to %s", cand.tg_user_id)
+    except Exception:
+        logger.debug("Failed to send interview morning reminder to %s", cand.tg_user_id)
+
+
+async def _send_interview_1h(bot: Bot, cand: Candidate, m, time_str: str):
+    """Send 1-hour-before reminder."""
+    try:
+        await bot.send_message(
+            cand.tg_user_id,
+            m.INTERVIEW_1H_REMINDER.format(time=time_str),
+        )
+        # Mark as sent
+        async with async_session() as session:
+            await session.execute(
+                update(Candidate)
+                .where(Candidate.tg_user_id == cand.tg_user_id)
+                .values(interview_reminder_sent=True)
+            )
+            await session.commit()
+        logger.info("Interview 1h reminder sent to %s", cand.tg_user_id)
+    except Exception:
+        logger.debug("Failed to send interview 1h reminder to %s", cand.tg_user_id)
