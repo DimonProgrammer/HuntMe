@@ -692,6 +692,25 @@ async def cmd_getfileid(message: Message):
         await message.answer("No video/photo/document found in that message.")
 
 
+@router.message(F.func(is_admin), F.video)
+@router.message(F.func(is_admin), F.document)
+@router.message(F.func(is_admin), F.photo)
+@router.message(F.func(is_admin), F.animation)
+async def admin_media_file_id(message: Message):
+    """Auto-reply with file_id when admin sends any media."""
+    file_id = None
+    if message.video:
+        file_id = message.video.file_id
+    elif message.photo:
+        file_id = message.photo[-1].file_id
+    elif message.document:
+        file_id = message.document.file_id
+    elif message.animation:
+        file_id = message.animation.file_id
+    if file_id:
+        await message.answer(f"file_id:\n<code>{file_id}</code>", parse_mode="HTML")
+
+
 @router.message(Command("help"), F.func(is_admin))
 async def cmd_help(message: Message):
     await message.answer(
