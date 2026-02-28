@@ -12,6 +12,7 @@ from datetime import datetime
 from aiogram import Router
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
+from aiogram import Bot
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from bot.config import config
@@ -19,6 +20,26 @@ from bot.messages import msg
 
 logger = logging.getLogger(__name__)
 router = Router()
+
+
+async def send_agent_offer(bot: Bot, chat_id: int, text: str, lang: str = "en") -> None:
+    """Send agent offer text + video + become_agent button.
+
+    Used from: admin reject, overage decline, AI decline.
+    """
+    m = msg(lang)
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=m.BTN_BECOME_AGENT, callback_data="become_agent")],
+    ])
+    full_text = text + m.AGENT_OFFER_BLOCK
+
+    if config.AGENT_VIDEO_FILE_ID:
+        try:
+            await bot.send_video(chat_id, config.AGENT_VIDEO_FILE_ID)
+        except Exception:
+            logger.debug("Failed to send agent video to %s", chat_id)
+
+    await bot.send_message(chat_id, full_text, reply_markup=kb)
 
 
 class AgentForm(StatesGroup):

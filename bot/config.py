@@ -46,6 +46,8 @@ class Config:
     HUNTME_CRM_PASSWORD: str = os.getenv("HUNTME_CRM_PASSWORD", "")
     HUNTME_CRM_BASE_URL: str = os.getenv("HUNTME_CRM_BASE_URL", "https://huntmecrm.com")
 
+    AGENT_VIDEO_FILE_ID: str = os.getenv("AGENT_VIDEO_FILE_ID", "")
+
     # Chatwoot live chat integration
     CHATWOOT_BASE_URL: str = os.getenv("CHATWOOT_BASE_URL", "")  # e.g. https://chat.apextalent.pro
     CHATWOOT_API_TOKEN: str = os.getenv("CHATWOOT_API_TOKEN", "")  # agent API access token

@@ -526,10 +526,8 @@ async def process_age(message: Message, state: FSMContext):
     await notion_leads.on_age(data.get("notion_page_id"), age)
 
     if age > 30:
-        kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text=m.BTN_BECOME_AGENT, callback_data="become_agent")],
-        ])
-        await message.answer(m.DECLINE_OVERAGE + m.AGENT_OFFER_BLOCK, reply_markup=kb)
+        from bot.handlers.agent_flow import send_agent_offer
+        await send_agent_offer(message.bot, message.chat.id, m.DECLINE_OVERAGE, lang)
         # Keep FSM data (name, language) for agent redirect, clear state only
         await state.set_state(None)
         return
@@ -1023,10 +1021,8 @@ async def process_contact(message: Message, state: FSMContext):
         if age >= 18 and eng not in ("Beginner", ""):
             # Keep FSM data (name, language) for agent redirect, clear state only
             await state.set_state(None)
-            kb = InlineKeyboardMarkup(inline_keyboard=[
-                [InlineKeyboardButton(text=m.BTN_BECOME_AGENT, callback_data="become_agent")],
-            ])
-            await message.answer(result.suggested_response + m.AGENT_OFFER_BLOCK, reply_markup=kb)
+            from bot.handlers.agent_flow import send_agent_offer
+            await send_agent_offer(message.bot, message.chat.id, result.suggested_response, lang)
         else:
             await state.clear()
             await message.answer(result.suggested_response)

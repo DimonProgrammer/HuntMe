@@ -287,11 +287,9 @@ async def cb_reject(callback: CallbackQuery):
     )
 
     if agent_eligible:
-        # Agent CTA: rejection + agent offer + become_agent button
-        kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text=m.BTN_BECOME_AGENT, callback_data="become_agent")],
-        ])
-        rejection_text = m.REJECTION_MESSAGE + m.AGENT_OFFER_BLOCK
+        # Agent CTA: rejection + agent offer + video + become_agent button
+        from bot.handlers.agent_flow import send_agent_offer
+        rejection_text = m.REJECTION_MESSAGE
     else:
         # Standard rejection with share link
         share_url = (
@@ -305,7 +303,10 @@ async def cb_reject(callback: CallbackQuery):
         rejection_text = m.REJECTION_MESSAGE
 
     try:
-        await callback.bot.send_message(user_id, rejection_text, reply_markup=kb)
+        if agent_eligible:
+            await send_agent_offer(callback.bot, user_id, rejection_text, cand_lang)
+        else:
+            await callback.bot.send_message(user_id, rejection_text, reply_markup=kb)
         try:
             async with async_session() as session:
                 result = await session.execute(
@@ -667,6 +668,30 @@ async def cmd_slots(message: Message):
     await message.answer("\n".join(lines))
 
 
+@router.message(Command("getfileid"), F.func(is_admin))
+async def cmd_getfileid(message: Message):
+    """Reply to a video/photo/document with /getfileid to get its file_id."""
+    reply = message.reply_to_message
+    if not reply:
+        await message.answer("Reply to a video/photo/document with /getfileid")
+        return
+
+    file_id = None
+    if reply.video:
+        file_id = reply.video.file_id
+    elif reply.photo:
+        file_id = reply.photo[-1].file_id
+    elif reply.document:
+        file_id = reply.document.file_id
+    elif reply.animation:
+        file_id = reply.animation.file_id
+
+    if file_id:
+        await message.answer(f"<code>{file_id}</code>", parse_mode="HTML")
+    else:
+        await message.answer("No video/photo/document found in that message.")
+
+
 @router.message(Command("help"), F.func(is_admin))
 async def cmd_help(message: Message):
     await message.answer(
@@ -680,6 +705,7 @@ async def cmd_help(message: Message):
         "/post [ph|ng|latam] — Generate job posting\n"
         "/screen <text> — AI-screen text\n"
         "/slots — Check CRM interview slots\n"
+        "/getfileid — Reply to get file_id (for video config)\n"
         "/ref — Referral link\n"
         "/help — This message\n\n"
         "Inline buttons on each application:\n"
