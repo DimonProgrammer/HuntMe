@@ -1007,14 +1007,19 @@ async def process_contact(message: Message, state: FSMContext):
     )
 
     # PASS → auto-start interview booking (AI decided to invite)
-    # MAYBE/REJECT → admin decides via button
+    # MAYBE → just send clarifying question (no agent offer)
+    # REJECT → decline + agent offer if eligible
     if result.recommendation == "PASS":
         # Save to FSM so booking flow can show correct score in admin card
         await state.update_data(ai_score=result.overall_score, ai_recommendation=result.recommendation)
         from bot.handlers.interview_booking import start_booking
         await start_booking(message, state, message.from_user.id)
+    elif result.recommendation == "MAYBE":
+        # Just ask for more info — no agent offer, no video
+        await state.set_state(None)
+        await message.answer(result.suggested_response)
     else:
-        # Check if agent redirect makes sense (not underage, not English issue)
+        # REJECT — offer agent role if eligible (not underage, not English issue)
         age = data.get("age", 25)
         eng = data.get("english_level", "")
 

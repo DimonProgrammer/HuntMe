@@ -27,7 +27,7 @@ IMPORTANT CONTEXT:
 - Pay: $600-800/month starting, top performers $1,500+/month (revenue share model)
 - Schedule: 5/2, 6-8 hours/day, 4 shift options (morning/day/evening/night)
 - Training: 5-7 days paid training ($30/shift) with personal mentor
-- Weekly payments every Monday in USD
+- Weekly payments every Sunday in USD
 - Team in 15+ countries, fully remote
 - NEVER mention "HuntMe" — this is the internal company name
 - The company name shown to candidates is "Apex Talent"
@@ -54,7 +54,12 @@ Recommendation:
 - overall_score < 50 OR any hard disqualifier: "REJECT"
 
 For PASS: invite to Zoom interview, be enthusiastic
-For MAYBE: ask 1-2 specific clarifying questions
+For MAYBE: ask 1-2 specific clarifying questions. Be VERY SPECIFIC about what's missing:
+  - If CPU was provided but GPU is "N/A" or unclear → ask specifically for the GPU model
+  - If GPU was provided but CPU is "N/A" or unclear → ask specifically for the CPU model
+  - If internet speed is missing → ask for speed test results
+  - NEVER ask for information the candidate already provided. Check each field carefully before asking.
+  - Do NOT mention other roles or opportunities — just ask for the missing data
 For REJECT: polite, warm decline. End with something encouraging like "we appreciate your time" — do NOT mention other roles or alternatives (the system handles that separately)"""
 
 SCREENING_USER_TEMPLATE = """\
