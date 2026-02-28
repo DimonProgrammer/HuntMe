@@ -30,6 +30,10 @@ from bot.services.huntme_crm import _MANILA_TZ
 logger = logging.getLogger(__name__)
 router = Router()
 
+# Temporary flag — set False to skip actual CRM API submission
+# (admin approval still works: DB status updates, candidate gets notified)
+CRM_SUBMISSION_ENABLED = False
+
 
 class InterviewBooking(StatesGroup):
     waiting_birth_date = State()
@@ -740,6 +744,39 @@ async def on_crm_approve(callback: CallbackQuery):
             await _rebook_candidate(callback.bot, tg_user_id, fresh_slots)
             return
 
+    display = _format_slot_display(slot_str)
+
+    if not CRM_SUBMISSION_ENABLED:
+        try:
+            async with async_session() as session:
+                result = await session.execute(
+                    select(Candidate).where(Candidate.tg_user_id == tg_user_id)
+                )
+                cand = result.scalar_one_or_none()
+                if cand:
+                    cand.status = "interview_invited"
+                    await session.commit()
+        except Exception:
+            logger.exception("Failed to update candidate status (CRM disabled)")
+
+        await _release_slot(slot_str)
+
+        cand_lang = candidate.language or "en"
+        cm = msg(cand_lang)
+        cal_link = _google_calendar_link(slot_str, display)
+        invite_text = cm.BOOKING_INVITE.format(display=display)
+        if cal_link:
+            invite_text += f"\n\n📆 [Add to Google Calendar]({cal_link})"
+        try:
+            await callback.bot.send_message(tg_user_id, invite_text, parse_mode="Markdown")
+        except Exception:
+            logger.debug("Failed to notify candidate (CRM disabled)")
+
+        await callback.message.edit_text(
+            callback.message.text + f"\n\n✅ APPROVED (CRM submission disabled) — {display}"
+        )
+        return
+
     # Generate AI-powered CRM form answers
     crm_answers = await huntme_crm.generate_crm_answers(
         name=candidate.name,
@@ -771,8 +808,6 @@ async def on_crm_approve(callback: CallbackQuery):
         crm_answers=crm_answers,
         office_id=95,
     )
-
-    display = _format_slot_display(slot_str)
 
     if success:
         # Update DB
