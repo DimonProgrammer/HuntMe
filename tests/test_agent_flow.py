@@ -1,12 +1,11 @@
-"""Tests for agent application flow: CRM fields collection.
+"""Tests for agent application flow: CRM fields collection + auto-submit.
 
 Covers:
 - Agent name validation (fallback step)
 - DOB validation (format, underage)
-- Phone validation
-- Full flow (name → dob → phone → admin notification)
+- Phone validation + CRM auto-submit
+- Full flow (name → dob → phone → CRM submit → welcome)
 - become_agent redirect from operator decline
-- Admin approve/reject callbacks
 """
 
 import pytest
@@ -21,7 +20,7 @@ from bot.handlers.agent_flow import (
 )
 
 
-# ── Patch agent_flow's config for admin notifications ──
+# ── Patch agent_flow's config + CRM for all tests ──
 
 @pytest.fixture(autouse=True)
 def patch_agent_config():
@@ -30,6 +29,14 @@ def patch_agent_config():
         cfg.ADMIN_CHAT_ID = 999
         cfg.AGENT_VIDEO_FILE_ID = ""
         yield cfg
+
+
+@pytest.fixture(autouse=True)
+def patch_crm():
+    with patch("bot.handlers.agent_flow.huntme_crm") as crm:
+        crm.parse_phone = MagicMock(return_value=("639171234567", "ph"))
+        crm.submit_agent = AsyncMock(return_value=(True, None))
+        yield crm
 
 
 # ═══ NAME VALIDATION ═══
@@ -115,7 +122,7 @@ class TestAgentDOB:
         assert await state.get_state() == AgentForm.waiting_dob.state
 
 
-# ═══ PHONE VALIDATION ═══
+# ═══ PHONE + CRM SUBMISSION ═══
 
 class TestAgentPhone:
 
@@ -129,7 +136,7 @@ class TestAgentPhone:
         assert await state.get_state() == AgentForm.waiting_phone.state
 
     @pytest.mark.asyncio
-    async def test_valid_phone_completes_and_notifies(self, state):
+    async def test_valid_phone_submits_to_crm_and_welcomes(self, state, patch_crm):
         msg = make_message("+63 917 123 4567")
         await state.update_data(
             language="en", name="John Doe",
@@ -137,15 +144,37 @@ class TestAgentPhone:
         )
         await state.set_state(AgentForm.waiting_phone)
         await agent_phone(msg, state)
+
         # State cleared
         assert await state.get_state() is None
-        # Admin notified
-        msg.bot.send_message.assert_called_once()
+        # CRM called
+        patch_crm.submit_agent.assert_called_once()
+        # Welcome message with CRM contact and name
+        welcome_call = msg.answer.call_args_list[-1]
+        assert "@jobwith_huntme" in welcome_call[0][0]
+        assert "John Doe" in welcome_call[0][0]
+        # Admin notified with CRM status
         admin_text = msg.bot.send_message.call_args[0][1]
-        assert "[AGENT APPLICATION]" in admin_text
+        assert "CRM" in admin_text
         assert "John Doe" in admin_text
-        assert "15.05.1995" in admin_text
-        assert "+63 917 123 4567" in admin_text
+
+    @pytest.mark.asyncio
+    async def test_crm_failure_still_welcomes(self, state, patch_crm):
+        """Even if CRM fails, candidate gets welcome message."""
+        patch_crm.submit_agent = AsyncMock(return_value=(False, "CRM error 500"))
+        msg = make_message("+63 917 123 4567")
+        await state.update_data(language="en", name="Jane", dob="01.01.1990")
+        await state.set_state(AgentForm.waiting_phone)
+        await agent_phone(msg, state)
+
+        assert await state.get_state() is None
+        # Welcome message still sent
+        welcome_call = msg.answer.call_args_list[-1]
+        assert "@jobwith_huntme" in welcome_call[0][0]
+        # Admin notified about failure
+        admin_text = msg.bot.send_message.call_args[0][1]
+        assert "❌" in admin_text
+        assert "CRM error 500" in admin_text
 
     @pytest.mark.asyncio
     async def test_phone_with_dashes_accepted(self, state):
@@ -229,49 +258,3 @@ class TestBecomeAgentRedirect:
 
         data = await state.get_data()
         assert data["language"] == "ru"
-
-
-# ═══ ADMIN CALLBACKS ═══
-
-class TestAdminAgentCallbacks:
-
-    @pytest.fixture(autouse=True)
-    def patch_admin_deps(self):
-        session_mock = AsyncMock()
-        cand_mock = MagicMock()
-        cand_mock.language = "en"
-        cand_mock.status = "screened"
-        session_mock.execute = AsyncMock(
-            return_value=MagicMock(scalar_one_or_none=MagicMock(return_value=cand_mock))
-        )
-        session_mock.commit = AsyncMock()
-        cm = AsyncMock()
-        cm.__aenter__ = AsyncMock(return_value=session_mock)
-        cm.__aexit__ = AsyncMock(return_value=False)
-        with patch("bot.handlers.admin.async_session", return_value=cm), \
-             patch("bot.handlers.admin.config") as cfg:
-            cfg.ADMIN_CHAT_ID = 999
-            self.cand_mock = cand_mock
-            yield
-
-    @pytest.mark.asyncio
-    async def test_agent_approve(self):
-        from bot.handlers.admin import cb_agent_approve
-
-        cb = make_callback("agentok_123456")
-        await cb_agent_approve(cb)
-
-        cb.bot.send_message.assert_called_once()
-        cb.answer.assert_called_once_with("Agent approved ✅")
-        assert self.cand_mock.status == "active"
-
-    @pytest.mark.asyncio
-    async def test_agent_reject(self):
-        from bot.handlers.admin import cb_agent_reject
-
-        cb = make_callback("agentno_123456")
-        await cb_agent_reject(cb)
-
-        cb.bot.send_message.assert_called_once()
-        cb.answer.assert_called_once_with("Agent rejected ❌")
-        assert self.cand_mock.status == "declined"

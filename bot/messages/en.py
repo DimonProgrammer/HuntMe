@@ -488,8 +488,10 @@ REJECTION_MESSAGE = (
     "Thank you for your interest in our team! 🙏\n\n"
     "Unfortunately, we're not able to move forward with your application at this time.\n\n"
     "If anything changes in the future, feel free to reach out again. "
-    "We wish you all the best! 🙂\n\n"
-    "——\n"
+    "We wish you all the best! 🙂"
+)
+REJECTION_SHARE_SUFFIX = (
+    "\n\n——\n"
     "If you know someone with free time during the day, a gaming PC, and decent English — "
     "this could be a great fit for them. Pass it along and they'll thank you for it. 🙌"
 )
@@ -789,12 +791,11 @@ AGENT_MSG_4_CTA = (
     "Please enter in format: DD.MM.YYYY (e.g. 15.05.1998)"
 )
 
-AGENT_APPROVED = (
-    "Welcome to the team! 🎉\n\n"
-    "You've been approved as a Recruitment Agent.\n\n"
-    "Our team will reach out to you shortly with your referral materials "
-    "and everything you need to get started.\n\n"
-    "In the meantime, if you have any questions — just message us here!"
+AGENT_WELCOME = (
+    "Great, send the following message to our interviewer Dmitry "
+    "(@jobwith_huntme), he will help you register:\n\n"
+    "\"Hi, I'm {name}, I want to join the Traffic Reapers team\"\n\n"
+    "Once you've done it, send me a \"+\" in reply to this message"
 )
 
 # Agent flow step prompts (i18n)

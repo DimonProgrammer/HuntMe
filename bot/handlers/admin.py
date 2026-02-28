@@ -300,7 +300,7 @@ async def cb_reject(callback: CallbackQuery):
         kb = InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text=m.BTN_SHARE_REFERRAL, url=share_url)],
         ])
-        rejection_text = m.REJECTION_MESSAGE
+        rejection_text = m.REJECTION_MESSAGE + m.REJECTION_SHARE_SUFFIX
 
     try:
         if agent_eligible:

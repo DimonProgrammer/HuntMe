@@ -1,7 +1,7 @@
-"""Agent application flow — collects CRM-required fields.
+"""Agent application flow — collects CRM-required fields + auto-submits.
 
 Triggered from operator decline redirect or future menu role selection.
-Steps: [name (if unknown)] → DOB → phone → admin notification
+Steps: [name (if unknown)] → DOB → phone → CRM submit → welcome message
 Telegram @username captured automatically from TG API.
 """
 
@@ -17,6 +17,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from bot.config import config
 from bot.messages import msg
+from bot.services import huntme_crm
 
 logger = logging.getLogger(__name__)
 router = Router()
@@ -144,29 +145,40 @@ async def agent_phone(message: Message, state: FSMContext):
     data = await state.get_data()
     await state.clear()
 
-    await message.answer(m.APPLICATION_RECEIVED)
-    await _notify_admin_agent(message, data)
+    # Auto-submit to CRM
+    digits, country = huntme_crm.parse_phone(phone)
+    tg_handle = message.from_user.username or ""
+    crm_ok, crm_error = await huntme_crm.submit_agent(
+        name=data.get("name", "N/A"),
+        birth_date=data.get("dob", ""),
+        phone=digits,
+        phone_country=country,
+        telegram=tg_handle,
+    )
+
+    # Welcome message (always, even if CRM failed)
+    await message.answer(m.AGENT_WELCOME.format(name=data.get("name", "")))
+
+    # Admin FYI notification (no approve/reject buttons)
+    await _notify_admin_agent(message, data, crm_ok=crm_ok, crm_error=crm_error)
 
 
 # --- Admin notification ---
 
-async def _notify_admin_agent(message: Message, data: dict):
+async def _notify_admin_agent(
+    message: Message, data: dict, crm_ok: bool = False, crm_error: str = None,
+):
     tg_username = message.from_user.username or "N/A"
+    crm_status = "✅ CRM submitted" if crm_ok else f"❌ CRM failed: {crm_error or 'unknown'}"
     admin_text = (
-        "[AGENT APPLICATION]\n\n"
+        f"[AGENT → {crm_status}]\n\n"
         f"Name: {data.get('name', 'N/A')}\n"
         f"TG: @{tg_username} (ID: {message.from_user.id})\n"
         f"DOB: {data.get('dob', 'N/A')}\n"
         f"Phone: {data.get('phone', 'N/A')}\n"
         f"Lang: {data.get('language', 'en').upper()}"
     )
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton(text="✅ Approve Agent", callback_data=f"agentok_{message.from_user.id}"),
-            InlineKeyboardButton(text="❌ Reject", callback_data=f"agentno_{message.from_user.id}"),
-        ],
-    ])
     try:
-        await message.bot.send_message(config.ADMIN_CHAT_ID, admin_text, reply_markup=keyboard)
+        await message.bot.send_message(config.ADMIN_CHAT_ID, admin_text)
     except Exception:
         logger.exception("Failed to notify admin about agent application")
