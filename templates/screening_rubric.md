@@ -5,10 +5,10 @@
 | Check | Condition | Result |
 |-------|-----------|--------|
 | PC/Laptop | No PC/laptop (Windows) | REJECT |
-| Age | Under 18 | REJECT |
+| Age | Under 18 or over 30 | REJECT |
 | Study Status | In-person student | REJECT |
-| CPU | Below Intel i3 10th gen / Ryzen 3 3000 | REJECT |
-| GPU | Below GTX 1060 6GB / RX 5500 | REJECT |
+| CPU | Below 4 cores / 8 threads (i3 10th gen / Ryzen 3 3000) | REJECT |
+| GPU | Integrated (no discrete GPU) | REJECT |
 | MacBook | Apple device | REJECT |
 | English | Below B1 (Intermediate) | REJECT |
 
@@ -16,7 +16,7 @@
 
 ### 1. Hardware Compatibility (Weight: 30%)
 - **8-10:** i5/i7 12th+ with RTX 3060+, 100+ Mbps, LAN port
-- **5-7:** Meets minimum requirements (i3 10th+, GTX 1060 6GB+)
+- **5-7:** Meets minimum requirements (i3 10th+, discrete GPU GTX 1050+)
 - **1-4:** Below minimum or could not verify
 
 ### 2. English Proficiency (Weight: 25%)
