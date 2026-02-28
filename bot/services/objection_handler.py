@@ -26,6 +26,9 @@ _OBJ_ATTR = {
     "office_question": "OBJ_OFFICE",
     "payment_trust": "OBJ_PAYMENT_TRUST",
     "passport_question": "OBJ_PASSPORT",
+    "what_is_agent": "OBJ_WHAT_IS_AGENT",
+    "agent_earnings": "OBJ_AGENT_EARNINGS",
+    "agent_how_start": "OBJ_AGENT_HOW_START",
 }
 
 # English keywords
@@ -45,6 +48,9 @@ _KEYWORDS_EN = {
     "office_question": ["office", "in person", "come to office", "location", "where is the office", "on-site"],
     "payment_trust": ["how do i know", "will you pay", "guarantee", "proof of payment", "payment proof", "really pay", "when get paid"],
     "passport_question": ["passport", "need id", "show id", "my id", "send id", "identification", "document", "verify identity", "verification", "personal document"],
+    "what_is_agent": ["what is agent", "agent role", "agent position", "recruitment agent", "referral agent", "what do agents do", "tell me about agent"],
+    "agent_earnings": ["agent earn", "agents earn", "agent pay", "agent salary", "agent commission", "how much agent", "how much do agent", "referral earn", "passive income", "earn per referral"],
+    "agent_how_start": ["become agent", "become an agent", "how to become agent", "start as agent", "apply as agent", "sign up agent", "agent application"],
 }
 
 # Russian keywords
@@ -64,6 +70,9 @@ _KEYWORDS_RU = {
     "office_question": ["офис", "приходить", "локация", "где находится", "на месте"],
     "payment_trust": ["как я узнаю", "вы заплатите", "гарантия", "доказательства оплаты", "когда платят"],
     "passport_question": ["паспорт", "документы", "удостоверение", "верификация", "подтверждение личности"],
+    "what_is_agent": ["что такое агент", "роль агента", "агентская программа", "рекрутинг агент", "кто такой агент", "расскажи про агента"],
+    "agent_earnings": ["агент зарабатывает", "агент заработок", "сколько агент", "комиссия агента", "пассивный доход", "реферальный доход"],
+    "agent_how_start": ["стать агентом", "как стать агентом", "подать заявку агент", "записаться агентом", "хочу быть агентом"],
 }
 
 

@@ -1,6 +1,6 @@
 """6-step FSM flow for Recruitment Agent qualification.
 
-Triggered from menu.py when user selects Agent role.
+Triggered from operator decline redirect or future menu role selection.
 Steps: name → region → english → experience → hours → contact
 No AI screening — goes directly to admin for manual review.
 """
@@ -13,7 +13,7 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from bot.config import config
-from bot.services.followup import APPLICATION_RECEIVED, DECLINE_ENGLISH
+from bot.messages import msg
 
 logger = logging.getLogger(__name__)
 router = Router()
@@ -32,8 +32,18 @@ class AgentForm(StatesGroup):
 
 @router.message(AgentForm.waiting_name)
 async def agent_name(message: Message, state: FSMContext):
-    name = message.text.strip()
+    name = (message.text or "").strip()
+    if len(name) < 2 or len(name) > 50:
+        data = await state.get_data()
+        lang = data.get("language", "en")
+        m = msg(lang)
+        await message.answer(m.STEP_NAME_VALIDATION)
+        return
     await state.update_data(name=name)
+
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
 
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [
@@ -45,9 +55,10 @@ async def agent_name(message: Message, state: FSMContext):
             InlineKeyboardButton(text="Other", callback_data="aregion_other"),
         ],
     ])
+    first_name = name.split()[0] if name else name
+    greeting = m.STEP_NAME_GREETING.format(name=first_name)
     await message.answer(
-        f"Nice to meet you, {name.split()[0]}! 🙂\n\n"
-        "Where are you based?",
+        f"{greeting}\n\n{m.AGENT_STEP_REGION}",
         reply_markup=keyboard,
     )
     await state.set_state(AgentForm.waiting_region)
@@ -61,6 +72,10 @@ async def agent_region(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
     await state.update_data(region=region)
 
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
+
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(text="Beginner (A1-A2)", callback_data="aeng_beginner"),
@@ -72,12 +87,7 @@ async def agent_region(callback: CallbackQuery, state: FSMContext):
         ],
         [InlineKeyboardButton(text="Native / Fluent", callback_data="aeng_native")],
     ])
-    await callback.message.answer(
-        "What is your English level?\n\n"
-        "You'll need at least B1 (Intermediate) to communicate "
-        "with candidates and our team.",
-        reply_markup=keyboard,
-    )
+    await callback.message.answer(m.AGENT_STEP_ENGLISH, reply_markup=keyboard)
     await state.set_state(AgentForm.waiting_english)
 
 
@@ -88,19 +98,20 @@ async def agent_english(callback: CallbackQuery, state: FSMContext):
     level = callback.data.removeprefix("aeng_")
     await callback.answer()
 
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
+
     if level == "beginner":
         await state.update_data(english_level="beginner")
-        await callback.message.answer(DECLINE_ENGLISH)
+        await callback.message.answer(m.DECLINE_ENGLISH)
         await state.clear()
         return
 
     level_map = {"b1": "B1", "b2": "B2", "c1": "C1", "native": "Native"}
     await state.update_data(english_level=level_map.get(level, level))
 
-    await callback.message.answer(
-        "Have you done any recruiting, referral work, or network building before?\n\n"
-        "Tell us briefly about your experience — it's totally okay if you're new to this!"
-    )
+    await callback.message.answer(m.AGENT_STEP_EXPERIENCE)
     await state.set_state(AgentForm.waiting_experience)
 
 
@@ -110,15 +121,16 @@ async def agent_english(callback: CallbackQuery, state: FSMContext):
 async def agent_experience(message: Message, state: FSMContext):
     await state.update_data(recruiting_experience=message.text.strip())
 
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
+
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="5-10 hrs/week", callback_data="ahours_5-10")],
         [InlineKeyboardButton(text="10-20 hrs/week", callback_data="ahours_10-20")],
         [InlineKeyboardButton(text="20+ hrs/week (full-time)", callback_data="ahours_20+")],
     ])
-    await message.answer(
-        "How many hours per week can you dedicate to recruiting?",
-        reply_markup=keyboard,
-    )
+    await message.answer(m.AGENT_STEP_HOURS, reply_markup=keyboard)
     await state.set_state(AgentForm.waiting_hours)
 
 
@@ -130,12 +142,11 @@ async def agent_hours(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
     await state.update_data(available_hours=hours)
 
-    await callback.message.answer(
-        "Last question! 🙂\n\n"
-        "Please share your contact:\n"
-        "• Telegram @username (preferred)\n"
-        "• Or WhatsApp number"
-    )
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
+
+    await callback.message.answer(m.AGENT_STEP_CONTACT)
     await state.set_state(AgentForm.waiting_contact)
 
 
@@ -145,10 +156,25 @@ async def agent_hours(callback: CallbackQuery, state: FSMContext):
 async def agent_contact(message: Message, state: FSMContext):
     await state.update_data(contact_info=message.text.strip())
     data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
     await state.clear()
 
-    await message.answer(APPLICATION_RECEIVED)
+    await message.answer(m.APPLICATION_RECEIVED)
     await _notify_admin_agent(message, data)
+
+
+# --- Catch-all: text sent in button-only states ---
+
+@router.message(AgentForm.waiting_region)
+@router.message(AgentForm.waiting_english)
+@router.message(AgentForm.waiting_hours)
+async def agent_button_state_text(message: Message, state: FSMContext):
+    """User typed text instead of pressing a button."""
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
+    await message.answer(m.USE_BUTTONS)
 
 
 async def _notify_admin_agent(message: Message, data: dict):

@@ -662,6 +662,43 @@ OBJ_PASSPORT = (
     "Is there anything else you'd like to know?"
 )
 
+# ═══ AGENT OBJECTIONS ═══
+
+OBJ_WHAT_IS_AGENT = (
+    "Great question! 🙂\n\n"
+    "A Recruitment Agent finds and refers candidates to our streaming platform. "
+    "You don't need a PC or any equipment — you work from your phone.\n\n"
+    "You earn for every successful referral:\n"
+    "  • $50-100 per hired operator (progressive scale)\n"
+    "  • $10/day per working model — passive income for 12 months!\n\n"
+    "It's a flexible, independent role — 5 to 20+ hours per week, "
+    "with weekly USD payments.\n\n"
+    "Would you like to apply as an agent?"
+)
+
+OBJ_AGENT_EARNINGS = (
+    "Here's how agent compensation works! 💰\n\n"
+    "Operators (one-time bonus per hire):\n"
+    "  • 1st–3rd hire: $50 each\n"
+    "  • 4th–6th hire: $75 each\n"
+    "  • 7th+ hire: $100 each\n\n"
+    "Models (passive income!):\n"
+    "  • $10 per working day for 12 months\n"
+    "  • Example: refer 5 models → ~$1,000/month\n\n"
+    "Payments: weekly in USD, minimum payout $50.\n\n"
+    "Interested in learning more?"
+)
+
+OBJ_AGENT_HOW_START = (
+    "Becoming an agent is simple! 🚀\n\n"
+    "1. Answer a few quick questions (takes ~2 minutes)\n"
+    "2. Our team reviews your application\n"
+    "3. Once approved, you get your referral materials\n"
+    "4. Start referring — earn per successful hire!\n\n"
+    "No PC, no equipment needed. You work from your phone.\n\n"
+    "Ready to get started? Just tap the button below!"
+)
+
 # ═══ SCREENER ═══
 
 SCREENER_RESPONSE_LANG = "The suggested_response MUST be written in English."
@@ -702,6 +739,65 @@ APPLICATION_RECEIVED = (
     "Our team will review your application and get back to you within 24 hours.\n\n"
     "If you have any questions in the meantime, feel free to message us!\n\n"
     "You can return to the main menu anytime by typing /menu."
+)
+
+# ═══ AGENT REDIRECT (operator → agent) ═══
+
+BTN_BECOME_AGENT = "🔄 Tell me about the Agent role"
+
+AGENT_OFFER_BLOCK = (
+    "\n\n"
+    "——\n\n"
+    "💡 By the way — we have another role that might be a great fit!\n\n"
+    "As a Recruitment Agent, you earn by referring people to our platform:\n\n"
+    "  💰 $50-100 per hired operator\n"
+    "  🔄 $10/day per working model — passive income for 12 months!\n"
+    "  📱 Work from your phone — no PC needed\n"
+    "  ⏰ Flexible: 5-20+ hours/week\n\n"
+    "Example: refer 5 models → $1,000/month in passive income."
+)
+
+AGENT_REDIRECT_GREETING = (
+    "Great! Let me tell you more about the Agent role. 🙂\n\n"
+    "As a Recruitment Agent for Apex Talent, you find and refer candidates "
+    "to our streaming platform. You earn for every successful referral:\n\n"
+    "Operators (one-time):\n"
+    "  • 1st–3rd hire: $50 each\n"
+    "  • 4th–6th hire: $75 each\n"
+    "  • 7th+ hire: $100 each\n\n"
+    "Models (passive income!):\n"
+    "  • $10 per working day for 12 months\n"
+    "  • Example: 1 model = $200/month for a year\n\n"
+    "Payments: weekly in USD, $50 minimum payout.\n\n"
+    "No PC, no equipment — you work from your phone.\n\n"
+    "Let me ask a few questions. Where are you based?"
+)
+
+AGENT_APPROVED = (
+    "Welcome to the team! 🎉\n\n"
+    "You've been approved as a Recruitment Agent.\n\n"
+    "Our team will reach out to you shortly with your referral materials "
+    "and everything you need to get started.\n\n"
+    "In the meantime, if you have any questions — just message us here!"
+)
+
+# Agent flow step prompts (i18n)
+AGENT_STEP_REGION = "Where are you based?"
+AGENT_STEP_ENGLISH = (
+    "What is your English level?\n\n"
+    "You'll need at least B1 (Intermediate) to communicate "
+    "with candidates and our team."
+)
+AGENT_STEP_EXPERIENCE = (
+    "Have you done any recruiting, referral work, or network building before?\n\n"
+    "Tell us briefly about your experience — it's totally okay if you're new to this!"
+)
+AGENT_STEP_HOURS = "How many hours per week can you dedicate to recruiting?"
+AGENT_STEP_CONTACT = (
+    "Last question! 🙂\n\n"
+    "Please share your contact:\n"
+    "• Telegram @username (preferred)\n"
+    "• Or WhatsApp number"
 )
 
 # ═══ INTERVIEW BOOKING ═══

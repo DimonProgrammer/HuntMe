@@ -100,3 +100,48 @@ class TestGetResponse:
     def test_payment_response_contains_monday(self):
         response = get_response("payment_trust")
         assert "monday" in response.lower()
+
+
+class TestAgentObjections:
+
+    def test_detect_what_is_agent(self):
+        assert detect_objection("What is the agent role?") == "what_is_agent"
+        assert detect_objection("Tell me about agent position") == "what_is_agent"
+        assert detect_objection("What do recruitment agents do?") == "what_is_agent"
+
+    def test_detect_agent_earnings(self):
+        assert detect_objection("How much do agents earn?") == "agent_earnings"
+        assert detect_objection("What is the agent commission?") == "agent_earnings"
+        assert detect_objection("Tell me about passive income") == "agent_earnings"
+
+    def test_detect_agent_how_start(self):
+        assert detect_objection("How do I become an agent?") == "agent_how_start"
+        assert detect_objection("I want to apply as agent") == "agent_how_start"
+
+    def test_detect_agent_ru(self):
+        assert detect_objection("Что такое агент?", "ru") == "what_is_agent"
+        assert detect_objection("Сколько агент зарабатывает?", "ru") == "agent_earnings"
+        assert detect_objection("Как стать агентом?", "ru") == "agent_how_start"
+
+    def test_agent_response_contains_referral_info(self):
+        response = get_response("what_is_agent")
+        assert "$50" in response or "referral" in response.lower()
+
+    def test_agent_earnings_contains_rates(self):
+        response = get_response("agent_earnings")
+        assert "$50" in response
+        assert "$100" in response
+        assert "$10" in response
+
+    def test_agent_how_start_contains_steps(self):
+        response = get_response("agent_how_start")
+        assert "1." in response or "1)" in response
+
+    def test_all_agent_responses_bilingual(self):
+        """Agent objections must have responses in both EN and RU."""
+        for key in ["what_is_agent", "agent_earnings", "agent_how_start"]:
+            en = get_response(key, "en")
+            ru = get_response(key, "ru")
+            assert en is not None, f"No EN response for {key}"
+            assert ru is not None, f"No RU response for {key}"
+            assert en != ru, f"EN and RU are identical for {key}"

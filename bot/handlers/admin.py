@@ -300,6 +300,70 @@ async def cb_reject(callback: CallbackQuery):
         await callback.answer("Failed to send")
 
 
+# ═══ AGENT CALLBACKS ═══
+
+@router.callback_query(F.data.startswith("agentok_"))
+async def cb_agent_approve(callback: CallbackQuery):
+    """Approve agent application → send welcome message."""
+    user_id = int(callback.data.removeprefix("agentok_"))
+    cand_lang = "en"
+    try:
+        async with async_session() as session:
+            result = await session.execute(
+                select(Candidate).where(Candidate.tg_user_id == user_id)
+            )
+            cand = result.scalar_one_or_none()
+            if cand:
+                if cand.language:
+                    cand_lang = cand.language
+                cand.status = "active"
+                await session.commit()
+    except Exception:
+        logger.debug("Failed to update agent status")
+    m = msg(cand_lang)
+    try:
+        await callback.bot.send_message(user_id, m.AGENT_APPROVED)
+        await callback.answer("Agent approved ✅")
+        await callback.message.edit_text(callback.message.text + "\n\n✅ AGENT APPROVED")
+    except Exception:
+        await callback.answer("Failed to send — user may have blocked the bot")
+
+
+@router.callback_query(F.data.startswith("agentno_"))
+async def cb_agent_reject(callback: CallbackQuery):
+    """Reject agent application."""
+    user_id = int(callback.data.removeprefix("agentno_"))
+    cand_lang = "en"
+    try:
+        async with async_session() as session:
+            result = await session.execute(
+                select(Candidate).where(Candidate.tg_user_id == user_id)
+            )
+            cand = result.scalar_one_or_none()
+            if cand:
+                if cand.language:
+                    cand_lang = cand.language
+                cand.status = "declined"
+                await session.commit()
+    except Exception:
+        logger.debug("Failed to update agent status")
+    m = msg(cand_lang)
+    share_url = (
+        "https://t.me/share/url?url=https://apextalent.pro/ru"
+        if cand_lang == "ru"
+        else "https://t.me/share/url?url=https://apextalent.pro"
+    )
+    share_kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=m.BTN_SHARE_REFERRAL, url=share_url)],
+    ])
+    try:
+        await callback.bot.send_message(user_id, m.REJECTION_MESSAGE, reply_markup=share_kb)
+        await callback.answer("Agent rejected ❌")
+        await callback.message.edit_text(callback.message.text + "\n\n❌ REJECTED")
+    except Exception:
+        await callback.answer("Failed to send")
+
+
 # ═══ MESSAGE CANDIDATE (inline button) ═══
 
 @router.callback_query(F.data.startswith("msg_"))

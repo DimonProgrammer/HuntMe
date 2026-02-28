@@ -526,8 +526,12 @@ async def process_age(message: Message, state: FSMContext):
     await notion_leads.on_age(data.get("notion_page_id"), age)
 
     if age > 30:
-        await message.answer(m.DECLINE_OVERAGE)
-        await state.clear()
+        kb = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text=m.BTN_BECOME_AGENT, callback_data="become_agent")],
+        ])
+        await message.answer(m.DECLINE_OVERAGE + m.AGENT_OFFER_BLOCK, reply_markup=kb)
+        # Keep FSM data (name, language) for agent redirect, clear state only
+        await state.set_state(None)
         return
     if age < 18:
         await message.answer(m.DECLINE_UNDERAGE)
@@ -1012,8 +1016,20 @@ async def process_contact(message: Message, state: FSMContext):
         from bot.handlers.interview_booking import start_booking
         await start_booking(message, state, message.from_user.id)
     else:
-        await state.clear()
-        await message.answer(result.suggested_response)
+        # Check if agent redirect makes sense (not underage, not English issue)
+        age = data.get("age", 25)
+        eng = data.get("english_level", "")
+
+        if age >= 18 and eng not in ("Beginner", ""):
+            # Keep FSM data (name, language) for agent redirect, clear state only
+            await state.set_state(None)
+            kb = InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text=m.BTN_BECOME_AGENT, callback_data="become_agent")],
+            ])
+            await message.answer(result.suggested_response + m.AGENT_OFFER_BLOCK, reply_markup=kb)
+        else:
+            await state.clear()
+            await message.answer(result.suggested_response)
 
     await _notify_admin(message, data, result)
     await _send_to_n8n(message, data, result)
@@ -1198,3 +1214,57 @@ async def _send_to_n8n(message, data, result):
             )
     except Exception:
         logger.debug("n8n webhook not available — skipping")
+
+
+# ═══ AGENT REDIRECT ═══
+
+@router.callback_query(F.data == "become_agent")
+async def on_become_agent(callback: CallbackQuery, state: FSMContext):
+    """Redirect declined operator candidate to agent flow."""
+    await callback.answer()
+
+    # Get existing data (name, language from previous flow)
+    data = await state.get_data()
+    name = data.get("name")
+    lang = data.get("language", "en")
+    m = msg(lang)
+
+    # Try to get name from DB if not in FSM state
+    if not name:
+        from sqlalchemy import select as sa_select
+        try:
+            async with async_session() as session:
+                result = await session.execute(
+                    sa_select(Candidate).where(Candidate.tg_user_id == callback.from_user.id)
+                )
+                cand = result.scalar_one_or_none()
+                if cand:
+                    name = cand.name
+        except Exception:
+            logger.debug("Could not look up candidate name from DB")
+
+    await state.clear()
+
+    from bot.handlers.agent_flow import AgentForm
+
+    if name:
+        # Name known → skip step 1, go to step 2 (region)
+        await state.update_data(name=name, language=lang, candidate_type="agent")
+
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [
+                InlineKeyboardButton(text="Philippines", callback_data="aregion_ph"),
+                InlineKeyboardButton(text="Nigeria", callback_data="aregion_ng"),
+            ],
+            [
+                InlineKeyboardButton(text="Latin America", callback_data="aregion_latam"),
+                InlineKeyboardButton(text="Other", callback_data="aregion_other"),
+            ],
+        ])
+        await callback.message.answer(m.AGENT_REDIRECT_GREETING, reply_markup=keyboard)
+        await state.set_state(AgentForm.waiting_region)
+    else:
+        # No name → start from step 1
+        await state.update_data(language=lang, candidate_type="agent")
+        await callback.message.answer(m.AGENT_GREETING.format(name=callback.from_user.first_name))
+        await state.set_state(AgentForm.waiting_name)
