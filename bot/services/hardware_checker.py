@@ -70,6 +70,8 @@ NVIDIA_COMPATIBLE = {
 # NVIDIA instant fail — entry-level display cards, not real GPUs
 NVIDIA_INCOMPATIBLE = [
     "gt 710", "gt 730", "gt 1030",
+    # MX-series — laptop display adapters, weaker than GT 1030
+    "mx110", "mx130", "mx150", "mx230", "mx250", "mx330", "mx350", "mx450", "mx550",
 ]
 
 # --- AMD GPUs ---
