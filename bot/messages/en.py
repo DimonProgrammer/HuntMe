@@ -770,7 +770,8 @@ AGENT_REDIRECT_GREETING = (
     "  • Example: 1 model = $200/month for a year\n\n"
     "Payments: weekly in USD, $50 minimum payout.\n\n"
     "No PC, no equipment — you work from your phone.\n\n"
-    "Let me ask a few questions. Where are you based?"
+    "I just need a couple of details. What is your date of birth?\n"
+    "Please enter in format: DD.MM.YYYY (e.g. 15.05.1998)"
 )
 
 AGENT_APPROVED = (
@@ -782,23 +783,17 @@ AGENT_APPROVED = (
 )
 
 # Agent flow step prompts (i18n)
-AGENT_STEP_REGION = "Where are you based?"
-AGENT_STEP_ENGLISH = (
-    "What is your English level?\n\n"
-    "You'll need at least B1 (Intermediate) to communicate "
-    "with candidates and our team."
+AGENT_STEP_DOB = (
+    "What is your date of birth?\n"
+    "Please enter in format: DD.MM.YYYY (e.g. 15.05.1998)"
 )
-AGENT_STEP_EXPERIENCE = (
-    "Have you done any recruiting, referral work, or network building before?\n\n"
-    "Tell us briefly about your experience — it's totally okay if you're new to this!"
-)
-AGENT_STEP_HOURS = "How many hours per week can you dedicate to recruiting?"
-AGENT_STEP_CONTACT = (
+AGENT_STEP_DOB_VALIDATION = "Please enter a valid date in DD.MM.YYYY format (e.g. 15.05.1998)."
+AGENT_STEP_PHONE = (
     "Last question! 🙂\n\n"
-    "Please share your contact:\n"
-    "• Telegram @username (preferred)\n"
-    "• Or WhatsApp number"
+    "What is your phone number?\n"
+    "Please include country code (e.g. +63 917 123 4567)."
 )
+AGENT_STEP_PHONE_VALIDATION = "Please enter a valid phone number with country code (e.g. +63 917 123 4567)."
 
 # ═══ INTERVIEW BOOKING ═══
 

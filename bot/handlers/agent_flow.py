@@ -1,16 +1,18 @@
-"""6-step FSM flow for Recruitment Agent qualification.
+"""Agent application flow — collects CRM-required fields.
 
 Triggered from operator decline redirect or future menu role selection.
-Steps: name → region → english → experience → hours → contact
-No AI screening — goes directly to admin for manual review.
+Steps: [name (if unknown)] → DOB → phone → admin notification
+Telegram @username captured automatically from TG API.
 """
 
 import logging
+import re
+from datetime import datetime
 
-from aiogram import F, Router
+from aiogram import Router
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from bot.config import config
 from bot.messages import msg
@@ -21,175 +23,109 @@ router = Router()
 
 class AgentForm(StatesGroup):
     waiting_name = State()
-    waiting_region = State()
-    waiting_english = State()
-    waiting_experience = State()
-    waiting_hours = State()
-    waiting_contact = State()
+    waiting_dob = State()
+    waiting_phone = State()
 
 
-# --- Step 1: Name ---
+# --- Step 1 (fallback): Name ---
 
 @router.message(AgentForm.waiting_name)
 async def agent_name(message: Message, state: FSMContext):
     name = (message.text or "").strip()
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
+
     if len(name) < 2 or len(name) > 50:
-        data = await state.get_data()
-        lang = data.get("language", "en")
-        m = msg(lang)
         await message.answer(m.STEP_NAME_VALIDATION)
         return
+
     await state.update_data(name=name)
-
-    data = await state.get_data()
-    lang = data.get("language", "en")
-    m = msg(lang)
-
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton(text="Philippines", callback_data="aregion_ph"),
-            InlineKeyboardButton(text="Nigeria", callback_data="aregion_ng"),
-        ],
-        [
-            InlineKeyboardButton(text="Latin America", callback_data="aregion_latam"),
-            InlineKeyboardButton(text="Other", callback_data="aregion_other"),
-        ],
-    ])
     first_name = name.split()[0] if name else name
     greeting = m.STEP_NAME_GREETING.format(name=first_name)
-    await message.answer(
-        f"{greeting}\n\n{m.AGENT_STEP_REGION}",
-        reply_markup=keyboard,
-    )
-    await state.set_state(AgentForm.waiting_region)
+    await message.answer(f"{greeting}\n\n{m.AGENT_STEP_DOB}")
+    await state.set_state(AgentForm.waiting_dob)
 
 
-# --- Step 2: Region ---
+# --- Step 2: Date of Birth ---
 
-@router.callback_query(AgentForm.waiting_region, F.data.startswith("aregion_"))
-async def agent_region(callback: CallbackQuery, state: FSMContext):
-    region = callback.data.removeprefix("aregion_")
-    await callback.answer()
-    await state.update_data(region=region)
+def _parse_dob(text: str):
+    """Parse dd.mm.yyyy, return (date, error_key)."""
+    text = text.strip().replace("/", ".").replace("-", ".")
+    match = re.match(r"^(\d{1,2})\.(\d{1,2})\.(\d{4})$", text)
+    if not match:
+        return None, "format"
+    try:
+        day, month, year = int(match.group(1)), int(match.group(2)), int(match.group(3))
+        dob = datetime(year, month, day)
+    except (ValueError, OverflowError):
+        return None, "format"
+    if dob >= datetime.now():
+        return None, "future"
+    age = (datetime.now() - dob).days // 365
+    if age < 18:
+        return None, "underage"
+    return dob, None
 
+
+@router.message(AgentForm.waiting_dob)
+async def agent_dob(message: Message, state: FSMContext):
     data = await state.get_data()
     lang = data.get("language", "en")
     m = msg(lang)
 
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton(text="Beginner (A1-A2)", callback_data="aeng_beginner"),
-            InlineKeyboardButton(text="Intermediate (B1)", callback_data="aeng_b1"),
-        ],
-        [
-            InlineKeyboardButton(text="Upper-Intermediate (B2)", callback_data="aeng_b2"),
-            InlineKeyboardButton(text="Advanced (C1+)", callback_data="aeng_c1"),
-        ],
-        [InlineKeyboardButton(text="Native / Fluent", callback_data="aeng_native")],
-    ])
-    await callback.message.answer(m.AGENT_STEP_ENGLISH, reply_markup=keyboard)
-    await state.set_state(AgentForm.waiting_english)
-
-
-# --- Step 3: English Level ---
-
-@router.callback_query(AgentForm.waiting_english, F.data.startswith("aeng_"))
-async def agent_english(callback: CallbackQuery, state: FSMContext):
-    level = callback.data.removeprefix("aeng_")
-    await callback.answer()
-
-    data = await state.get_data()
-    lang = data.get("language", "en")
-    m = msg(lang)
-
-    if level == "beginner":
-        await state.update_data(english_level="beginner")
-        await callback.message.answer(m.DECLINE_ENGLISH)
+    dob, error = _parse_dob(message.text or "")
+    if error == "underage":
+        await message.answer(m.DECLINE_UNDERAGE)
         await state.clear()
         return
+    if error:
+        await message.answer(m.AGENT_STEP_DOB_VALIDATION)
+        return
 
-    level_map = {"b1": "B1", "b2": "B2", "c1": "C1", "native": "Native"}
-    await state.update_data(english_level=level_map.get(level, level))
-
-    await callback.message.answer(m.AGENT_STEP_EXPERIENCE)
-    await state.set_state(AgentForm.waiting_experience)
+    await state.update_data(dob=dob.strftime("%d.%m.%Y"))
+    await message.answer(m.AGENT_STEP_PHONE)
+    await state.set_state(AgentForm.waiting_phone)
 
 
-# --- Step 4: Recruiting Experience ---
+# --- Step 3: Phone ---
 
-@router.message(AgentForm.waiting_experience)
-async def agent_experience(message: Message, state: FSMContext):
-    await state.update_data(recruiting_experience=message.text.strip())
+def _validate_phone(text: str) -> bool:
+    """Basic phone validation: 7+ digits, allows +, spaces, dashes, parens."""
+    digits = re.sub(r"[^\d]", "", text)
+    return len(digits) >= 7
 
+
+@router.message(AgentForm.waiting_phone)
+async def agent_phone(message: Message, state: FSMContext):
     data = await state.get_data()
     lang = data.get("language", "en")
     m = msg(lang)
 
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="5-10 hrs/week", callback_data="ahours_5-10")],
-        [InlineKeyboardButton(text="10-20 hrs/week", callback_data="ahours_10-20")],
-        [InlineKeyboardButton(text="20+ hrs/week (full-time)", callback_data="ahours_20+")],
-    ])
-    await message.answer(m.AGENT_STEP_HOURS, reply_markup=keyboard)
-    await state.set_state(AgentForm.waiting_hours)
+    phone = (message.text or "").strip()
+    if not _validate_phone(phone):
+        await message.answer(m.AGENT_STEP_PHONE_VALIDATION)
+        return
 
-
-# --- Step 5: Available Hours ---
-
-@router.callback_query(AgentForm.waiting_hours, F.data.startswith("ahours_"))
-async def agent_hours(callback: CallbackQuery, state: FSMContext):
-    hours = callback.data.removeprefix("ahours_")
-    await callback.answer()
-    await state.update_data(available_hours=hours)
-
+    await state.update_data(phone=phone)
     data = await state.get_data()
-    lang = data.get("language", "en")
-    m = msg(lang)
-
-    await callback.message.answer(m.AGENT_STEP_CONTACT)
-    await state.set_state(AgentForm.waiting_contact)
-
-
-# --- Step 6: Contact → Notify Admin ---
-
-@router.message(AgentForm.waiting_contact)
-async def agent_contact(message: Message, state: FSMContext):
-    await state.update_data(contact_info=message.text.strip())
-    data = await state.get_data()
-    lang = data.get("language", "en")
-    m = msg(lang)
     await state.clear()
 
     await message.answer(m.APPLICATION_RECEIVED)
     await _notify_admin_agent(message, data)
 
 
-# --- Catch-all: text sent in button-only states ---
-
-@router.message(AgentForm.waiting_region)
-@router.message(AgentForm.waiting_english)
-@router.message(AgentForm.waiting_hours)
-async def agent_button_state_text(message: Message, state: FSMContext):
-    """User typed text instead of pressing a button."""
-    data = await state.get_data()
-    lang = data.get("language", "en")
-    m = msg(lang)
-    await message.answer(m.USE_BUTTONS)
-
+# --- Admin notification ---
 
 async def _notify_admin_agent(message: Message, data: dict):
-    region_map = {"ph": "Philippines", "ng": "Nigeria", "latam": "Latin America", "other": "Other"}
-    region_label = region_map.get(data.get("region", "other"), data.get("region", "N/A"))
-
+    tg_username = message.from_user.username or "N/A"
     admin_text = (
         "[AGENT APPLICATION]\n\n"
         f"Name: {data.get('name', 'N/A')}\n"
-        f"TG: @{message.from_user.username or 'N/A'} (ID: {message.from_user.id})\n"
-        f"Region: {region_label}\n"
-        f"English: {data.get('english_level', 'N/A')}\n"
-        f"Recruiting Experience: {data.get('recruiting_experience', 'N/A')}\n"
-        f"Available Hours: {data.get('available_hours', 'N/A')}/week\n"
-        f"Contact: {data.get('contact_info', 'N/A')}"
+        f"TG: @{tg_username} (ID: {message.from_user.id})\n"
+        f"DOB: {data.get('dob', 'N/A')}\n"
+        f"Phone: {data.get('phone', 'N/A')}\n"
+        f"Lang: {data.get('language', 'en').upper()}"
     )
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [

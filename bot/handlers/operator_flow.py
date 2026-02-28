@@ -1252,21 +1252,10 @@ async def on_become_agent(callback: CallbackQuery, state: FSMContext):
     from bot.handlers.agent_flow import AgentForm
 
     if name:
-        # Name known → skip step 1, go to step 2 (region)
+        # Name known → skip to DOB
         await state.update_data(name=name, language=lang, candidate_type="agent")
-
-        keyboard = InlineKeyboardMarkup(inline_keyboard=[
-            [
-                InlineKeyboardButton(text="Philippines", callback_data="aregion_ph"),
-                InlineKeyboardButton(text="Nigeria", callback_data="aregion_ng"),
-            ],
-            [
-                InlineKeyboardButton(text="Latin America", callback_data="aregion_latam"),
-                InlineKeyboardButton(text="Other", callback_data="aregion_other"),
-            ],
-        ])
-        await callback.message.answer(m.AGENT_REDIRECT_GREETING, reply_markup=keyboard)
-        await state.set_state(AgentForm.waiting_region)
+        await callback.message.answer(m.AGENT_REDIRECT_GREETING)
+        await state.set_state(AgentForm.waiting_dob)
     else:
         # No name → start from step 1
         await state.update_data(language=lang, candidate_type="agent")
