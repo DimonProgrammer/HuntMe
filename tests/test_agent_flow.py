@@ -25,8 +25,10 @@ from bot.handlers.agent_flow import (
 
 @pytest.fixture(autouse=True)
 def patch_agent_config():
-    with patch("bot.handlers.agent_flow.config") as cfg:
+    with patch("bot.handlers.agent_flow.config") as cfg, \
+         patch("bot.handlers.agent_flow.asyncio.sleep", new_callable=AsyncMock):
         cfg.ADMIN_CHAT_ID = 999
+        cfg.AGENT_VIDEO_FILE_ID = ""
         yield cfg
 
 
@@ -175,6 +177,14 @@ class TestBecomeAgentRedirect:
         with patch("bot.handlers.operator_flow.config") as cfg:
             cfg.ADMIN_CHAT_ID = 999
             cfg.N8N_WEBHOOK_URL = ""
+            yield
+
+    @pytest.fixture(autouse=True)
+    def patch_sleep_and_video(self):
+        with patch("bot.handlers.agent_flow.asyncio.sleep", new_callable=AsyncMock), \
+             patch("bot.handlers.agent_flow.config") as cfg:
+            cfg.ADMIN_CHAT_ID = 999
+            cfg.AGENT_VIDEO_FILE_ID = ""
             yield
 
     @pytest.mark.asyncio

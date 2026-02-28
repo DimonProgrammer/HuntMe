@@ -708,15 +708,8 @@ SCREENER_RESPONSE_LANG = "The suggested_response MUST be written in English."
 AGENT_GREETING = (
     "Hi {name}! 👋\n\n"
     "Great that you're interested in our Agent program!\n\n"
-    "As a Recruitment Agent, you earn for every person you successfully refer:\n\n"
-    "Operators:\n"
-    "  • 1st–3rd hire: $50 each\n"
-    "  • 4th–6th hire: $75 each\n"
-    "  • 7th+ hire: $100 each\n\n"
-    "Models:\n"
-    "  • $10 per working day for 12 months (passive income!)\n\n"
-    "Payments: weekly in USD, $50 minimum payout.\n\n"
-    "Let me ask a few quick questions. What is your full name?"
+    "Let me ask a few quick questions first.\n\n"
+    "What is your full name?"
 )
 
 MODEL_GREETING = (
@@ -753,24 +746,46 @@ AGENT_OFFER_BLOCK = (
     "  💰 $50-100 per hired operator\n"
     "  🔄 $10/day per working model — passive income for 12 months!\n"
     "  📱 Work from your phone — no PC needed\n"
-    "  ⏰ Flexible: 5-20+ hours/week\n\n"
+    "  🎓 Full training + team support provided\n\n"
     "Example: refer 5 models → $1,000/month in passive income."
 )
 
-AGENT_REDIRECT_GREETING = (
-    "Great! Let me tell you more about the Agent role. 🙂\n\n"
-    "As a Recruitment Agent for Apex Talent, you find and refer candidates "
-    "to our streaming platform. You earn for every successful referral:\n\n"
-    "Operators (one-time):\n"
+# Multi-message agent presentation (sent with delays)
+AGENT_MSG_1_INTRO = (
+    "Great! Let me tell you about the Agent role. 🙂\n\n"
+    "As a Recruitment Agent at Apex Talent, you help people find remote jobs "
+    "on our streaming platform. You connect candidates with opportunities — "
+    "and earn for every successful hire.\n\n"
+    "No experience needed. No PC required. You work from your phone, "
+    "on your own schedule."
+)
+
+AGENT_MSG_2_SUPPORT = (
+    "Here's what you get when you join: 👇\n\n"
+    "🎓 Full training — we teach you everything step by step\n"
+    "👥 Your own team with a leader who guides you\n"
+    "📋 Ready-made materials (scripts, job posts, templates)\n"
+    "💬 24/7 support in our team chat\n"
+    "🌍 International community across 15+ countries"
+)
+
+AGENT_MSG_3_EARNINGS = (
+    "Now let's talk earnings 💰\n\n"
+    "For every hired operator (one-time):\n"
     "  • 1st–3rd hire: $50 each\n"
     "  • 4th–6th hire: $75 each\n"
     "  • 7th+ hire: $100 each\n\n"
-    "Models (passive income!):\n"
+    "For every working model (passive income!):\n"
     "  • $10 per working day for 12 months\n"
-    "  • Example: 1 model = $200/month for a year\n\n"
-    "Payments: weekly in USD, $50 minimum payout.\n\n"
-    "No PC, no equipment — you work from your phone.\n\n"
-    "I just need a couple of details. What is your date of birth?\n"
+    "  • Example: 1 model = $200/month for a full year\n"
+    "  • 5 models = $1,000/month — and it keeps coming\n\n"
+    "Payments: weekly in USD, $50 minimum payout."
+)
+
+AGENT_MSG_4_CTA = (
+    "Sounds good? Let's get you registered! 🚀\n\n"
+    "I just need a couple of details.\n\n"
+    "What is your date of birth?\n"
     "Please enter in format: DD.MM.YYYY (e.g. 15.05.1998)"
 )
 

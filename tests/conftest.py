@@ -25,8 +25,11 @@ def make_message(text="", user_id=123456, username="testuser", first_name="Test"
     msg.from_user.username = username
     msg.from_user.first_name = first_name
     msg.answer = AsyncMock()
+    msg.chat = MagicMock()
+    msg.chat.id = user_id
     msg.bot = MagicMock()
     msg.bot.send_message = AsyncMock()
+    msg.bot.send_video = AsyncMock()
     return msg
 
 
@@ -42,6 +45,11 @@ def make_callback(data="", user_id=123456, username="testuser", first_name="Test
     cb.message = MagicMock()
     cb.message.answer = AsyncMock()
     cb.message.edit_text = AsyncMock()
+    cb.message.bot = MagicMock()
+    cb.message.bot.send_message = AsyncMock()
+    cb.message.bot.send_video = AsyncMock()
+    cb.message.chat = MagicMock()
+    cb.message.chat.id = user_id
     cb.bot = MagicMock()
     cb.bot.send_message = AsyncMock()
     return cb

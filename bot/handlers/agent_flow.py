@@ -5,14 +5,14 @@ Steps: [name (if unknown)] → DOB → phone → admin notification
 Telegram @username captured automatically from TG API.
 """
 
+import asyncio
 import logging
 import re
 from datetime import datetime
 
-from aiogram import Router
+from aiogram import Bot, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram import Bot
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from bot.config import config
@@ -42,6 +42,18 @@ async def send_agent_offer(bot: Bot, chat_id: int, text: str, lang: str = "en") 
     await bot.send_message(chat_id, full_text, reply_markup=kb)
 
 
+async def send_agent_presentation(bot: Bot, chat_id: int, lang: str = "en") -> None:
+    """Send 4-message agent presentation with 5s delays, ending with DOB question."""
+    m = msg(lang)
+    await bot.send_message(chat_id, m.AGENT_MSG_1_INTRO)
+    await asyncio.sleep(5)
+    await bot.send_message(chat_id, m.AGENT_MSG_2_SUPPORT)
+    await asyncio.sleep(5)
+    await bot.send_message(chat_id, m.AGENT_MSG_3_EARNINGS)
+    await asyncio.sleep(5)
+    await bot.send_message(chat_id, m.AGENT_MSG_4_CTA)
+
+
 class AgentForm(StatesGroup):
     waiting_name = State()
     waiting_dob = State()
@@ -63,8 +75,8 @@ async def agent_name(message: Message, state: FSMContext):
 
     await state.update_data(name=name)
     first_name = name.split()[0] if name else name
-    greeting = m.STEP_NAME_GREETING.format(name=first_name)
-    await message.answer(f"{greeting}\n\n{m.AGENT_STEP_DOB}")
+    await message.answer(m.STEP_NAME_GREETING.format(name=first_name))
+    await send_agent_presentation(message.bot, message.chat.id, lang)
     await state.set_state(AgentForm.waiting_dob)
 
 

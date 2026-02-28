@@ -1245,12 +1245,12 @@ async def on_become_agent(callback: CallbackQuery, state: FSMContext):
 
     await state.clear()
 
-    from bot.handlers.agent_flow import AgentForm
+    from bot.handlers.agent_flow import AgentForm, send_agent_presentation
 
     if name:
-        # Name known → skip to DOB
+        # Name known → multi-message presentation → DOB
         await state.update_data(name=name, language=lang, candidate_type="agent")
-        await callback.message.answer(m.AGENT_REDIRECT_GREETING)
+        await send_agent_presentation(callback.message.bot, callback.message.chat.id, lang)
         await state.set_state(AgentForm.waiting_dob)
     else:
         # No name → start from step 1
