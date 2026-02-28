@@ -257,10 +257,15 @@ async def cb_send_referral(callback: CallbackQuery):
 
 @router.callback_query(F.data.startswith("rej_"))
 async def cb_reject(callback: CallbackQuery):
-    """Send rejection to candidate + update DB status."""
+    """Send rejection to candidate + update DB status.
+
+    If candidate is eligible (operator, age>=18, English!=Beginner),
+    append agent offer CTA to the rejection message.
+    """
     user_id = int(callback.data.removeprefix("rej_"))
-    # Get candidate language
+    # Get candidate info for language + agent eligibility
     cand_lang = "en"
+    cand = None
     try:
         async with async_session() as session:
             result = await session.execute(
@@ -272,16 +277,35 @@ async def cb_reject(callback: CallbackQuery):
     except Exception:
         pass
     m = msg(cand_lang)
-    share_url = (
-        "https://t.me/share/url?url=https://apextalent.pro/ru"
-        if cand_lang == "ru"
-        else "https://t.me/share/url?url=https://apextalent.pro"
+
+    # Check if agent redirect makes sense for this candidate
+    agent_eligible = (
+        cand
+        and cand.candidate_type == "operator"
+        and (cand.age is None or cand.age >= 18)
+        and cand.english_level not in ("Beginner", None)
     )
-    share_kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text=m.BTN_SHARE_REFERRAL, url=share_url)],
-    ])
+
+    if agent_eligible:
+        # Agent CTA: rejection + agent offer + become_agent button
+        kb = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text=m.BTN_BECOME_AGENT, callback_data="become_agent")],
+        ])
+        rejection_text = m.REJECTION_MESSAGE + m.AGENT_OFFER_BLOCK
+    else:
+        # Standard rejection with share link
+        share_url = (
+            "https://t.me/share/url?url=https://apextalent.pro/ru"
+            if cand_lang == "ru"
+            else "https://t.me/share/url?url=https://apextalent.pro"
+        )
+        kb = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text=m.BTN_SHARE_REFERRAL, url=share_url)],
+        ])
+        rejection_text = m.REJECTION_MESSAGE
+
     try:
-        await callback.bot.send_message(user_id, m.REJECTION_MESSAGE, reply_markup=share_kb)
+        await callback.bot.send_message(user_id, rejection_text, reply_markup=kb)
         try:
             async with async_session() as session:
                 result = await session.execute(

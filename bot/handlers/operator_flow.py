@@ -1229,8 +1229,8 @@ async def on_become_agent(callback: CallbackQuery, state: FSMContext):
     lang = data.get("language", "en")
     m = msg(lang)
 
-    # Try to get name from DB if not in FSM state
-    if not name:
+    # Try to get name + language from DB if not in FSM state
+    if not name or lang == "en":
         from sqlalchemy import select as sa_select
         try:
             async with async_session() as session:
@@ -1239,9 +1239,13 @@ async def on_become_agent(callback: CallbackQuery, state: FSMContext):
                 )
                 cand = result.scalar_one_or_none()
                 if cand:
-                    name = cand.name
+                    if not name:
+                        name = cand.name
+                    if cand.language:
+                        lang = cand.language
+                        m = msg(lang)
         except Exception:
-            logger.debug("Could not look up candidate name from DB")
+            logger.debug("Could not look up candidate from DB")
 
     await state.clear()
 
