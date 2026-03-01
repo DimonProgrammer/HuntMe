@@ -1008,18 +1008,10 @@ async def process_contact(message: Message, state: FSMContext):
         await state.set_state(None)
         await message.answer(result.suggested_response)
     else:
-        # REJECT — offer agent role if eligible (not underage, not English issue)
-        age = data.get("age", 25)
-        eng = data.get("english_level", "")
-
-        if age >= 18 and eng not in ("Beginner", ""):
-            # Keep FSM data (name, language) for agent redirect, clear state only
-            await state.set_state(None)
-            from bot.handlers.agent_flow import send_agent_offer
-            await send_agent_offer(message.bot, message.chat.id, result.suggested_response, lang)
-        else:
-            await state.clear()
-            await message.answer(result.suggested_response)
+        # REJECT — always offer agent role
+        await state.set_state(None)
+        from bot.handlers.agent_flow import send_agent_offer
+        await send_agent_offer(message.bot, message.chat.id, result.suggested_response, lang)
 
     await _notify_admin(message, data, result)
     await _send_to_n8n(message, data, result)
