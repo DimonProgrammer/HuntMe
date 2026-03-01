@@ -26,9 +26,3 @@ def detect_lang_from_deeplink(param: str) -> str | None:
         return "ru"
     return None
 
-
-def detect_lang_from_tg(language_code: str | None) -> str:
-    """Detect language from Telegram's language_code field."""
-    if language_code and language_code.startswith(("ru", "uk")):
-        return "ru"
-    return "en"

@@ -20,7 +20,7 @@ from bot.config import config
 from bot.database import async_session
 from bot.database.models import Candidate, FunnelEvent
 from bot.handlers.operator_flow import OperatorForm, _track_event
-from bot.messages import msg, detect_lang_from_deeplink, detect_lang_from_tg
+from bot.messages import msg, detect_lang_from_deeplink
 from bot.services import notion_leads
 
 logger = logging.getLogger(__name__)
@@ -90,9 +90,8 @@ async def cmd_start(message: Message, state: FSMContext):
             await state.update_data(utm_source=param)
             await _track_event(message.from_user.id, "utm_source", "start", {"source": param})
 
-    # Detect language from Telegram locale if not set by deep link
     if lang is None:
-        lang = detect_lang_from_tg(message.from_user.language_code)
+        lang = "en"
     await state.update_data(language=lang)
 
     await _track_event(message.from_user.id, "bot_started", "start")
