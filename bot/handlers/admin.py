@@ -278,35 +278,11 @@ async def cb_reject(callback: CallbackQuery):
         pass
     m = msg(cand_lang)
 
-    # Check if agent redirect makes sense for this candidate
-    agent_eligible = (
-        cand
-        and cand.candidate_type == "operator"
-        and (cand.age is None or cand.age >= 18)
-        and cand.english_level not in ("Beginner", None)
-    )
-
-    if agent_eligible:
-        # Agent CTA: rejection + agent offer + video + become_agent button
-        from bot.handlers.agent_flow import send_agent_offer
-        rejection_text = m.REJECTION_MESSAGE
-    else:
-        # Standard rejection with share link
-        share_url = (
-            "https://t.me/share/url?url=https://apextalent.pro/ru"
-            if cand_lang == "ru"
-            else "https://t.me/share/url?url=https://apextalent.pro"
-        )
-        kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text=m.BTN_SHARE_REFERRAL, url=share_url)],
-        ])
-        rejection_text = m.REJECTION_MESSAGE + m.REJECTION_SHARE_SUFFIX
+    # Always send agent offer on manual rejection — admin has already evaluated the candidate
+    from bot.handlers.agent_flow import send_agent_offer
 
     try:
-        if agent_eligible:
-            await send_agent_offer(callback.bot, user_id, rejection_text, cand_lang)
-        else:
-            await callback.bot.send_message(user_id, rejection_text, reply_markup=kb)
+        await send_agent_offer(callback.bot, user_id, m.REJECTION_MESSAGE, cand_lang)
         try:
             async with async_session() as session:
                 result = await session.execute(
