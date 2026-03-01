@@ -525,17 +525,6 @@ async def process_age(message: Message, state: FSMContext):
     data = await state.get_data()
     await notion_leads.on_age(data.get("notion_page_id"), age)
 
-    if age > 30:
-        from bot.handlers.agent_flow import send_agent_offer
-        await send_agent_offer(message.bot, message.chat.id, m.DECLINE_OVERAGE, lang)
-        # Keep FSM data (name, language) for agent redirect, clear state only
-        await state.set_state(None)
-        return
-    if age < 18:
-        await message.answer(m.DECLINE_UNDERAGE)
-        await state.clear()
-        return
-
     await state.set_state(OperatorForm.waiting_study_work)
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text=m.BTN_WORKING, callback_data="study_working")],

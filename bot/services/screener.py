@@ -34,7 +34,6 @@ IMPORTANT CONTEXT:
 
 HARD DISQUALIFIERS (auto-REJECT if any is true):
 - has_pc is false → REJECT
-- age < 18 → REJECT
 - study_status is "student_inperson" → REJECT
 - hardware_compatible is false → REJECT
 - english_level is "beginner" or "A1" or "A2" → REJECT
