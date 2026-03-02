@@ -67,7 +67,7 @@ class TestAgentName:
         await state.update_data(language="en")
         await state.set_state(AgentForm.waiting_name)
         await agent_name(msg, state)
-        assert await state.get_state() == AgentForm.waiting_dob.state
+        assert await state.get_state() == AgentForm.waiting_ready_check.state
         data = await state.get_data()
         assert data["name"] == "John Doe"
 

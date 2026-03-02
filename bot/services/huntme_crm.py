@@ -265,6 +265,18 @@ def pick_nearest_slots(
     return [dt.strftime("%d.%m.%Y %H:%M") for dt in all_slots[:count]]
 
 
+_COUNTRY_PREFIXES = {
+    "ph": "63",
+    "id": "62",
+    "ng": "234",
+    "ru": "7",
+    "us": "1",
+    "br": "55",
+    "co": "57",
+    "ar": "54",
+}
+
+
 def _guess_phone_country(phone_digits: str) -> str:
     """Guess phone country code from phone number prefix."""
     if phone_digits.startswith("63"):
@@ -277,16 +289,35 @@ def _guess_phone_country(phone_digits: str) -> str:
         return "ru"
     if phone_digits.startswith("1"):
         return "us"
+    if phone_digits.startswith("55"):
+        return "br"
+    if phone_digits.startswith("57"):
+        return "co"
+    if phone_digits.startswith("54"):
+        return "ar"
     return "ph"  # default for target regions
 
 
 def parse_phone(raw: str) -> tuple:
-    """Extract digits from phone string and guess country.
+    """Extract LOCAL digits from phone string and guess country.
 
-    Returns: (digits_only, country_code)
+    CRM has its own country selector (+63, +62, etc.) —
+    we only send the local number without country code.
+
+    Returns: (local_digits, country_code)
     """
     digits = re.sub(r"\D", "", raw)
     country = _guess_phone_country(digits)
+
+    # Strip country code prefix (CRM adds it via phone_country dropdown)
+    prefix = _COUNTRY_PREFIXES.get(country, "")
+    if prefix and digits.startswith(prefix):
+        digits = digits[len(prefix):]
+
+    # PH local format: 09xx → strip leading 0
+    if country == "ph" and digits.startswith("0"):
+        digits = digits[1:]
+
     return digits, country
 
 
@@ -302,14 +333,14 @@ def _build_form_data(
 ) -> aiohttp.FormData:
     """Build multipart form data for CRM application."""
     form_data = aiohttp.FormData()
-    form_data.add_field("category", "0")  # Solo
+    form_data.add_field("category", "1")  # Team
     form_data.add_field("office_id", str(office_id))
     form_data.add_field("interview_appointment_date", slot)
     form_data.add_field("name", name)
     form_data.add_field("birth_date", birth_date)
     form_data.add_field("number", phone)
     form_data.add_field("phone_country", phone_country)
-    form_data.add_field("telegram", telegram)
+    form_data.add_field("telegram", telegram.lstrip("@"))
     form_data.add_field(
         "questions_and_answers.0.question_id", _QUESTION_IDS["company_name"]
     )
@@ -338,6 +369,10 @@ def _build_form_data(
         "questions_and_answers.3.answer_text",
         crm_answers.get("additional_notes", "")[:500],
     )
+    # Required checkboxes (always checked)
+    form_data.add_field("number_checkbox1", "true")  # Phone is correct
+    form_data.add_field("number_checkbox2", "true")  # Knows job requirements
+    form_data.add_field("number_checkbox3", "true")  # Will confirm on interview day
     return form_data
 
 
@@ -428,6 +463,104 @@ async def submit_application(
                     )
     except Exception:
         logger.exception("CRM submit exception")
+        return False, "CRM request failed"
+
+
+# ═══ AGENT CRM SUBMISSION ═══
+
+
+def _build_agent_form_data(
+    name: str,
+    birth_date: str,
+    phone: str,
+    phone_country: str,
+    telegram: str,
+    office_id: int = 95,
+) -> aiohttp.FormData:
+    """Build multipart form data for agent CRM application (Team category)."""
+    form_data = aiohttp.FormData()
+    form_data.add_field("category", "1")  # Team (not Solo)
+    form_data.add_field("office_id", str(office_id))
+    form_data.add_field("name", name)
+    form_data.add_field("birth_date", birth_date)
+    form_data.add_field("number", phone)
+    form_data.add_field("phone_country", phone_country)
+    form_data.add_field("telegram", telegram.lstrip("@"))
+    return form_data
+
+
+async def submit_agent(
+    name: str,
+    birth_date: str,
+    phone: str,
+    phone_country: str,
+    telegram: str,
+    office_id: int = 95,
+) -> tuple:
+    """Submit agent application to HuntMe CRM.
+
+    Returns: (success: bool, error_message: Optional[str])
+    """
+    form_data = _build_agent_form_data(
+        name, birth_date, phone, phone_country, telegram, office_id,
+    )
+
+    token = await _ensure_token()
+    if not token:
+        return False, "CRM authentication failed"
+
+    base = _base_url()
+    url = "%s/api/backend/requests/create/agent" % base
+    try:
+        async with aiohttp.ClientSession(
+            headers=_base_headers(), cookies=_auth_cookies()
+        ) as session:
+            async with session.post(
+                url,
+                data=form_data,
+                timeout=aiohttp.ClientTimeout(total=20),
+            ) as resp:
+                if resp.status in (200, 201):
+                    result = await resp.json()
+                    logger.info("CRM agent submitted: %s", result)
+                    return True, None
+                elif resp.status in (401, 403):
+                    global _session_token, _token_obtained_at
+                    _session_token = None
+                    _token_obtained_at = None
+                    new_token = await _ensure_token()
+                    if not new_token:
+                        return False, "CRM re-auth failed"
+                    form_data2 = _build_agent_form_data(
+                        name, birth_date, phone, phone_country,
+                        telegram, office_id,
+                    )
+                    async with aiohttp.ClientSession(
+                        headers=_base_headers(), cookies=_auth_cookies()
+                    ) as session2:
+                        async with session2.post(
+                            url,
+                            data=form_data2,
+                            timeout=aiohttp.ClientTimeout(total=20),
+                        ) as resp2:
+                            if resp2.status in (200, 201):
+                                result = await resp2.json()
+                                logger.info("CRM agent submitted (retry): %s", result)
+                                return True, None
+                            text = await resp2.text()
+                            logger.warning(
+                                "CRM agent retry failed: %s %s",
+                                resp2.status, text[:300],
+                            )
+                            return False, "CRM error %s" % resp2.status
+                else:
+                    text = await resp.text()
+                    logger.warning(
+                        "CRM agent submit failed: %s %s", resp.status, text[:300]
+                    )
+                    return False, "CRM error %s: %s" % (resp.status, text[:200])
+    except Exception:
+        logger.exception("CRM agent submit exception")
         return False, "CRM request failed"
 
 
@@ -536,6 +669,22 @@ async def generate_crm_answers(
         cleaned = cleaned.strip()
 
         data = json.loads(cleaned)
+
+        # Ensure additional_notes always includes HW + internet details
+        hw_parts = []
+        if cpu_model and cpu_model != "Not specified":
+            hw_parts.append(f"CPU: {cpu_model}")
+        if gpu_model and gpu_model != "Not specified":
+            hw_parts.append(f"GPU: {gpu_model}")
+        if internet_speed and internet_speed != "Not specified":
+            hw_parts.append(f"Internet: {internet_speed}")
+        if hw_parts:
+            existing = data.get("additional_notes", "")
+            hw_str = " | ".join(hw_parts)
+            # Don't duplicate if AI already included HW details
+            if cpu_model and cpu_model not in existing:
+                data["additional_notes"] = f"{existing} HW: {hw_str}"[:500]
+
         logger.info("AI generated CRM answers for %s", name)
         return data
     except Exception:
@@ -549,12 +698,21 @@ async def generate_crm_answers(
         "C1": "C1 Advanced",
         "Native": "Native/Fluent",
     }
+    hw_parts = []
+    if cpu_model and cpu_model != "Not specified":
+        hw_parts.append(f"CPU: {cpu_model}")
+    if gpu_model and gpu_model != "Not specified":
+        hw_parts.append(f"GPU: {gpu_model}")
+    if internet_speed and internet_speed != "Not specified":
+        hw_parts.append(f"Internet: {internet_speed}")
+    hw_str = " | ".join(hw_parts) if hw_parts else "Not specified"
+
     return {
         "company_name": "Apex Talent",
         "english_level": eng_map.get(english_level, english_level or "Not specified"),
         "experience": experience[:200] if experience else "No prior experience specified",
-        "additional_notes": "Available: %s. Score: %s/100." % (
-            start_date or "N/A", score or "N/A"
+        "additional_notes": "Available: %s. Score: %s/100. HW: %s" % (
+            start_date or "N/A", score or "N/A", hw_str,
         ),
     }
 
@@ -584,3 +742,86 @@ async def check_connection() -> tuple:
         len(slots),
         total_slots,
     )
+
+
+async def verify_submission(
+    name: str,
+    telegram: str,
+    category: str = "operators",
+) -> tuple:
+    """Verify a submitted application appeared in CRM.
+
+    Searches recent applications by name in the given category.
+    Returns: (found: bool, crm_data: dict or None, error: str or None)
+    """
+    data = await _request(
+        "GET",
+        "/api/backend/requests",
+        params={
+            "category": category,
+            "search": name,
+            "status": "",
+            "age": "",
+            "company": "",
+            "team": "",
+            "agent": "",
+            "page": "1",
+        },
+    )
+    if data is None:
+        return False, None, "Failed to fetch application list"
+
+    applications = data.get("data", [])
+    tg_clean = telegram.lstrip("@").lower()
+
+    for app in applications:
+        app_tg = (app.get("telegram") or {}).get("nickname", "").lower()
+        if app_tg == tg_clean:
+            # Found! Fetch full card with both tabs
+            app_id = app.get("id")
+            detail = await _request("GET", f"/api/backend/requests/{app_id}")
+            if detail:
+                return True, detail, None
+            return True, app, None  # fallback to list data
+
+    return False, None, f"Application not found (searched '{name}', {len(applications)} results)"
+
+
+def compare_submission(submitted: dict, crm_data: dict) -> list:
+    """Compare what was submitted vs what CRM stored.
+
+    Returns list of mismatch descriptions (empty = all good).
+    """
+    mismatches = []
+
+    # Name
+    crm_name = crm_data.get("name", "")
+    if submitted.get("name") and crm_name and submitted["name"] != crm_name:
+        mismatches.append(f"name: sent '{submitted['name']}' vs CRM '{crm_name}'")
+
+    # Birth date
+    crm_dob = crm_data.get("birth_date", "")
+    if submitted.get("birth_date") and crm_dob and submitted["birth_date"] != crm_dob:
+        mismatches.append(f"DOB: sent '{submitted['birth_date']}' vs CRM '{crm_dob}'")
+
+    # Telegram
+    crm_tg = (crm_data.get("telegram") or {}).get("nickname", "")
+    sub_tg = submitted.get("telegram", "").lstrip("@")
+    if sub_tg and crm_tg and sub_tg.lower() != crm_tg.lower():
+        mismatches.append(f"telegram: sent '{sub_tg}' vs CRM '{crm_tg}'")
+
+    # Phone number
+    crm_phone = (crm_data.get("number") or {}).get("number", "")
+    if submitted.get("phone") and crm_phone:
+        # Strip non-digits for comparison
+        crm_digits = re.sub(r"\D", "", crm_phone)
+        sub_digits = re.sub(r"\D", "", submitted["phone"])
+        if sub_digits and crm_digits and not crm_digits.endswith(sub_digits):
+            mismatches.append(f"phone: sent '{submitted['phone']}' vs CRM '{crm_phone}'")
+
+    # Slot (operators only)
+    crm_slot = crm_data.get("interview_appointment_date", "")
+    if submitted.get("slot") and crm_slot and submitted["slot"] != crm_slot:
+        mismatches.append(f"slot: sent '{submitted['slot']}' vs CRM '{crm_slot}'")
+
+    return mismatches

@@ -847,6 +847,62 @@ async def on_crm_approve(callback: CallbackQuery):
             callback.message.text.replace("\n\n⏳ Processing...", "")
             + f"\n\n✅ SUBMITTED TO CRM — {display}"
         )
+
+        # Verify submission appeared in CRM
+        verification_block = ""
+        try:
+            found, crm_data, verify_error = await huntme_crm.verify_submission(
+                name=candidate.name,
+                telegram=tg_handle,
+                category="operators",
+            )
+            if found and crm_data:
+                mismatches = huntme_crm.compare_submission(
+                    submitted={
+                        "name": candidate.name,
+                        "birth_date": candidate.birth_date,
+                        "phone": candidate.phone_number,
+                        "telegram": tg_handle,
+                        "slot": slot_str,
+                    },
+                    crm_data=crm_data,
+                )
+                if mismatches:
+                    verification_block = "\n\n⚠️ MISMATCHES:\n" + "\n".join(
+                        f"  - {m}" for m in mismatches
+                    )
+                else:
+                    verification_block = "\n\n✅ VERIFIED — all fields match CRM"
+            elif verify_error:
+                verification_block = f"\n\n⚠️ Verify: {verify_error}"
+        except Exception:
+            verification_block = "\n\n⚠️ Verification check failed"
+
+        # Detailed admin notification with all submitted data
+        detail_msg = (
+            f"📋 CRM SUBMISSION DETAILS\n\n"
+            f"Candidate: {candidate.name} (@{tg_handle})\n"
+            f"Slot: {display}\n\n"
+            f"Submitted data:\n"
+            f"  Category: Team\n"
+            f"  Office: 95 (ENG+OTHER)\n"
+            f"  Name: {candidate.name}\n"
+            f"  DOB: {candidate.birth_date or 'N/A'}\n"
+            f"  Phone: {candidate.phone_number or 'N/A'} ({candidate.phone_country or 'N/A'})\n"
+            f"  Telegram: {tg_handle}\n"
+            f"  Slot: {slot_str}\n\n"
+            f"CRM answers:\n"
+            f"  Q49 Company: {crm_answers.get('company_name', 'N/A')}\n"
+            f"  Q50 English: {crm_answers.get('english_level', 'N/A')}\n"
+            f"  Q51 Experience: {crm_answers.get('experience', 'N/A')}\n"
+            f"  Q52 Notes: {crm_answers.get('additional_notes', 'N/A')}"
+            f"{verification_block}"
+        )
+        try:
+            await callback.bot.send_message(config.ADMIN_CHAT_ID, detail_msg)
+        except Exception:
+            logger.debug("Failed to send CRM detail notification")
+
     else:
         logger.warning("CRM submit failed for %s: %s", tg_user_id, error)
         await callback.message.edit_text(
