@@ -1254,7 +1254,7 @@ async def on_become_agent(callback: CallbackQuery, state: FSMContext):
         # Name known → multi-message presentation → DOB
         await state.update_data(name=name, language=lang, candidate_type="agent")
         await send_agent_presentation(callback.message.bot, callback.message.chat.id, lang)
-        await state.set_state(AgentForm.waiting_dob)
+        await state.set_state(AgentForm.waiting_ready_check)
     else:
         # No name → start from step 1
         await state.update_data(language=lang, candidate_type="agent")

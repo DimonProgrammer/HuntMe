@@ -226,7 +226,7 @@ class TestBecomeAgentRedirect:
 
         await on_become_agent(cb, state)
 
-        assert await state.get_state() == AgentForm.waiting_dob.state
+        assert await state.get_state() == AgentForm.waiting_ready_check.state
         data = await state.get_data()
         assert data["name"] == "Maria"
         assert data["language"] == "ru"
