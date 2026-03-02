@@ -276,9 +276,6 @@ _COUNTRY_PREFIXES = {
     "ar": "54",
 }
 
-# Countries where local phone format requires a leading trunk digit (0)
-# e.g. PH: +63 9xx → local 09xx (11 digits), not 9xx (10 digits)
-_TRUNK_PREFIXES = {"ph": "0", "id": "0", "ng": "0"}
 
 
 def _guess_phone_country(phone_digits: str) -> str:
@@ -330,22 +327,15 @@ def parse_phone(raw: str) -> tuple:
 
 
 def _strip_country_prefix(digits: str, country: str) -> str:
-    """Strip country code prefix from full international digits for CRM form.
+    """Strip country code prefix from full international digits.
 
-    CRM has its own phone_country dropdown that adds the prefix,
-    so we must send LOCAL digits only.
-
-    For PH/ID/NG, the local format requires a leading trunk 0
-    (e.g. PH: 639670997638 → 09670997638, not 9670997638).
+    Kept for backwards compatibility but no longer used in CRM form submissions
+    (CRM now receives the full international number directly).
     """
     prefix = _COUNTRY_PREFIXES.get(country, "")
-    local = digits[len(prefix):] if (prefix and digits.startswith(prefix)) else digits
-
-    trunk = _TRUNK_PREFIXES.get(country, "")
-    if trunk and not local.startswith(trunk):
-        local = trunk + local
-
-    return local
+    if prefix and digits.startswith(prefix):
+        return digits[len(prefix):]
+    return digits
 
 
 def _extract_app_id(result: dict) -> Optional[int]:
@@ -426,14 +416,13 @@ def _build_form_data(
     office_id: int = 95,
 ) -> aiohttp.FormData:
     """Build multipart form data for CRM application."""
-    local_number = _strip_country_prefix(phone, phone_country)
     form_data = aiohttp.FormData()
     form_data.add_field("category", "1")  # Team
     form_data.add_field("office_id", str(office_id))
     form_data.add_field("interview_appointment_date", slot)
     form_data.add_field("name", name)
     form_data.add_field("birth_date", birth_date)
-    form_data.add_field("number", local_number)
+    form_data.add_field("number", phone)  # full international number (e.g. 639670997638)
     form_data.add_field("phone_country", phone_country)
     form_data.add_field("telegram", telegram.lstrip("@"))
     form_data.add_field(
