@@ -1202,11 +1202,7 @@
             <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;font-family:'Inter',sans-serif;">Telegram *</label>
             <p style="font-size:12px;opacity:0.4;margin-bottom:8px;font-family:'Inter',sans-serif;line-height:1.4;">Дальше — 2 минуты в Telegram, без лишних вопросов</p>
             <input type="text" class="form-input" name="telegram" placeholder="@yourusername" required>
-          </div>
-
-          <div>
-            <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;font-family:'Inter',sans-serif;">Резервный контакт <span style="opacity:0.5;font-weight:400;">(необязательно)</span></label>
-            <input type="text" class="form-input" name="contact" placeholder="Телефон или email — на случай, если нет Telegram">
+            <div id="tgError" style="color:#EF4444;font-size:12px;margin-top:4px;display:none;"></div>
           </div>
 
           <button type="submit"
@@ -1334,14 +1330,26 @@
   async function handleSubmit(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button[type="submit"]');
-    btn.innerHTML = 'Отправляем…';
-    btn.disabled = true;
+    const errorDiv = document.getElementById('tgError');
 
     const form = document.getElementById('applicationForm');
+    const tgInput = form.querySelector('[name="telegram"]').value.trim();
+
+    // Validate Telegram username format
+    const tgRegex = /^@?[a-zA-Z0-9_]{5,32}$/;
+    if (!tgRegex.test(tgInput)) {
+      errorDiv.textContent = 'Корректное имя в Telegram (5-32 символов, буквы/цифры/_)';
+      errorDiv.style.display = 'block';
+      return;
+    }
+    errorDiv.style.display = 'none';
+
+    btn.innerHTML = 'Переходим…';
+    btn.disabled = true;
+
     const data = {
       name:     form.querySelector('[name="name"]').value.trim(),
-      telegram: form.querySelector('[name="telegram"]').value.trim(),
-      contact:  form.querySelector('[name="contact"]').value.trim(),
+      telegram: tgInput,
       language: form.querySelector('[name="language"]').value,
     };
 
@@ -1356,21 +1364,14 @@
       candidateId = json.id;
     } catch (_) {}
 
-    // Build deep link with candidate ID
+    // Build deep link and auto-redirect
     const deepLink = candidateId
       ? `https://t.me/apextalent_bot?start=land_ru_${candidateId}`
       : 'https://t.me/apextalent_bot?start=landing_ru';
-    document.getElementById('tgDeepLink').href = deepLink;
 
-    form.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-    form.style.opacity = '0';
-    form.style.transform = 'scale(0.97)';
-
+    // Auto-redirect after a tiny delay
     setTimeout(() => {
-      form.style.display = 'none';
-      const msg = document.getElementById('successMsg');
-      msg.style.display = 'block';
-      requestAnimationFrame(() => { msg.style.opacity = '1'; });
+      window.location.href = deepLink;
     }, 300);
   }
 

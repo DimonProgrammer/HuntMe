@@ -1187,13 +1187,9 @@
 
           <div>
             <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;font-family:'Plus Jakarta Sans',sans-serif;">Telegram Username *</label>
-            <p style="font-size:12px;opacity:0.4;margin-bottom:8px;font-family:'Plus Jakarta Sans',sans-serif;line-height:1.4;">We'll follow up in Telegram — takes about 2 minutes</p>
+            <p style="font-size:12px;opacity:0.4;margin-bottom:8px;font-family:'Plus Jakarta Sans',sans-serif;line-height:1.4;">We'll continue the conversation in Telegram</p>
             <input type="text" class="form-input" name="telegram" placeholder="@yourusername" required>
-          </div>
-
-          <div>
-            <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;font-family:'Plus Jakarta Sans',sans-serif;">Backup Contact <span style="opacity:0.5;font-weight:400;">(optional)</span></label>
-            <input type="text" class="form-input" name="contact" placeholder="Phone or email — in case you don't have Telegram">
+            <div id="tgError" style="color:#EF4444;font-size:12px;margin-top:4px;display:none;"></div>
           </div>
 
           <button type="submit"
@@ -1321,14 +1317,26 @@
   async function handleSubmit(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button[type="submit"]');
-    btn.innerHTML = 'Sending…';
-    btn.disabled = true;
+    const errorDiv = document.getElementById('tgError');
 
     const form = document.getElementById('applicationForm');
+    const tgInput = form.querySelector('[name="telegram"]').value.trim();
+
+    // Validate Telegram username format
+    const tgRegex = /^@?[a-zA-Z0-9_]{5,32}$/;
+    if (!tgRegex.test(tgInput)) {
+      errorDiv.textContent = 'Valid Telegram username (5-32 characters, letters/numbers/_)';
+      errorDiv.style.display = 'block';
+      return;
+    }
+    errorDiv.style.display = 'none';
+
+    btn.innerHTML = 'Redirecting…';
+    btn.disabled = true;
+
     const data = {
       name:     form.querySelector('[name="name"]').value.trim(),
-      telegram: form.querySelector('[name="telegram"]').value.trim(),
-      contact:  form.querySelector('[name="contact"]').value.trim(),
+      telegram: tgInput,
       language: form.querySelector('[name="language"]').value,
     };
 
@@ -1343,22 +1351,15 @@
       candidateId = json.id;
     } catch (_) {}
 
-    // Build deep link with candidate ID
+    // Build deep link and auto-redirect
     const deepLink = candidateId
       ? `https://t.me/apextalent_bot?start=land_${candidateId}`
       : 'https://t.me/apextalent_bot?start=landing';
-    document.getElementById('tgDeepLink').href = deepLink;
 
-    form.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-    form.style.opacity = '0';
-    form.style.transform = 'scale(0.97)';
-
+    // Auto-redirect after a tiny delay
     setTimeout(() => {
-      form.style.display = 'none';
-      const msg = document.getElementById('successMsg');
-      msg.style.display = 'block';
-      requestAnimationFrame(() => { msg.style.opacity = '1'; });
-    }, 300);
+      window.location.href = deepLink;
+    }, 200);
   }
 
   // ── Navbar scroll effect ─────────────────────
