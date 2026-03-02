@@ -11,7 +11,8 @@ MAIN_MENU_TEXT = (
     "🏠 100% remote, flexible shifts\n"
     "🎓 Paid training — no experience needed\n"
     "🛡 Zero fees — we pay you, never the other way\n\n"
-    "Takes 2-3 minutes to apply. Ready?"
+    "Takes 2-3 minutes to apply. Ready?\n\n"
+    "Need help? Write to @vision_dmitry"
 )
 
 BTN_APPLY = "🚀 Apply Now"
@@ -69,7 +70,7 @@ REFERRAL_TEXT = (
     "  7+ hires: $100 each"
 )
 
-ERROR_GENERIC = "Sorry, something went wrong. Please try again."
+ERROR_GENERIC = "Sorry, something went wrong. Please try again.\nIf the problem persists, contact @vision_dmitry"
 
 # ═══ VACANCY INFO ═══
 
@@ -896,11 +897,13 @@ BOOKING_HW_REMIND_PARSE_FAIL = (
 BOOKING_FETCHING_SLOTS = "Looking for available interview times..."
 BOOKING_SLOTS_ERROR = (
     "Sorry, I couldn't connect to the scheduling system right now.\n"
-    "Our team will reach out to you directly to schedule."
+    "Our team will reach out to you directly to schedule.\n\n"
+    "Or contact @vision_dmitry for faster help."
 )
 BOOKING_NO_SLOTS = (
     "No interview slots are available right now.\n"
-    "We'll notify you as soon as new slots open up!"
+    "We'll notify you as soon as new slots open up!\n\n"
+    "Questions? Write to @vision_dmitry"
 )
 BOOKING_SLOTS_TOO_SOON = (
     "All available slots are too soon to book.\n"
@@ -932,7 +935,7 @@ BOOKING_SLOT_RESERVED = (
 )
 BOOKING_CONFIRMING = "Confirming your slot..."
 BOOKING_PREFERRED_ACK = "Got it! Let me check what's available around that time..."
-BOOKING_DATA_ERROR = "Something went wrong loading your data. Our team will contact you directly."
+BOOKING_DATA_ERROR = "Something went wrong loading your data. Our team will contact you directly.\nOr write to @vision_dmitry for help."
 BOOKING_SLOT_CHOSEN = (
     "You've chosen: {display} (Manila time) ✅\n\n"
     "Our admin will review and confirm your booking shortly. 🙏"
@@ -979,12 +982,14 @@ INTERVIEW_1H_REMINDER = (
 )
 BOOKING_SOFT_REJECT = (
     "Thank you for your patience! Our team will contact you within 24 hours "
-    "to discuss next steps."
+    "to discuss next steps.\n\n"
+    "Questions? Write to @vision_dmitry"
 )
 REBOOK_NO_SLOTS = (
     "Sorry, the interview slot you selected is no longer available, "
     "and there are no other open times right now. "
-    "Our team will contact you to reschedule."
+    "Our team will contact you to reschedule.\n\n"
+    "Or write to @vision_dmitry for faster help."
 )
 REBOOK_PICK_NEW = (
     "Sorry, the slot you picked was just taken! 😔\n\n"
