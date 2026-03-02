@@ -261,19 +261,24 @@ async def cb_reject(callback: CallbackQuery):
 
     If candidate is eligible (operator, age>=18, English!=Beginner),
     append agent offer CTA to the rejection message.
+    Also clears any active FSM state so the candidate cannot continue
+    filling out the booking form after being rejected.
     """
     user_id = int(callback.data.removeprefix("rej_"))
     # Get candidate info for language + agent eligibility
     cand_lang = "en"
     cand = None
+    slot_to_release = None
     try:
         async with async_session() as session:
             result = await session.execute(
                 select(Candidate).where(Candidate.tg_user_id == user_id)
             )
             cand = result.scalar_one_or_none()
-            if cand and cand.language:
-                cand_lang = cand.language
+            if cand:
+                if cand.language:
+                    cand_lang = cand.language
+                slot_to_release = cand.huntme_crm_slot
     except Exception:
         pass
     m = msg(cand_lang)
@@ -291,9 +296,16 @@ async def cb_reject(callback: CallbackQuery):
                 candidate = result.scalar_one_or_none()
                 if candidate:
                     candidate.status = "declined"
+                    candidate.huntme_crm_slot = None
                     await session.commit()
         except Exception:
             logger.debug("Failed to update candidate status")
+
+        # Clear FSM so candidate can't continue booking flow after rejection
+        from bot.handlers.interview_booking import _clear_candidate_fsm, _release_slot
+        await _clear_candidate_fsm(user_id, callback.bot.id)
+        if slot_to_release:
+            await _release_slot(slot_to_release)
 
         await callback.answer("Rejection sent.")
         await callback.message.edit_text(callback.message.text + "\n\n❌ REJECTED")

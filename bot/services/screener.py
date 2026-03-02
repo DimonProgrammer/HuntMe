@@ -2,7 +2,7 @@
 
 Based on official HuntMe screening criteria:
 - Hardware compatibility (CPU/GPU/internet)
-- Age 18+
+- Age 18-30
 - No in-person students
 - PC/laptop required
 - English B1+ required
@@ -34,6 +34,7 @@ IMPORTANT CONTEXT:
 
 HARD DISQUALIFIERS (auto-REJECT if any is true):
 - has_pc is false → REJECT
+- age > 30 → REJECT (platform requirement, max age is 30)
 - study_status is "student_inperson" → REJECT
 - hardware_compatible is false → REJECT
 - english_level is "beginner" or "A1" or "A2" → REJECT
