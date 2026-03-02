@@ -944,7 +944,7 @@ async def on_crm_reject(callback: CallbackQuery):
             cand = result.scalar_one_or_none()
             if cand:
                 slot_to_release = cand.huntme_crm_slot
-                cand.status = "screened"
+                cand.status = "declined"
                 cand.huntme_crm_slot = None
                 await session.commit()
     except Exception:
@@ -953,11 +953,12 @@ async def on_crm_reject(callback: CallbackQuery):
     await _clear_candidate_fsm(tg_user_id, callback.bot.id)
     await _release_slot(slot_to_release)
 
-    # Notify candidate — get language from candidate record
+    # Notify candidate with rejection + agent offer (same as main reject flow)
     cand_lang = cand.language if cand else "en"
     cm = msg(cand_lang)
     try:
-        await callback.bot.send_message(tg_user_id, cm.BOOKING_SOFT_REJECT)
+        from bot.handlers.agent_flow import send_agent_offer
+        await send_agent_offer(callback.bot, tg_user_id, cm.REJECTION_MESSAGE, cand_lang)
     except Exception:
         logger.debug("Failed to notify candidate about CRM rejection")
 
