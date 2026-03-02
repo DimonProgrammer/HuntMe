@@ -765,11 +765,17 @@ async def on_crm_approve(callback: CallbackQuery):
         cand_lang = candidate.language or "en"
         cm = msg(cand_lang)
         cal_link = _google_calendar_link(slot_str, display)
-        invite_text = cm.BOOKING_INVITE.format(display=display)
-        if cal_link:
-            invite_text += f"\n\n📆 [Add to Google Calendar]({cal_link})"
+        cal_block = f"📆 [Add to Google Calendar]({cal_link})\n\n" if cal_link else ""
+        invite_text = cm.BOOKING_INVITE.format(display=display, cal_block=cal_block)
         try:
             await callback.bot.send_message(tg_user_id, invite_text, parse_mode="Markdown")
+            # Send .ics file with reminders
+            ics_data = _generate_ics(slot_str)
+            if ics_data:
+                from io import BytesIO
+                from aiogram.types import BufferedInputFile
+                ics_file = BufferedInputFile(ics_data, filename="interview.ics")
+                await callback.bot.send_document(tg_user_id, ics_file)
         except Exception:
             logger.debug("Failed to notify candidate (CRM disabled)")
 
@@ -835,15 +841,21 @@ async def on_crm_approve(callback: CallbackQuery):
         cand_lang = cand.language if cand else "en"
         cm = msg(cand_lang)
         cal_link = _google_calendar_link(slot_str, display)
-        invite_text = cm.BOOKING_INVITE.format(display=display)
-        if cal_link:
-            invite_text += f"\n\n📆 [Add to Google Calendar]({cal_link})"
+        cal_block = f"📆 [Add to Google Calendar]({cal_link})\n\n" if cal_link else ""
+        invite_text = cm.BOOKING_INVITE.format(display=display, cal_block=cal_block)
         try:
             await callback.bot.send_message(
                 tg_user_id,
                 invite_text,
                 parse_mode="Markdown",
             )
+            # Send .ics file with reminders (15min, 1h, 6h)
+            ics_data = _generate_ics(slot_str)
+            if ics_data:
+                from io import BytesIO
+                from aiogram.types import BufferedInputFile
+                ics_file = BufferedInputFile(ics_data, filename="interview.ics")
+                await callback.bot.send_document(tg_user_id, ics_file)
         except Exception:
             logger.debug("Failed to notify candidate about confirmed booking")
 
@@ -1193,13 +1205,62 @@ def _google_calendar_link(slot_str: str, display: str) -> Optional[str]:
         title = urllib.parse.quote("Interview — Apex Talent (Live Stream Operator)")
         details = urllib.parse.quote(
             "Join via Zoom or Discord.\n"
-            "Manager contact: @hr_helper31 (Telegram) or wa.me/14433037260 (WhatsApp)"
+            "Manager contact: @hr_helper31 (Telegram) or wa.me/14433037260 (WhatsApp)\n\n"
+            "⚠️ Set reminders: 6 hours, 1 hour, and 15 minutes before!"
         )
         dates = f"{slot_utc.strftime(fmt)}/{end_utc.strftime(fmt)}"
         return (
             f"https://calendar.google.com/calendar/render"
             f"?action=TEMPLATE&text={title}&dates={dates}&details={details}"
         )
+    except Exception:
+        return None
+
+
+def _generate_ics(slot_str: str) -> Optional[bytes]:
+    """Generate .ics calendar file with VALARM reminders (15min, 1h, 6h).
+
+    Returns bytes content or None on error.
+    """
+    try:
+        slot_dt = _dt.datetime.strptime(slot_str, "%d.%m.%Y %H:%M")
+        slot_utc = slot_dt - _dt.timedelta(hours=8)
+        end_utc = slot_utc + _dt.timedelta(hours=1)
+        fmt = "%Y%m%dT%H%M%SZ"
+        uid = f"interview-{slot_utc.strftime('%Y%m%d%H%M')}@apextalent.pro"
+
+        ics = (
+            "BEGIN:VCALENDAR\r\n"
+            "VERSION:2.0\r\n"
+            "PRODID:-//Apex Talent//Interview Bot//EN\r\n"
+            "CALSCALE:GREGORIAN\r\n"
+            "METHOD:PUBLISH\r\n"
+            "BEGIN:VEVENT\r\n"
+            f"UID:{uid}\r\n"
+            f"DTSTART:{slot_utc.strftime(fmt)}\r\n"
+            f"DTEND:{end_utc.strftime(fmt)}\r\n"
+            "SUMMARY:Interview — Apex Talent (Live Stream Operator)\r\n"
+            "DESCRIPTION:Join via Zoom or Discord.\\n"
+            "Manager: @hr_helper31 (Telegram) or wa.me/14433037260 (WhatsApp)\r\n"
+            "BEGIN:VALARM\r\n"
+            "TRIGGER:-PT6H\r\n"
+            "ACTION:DISPLAY\r\n"
+            "DESCRIPTION:Interview in 6 hours\r\n"
+            "END:VALARM\r\n"
+            "BEGIN:VALARM\r\n"
+            "TRIGGER:-PT1H\r\n"
+            "ACTION:DISPLAY\r\n"
+            "DESCRIPTION:Interview in 1 hour\r\n"
+            "END:VALARM\r\n"
+            "BEGIN:VALARM\r\n"
+            "TRIGGER:-PT15M\r\n"
+            "ACTION:DISPLAY\r\n"
+            "DESCRIPTION:Interview in 15 minutes\r\n"
+            "END:VALARM\r\n"
+            "END:VEVENT\r\n"
+            "END:VCALENDAR\r\n"
+        )
+        return ics.encode("utf-8")
     except Exception:
         return None
 

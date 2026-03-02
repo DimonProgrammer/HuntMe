@@ -486,25 +486,35 @@ async def submit_application(
 # ═══ AGENT CRM SUBMISSION ═══
 
 
-def _build_agent_form_data(
+def _build_agent_json(
     name: str,
     birth_date: str,
     phone: str,
     phone_country: str,
     telegram: str,
-    office_id: int = 95,
-) -> aiohttp.FormData:
-    """Build multipart form data for agent CRM application (Team category)."""
-    local_number = _strip_country_prefix(phone, phone_country)
-    form_data = aiohttp.FormData()
-    form_data.add_field("category", "1")  # Team (not Solo)
-    form_data.add_field("office_id", str(office_id))
-    form_data.add_field("name", name)
-    form_data.add_field("birth_date", birth_date)
-    form_data.add_field("number", local_number)
-    form_data.add_field("phone_country", phone_country)
-    form_data.add_field("telegram", telegram.lstrip("@"))
-    return form_data
+) -> dict:
+    """Build JSON payload for agent CRM application.
+
+    Agent endpoint accepts JSON (not multipart), no office_id needed,
+    phone number in full international format with + prefix.
+    """
+    # Build full international number with + prefix
+    prefix = _COUNTRY_PREFIXES.get(phone_country, "")
+    if prefix and phone.startswith(prefix):
+        full_number = "+" + phone
+    elif phone.startswith("+"):
+        full_number = phone
+    else:
+        full_number = "+" + prefix + phone
+
+    return {
+        "category": "1",  # Team
+        "name": name,
+        "birth_date": birth_date,
+        "number": full_number,
+        "phone_country": phone_country,
+        "telegram": telegram.lstrip("@"),
+    }
 
 
 async def submit_agent(
@@ -513,15 +523,13 @@ async def submit_agent(
     phone: str,
     phone_country: str,
     telegram: str,
-    office_id: int = 95,
 ) -> tuple:
     """Submit agent application to HuntMe CRM.
 
+    Agent endpoint uses JSON (not multipart/form-data).
     Returns: (success: bool, error_message: Optional[str])
     """
-    form_data = _build_agent_form_data(
-        name, birth_date, phone, phone_country, telegram, office_id,
-    )
+    payload = _build_agent_json(name, birth_date, phone, phone_country, telegram)
 
     token = await _ensure_token()
     if not token:
@@ -529,13 +537,14 @@ async def submit_agent(
 
     base = _base_url()
     url = "%s/api/backend/requests/create/agent" % base
+    headers = {**_base_headers(), "Content-Type": "application/json"}
     try:
         async with aiohttp.ClientSession(
-            headers=_base_headers(), cookies=_auth_cookies()
+            headers=headers, cookies=_auth_cookies()
         ) as session:
             async with session.post(
                 url,
-                data=form_data,
+                json=payload,
                 timeout=aiohttp.ClientTimeout(total=20),
             ) as resp:
                 if resp.status in (200, 201):
@@ -549,16 +558,12 @@ async def submit_agent(
                     new_token = await _ensure_token()
                     if not new_token:
                         return False, "CRM re-auth failed"
-                    form_data2 = _build_agent_form_data(
-                        name, birth_date, phone, phone_country,
-                        telegram, office_id,
-                    )
                     async with aiohttp.ClientSession(
-                        headers=_base_headers(), cookies=_auth_cookies()
+                        headers=headers, cookies=_auth_cookies()
                     ) as session2:
                         async with session2.post(
                             url,
-                            data=form_data2,
+                            json=payload,
                             timeout=aiohttp.ClientTimeout(total=20),
                         ) as resp2:
                             if resp2.status in (200, 201):

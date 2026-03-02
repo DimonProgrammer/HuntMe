@@ -219,7 +219,9 @@ async def _notify_admin_agent(
 ):
     tg_username = message.from_user.username or ""
     tg_display = f"@{tg_username}" if tg_username else "no username"
-    local_number = huntme_crm._strip_country_prefix(digits, country)
+    # Agent CRM uses full international number with + prefix
+    prefix = huntme_crm._COUNTRY_PREFIXES.get(country, "")
+    full_number = f"+{digits}" if digits and not digits.startswith("+") else digits
     crm_status = "CRM submitted" if crm_ok else f"CRM failed: {crm_error or 'unknown'}"
     admin_text = (
         f"[AGENT {'✅' if crm_ok else '❌'} {crm_status}]\n\n"
@@ -228,10 +230,9 @@ async def _notify_admin_agent(
         f"DOB: {data.get('dob', 'N/A')}\n"
         f"Phone: {data.get('phone', 'N/A')}\n"
         f"Lang: {data.get('language', 'en').upper()}\n\n"
-        f"CRM submitted data:\n"
+        f"CRM submitted data (JSON):\n"
         f"  Category: Team (1)\n"
-        f"  Office: 95\n"
-        f"  Number (local): {local_number}\n"
+        f"  Number: {full_number}\n"
         f"  Phone country: {country}\n"
         f"  Telegram: {tg_username}"
     )

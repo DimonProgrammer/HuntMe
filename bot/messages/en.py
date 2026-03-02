@@ -949,17 +949,17 @@ BOOKING_CONFIRMED = (
     "Please be ready 2-3 minutes before your slot. See you there! 🙂"
 )
 BOOKING_INVITE = (
-    "Here is your invitation to interview to work remotely "
-    "as a live stream moderator:\n\n"
-    "📅 {display}\n\n"
-    "🕒 Time zone: GMT +8 (Manila)\n"
-    "Please check that the time zone matches your local time.\n\n"
-    "💻 Format: Our manager will contact you on the day of your interview. "
-    "Please stay in touch and reply to the message.\n"
-    "Zoom or Discord app.\n\n"
-    "Contacts: @hr_helper31 (Telegram)\n"
-    "👉 Send \"+\"  wa.me/14433037260  (WhatsApp)\n\n"
-    "If your plans change, please notify us via this chat bot.\n\n"
+    "🎉 Your interview is confirmed!\n\n"
+    "📅 {display}\n"
+    "🕒 Time zone: GMT+8 (Manila)\n"
+    "Please make sure to convert to your local time.\n\n"
+    "💻 Format: Zoom or Discord\n"
+    "Our manager will contact you on the interview day.\n"
+    "Please stay online and reply promptly.\n\n"
+    "👉 Send \"+\" to @hr\\_helper31 (Telegram)\n"
+    "or wa.me/14433037260 (WhatsApp)\n\n"
+    "{cal_block}"
+    "If your plans change, let us know via this bot.\n\n"
     "See you there!"
 )
 INTERVIEW_MORNING_CONFIRM = (
