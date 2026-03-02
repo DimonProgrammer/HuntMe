@@ -1,7 +1,7 @@
 """11-step FSM flow for operator (Live Stream Moderator) qualification.
 
 Steps: name → PC → age → study/work → english → PC confidence →
-       CPU → GPU → internet → start date → contact
+       CPU → GPU → internet → start date → phone
 
 Features:
 - Objection auto-handling at every step
@@ -28,6 +28,7 @@ from bot.config import config
 from bot.database import async_session
 from bot.database.models import Candidate, FunnelEvent
 from bot.services.hardware_checker import quick_check
+from bot.services.huntme_crm import parse_phone
 from bot.messages import msg
 from bot.services.objection_handler import detect_objection, get_response
 from bot.services.screener import ScreeningResult, screen_candidate
@@ -299,7 +300,7 @@ async def _send_step_prompt(target, state: FSMContext, set_state=False):
 
     elif current == OperatorForm.waiting_contact.state:
         kb = InlineKeyboardMarkup(inline_keyboard=[_back_row(lang)])
-        await send(f"{_progress(11)} — {m.STEP_CONTACT}", reply_markup=kb)
+        await send(f"{_progress(11)} — {m.STEP_PHONE}", reply_markup=kb)
 
 
 # ═══ UNIVERSAL BACK HANDLER ═══
@@ -911,27 +912,37 @@ async def process_start_date(message: Message, state: FSMContext):
     await _track_event(message.from_user.id, "step_completed", "start_date", {"value": sdate})
     await state.set_state(OperatorForm.waiting_contact)
     kb = InlineKeyboardMarkup(inline_keyboard=[_back_row(lang)])
-    await message.answer(f"{_progress(11)} — {m.STEP_CONTACT_LAST}", reply_markup=kb)
+    await message.answer(f"{_progress(11)} — {m.STEP_PHONE_LAST}", reply_markup=kb)
 
 
-# ═══ STEP 11: Contact → Screening ═══
+# ═══ STEP 11: Phone → Screening ═══
 
 @router.message(OperatorForm.waiting_contact)
-async def process_contact(message: Message, state: FSMContext):
+async def process_phone(message: Message, state: FSMContext):
     data_pre = await state.get_data()
     lang = data_pre.get("language", "en")
     m = msg(lang)
 
     if not message.text:
-        await message.answer(m.CONTACT_VALIDATION)
+        await message.answer(m.PHONE_VALIDATION)
         return
 
     if await _handle_possible_question(message, state):
         return
 
-    contact = message.text.strip()
-    await state.update_data(contact_info=contact)
-    await _track_event(message.from_user.id, "step_completed", "contact", {"value": contact})
+    raw = message.text.strip()
+    digits, country = parse_phone(raw)
+
+    if len(digits) < 7:
+        await message.answer(m.PHONE_VALIDATION)
+        return
+
+    await state.update_data(
+        phone_number=digits,
+        phone_country=country,
+        contact_info=raw,  # backward compat for screener/DB/Notion
+    )
+    await _track_event(message.from_user.id, "step_completed", "phone", {"value": digits})
     data = await state.get_data()
 
     # Prevent duplicate processing: clear state before the 10s wait
@@ -1050,6 +1061,8 @@ async def _save_candidate(message, data, status="new", score=None, recommendatio
                 candidate.internet_speed = data.get("internet_speed")
                 candidate.start_date = data.get("start_date")
                 candidate.contact_info = data.get("contact_info")
+                candidate.phone_number = data.get("phone_number")
+                candidate.phone_country = data.get("phone_country")
                 candidate.score = score
                 candidate.recommendation = recommendation
                 candidate.status = status
@@ -1074,6 +1087,8 @@ async def _save_candidate(message, data, status="new", score=None, recommendatio
                     internet_speed=data.get("internet_speed"),
                     start_date=data.get("start_date"),
                     contact_info=data.get("contact_info"),
+                    phone_number=data.get("phone_number"),
+                    phone_country=data.get("phone_country"),
                     referrer_tg_id=data.get("referrer_tg_id"),
                     utm_source=data.get("utm_source"),
                     score=score,
@@ -1128,7 +1143,7 @@ async def _notify_admin(message, data, result):
         f"HW check: {data.get('cpu_status', 'N/A')} / {data.get('gpu_status', 'N/A')}\n"
         f"Internet: {data.get('internet_speed', 'N/A')}\n"
         f"Start: {data.get('start_date', 'N/A')}\n"
-        f"Contact: {data.get('contact_info', 'N/A')}\n"
+        f"Phone: {data.get('phone_number', 'N/A')} ({data.get('phone_country', 'N/A')})\n"
         f"{'Referred by: ' + str(data.get('referrer_tg_id')) + chr(10) if data.get('referrer_tg_id') else ''}"
         f"{'Source: ' + data.get('utm_source', '') + chr(10) if data.get('utm_source') else ''}"
         f"Lang: {data.get('language', 'en').upper()}"
@@ -1189,6 +1204,8 @@ async def _send_to_n8n(message, data, result):
                     "internet_speed": data.get("internet_speed"),
                     "start_date": data.get("start_date"),
                     "contact_info": data.get("contact_info"),
+                    "phone_number": data.get("phone_number"),
+                    "phone_country": data.get("phone_country"),
                     "score": result.overall_score,
                     "recommendation": result.recommendation,
                 },

@@ -87,27 +87,7 @@ async def on_birth_date(message: Message, state: FSMContext):
         return
 
     await state.update_data(birth_date=birth_date)
-    await state.set_state(InterviewBooking.waiting_phone)
-    await message.answer(m.BOOKING_PHONE)
-
-
-# ═══ PHONE ═══
-
-
-@router.message(InterviewBooking.waiting_phone, F.text)
-async def on_phone(message: Message, state: FSMContext):
-    data = await state.get_data()
-    lang = data.get("language", "en")
-    m = msg(lang)
-    raw = message.text.strip()
-    digits, country = huntme_crm.parse_phone(raw)
-
-    if len(digits) < 7:
-        await message.answer(m.BOOKING_PHONE_FAIL)
-        return
-
-    await state.update_data(phone_number=digits, phone_country=country)
-
+    # Phone already collected in Step 11 of operator_flow — skip to experience
     await state.set_state(InterviewBooking.waiting_experience)
     await message.answer(m.BOOKING_EXPERIENCE)
 

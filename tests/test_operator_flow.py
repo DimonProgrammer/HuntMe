@@ -25,7 +25,7 @@ from bot.handlers.operator_flow import (
     process_gpu_simple_gaming,
     process_internet,
     process_start_date,
-    process_contact,
+    process_phone,
     cb_go_back,
     catch_text_in_button_states,
 )
@@ -184,8 +184,8 @@ class TestHappyPathDirect:
         assert data["start_date"] == "Next Monday"
         assert await state.get_state() == OperatorForm.waiting_contact.state
 
-    async def test_step11_contact_completes_flow(self, state):
-        msg = make_message("@johndoe")
+    async def test_step11_phone_completes_flow(self, state):
+        msg = make_message("+639664469038")
         await state.set_state(OperatorForm.waiting_contact)
         await state.update_data(
             name="John Smith", has_pc=True, age=22, study_status="working",
@@ -193,7 +193,7 @@ class TestHappyPathDirect:
             gpu_model="RTX 3060", internet_speed="200 Mbps", start_date="Monday",
             candidate_type="operator",
         )
-        await process_contact(msg, state)
+        await process_phone(msg, state)
 
         # PASS → booking flow auto-started (state = waiting_birth_date)
         assert await state.get_state() == InterviewBooking.waiting_birth_date.state
@@ -483,8 +483,8 @@ class TestFullFlowIntegration:
         await process_start_date(make_message("This week"), state)
         assert await state.get_state() == OperatorForm.waiting_contact.state
 
-        # Step 11: Contact → PASS → booking auto-starts
-        await process_contact(make_message("@maria_santos"), state)
+        # Step 11: Phone → PASS → booking auto-starts
+        await process_phone(make_message("+639171234567"), state)
         assert await state.get_state() == InterviewBooking.waiting_birth_date.state
 
     async def test_complete_flow_simplified_hw(self, state):
@@ -517,5 +517,5 @@ class TestFullFlowIntegration:
         # Finish
         await process_internet(make_message("100 Mbps wifi"), state)
         await process_start_date(make_message("Tomorrow"), state)
-        await process_contact(make_message("+234 901 234 5678"), state)
+        await process_phone(make_message("+234 901 234 5678"), state)
         assert await state.get_state() == InterviewBooking.waiting_birth_date.state

@@ -226,22 +226,26 @@ STEP_START_DATE = (
     "We can schedule your interview and start training the same day!"
 )
 
-STEP_CONTACT = (
+STEP_PHONE = (
     "Last one!\n\n"
-    "Please share your contact for the interview:\n"
-    "• Telegram @username (preferred)\n• Or WhatsApp number"
+    "What is your phone number (with country code)?\n"
+    "For example: +639171234567 or 09171234567"
 )
-STEP_CONTACT_LAST = (
+STEP_PHONE_LAST = (
     "Last question! 🙂\n\n"
-    "Please share your contact for the interview:\n"
-    "• Telegram @username (preferred)\n"
-    "• Or WhatsApp number"
+    "What is your phone number (with country code)?\n"
+    "For example: +639171234567 or 09171234567"
 )
-CONTACT_VALIDATION = (
-    "Please type your contact info:\n"
-    "• Telegram @username (preferred)\n"
-    "• Or WhatsApp number"
+PHONE_VALIDATION = (
+    "That doesn't look like a valid phone number.\n"
+    "Please enter your full phone number with country code,\n"
+    "for example: +639171234567 or 09171234567"
 )
+
+# Legacy aliases
+STEP_CONTACT = STEP_PHONE
+STEP_CONTACT_LAST = STEP_PHONE_LAST
+CONTACT_VALIDATION = PHONE_VALIDATION
 
 # ═══ SCREENING / COMPLETION ═══
 
