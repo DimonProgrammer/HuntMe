@@ -299,24 +299,28 @@ def _guess_phone_country(phone_digits: str) -> str:
 
 
 def parse_phone(raw: str) -> tuple:
-    """Extract LOCAL digits from phone string and guess country.
+    """Normalize phone to full international digits and guess country.
 
-    CRM has its own country selector (+63, +62, etc.) —
-    we only send the local number without country code.
+    CRM expects full number WITH country code (e.g. 639664469038).
+    phone_country is sent separately for the flag dropdown.
 
-    Returns: (local_digits, country_code)
+    Handles PH specifics: local 09xx → 639xx, bare 9xx → 639xx.
+
+    Returns: (full_international_digits, country_code)
     """
     digits = re.sub(r"\D", "", raw)
     country = _guess_phone_country(digits)
-
-    # Strip country code prefix (CRM adds it via phone_country dropdown)
     prefix = _COUNTRY_PREFIXES.get(country, "")
-    if prefix and digits.startswith(prefix):
-        digits = digits[len(prefix):]
 
-    # PH local format: 09xx → strip leading 0
-    if country == "ph" and digits.startswith("0"):
-        digits = digits[1:]
+    if prefix and digits.startswith(prefix):
+        # Already has country code → keep as is
+        pass
+    elif digits.startswith("0"):
+        # Local format with leading 0 (e.g. PH 09xx) → replace 0 with country code
+        digits = prefix + digits[1:]
+    else:
+        # Bare local number (e.g. 9664469038) → prepend country code
+        digits = prefix + digits
 
     return digits, country
 
