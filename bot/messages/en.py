@@ -896,8 +896,7 @@ BOOKING_HW_REMIND_PARSE_FAIL = (
 )
 BOOKING_TG_NICK = (
     "Last step — what is your Telegram username?\n\n"
-    "Send it without @ (example: john_doe)\n"
-    "If you don't have a username, type \"-\""
+    "Send it without @ (example: john_doe)"
 )
 BOOKING_TG_NICK_SAVED = "Got it! ✅"
 BOOKING_FETCHING_SLOTS = "Looking for available interview times..."

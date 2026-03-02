@@ -202,7 +202,7 @@ async def on_tg_nick(message: Message, state: FSMContext):
     m = msg(lang)
 
     raw = message.text.strip()
-    nick = raw.lstrip("@") if raw != "-" else ""
+    nick = raw.lstrip("@")
     await state.update_data(tg_nick=nick)
 
     # Persist to DB so on_crm_approve can read it without FSM

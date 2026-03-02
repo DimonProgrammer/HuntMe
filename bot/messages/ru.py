@@ -902,8 +902,7 @@ BOOKING_HW_REMIND_PARSE_FAIL = (
 )
 BOOKING_TG_NICK = (
     "Последний шаг — укажи свой Telegram-юзернейм.\n\n"
-    "Отправь без @ (пример: ivan_ivanov)\n"
-    "Если нет юзернейма — напиши \"-\""
+    "Отправь без @ (пример: ivan_ivanov)"
 )
 BOOKING_TG_NICK_SAVED = "Принято! ✅"
 BOOKING_FETCHING_SLOTS = "Ищу доступные слоты для интервью..."
