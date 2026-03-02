@@ -350,7 +350,7 @@ def _build_form_data(
     )
     form_data.add_field(
         "questions_and_answers.0.answer_text",
-        crm_answers.get("company_name", "Apex Talent"),
+        crm_answers.get("company_name", "https://www.apextalent.pro/"),
     )
     form_data.add_field(
         "questions_and_answers.1.question_id", _QUESTION_IDS["english"]
@@ -576,13 +576,13 @@ You receive candidate data and must produce answers for 4 specific questions.
 Answer in English, concise and professional. Return ONLY valid JSON, no markdown.
 
 Context:
-- Company name presented to candidates: "Apex Talent"
+- Company website presented to candidates: https://www.apextalent.pro/
 - Role: Live Stream Operator (behind the scenes — OBS, chat moderation, scheduling)
 - This is NOT a modeling/on-camera role
 
 Questions to answer:
 1. company_name: Which company name was presented to the candidate?
-   → Always "Apex Talent"
+   → Always "https://www.apextalent.pro/"
 
 2. english_level: What is the candidate's English proficiency level?
    → Translate the bot's level to a CRM-friendly description.
@@ -674,6 +674,17 @@ async def generate_crm_answers(
 
         data = json.loads(cleaned)
 
+        # Always override company_name with the URL
+        data["company_name"] = "https://www.apextalent.pro/"
+
+        # Ensure english_level has a value (fallback to candidate's level)
+        if not data.get("english_level") or data["english_level"] == "Not specified":
+            data["english_level"] = english_level or "Not specified"
+
+        # Ensure experience has a value (fallback to candidate's answer)
+        if not data.get("experience") or data["experience"] == "Not specified":
+            data["experience"] = (experience[:200] if experience else "No prior experience specified")
+
         # Ensure additional_notes always includes HW + internet details
         hw_parts = []
         if cpu_model and cpu_model != "Not specified":
@@ -712,7 +723,7 @@ async def generate_crm_answers(
     hw_str = " | ".join(hw_parts) if hw_parts else "Not specified"
 
     return {
-        "company_name": "Apex Talent",
+        "company_name": "https://www.apextalent.pro/",
         "english_level": eng_map.get(english_level, english_level or "Not specified"),
         "experience": experience[:200] if experience else "No prior experience specified",
         "additional_notes": "Available: %s. Score: %s/100. HW: %s" % (

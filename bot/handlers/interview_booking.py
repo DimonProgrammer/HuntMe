@@ -18,11 +18,11 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
-from sqlalchemy import delete, select
+from sqlalchemy import delete, select, update
 
 from bot.config import config
 from bot.database import async_session
-from bot.database.models import Candidate, SlotReservation
+from bot.database.models import Candidate, FsmState, SlotReservation
 from bot.messages import msg
 from bot.services import huntme_crm
 from bot.services.huntme_crm import _MANILA_TZ
@@ -282,6 +282,26 @@ async def _try_reserve_slot(slot_str: str, tg_user_id: int) -> bool:
             session.add(SlotReservation(slot_str=slot_str, tg_user_id=tg_user_id, reserved_at=now))
         await session.commit()
         return True
+
+
+async def _clear_candidate_fsm(tg_user_id: int, bot_id: int):
+    """Clear FSM state for a candidate (called from admin callbacks).
+
+    Prevents the reminder system from sending inactivity prompts
+    to candidates who have completed or exited the booking flow.
+    """
+    try:
+        async with async_session() as session:
+            await session.execute(
+                update(FsmState)
+                .where(FsmState.chat_id == tg_user_id)
+                .where(FsmState.user_id == tg_user_id)
+                .where(FsmState.bot_id == bot_id)
+                .values(state=None)
+            )
+            await session.commit()
+    except Exception:
+        logger.debug("Failed to clear FSM for candidate %s", tg_user_id)
 
 
 async def _release_slot(slot_str: str):
@@ -759,6 +779,7 @@ async def on_crm_approve(callback: CallbackQuery):
         except Exception:
             logger.exception("Failed to update candidate status (CRM disabled)")
 
+        await _clear_candidate_fsm(tg_user_id, callback.bot.id)
         await _release_slot(slot_str)
 
         cand_lang = candidate.language or "en"
@@ -823,6 +844,9 @@ async def on_crm_approve(callback: CallbackQuery):
                     await session.commit()
         except Exception:
             logger.exception("Failed to update CRM status")
+
+        # Clear FSM state so reminder system stops monitoring this candidate
+        await _clear_candidate_fsm(tg_user_id, callback.bot.id)
 
         # Release slot reservation (no longer needed after successful submit)
         await _release_slot(slot_str)
@@ -933,6 +957,7 @@ async def on_crm_reject(callback: CallbackQuery):
     except Exception:
         logger.exception("Failed to update candidate after CRM rejection")
 
+    await _clear_candidate_fsm(tg_user_id, callback.bot.id)
     await _release_slot(slot_to_release)
 
     # Notify candidate — get language from candidate record
@@ -1200,14 +1225,20 @@ def _google_calendar_link(slot_str: str, display: str) -> Optional[str]:
 
 
 def _parse_date(raw: str) -> Optional[str]:
-    """Parse birth date from various formats. Returns dd.MM.yyyy or None."""
+    """Parse birth date from various formats. Returns dd.MM.yyyy or None.
+
+    Validates: not in future, not too old, must be 18+.
+    """
     raw = raw.strip()
-    # Try common formats
+    today = _dt.date.today()
     for fmt in ("%d.%m.%Y", "%d/%m/%Y", "%d-%m-%Y", "%Y-%m-%d", "%m/%d/%Y"):
         try:
-            dt = _dt.datetime.strptime(raw, fmt)
-            # Sanity check: not in the future, not too old
-            if dt.year < 1950 or dt.year > 2010:
+            dt = _dt.datetime.strptime(raw, fmt).date()
+            if dt.year < 1950 or dt >= today:
+                continue
+            # 18+ check
+            age = (today - dt).days // 365
+            if age < 18:
                 continue
             return dt.strftime("%d.%m.%Y")
         except ValueError:

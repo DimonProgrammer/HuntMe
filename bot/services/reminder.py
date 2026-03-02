@@ -30,6 +30,11 @@ logger = logging.getLogger(__name__)
 
 # FSM state prefixes we monitor for inactivity
 _MONITORED_PREFIXES = ("OperatorForm:", "InterviewBooking:")
+# States where we should NOT send inactivity reminders
+# (candidate is waiting for admin action or flow is complete)
+_SKIP_STATES = frozenset({
+    "InterviewBooking:waiting_crm_approval",
+})
 _MAX_PROMPTS = 2
 _INACTIVITY_MINUTES = 10
 _SECOND_PROMPT_HOURS = 6
@@ -83,6 +88,9 @@ async def _process_reminders(bot: Bot):
             continue
         # Only monitor screening / booking states
         if not any(fsm.state.startswith(p) for p in _MONITORED_PREFIXES):
+            continue
+        # Skip states where candidate is waiting for admin (not actionable by candidate)
+        if fsm.state in _SKIP_STATES:
             continue
 
         data = json.loads(fsm.data or "{}")
