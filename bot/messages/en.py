@@ -894,6 +894,12 @@ BOOKING_HW_REMIND_PARSE_FAIL = (
     "Couldn't understand that. Try a different format, e.g.:\n"
     "'in 1 hour', 'in 30 minutes', 'tomorrow'"
 )
+BOOKING_TG_NICK = (
+    "Last step — what is your Telegram username?\n\n"
+    "Send it without @ (example: john_doe)\n"
+    "If you don't have a username, type \"-\""
+)
+BOOKING_TG_NICK_SAVED = "Got it! ✅"
 BOOKING_FETCHING_SLOTS = "Looking for available interview times..."
 BOOKING_SLOTS_ERROR = (
     "Sorry, I couldn't connect to the scheduling system right now.\n"

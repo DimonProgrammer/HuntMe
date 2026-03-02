@@ -43,6 +43,7 @@ class InterviewBooking(StatesGroup):
     waiting_hw_gpu = State()       # exact GPU — only if missing from screening
     waiting_hw_internet = State()  # exact internet — only if missing from screening
     waiting_hw_remind = State()    # candidate can't answer now — pick reminder time
+    waiting_tg_nick = State()
     waiting_slot_choice = State()
     waiting_slot_preferred = State()
     waiting_crm_approval = State()  # slot chosen, pending admin approval
@@ -142,9 +143,9 @@ async def _start_hw_collection(message: Message, state: FSMContext):
         await message.answer(m.BOOKING_HW_INTERNET, reply_markup=_cant_now_kb(m))
         return
 
-    # All hardware present — proceed to slot selection
-    await message.answer(m.BOOKING_FETCHING_SLOTS)
-    await _show_slots(message, state)
+    # All hardware present — ask for Telegram username
+    await state.set_state(InterviewBooking.waiting_tg_nick)
+    await message.answer(m.BOOKING_TG_NICK)
 
 
 @router.callback_query(
@@ -189,6 +190,38 @@ async def on_hw_internet(message: Message, state: FSMContext):
     speed = message.text.strip()
     await state.update_data(internet_speed=speed)
     await _start_hw_collection(message, state)
+
+
+# ═══ TELEGRAM NICK ═══
+
+
+@router.message(InterviewBooking.waiting_tg_nick, F.text)
+async def on_tg_nick(message: Message, state: FSMContext):
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
+
+    raw = message.text.strip()
+    nick = raw.lstrip("@") if raw != "-" else ""
+    await state.update_data(tg_nick=nick)
+
+    # Persist to DB so on_crm_approve can read it without FSM
+    tg_user_id = data.get("booking_tg_user_id", message.from_user.id)
+    try:
+        async with async_session() as session:
+            result = await session.execute(
+                select(Candidate).where(Candidate.tg_user_id == tg_user_id)
+            )
+            cand = result.scalar_one_or_none()
+            if cand:
+                cand.tg_username = nick
+                await session.commit()
+    except Exception:
+        logger.debug("Failed to update tg_username for candidate %s", tg_user_id)
+
+    await message.answer(m.BOOKING_TG_NICK_SAVED)
+    await message.answer(m.BOOKING_FETCHING_SLOTS)
+    await _show_slots(message, state)
 
 
 def _parse_reminder_delta(text: str) -> Optional[_dt.timedelta]:
