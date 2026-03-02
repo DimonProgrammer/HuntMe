@@ -10,10 +10,10 @@ import logging
 import re
 from datetime import datetime
 
-from aiogram import Bot, Router
+from aiogram import Bot, F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from bot.config import config
 from bot.messages import msg
@@ -44,7 +44,7 @@ async def send_agent_offer(bot: Bot, chat_id: int, text: str, lang: str = "en") 
 
 
 async def send_agent_presentation(bot: Bot, chat_id: int, lang: str = "en") -> None:
-    """Send 4-message agent presentation with 5s delays, ending with DOB question."""
+    """Send 4-message agent presentation with 5s delays, then ask if ready."""
     m = msg(lang)
     await bot.send_message(chat_id, m.AGENT_MSG_1_INTRO)
     await asyncio.sleep(5)
@@ -53,10 +53,17 @@ async def send_agent_presentation(bot: Bot, chat_id: int, lang: str = "en") -> N
     await bot.send_message(chat_id, m.AGENT_MSG_3_EARNINGS)
     await asyncio.sleep(5)
     await bot.send_message(chat_id, m.AGENT_MSG_4_CTA)
+    await asyncio.sleep(2)
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=m.BTN_AGENT_YES, callback_data="agent_yes")],
+        [InlineKeyboardButton(text=m.BTN_AGENT_MAYBE, callback_data="agent_maybe")],
+    ])
+    await bot.send_message(chat_id, m.AGENT_READY_CHECK, reply_markup=kb)
 
 
 class AgentForm(StatesGroup):
     waiting_name = State()
+    waiting_ready_check = State()
     waiting_dob = State()
     waiting_phone = State()
 
@@ -78,7 +85,44 @@ async def agent_name(message: Message, state: FSMContext):
     first_name = name.split()[0] if name else name
     await message.answer(m.STEP_NAME_GREETING.format(name=first_name))
     await send_agent_presentation(message.bot, message.chat.id, lang)
+    await state.set_state(AgentForm.waiting_ready_check)
+
+
+# --- Ready Check: Yes/No ---
+
+@router.callback_query(AgentForm.waiting_ready_check, F.data == "agent_yes")
+async def agent_ready_yes(callback: CallbackQuery, state: FSMContext):
+    """User confirmed interest in agent role."""
+    await callback.answer()
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
+
     await state.set_state(AgentForm.waiting_dob)
+    await callback.message.answer(
+        f"{m.AGENT_STEP_DOB_INTRO}\n\n{m.AGENT_STEP_DOB}"
+    )
+
+
+@router.callback_query(AgentForm.waiting_ready_check, F.data == "agent_maybe")
+async def agent_ready_maybe(callback: CallbackQuery, state: FSMContext):
+    """User declined for now — show share link."""
+    await callback.answer()
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
+
+    share_url = (
+        "https://t.me/share/url?url=https://apextalent.pro/ru"
+        if lang == "ru"
+        else "https://t.me/share/url?url=https://apextalent.pro"
+    )
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=m.BTN_SHARE_REFERRAL, url=share_url)],
+    ])
+
+    await state.clear()
+    await callback.message.answer(m.AGENT_DECLINED, reply_markup=kb)
 
 
 # --- Step 2: Date of Birth ---
@@ -160,23 +204,34 @@ async def agent_phone(message: Message, state: FSMContext):
     await message.answer(m.AGENT_WELCOME.format(name=data.get("name", "")))
 
     # Admin FYI notification (no approve/reject buttons)
-    await _notify_admin_agent(message, data, crm_ok=crm_ok, crm_error=crm_error)
+    await _notify_admin_agent(
+        message, data, digits=digits, country=country,
+        crm_ok=crm_ok, crm_error=crm_error,
+    )
 
 
 # --- Admin notification ---
 
 async def _notify_admin_agent(
-    message: Message, data: dict, crm_ok: bool = False, crm_error: str = None,
+    message: Message, data: dict,
+    digits: str = "", country: str = "",
+    crm_ok: bool = False, crm_error: str = None,
 ):
     tg_username = message.from_user.username or "N/A"
-    crm_status = "✅ CRM submitted" if crm_ok else f"❌ CRM failed: {crm_error or 'unknown'}"
+    crm_status = "CRM submitted" if crm_ok else f"CRM failed: {crm_error or 'unknown'}"
     admin_text = (
-        f"[AGENT → {crm_status}]\n\n"
+        f"[AGENT {'✅' if crm_ok else '❌'} {crm_status}]\n\n"
         f"Name: {data.get('name', 'N/A')}\n"
         f"TG: @{tg_username} (ID: {message.from_user.id})\n"
         f"DOB: {data.get('dob', 'N/A')}\n"
         f"Phone: {data.get('phone', 'N/A')}\n"
-        f"Lang: {data.get('language', 'en').upper()}"
+        f"Lang: {data.get('language', 'en').upper()}\n\n"
+        f"CRM submitted data:\n"
+        f"  Category: Team (1)\n"
+        f"  Office: 95\n"
+        f"  Number (local): {digits}\n"
+        f"  Phone country: {country}\n"
+        f"  Telegram: {tg_username}"
     )
     try:
         await message.bot.send_message(config.ADMIN_CHAT_ID, admin_text)

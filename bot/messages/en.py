@@ -785,10 +785,26 @@ AGENT_MSG_3_EARNINGS = (
 )
 
 AGENT_MSG_4_CTA = (
-    "Sounds good? Let's get you registered! 🚀\n\n"
-    "I just need a couple of details.\n\n"
-    "What is your date of birth?\n"
-    "Please enter in format: DD.MM.YYYY (e.g. 15.05.1998)"
+    "Sounds like something you'd be good at? Let's do this! 🚀"
+)
+
+AGENT_READY_CHECK = (
+    "Ready to move forward with the application?"
+)
+
+AGENT_DECLINED = (
+    "No problem! 😊\n\n"
+    "If this changes later, you can always come back. "
+    "In the meantime, if you know someone who'd be great at this, "
+    "feel free to share the opportunity with them!"
+)
+
+BTN_AGENT_YES = "I'm in! 🔥"
+BTN_AGENT_MAYBE = "Maybe later"
+
+AGENT_STEP_DOB_INTRO = (
+    "Great! Let's get you registered. 🚀\n\n"
+    "I just need a couple of details."
 )
 
 AGENT_WELCOME = (
