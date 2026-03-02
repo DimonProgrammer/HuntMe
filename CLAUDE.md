@@ -49,6 +49,7 @@
 - CRM question_id (49-52) привязаны к office_id=95. При смене офиса могут измениться
 - CRM cookie = `__Secure-authjs.session-token` (Auth.js v5, НЕ next-auth)
 - CRM create returns 201 (не 200). Telegram поле — без `@`
+- CRM поле `number` — полный международный номер БЕЗ стрипа (e.g. `639670997638`, не `9670997638`)
 
 ## Архитектура
 
