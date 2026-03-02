@@ -614,7 +614,7 @@ async def _request_crm_approval(message: Message, state: FSMContext, slot_str: s
 
     # Send admin the full preview + approve/reject buttons
     # Use FSM state data as fallback for screening fields (in case DB wasn't updated)
-    tg_handle = candidate.tg_username or str(tg_user_id)
+    tg_handle = candidate.tg_username or ""
     score_val = candidate.score or data.get("ai_score") or 0
     rec_val = candidate.recommendation or data.get("ai_recommendation") or "N/A"
     hw_compatible = candidate.hardware_compatible
@@ -625,7 +625,7 @@ async def _request_crm_approval(message: Message, state: FSMContext, slot_str: s
     )
     preview = (
         f"📋 CRM SUBMISSION — APPROVAL NEEDED\n\n"
-        f"Candidate: {candidate.name} (@{tg_handle})\n"
+        f"Candidate: {candidate.name} ({('@' + tg_handle) if tg_handle else 'no username'})\n"
         f"ID: {tg_user_id}\n"
         f"Score: {score_val}/100 ({rec_val})\n\n"
         f"📝 Form data for CRM:\n"
@@ -715,7 +715,7 @@ async def on_crm_approve(callback: CallbackQuery):
         return
 
     slot_str = candidate.huntme_crm_slot
-    tg_handle = candidate.tg_username or str(tg_user_id)
+    tg_handle = candidate.tg_username or ""
 
     # Safe slot parsing
     if " " not in slot_str:
@@ -885,7 +885,7 @@ async def on_crm_approve(callback: CallbackQuery):
         # Detailed admin notification with all submitted data
         detail_msg = (
             f"📋 CRM SUBMISSION DETAILS\n\n"
-            f"Candidate: {candidate.name} (@{tg_handle})\n"
+            f"Candidate: {candidate.name} ({('@' + tg_handle) if tg_handle else 'no username'})\n"
             f"Slot: {display}\n\n"
             f"Submitted data:\n"
             f"  Category: Team\n"
@@ -1133,7 +1133,7 @@ async def on_rebook_slot(callback: CallbackQuery):
     if not candidate:
         return
 
-    tg_handle = candidate.tg_username or str(tg_user_id)
+    tg_handle = candidate.tg_username or ""
     hw_icon = (
         "Compatible" if candidate.hardware_compatible
         else "Incompatible" if candidate.hardware_compatible is False
@@ -1141,7 +1141,7 @@ async def on_rebook_slot(callback: CallbackQuery):
     )
     preview = (
         f"📋 CRM SUBMISSION — APPROVAL NEEDED (re-booked)\n\n"
-        f"Candidate: {candidate.name} (@{tg_handle})\n"
+        f"Candidate: {candidate.name} ({('@' + tg_handle) if tg_handle else 'no username'})\n"
         f"ID: {tg_user_id}\n"
         f"Score: {candidate.score or 0}/100 ({candidate.recommendation or 'N/A'})\n\n"
         f"📝 New slot: {display}\n"

@@ -325,6 +325,18 @@ def parse_phone(raw: str) -> tuple:
     return digits, country
 
 
+def _strip_country_prefix(digits: str, country: str) -> str:
+    """Strip country code prefix from full international digits for CRM form.
+
+    CRM has its own phone_country dropdown that adds the prefix,
+    so we must send LOCAL digits only (e.g. 9750688047, not 639750688047).
+    """
+    prefix = _COUNTRY_PREFIXES.get(country, "")
+    if prefix and digits.startswith(prefix):
+        return digits[len(prefix):]
+    return digits
+
+
 def _build_form_data(
     name: str,
     birth_date: str,
@@ -336,41 +348,42 @@ def _build_form_data(
     office_id: int = 95,
 ) -> aiohttp.FormData:
     """Build multipart form data for CRM application."""
+    local_number = _strip_country_prefix(phone, phone_country)
     form_data = aiohttp.FormData()
     form_data.add_field("category", "1")  # Team
     form_data.add_field("office_id", str(office_id))
     form_data.add_field("interview_appointment_date", slot)
     form_data.add_field("name", name)
     form_data.add_field("birth_date", birth_date)
-    form_data.add_field("number", phone)
+    form_data.add_field("number", local_number)
     form_data.add_field("phone_country", phone_country)
     form_data.add_field("telegram", telegram.lstrip("@"))
     form_data.add_field(
-        "questions_and_answers.0.question_id", _QUESTION_IDS["company_name"]
+        "questions_and_answers[0][question_id]", _QUESTION_IDS["company_name"]
     )
     form_data.add_field(
-        "questions_and_answers.0.answer_text",
+        "questions_and_answers[0][answer_text]",
         crm_answers.get("company_name", "https://www.apextalent.pro/"),
     )
     form_data.add_field(
-        "questions_and_answers.1.question_id", _QUESTION_IDS["english"]
+        "questions_and_answers[1][question_id]", _QUESTION_IDS["english"]
     )
     form_data.add_field(
-        "questions_and_answers.1.answer_text",
+        "questions_and_answers[1][answer_text]",
         crm_answers.get("english_level", "Not specified"),
     )
     form_data.add_field(
-        "questions_and_answers.2.question_id", _QUESTION_IDS["experience"]
+        "questions_and_answers[2][question_id]", _QUESTION_IDS["experience"]
     )
     form_data.add_field(
-        "questions_and_answers.2.answer_text",
+        "questions_and_answers[2][answer_text]",
         crm_answers.get("experience", "Not specified"),
     )
     form_data.add_field(
-        "questions_and_answers.3.question_id", _QUESTION_IDS["additional"]
+        "questions_and_answers[3][question_id]", _QUESTION_IDS["additional"]
     )
     form_data.add_field(
-        "questions_and_answers.3.answer_text",
+        "questions_and_answers[3][answer_text]",
         crm_answers.get("additional_notes", "")[:500],
     )
     # Required checkboxes (always checked)
@@ -482,12 +495,13 @@ def _build_agent_form_data(
     office_id: int = 95,
 ) -> aiohttp.FormData:
     """Build multipart form data for agent CRM application (Team category)."""
+    local_number = _strip_country_prefix(phone, phone_country)
     form_data = aiohttp.FormData()
     form_data.add_field("category", "1")  # Team (not Solo)
     form_data.add_field("office_id", str(office_id))
     form_data.add_field("name", name)
     form_data.add_field("birth_date", birth_date)
-    form_data.add_field("number", phone)
+    form_data.add_field("number", local_number)
     form_data.add_field("phone_country", phone_country)
     form_data.add_field("telegram", telegram.lstrip("@"))
     return form_data
