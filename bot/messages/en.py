@@ -812,9 +812,10 @@ AGENT_STEP_DOB_INTRO = (
 )
 
 AGENT_WELCOME = (
-    "Great, send the following message to our interviewer Dmitry "
-    "(@jobwith_huntme), he will help you register:\n\n"
-    "\"Hi, I'm {name}, I want to join the Traffic Reapers team\"\n\n"
+    "It's all good, we confirmed your application to the agent vacancy!\n\n"
+    "Please, send the following message to our interviewer Dmitry "
+    "@jobwith\\_huntme, he will help you register:\n\n"
+    "\"Hi, I'm from Dima, I want to join the Traffic Reapers team\"\n\n"
     "Once you've done it, send me a \"+\" in reply to this message"
 )
 

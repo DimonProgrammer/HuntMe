@@ -151,8 +151,8 @@ class TestAgentPhone:
         patch_crm.submit_agent.assert_called_once()
         # Welcome message with CRM contact and name
         welcome_call = msg.answer.call_args_list[-1]
-        assert "@jobwith_huntme" in welcome_call[0][0]
-        assert "John Doe" in welcome_call[0][0]
+        assert "jobwith" in welcome_call[0][0] and "huntme" in welcome_call[0][0]
+        assert "Traffic Reapers" in welcome_call[0][0]
         # Admin notified with CRM status
         admin_text = msg.bot.send_message.call_args[0][1]
         assert "CRM" in admin_text
@@ -170,7 +170,7 @@ class TestAgentPhone:
         assert await state.get_state() is None
         # Welcome message still sent
         welcome_call = msg.answer.call_args_list[-1]
-        assert "@jobwith_huntme" in welcome_call[0][0]
+        assert "jobwith" in welcome_call[0][0] and "huntme" in welcome_call[0][0]
         # Admin notified about failure
         admin_text = msg.bot.send_message.call_args[0][1]
         assert "❌" in admin_text

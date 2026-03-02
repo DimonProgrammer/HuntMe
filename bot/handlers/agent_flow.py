@@ -201,7 +201,7 @@ async def agent_phone(message: Message, state: FSMContext):
     )
 
     # Welcome message (always, even if CRM failed)
-    await message.answer(m.AGENT_WELCOME.format(name=data.get("name", "")))
+    await message.answer(m.AGENT_WELCOME, parse_mode="Markdown")
 
     # Admin FYI notification (no approve/reject buttons)
     await _notify_admin_agent(
