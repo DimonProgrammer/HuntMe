@@ -32,7 +32,7 @@ router = Router()
 
 # Temporary flag — set False to skip actual CRM API submission
 # (admin approval still works: DB status updates, candidate gets notified)
-CRM_SUBMISSION_ENABLED = False
+CRM_SUBMISSION_ENABLED = True
 
 
 class InterviewBooking(StatesGroup):
