@@ -805,7 +805,7 @@ async def on_crm_approve(callback: CallbackQuery):
     )
 
     # Submit to CRM
-    success, error = await huntme_crm.submit_application(
+    success, error, qa_saved = await huntme_crm.submit_application(
         name=candidate.name,
         birth_date=candidate.birth_date or "01.01.2000",
         phone=candidate.phone_number or "",
@@ -895,6 +895,7 @@ async def on_crm_approve(callback: CallbackQuery):
             verification_block = "\n\n⚠️ Verification check failed"
 
         # Detailed admin notification with all submitted data
+        qa_status = "✅ saved" if qa_saved else "⚠️ NOT saved (PATCH failed)"
         detail_msg = (
             f"📋 CRM SUBMISSION DETAILS\n\n"
             f"Candidate: {candidate.name} ({('@' + tg_handle) if tg_handle else 'no username'})\n"
@@ -907,7 +908,7 @@ async def on_crm_approve(callback: CallbackQuery):
             f"  Phone: {candidate.phone_number or 'N/A'} ({candidate.phone_country or 'N/A'})\n"
             f"  Telegram: {tg_handle}\n"
             f"  Slot: {slot_str}\n\n"
-            f"CRM answers:\n"
+            f"CRM answers (Q&A: {qa_status}):\n"
             f"  Q49 Company: {crm_answers.get('company_name', 'N/A')}\n"
             f"  Q50 English: {crm_answers.get('english_level', 'N/A')}\n"
             f"  Q51 Experience: {crm_answers.get('experience', 'N/A')}\n"

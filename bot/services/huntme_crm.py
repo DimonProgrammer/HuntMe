@@ -337,6 +337,73 @@ def _strip_country_prefix(digits: str, country: str) -> str:
     return digits
 
 
+def _extract_app_id(result: dict) -> Optional[int]:
+    """Extract application ID from CRM create response."""
+    if not result or not isinstance(result, dict):
+        return None
+    if "id" in result:
+        return result["id"]
+    data = result.get("data")
+    if isinstance(data, dict) and "id" in data:
+        return data["id"]
+    if isinstance(data, list) and data and isinstance(data[0], dict):
+        return data[0].get("id")
+    return None
+
+
+def _build_questions_payload(crm_answers: dict) -> list:
+    """Build questions_and_answers list for CRM Q&A update."""
+    return [
+        {"question_id": int(_QUESTION_IDS["company_name"]),
+         "answer_text": crm_answers.get("company_name", "https://www.apextalent.pro/")},
+        {"question_id": int(_QUESTION_IDS["english"]),
+         "answer_text": crm_answers.get("english_level", "Not specified")},
+        {"question_id": int(_QUESTION_IDS["experience"]),
+         "answer_text": crm_answers.get("experience", "Not specified")},
+        {"question_id": int(_QUESTION_IDS["additional"]),
+         "answer_text": crm_answers.get("additional_notes", "")[:500]},
+    ]
+
+
+async def _update_questions(app_id: int, crm_answers: dict) -> tuple:
+    """Try to PATCH Q&A onto an existing CRM application.
+
+    The create endpoint ignores questions_and_answers in multipart format.
+    This tries PATCH /api/backend/requests/{id} with JSON payload.
+    Returns: (success: bool, error: str or None)
+    """
+    questions = _build_questions_payload(crm_answers)
+
+    token = await _ensure_token()
+    if not token:
+        return False, "Auth failed"
+
+    base = _base_url()
+    headers = {**_base_headers(), "Content-Type": "application/json"}
+
+    try:
+        async with aiohttp.ClientSession(
+            headers=headers, cookies=_auth_cookies()
+        ) as session:
+            async with session.patch(
+                f"{base}/api/backend/requests/{app_id}",
+                json={"questions_and_answers": questions},
+                timeout=aiohttp.ClientTimeout(total=20),
+            ) as resp:
+                text = await resp.text()
+                if resp.status in (200, 201):
+                    logger.info("CRM Q&A updated via PATCH for app %s", app_id)
+                    return True, None
+                logger.warning(
+                    "CRM Q&A PATCH failed for app %s: %s %s",
+                    app_id, resp.status, text[:300],
+                )
+                return False, "PATCH %s" % resp.status
+    except Exception:
+        logger.exception("CRM Q&A PATCH exception for app %s", app_id)
+        return False, "PATCH exception"
+
+
 def _build_form_data(
     name: str,
     birth_date: str,
@@ -393,6 +460,35 @@ def _build_form_data(
     return form_data
 
 
+async def _create_application(form_data, url: str) -> tuple:
+    """POST form_data to CRM create endpoint. Returns (result_json, error_str)."""
+    token = await _ensure_token()
+    if not token:
+        return None, "CRM authentication failed"
+
+    try:
+        async with aiohttp.ClientSession(
+            headers=_base_headers(), cookies=_auth_cookies()
+        ) as session:
+            async with session.post(
+                url, data=form_data,
+                timeout=aiohttp.ClientTimeout(total=20),
+            ) as resp:
+                if resp.status in (200, 201):
+                    result = await resp.json()
+                    logger.info("CRM application created: %s", result)
+                    return result, None
+                elif resp.status in (401, 403):
+                    return None, "auth_%s" % resp.status
+                else:
+                    text = await resp.text()
+                    logger.warning("CRM create failed: %s %s", resp.status, text[:300])
+                    return None, "CRM error %s: %s" % (resp.status, text[:200])
+    except Exception:
+        logger.exception("CRM create exception")
+        return None, "CRM request failed"
+
+
 async def submit_application(
     name: str,
     birth_date: str,
@@ -409,78 +505,44 @@ async def submit_application(
         crm_answers: dict from generate_crm_answers() with keys:
             company_name, english_level, experience, additional_notes
 
-    Returns: (success: bool, error_message: Optional[str])
+    Returns: (success: bool, error_message: Optional[str], qa_saved: bool)
     """
     form_data = _build_form_data(
         name, birth_date, phone, phone_country, telegram, slot,
         crm_answers, office_id,
     )
 
-    token = await _ensure_token()
-    if not token:
-        return False, "CRM authentication failed"
-
     base = _base_url()
     url = "%s/api/backend/requests/create/operator" % base
-    try:
-        async with aiohttp.ClientSession(
-            headers=_base_headers(), cookies=_auth_cookies()
-        ) as session:
-            async with session.post(
-                url,
-                data=form_data,
-                timeout=aiohttp.ClientTimeout(total=20),
-            ) as resp:
-                if resp.status in (200, 201):
-                    result = await resp.json()
-                    logger.info("CRM application submitted: %s", result)
-                    return True, None
-                elif resp.status in (401, 403):
-                    # Re-login and retry once
-                    global _session_token, _token_obtained_at
-                    _session_token = None
-                    _token_obtained_at = None
-                    new_token = await _ensure_token()
-                    if not new_token:
-                        return False, "CRM re-auth failed"
-                    # Rebuild form data (aiohttp FormData is consumed)
-                    form_data2 = _build_form_data(
-                        name, birth_date, phone, phone_country,
-                        telegram, slot, crm_answers, office_id,
-                    )
-                    async with aiohttp.ClientSession(
-                        headers=_base_headers(), cookies=_auth_cookies()
-                    ) as session2:
-                        async with session2.post(
-                            url,
-                            data=form_data2,
-                            timeout=aiohttp.ClientTimeout(total=20),
-                        ) as resp2:
-                            if resp2.status in (200, 201):
-                                result = await resp2.json()
-                                logger.info(
-                                    "CRM application submitted (retry): %s",
-                                    result,
-                                )
-                                return True, None
-                            text = await resp2.text()
-                            logger.warning(
-                                "CRM submit retry failed: %s %s",
-                                resp2.status, text[:300],
-                            )
-                            return False, "CRM error %s" % resp2.status
-                else:
-                    text = await resp.text()
-                    logger.warning(
-                        "CRM submit failed: %s %s", resp.status, text[:300]
-                    )
-                    return (
-                        False,
-                        "CRM error %s: %s" % (resp.status, text[:200]),
-                    )
-    except Exception:
-        logger.exception("CRM submit exception")
-        return False, "CRM request failed"
+
+    result, error = await _create_application(form_data, url)
+
+    # Retry on auth failure
+    if error and error.startswith("auth_"):
+        global _session_token, _token_obtained_at
+        _session_token = None
+        _token_obtained_at = None
+        form_data2 = _build_form_data(
+            name, birth_date, phone, phone_country,
+            telegram, slot, crm_answers, office_id,
+        )
+        result, error = await _create_application(form_data2, url)
+
+    if error:
+        return False, error, False
+
+    # Application created — try to PATCH Q&A onto it
+    app_id = _extract_app_id(result)
+    if not app_id:
+        logger.warning("Cannot extract app ID from CRM response: %s", result)
+        return True, None, False
+
+    qa_ok, qa_err = await _update_questions(app_id, crm_answers)
+    if qa_ok:
+        return True, None, True
+    else:
+        logger.warning("Q&A PATCH failed for app %s: %s", app_id, qa_err)
+        return True, None, False
 
 
 # ═══ AGENT CRM SUBMISSION ═══
