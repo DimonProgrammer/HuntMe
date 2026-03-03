@@ -203,13 +203,32 @@ async def _check_landing_lead_entered_bot(candidate_id: int, name: str, tg_link:
                 select(Candidate).where(Candidate.id == candidate_id)
             )
             candidate = result.scalar_one_or_none()
-            if candidate and candidate.status == "pending_bot":
-                msg = (
-                    f"⚠️ <b>Лид #{candidate_id} не зашёл в бота</b>\n\n"
-                    f"👤 {name} — {tg_link}\n"
-                    f"Прошло 30 мин. Свяжитесь вручную."
+            if not candidate or candidate.status != "pending_bot":
+                return  # Already entered bot (via deep link) or record gone
+
+            # Also check by TG username: user may have opened bot directly (not via deep link),
+            # creating a separate candidate record without linking to this landing record.
+            tg_username = (candidate.contact_info or "").lstrip("@")
+            if tg_username:
+                by_username = await session.execute(
+                    select(Candidate).where(
+                        Candidate.tg_username == tg_username,
+                        Candidate.status != "pending_bot",
+                        Candidate.id != candidate_id,
+                    )
                 )
-                await _bot.send_message(config.ADMIN_CHAT_ID, msg, parse_mode="HTML")
+                if by_username.scalar_one_or_none():
+                    # Person entered bot via direct link — mark landing record as linked
+                    candidate.status = "in_bot"
+                    await session.commit()
+                    return
+
+            msg = (
+                f"⚠️ <b>Лид #{candidate_id} не зашёл в бота</b>\n\n"
+                f"👤 {name} — {tg_link}\n"
+                f"Прошло 30 мин. Свяжитесь вручную."
+            )
+            await _bot.send_message(config.ADMIN_CHAT_ID, msg, parse_mode="HTML")
     except Exception as exc:
         logger.error("Landing lead check failed: %s", exc)
 
