@@ -201,12 +201,17 @@ async def agent_phone(message: Message, state: FSMContext):
     )
 
     # Welcome message (always, even if CRM failed)
-    await message.answer(m.AGENT_WELCOME, parse_mode="Markdown")
+    try:
+        await message.answer(m.AGENT_WELCOME, parse_mode="Markdown")
+        msg_sent = True
+    except Exception:
+        logger.exception("Failed to send AGENT_WELCOME to candidate")
+        msg_sent = False
 
     # Admin FYI notification (no approve/reject buttons)
     await _notify_admin_agent(
         message, data, digits=digits, country=country,
-        crm_ok=crm_ok, crm_error=crm_error,
+        crm_ok=crm_ok, crm_error=crm_error, msg_sent=msg_sent,
     )
 
 
@@ -216,20 +221,22 @@ async def _notify_admin_agent(
     message: Message, data: dict,
     digits: str = "", country: str = "",
     crm_ok: bool = False, crm_error: str = None,
+    msg_sent: bool = True,
 ):
     tg_username = message.from_user.username or ""
     tg_display = f"@{tg_username}" if tg_username else "no username"
     # Agent CRM uses full international number with + prefix
-    prefix = huntme_crm._COUNTRY_PREFIXES.get(country, "")
     full_number = f"+{digits}" if digits and not digits.startswith("+") else digits
     crm_status = "CRM submitted" if crm_ok else f"CRM failed: {crm_error or 'unknown'}"
+    msg_status = "✅ sent" if msg_sent else "❌ FAILED to send"
     admin_text = (
         f"[AGENT {'✅' if crm_ok else '❌'} {crm_status}]\n\n"
         f"Name: {data.get('name', 'N/A')}\n"
         f"TG: {tg_display} (ID: {message.from_user.id})\n"
         f"DOB: {data.get('dob', 'N/A')}\n"
         f"Phone: {data.get('phone', 'N/A')}\n"
-        f"Lang: {data.get('language', 'en').upper()}\n\n"
+        f"Lang: {data.get('language', 'en').upper()}\n"
+        f"Welcome msg: {msg_status}\n\n"
         f"CRM submitted data (JSON):\n"
         f"  Category: Team (1)\n"
         f"  Number: {full_number}\n"
