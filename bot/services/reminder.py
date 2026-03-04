@@ -24,6 +24,7 @@ from sqlalchemy import select, update
 from bot.database.connection import async_session
 from bot.database.models import Candidate, FsmState
 from bot.messages import msg
+from bot.services import huntme_crm
 from bot.services.huntme_crm import _MANILA_TZ
 
 logger = logging.getLogger(__name__)
@@ -34,6 +35,7 @@ _MONITORED_PREFIXES = ("OperatorForm:", "InterviewBooking:")
 # (candidate is waiting for admin action or flow is complete)
 _SKIP_STATES = frozenset({
     "InterviewBooking:waiting_crm_approval",
+    "InterviewBooking:waiting_slot_notify",   # candidate waiting for slots to open
 })
 _MAX_PROMPTS = 2
 _INACTIVITY_MINUTES = 10
@@ -337,3 +339,105 @@ async def _send_interview_1h(bot: Bot, cand: Candidate, m, time_str: str):
         logger.info("Interview 1h reminder sent to %s", cand.tg_user_id)
     except Exception:
         logger.debug("Failed to send interview 1h reminder to %s", cand.tg_user_id)
+
+
+# ═══ SLOT WAITING QUEUE ═══
+
+_SLOT_CHECK_INTERVAL_SEC = 6 * 3600   # check every 6 hours
+_SLOT_WAIT_MAX_DAYS = 4               # after 4 days without slots — send to support
+
+
+async def run_slot_notify_checker(bot: Bot):
+    """Every 6h: notify waiting candidates if slots opened in 4-day window."""
+    import asyncio
+    while True:
+        await asyncio.sleep(_SLOT_CHECK_INTERVAL_SEC)
+        try:
+            await _process_slot_notifications(bot)
+        except Exception:
+            logger.exception("Slot notify checker error")
+
+
+async def _process_slot_notifications(bot: Bot):
+    """Check all slot-waiting candidates; notify if slots in 4-day window appeared."""
+    from bot.handlers.interview_booking import _format_slot_display
+
+    try:
+        async with async_session() as session:
+            result = await session.execute(
+                select(Candidate).where(
+                    Candidate.waiting_for_slot == True,  # noqa: E712
+                    Candidate.tg_user_id.isnot(None),
+                )
+            )
+            candidates = result.scalars().all()
+    except Exception:
+        logger.exception("Failed to query slot-waiting candidates")
+        return
+
+    if not candidates:
+        return
+
+    # One CRM request for all candidates
+    raw_slots = await huntme_crm.get_available_slots(office_id=95)
+    if raw_slots is None:
+        return  # CRM unavailable — try again in 6h
+
+    window_slots = huntme_crm.filter_slots_by_window(raw_slots, days=4)
+    nearest = huntme_crm.pick_nearest_slots(window_slots, count=5) if window_slots else []
+
+    expiry_cutoff = datetime.utcnow() - timedelta(days=_SLOT_WAIT_MAX_DAYS)
+
+    for cand in candidates:
+        tg_user_id = cand.tg_user_id
+        lang = cand.language or "en"
+        m_lang = msg(lang)
+
+        # Check expiry: slot_wait_since > 4 days → send to support
+        wait_since = cand.slot_wait_since or cand.updated_at
+        if wait_since and wait_since < expiry_cutoff:
+            try:
+                await bot.send_message(tg_user_id, m_lang.BOOKING_SLOT_WAIT_EXPIRED)
+                async with async_session() as session:
+                    await session.execute(
+                        update(Candidate)
+                        .where(Candidate.tg_user_id == tg_user_id)
+                        .values(waiting_for_slot=False, slot_wait_since=None)
+                    )
+                    await session.commit()
+            except Exception:
+                logger.debug("Failed to expire slot-wait for %s", tg_user_id)
+            continue
+
+        if not nearest:
+            continue  # No slots yet — try again in 6h
+
+        # Slots available — notify candidate
+        try:
+            buttons = [
+                [InlineKeyboardButton(
+                    text=_format_slot_display(slot_str),
+                    callback_data=f"book_{slot_str.replace('.', '-').replace(' ', '_')}"
+                )]
+                for slot_str in nearest
+            ]
+            keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+            await bot.send_message(tg_user_id, m_lang.BOOKING_SLOTS_REOPENED, reply_markup=keyboard)
+
+            # Update FSM state → waiting_slot_choice (FSM data preserved)
+            async with async_session() as session:
+                await session.execute(
+                    update(FsmState)
+                    .where(FsmState.chat_id == tg_user_id)
+                    .where(FsmState.user_id == tg_user_id)
+                    .where(FsmState.bot_id == bot.id)
+                    .values(state="InterviewBooking:waiting_slot_choice")
+                )
+                await session.execute(
+                    update(Candidate)
+                    .where(Candidate.tg_user_id == tg_user_id)
+                    .values(waiting_for_slot=False, slot_wait_since=None)
+                )
+                await session.commit()
+        except Exception:
+            logger.debug("Failed to notify slot-waiting candidate %s", tg_user_id)

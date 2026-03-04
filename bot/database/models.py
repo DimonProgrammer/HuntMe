@@ -68,6 +68,10 @@ class Candidate(Base):
     interview_morning_sent: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True, default=False)
     interview_reminder_sent: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True, default=False)
 
+    # Slot waiting queue
+    waiting_for_slot: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True, default=False)
+    slot_wait_since: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
 

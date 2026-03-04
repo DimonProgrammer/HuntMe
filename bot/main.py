@@ -336,6 +336,7 @@ async def main():
     # Background tasks
     asyncio.create_task(reminder.run_reminder_checker(bot))
     asyncio.create_task(reminder.run_interview_reminder_checker(bot))
+    asyncio.create_task(reminder.run_slot_notify_checker(bot))
     logger.info("Reminder checkers started")
 
     # Set Telegram command menu (blue button near keyboard)

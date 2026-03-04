@@ -44,6 +44,7 @@ class InterviewBooking(StatesGroup):
     waiting_hw_internet = State()  # exact internet — only if missing from screening
     waiting_hw_remind = State()    # candidate can't answer now — pick reminder time
     waiting_tg_nick = State()
+    waiting_slot_notify = State()   # candidate is in waiting queue for slots
     waiting_slot_choice = State()
     waiting_slot_preferred = State()
     waiting_crm_approval = State()  # slot chosen, pending admin approval
@@ -397,6 +398,30 @@ def _filter_slots_by_preference(
     return all_slots[:5], False
 
 
+async def _handle_no_window_slots(message: Message, state: FSMContext):
+    """No slots in 4-day window — park candidate in waiting queue."""
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
+    tg_user_id = data.get("booking_tg_user_id", message.from_user.id)
+
+    try:
+        async with async_session() as session:
+            result = await session.execute(
+                select(Candidate).where(Candidate.tg_user_id == tg_user_id)
+            )
+            cand = result.scalar_one_or_none()
+            if cand:
+                cand.waiting_for_slot = True
+                cand.slot_wait_since = _dt.datetime.utcnow()
+                await session.commit()
+    except Exception:
+        logger.debug("Failed to set waiting_for_slot for %s", tg_user_id)
+
+    await state.set_state(InterviewBooking.waiting_slot_notify)
+    await message.answer(m.BOOKING_NO_SLOTS_WINDOW)
+
+
 async def _show_slots(
     message: Message, state: FSMContext, preferred_text: str = None
 ):
@@ -406,21 +431,29 @@ async def _show_slots(
     m = msg(lang)
     tg_user_id = data.get("booking_tg_user_id", 0)
 
-    slots = await huntme_crm.get_available_slots(office_id=95)
+    raw_slots = await huntme_crm.get_available_slots(office_id=95)
 
     retry_kb = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="🔄 Try Again", callback_data="retry_slots")],
         [InlineKeyboardButton(text=m.BTN_BACK_MENU, callback_data="back_main")],
     ])
 
-    if slots is None:
+    if raw_slots is None:
         await message.answer(m.BOOKING_SLOTS_ERROR, reply_markup=retry_kb)
         await state.set_state(InterviewBooking.waiting_slot_choice)
         return
 
+    # Filter to 4-day window (CRM rejects bookings beyond that)
+    slots = huntme_crm.filter_slots_by_window(raw_slots, days=4)
+
     if not slots:
-        await message.answer(m.BOOKING_NO_SLOTS, reply_markup=retry_kb)
-        await state.set_state(InterviewBooking.waiting_slot_choice)
+        if raw_slots:
+            # Slots exist in CRM but all are beyond 4-day window → waiting queue
+            await _handle_no_window_slots(message, state)
+        else:
+            # No slots at all
+            await message.answer(m.BOOKING_NO_SLOTS, reply_markup=retry_kb)
+            await state.set_state(InterviewBooking.waiting_slot_choice)
         return
 
     # Cleanup expired reservations
@@ -544,6 +577,15 @@ async def on_retry_slots(callback: CallbackQuery, state: FSMContext):
     except Exception:
         pass
     await _show_slots(callback.message, state)
+
+
+@router.message(InterviewBooking.waiting_slot_notify, F.text)
+async def on_slot_notify_message(message: Message, state: FSMContext):
+    """Candidate messaged while in waiting queue — reassure them."""
+    data = await state.get_data()
+    lang = data.get("language", "en")
+    m = msg(lang)
+    await message.answer(m.BOOKING_NO_SLOTS_WINDOW)
 
 
 @router.message(InterviewBooking.waiting_slot_preferred, F.text)

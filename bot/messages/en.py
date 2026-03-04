@@ -1006,3 +1006,16 @@ REBOOK_CONFIRMED = (
     "New slot selected: {display} (Manila time) ✅\n"
     "Our admin will review and confirm your booking shortly. 🙏"
 )
+BOOKING_NO_SLOTS_WINDOW = (
+    "No interview slots are available in the next 4 days. 🗓️\n\n"
+    "We'll message you as soon as one opens up — usually within 24 hours.\n"
+    "No need to do anything, just keep an eye on this chat!"
+)
+BOOKING_SLOTS_REOPENED = (
+    "Great news! 🎉 Interview slots are now available.\n\n"
+    "Here are the nearest times (Manila time, GMT+8) — pick one that works for you:"
+)
+BOOKING_SLOT_WAIT_EXPIRED = (
+    "We weren't able to find an open slot for your interview. "
+    "Please contact @vision_dmitry and we'll schedule you directly."
+)

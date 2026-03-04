@@ -265,6 +265,21 @@ def pick_nearest_slots(
     return [dt.strftime("%d.%m.%Y %H:%M") for dt in all_slots[:count]]
 
 
+def filter_slots_by_window(slots: dict, days: int = 4) -> dict:
+    """Keep only slots within today+days (Manila date, inclusive).
+
+    CRM does not accept bookings more than 4 days ahead.
+    Uses Manila timezone so the cutoff matches CRM's local date.
+    """
+    today_manila = datetime.now(_MANILA_TZ).date()
+    cutoff = today_manila + timedelta(days=days)
+    return {
+        date_str: times
+        for date_str, times in slots.items()
+        if datetime.strptime(date_str, "%d.%m.%Y").date() <= cutoff
+    }
+
+
 _COUNTRY_PREFIXES = {
     "ph": "63",
     "id": "62",
