@@ -14,8 +14,11 @@ from aiogram import Bot, F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
+from sqlalchemy import select
 
 from bot.config import config
+from bot.database import async_session
+from bot.database.models import Candidate
 from bot.messages import msg
 from bot.services import huntme_crm
 
@@ -188,6 +191,20 @@ async def agent_phone(message: Message, state: FSMContext):
     await state.update_data(phone=phone)
     data = await state.get_data()
     await state.clear()
+
+    # Update candidate status in DB
+    tg_user_id = message.from_user.id
+    try:
+        async with async_session() as session:
+            result = await session.execute(
+                select(Candidate).where(Candidate.tg_user_id == tg_user_id)
+            )
+            cand = result.scalar_one_or_none()
+            if cand:
+                cand.status = "agent_applied"
+                await session.commit()
+    except Exception:
+        logger.exception("Failed to update candidate status to agent_applied")
 
     # Auto-submit to CRM
     digits, country = huntme_crm.parse_phone(phone)
