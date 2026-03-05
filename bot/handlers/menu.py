@@ -72,7 +72,11 @@ async def cmd_start(message: Message, state: FSMContext):
     parts = message.text.split()
     if len(parts) > 1:
         param = parts[1].strip()
-        if param.startswith("land_"):
+        if param.startswith("agent_"):
+            # Agent landing lead → auto-start agent flow (skip menu)
+            await _handle_agent_deeplink(message, state, param)
+            return
+        elif param.startswith("land_"):
             # Landing lead → auto-start operator flow (skip menu + name)
             lang = detect_lang_from_deeplink(param)
             await _handle_landing_deeplink(message, state, param, lang)
@@ -166,6 +170,63 @@ async def _handle_landing_deeplink(
     await state.set_state(OperatorForm.waiting_has_pc)
     from bot.handlers.operator_flow import _send_step_prompt
     await _send_step_prompt(message, state)
+
+
+async def _handle_agent_deeplink(
+    message: Message, state: FSMContext, param: str,
+) -> None:
+    """Agent landing lead clicked deep link → load name from DB → auto-start agent flow."""
+    raw_id = param.removeprefix("agent_")
+    lang = "en"
+    m = msg(lang)
+
+    candidate_name = None
+    try:
+        cid = int(raw_id)
+        async with async_session() as session:
+            result = await session.execute(
+                select(Candidate).where(Candidate.id == cid)
+            )
+            candidate = result.scalar_one_or_none()
+            if candidate:
+                candidate_name = candidate.name
+                candidate.tg_user_id = message.from_user.id
+                candidate.status = "in_bot"
+                candidate.language = lang
+                candidate.candidate_type = "agent"
+                await session.commit()
+    except (ValueError, Exception) as exc:
+        logger.debug("Agent deep link parse error: %s", exc)
+
+    name = candidate_name or message.from_user.first_name or "there"
+
+    await state.update_data(
+        utm_source="agent_landing",
+        candidate_type="agent",
+        name=name,
+        language=lang,
+    )
+    await _track_event(
+        message.from_user.id, "bot_started", "start",
+        {"source": "agent_landing", "lang": lang},
+    )
+
+    # Track in Notion
+    notion_page_id = await notion_leads.on_start(
+        tg_id=message.from_user.id,
+        tg_username=message.from_user.username,
+        utm_source="agent_landing",
+    )
+    if notion_page_id:
+        await state.update_data(notion_page_id=notion_page_id)
+        await notion_leads.on_name(notion_page_id, name)
+
+    # Greeting → skip directly into agent presentation (name known)
+    from bot.handlers.agent_flow import AgentForm, send_agent_presentation
+    greeting = m.AGENT_GREETING_LANDING.format(name=name)
+    await message.answer(greeting)
+    await send_agent_presentation(message.bot, message.chat.id, lang)
+    await state.set_state(AgentForm.waiting_ready_check)
 
 
 # --- /referral — generate unique referral link ---

@@ -142,7 +142,7 @@ async def landing_webhook(request):
                 name=name,
                 contact_info=f"@{telegram}" if telegram else backup_contact,
                 platform="landing",
-                candidate_type="operator",
+                candidate_type=data.get("candidate_type", "operator"),
                 status="pending_bot",
                 language=language,
             )
@@ -157,17 +157,25 @@ async def landing_webhook(request):
     if _bot:
         tg_link = f'<a href="https://t.me/{telegram}">@{telegram}</a>' if telegram else "—"
         backup_line = f"\n📱 Backup: {backup_contact}" if backup_contact else ""
-        # Build deep link: land_ru_<id> for Russian, land_<id> for English
-        dl_prefix = "land_ru_" if language == "ru" else "land_"
+        # Build deep link based on candidate type
+        candidate_type = data.get("candidate_type", "operator")
+        if candidate_type == "agent":
+            dl_prefix = "agent_"
+        elif language == "ru":
+            dl_prefix = "land_ru_"
+        else:
+            dl_prefix = "land_"
         deep = f"https://t.me/apextalent_bot?start={dl_prefix}{candidate_id}" if candidate_id else ""
         lang_flag = "🇷🇺 RU" if language == "ru" else "🇬🇧 EN"
+        type_label = "🔍 Agent" if candidate_type == "agent" else "🖥️ Operator"
         admin_msg = (
             f"🌐 <b>Новый лид с сайта</b>\n\n"
             f"👤 <b>Имя:</b> {name or '—'}\n"
             f"✈️ <b>Telegram:</b> {tg_link}{backup_line}\n"
+            f"🎭 <b>Тип:</b> {type_label}\n"
             f"🌍 <b>Язык:</b> {lang_flag}\n"
             f"🆔 #{candidate_id or '?'}\n\n"
-            f"⏳ Ждём в боте для скрининга"
+            f"⏳ Ждём в боте"
         )
         if deep:
             admin_msg += f"\n🔗 <a href=\"{deep}\">Deep link</a>"

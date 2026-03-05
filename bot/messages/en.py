@@ -673,35 +673,35 @@ OBJ_PASSPORT = (
 
 OBJ_WHAT_IS_AGENT = (
     "Great question! 🙂\n\n"
-    "A Recruitment Agent finds and refers candidates to our streaming platform. "
-    "You don't need a PC or any equipment — you work from your phone.\n\n"
-    "You earn for every successful referral:\n"
-    "  • $50-100 per hired operator (progressive scale)\n"
-    "  • $10/day per working model — passive income for 12 months!\n\n"
-    "It's a flexible, independent role — 5 to 20+ hours per week, "
+    "A Talent Scout finds and recruits models from anywhere in the world "
+    "for our streaming platform. You don't need a PC — you work from your phone.\n\n"
+    "You earn for every model you recruit:\n"
+    "  • $10 per model's working shift — passive income for 12 months!\n"
+    "  • That's ~$200/month per model, growing as you add more\n\n"
+    "It's a flexible, independent role — work on your own schedule, "
     "with weekly USD payments.\n\n"
-    "Would you like to apply as an agent?"
+    "Would you like to apply as a Talent Scout?"
 )
 
 OBJ_AGENT_EARNINGS = (
-    "Here's how agent compensation works! 💰\n\n"
-    "Operators (one-time bonus per hire):\n"
-    "  • 1st–3rd hire: $50 each\n"
-    "  • 4th–6th hire: $75 each\n"
-    "  • 7th+ hire: $100 each\n\n"
-    "Models (passive income!):\n"
-    "  • $10 per working day for 12 months\n"
-    "  • Example: refer 5 models → ~$1,000/month\n\n"
-    "Payments: weekly in USD, minimum payout $50.\n\n"
-    "Interested in learning more?"
+    "Here's how Talent Scout compensation works! 💰\n\n"
+    "For every model you recruit:\n"
+    "  • $10 per model's working shift (recurring for 12 months)\n"
+    "  • 1 model = ~$200/month passive income\n"
+    "  • 3 models = ~$600/month\n"
+    "  • 5 models = ~$1,000/month\n\n"
+    "Your income grows every month as you add more models.\n"
+    "Average scouts earn $500+ from the first month.\n\n"
+    "Payments: weekly in USD.\n\n"
+    "Ready to get started?"
 )
 
 OBJ_AGENT_HOW_START = (
-    "Becoming an agent is simple! 🚀\n\n"
+    "Becoming a Talent Scout is simple! 🚀\n\n"
     "1. Answer a few quick questions (takes ~2 minutes)\n"
     "2. Our team reviews your application\n"
-    "3. Once approved, you get your referral materials\n"
-    "4. Start referring — earn per successful hire!\n\n"
+    "3. Once approved, you get scripts, templates, and team access\n"
+    "4. Start recruiting models — earn $10/shift per model for 12 months!\n\n"
     "No PC, no equipment needed. You work from your phone.\n\n"
     "Ready to get started? Just tap the button below!"
 )
@@ -745,24 +745,31 @@ APPLICATION_RECEIVED = (
 
 BTN_BECOME_AGENT = "🔄 Tell me about the Agent role"
 
+AGENT_GREETING_LANDING = (
+    "Hi {name}! 👋\n\n"
+    "Thanks for your interest in becoming a Talent Scout with Apex Talent!\n\n"
+    "Let me show you how this works — it'll take just a minute."
+)
+
 AGENT_OFFER_BLOCK = (
     "\n\n"
     "——\n\n"
     "💡 By the way — we have another role that might be a great fit!\n\n"
-    "As a Recruitment Agent, you earn by referring people to our platform:\n\n"
-    "  💰 $50-100 per hired operator\n"
-    "  🔄 $10/day per working model — passive income for 12 months!\n"
+    "As a Talent Scout, you recruit models worldwide and earn passive income:\n\n"
+    "  💰 $10 per model's working shift — recurring for 12 months\n"
     "  📱 Work from your phone — no PC needed\n"
-    "  🎓 Full training + team support provided\n\n"
-    "Example: refer 5 models → $1,000/month in passive income."
+    "  🎓 Full training + scripts + team support\n"
+    "  🌍 Recruit models from anywhere in the world\n\n"
+    "Example: 3 models = ~$600/month in passive income."
 )
 
 # Multi-message agent presentation (sent with delays)
 AGENT_MSG_1_INTRO = (
-    "Great! Let me tell you about the Agent role. 🙂\n\n"
-    "As a Recruitment Agent at Apex Talent, you help people find remote jobs "
-    "on our streaming platform. You connect candidates with opportunities — "
-    "and earn for every successful hire.\n\n"
+    "Great! Let me tell you about the Talent Scout role. 🙂\n\n"
+    "As a Talent Scout at Apex Talent, you find and recruit female models "
+    "from anywhere in the world for our streaming entertainment platform. "
+    "You connect talented women with income opportunities — "
+    "and earn for every model you bring in.\n\n"
     "No experience needed. No PC required. You work from your phone, "
     "on your own schedule."
 )
@@ -771,22 +778,20 @@ AGENT_MSG_2_SUPPORT = (
     "Here's what you get when you join: 👇\n\n"
     "🎓 Full training — we teach you everything step by step\n"
     "👥 Your own team with a leader who guides you\n"
-    "📋 Ready-made materials (scripts, job posts, templates)\n"
+    "📋 Ready-made scripts for social media, job boards, and Telegram groups\n"
     "💬 24/7 support in our team chat\n"
     "🌍 International community across 15+ countries"
 )
 
 AGENT_MSG_3_EARNINGS = (
     "Now let's talk earnings 💰\n\n"
-    "For every hired operator (one-time):\n"
-    "  • 1st–3rd hire: $50 each\n"
-    "  • 4th–6th hire: $75 each\n"
-    "  • 7th+ hire: $100 each\n\n"
-    "For every working model (passive income!):\n"
-    "  • $10 per working day for 12 months\n"
-    "  • Example: 1 model = $200/month for a full year\n"
-    "  • 5 models = $1,000/month — and it keeps coming\n\n"
-    "Payments: weekly in USD, $50 minimum payout."
+    "For every model you recruit (passive income!):\n"
+    "  • $10 per model's working shift — recurring for 12 months\n"
+    "  • 1 model = ~$200/month for a full year\n"
+    "  • 3 models = ~$600/month\n"
+    "  • 5 models = ~$1,000/month — and it keeps growing\n\n"
+    "Average scouts earn $500+ from the first month.\n\n"
+    "Payments: weekly in USD."
 )
 
 AGENT_MSG_4_CTA = (
