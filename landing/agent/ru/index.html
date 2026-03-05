@@ -1,24 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Talent Scout — Recruit Models Worldwide | Apex Talent</title>
-  <meta name="description" content="Become a Talent Scout at Apex Talent. Recruit models from anywhere in the world and earn $10 per shift — passive income for 12 months per model.">
+  <title>Talent Scout — Рекрутинг моделей по всему миру | Apex Talent</title>
+  <meta name="description" content="Стань Talent Scout в Apex Talent. Рекрутируй моделей со всего мира и зарабатывай $10 за смену — пассивный доход 12 месяцев с каждой модели.">
   <meta name="robots" content="noindex, nofollow">
-  <link rel="canonical" href="https://apextalent.pro/agent">
+  <link rel="canonical" href="https://apextalent.pro/agent/ru">
   <meta name="theme-color" content="#1A0F2E">
 
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="/favicon.ico" sizes="32x32">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
-  <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://apextalent.pro/agent">
+  <meta property="og:url" content="https://apextalent.pro/agent/ru">
   <meta property="og:site_name" content="Apex Talent">
-  <meta property="og:title" content="Talent Scout — Earn Passive Income Recruiting Models">
-  <meta property="og:description" content="Recruit models worldwide. Earn $10 per shift per model — passive income for 12 months. No PC needed, work from your phone.">
+  <meta property="og:title" content="Talent Scout — Пассивный доход на рекрутинге моделей">
+  <meta property="og:description" content="Рекрутируй моделей по всему миру. $10 за смену каждой модели — пассивный доход 12 месяцев. Без ПК, работай с телефона.">
   <meta property="og:image" content="https://apextalent.pro/og.jpg">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,7 +27,6 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       color: #1A0F2E;
@@ -36,152 +34,59 @@
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
     }
-
     @media (min-width: 768px) {
       body::before {
-        content: '';
-        position: fixed;
-        inset: 0;
+        content: '';position: fixed;inset: 0;
         background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-        pointer-events: none;
-        z-index: 0;
-        opacity: 0.4;
+        pointer-events: none;z-index: 0;opacity: 0.4;
       }
     }
-
     .font-heading { font-family: 'Outfit', sans-serif; }
     .font-serif   { font-family: 'Fraunces', serif; }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .animate-fade-up {
-      opacity: 0;
-      animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    .reveal {
-      opacity: 0;
-      transform: translateY(32px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
-    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-up { opacity: 0; animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
     .reveal.visible { opacity: 1; transform: translateY(0); }
     .reveal-delay-1 { transition-delay: 0.1s; }
     .reveal-delay-2 { transition-delay: 0.2s; }
     .reveal-delay-3 { transition-delay: 0.3s; }
-
-    .card {
-      background: #FFFFFF;
-      border-radius: 20px;
-      box-shadow: 0 20px 40px -10px rgba(26,15,46,0.08);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 32px 64px -16px rgba(26,15,46,0.15);
-    }
+    .card { background: #FFFFFF; border-radius: 20px; box-shadow: 0 20px 40px -10px rgba(26,15,46,0.08); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 32px 64px -16px rgba(26,15,46,0.15); }
     .card-lime { border: 2.5px solid #CCFF00; }
-
-    @keyframes floatY {
-      0%,100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
-    }
-
-    @keyframes pulseMagenta {
-      0%,100% { box-shadow: 0 0 0 0 rgba(227,59,197,0.45); }
-      60%      { box-shadow: 0 0 0 14px rgba(227,59,197,0); }
-    }
+    @keyframes floatY { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+    @keyframes pulseMagenta { 0%,100% { box-shadow: 0 0 0 0 rgba(227,59,197,0.45); } 60% { box-shadow: 0 0 0 14px rgba(227,59,197,0); } }
     .btn-pulse { animation: pulseMagenta 2.6s ease infinite; }
-
-    .text-gradient {
-      background: linear-gradient(135deg, #E33BC5 0%, #FF8C42 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .form-input {
-      width: 100%;
-      padding: 13px 16px;
-      border: 2px solid rgba(26,15,46,0.1);
-      border-radius: 12px;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 15px;
-      color: #1A0F2E;
-      background: #FAFAFA;
-      outline: none;
-      transition: border-color 0.2s ease, background 0.2s ease;
-      -webkit-appearance: none;
-    }
-    .form-input:focus {
-      border-color: #E33BC5;
-      background: #fff;
-    }
+    .text-gradient { background: linear-gradient(135deg, #E33BC5 0%, #FF8C42 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .form-input { width: 100%; padding: 13px 16px; border: 2px solid rgba(26,15,46,0.1); border-radius: 12px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; color: #1A0F2E; background: #FAFAFA; outline: none; transition: border-color 0.2s ease, background 0.2s ease; -webkit-appearance: none; }
+    .form-input:focus { border-color: #E33BC5; background: #fff; }
     .form-input::placeholder { color: rgba(26,15,46,0.35); }
-
-    .faq-answer {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.45s cubic-bezier(0.4,0,0.2,1);
-    }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.45s cubic-bezier(0.4,0,0.2,1); }
     .faq-item.open .faq-answer { max-height: 360px; }
     .faq-icon { transition: transform 0.3s ease; }
     .faq-item.open .faq-icon { transform: rotate(45deg); }
     .faq-item { border-bottom: 1px solid rgba(26,15,46,0.08); }
     .faq-item:last-child { border-bottom: none; }
-
     #successMsg { display: none; opacity: 0; transition: opacity 0.4s ease; }
     #successMsg.show { display: block; opacity: 1; }
-
-    #navbar.scrolled {
-      background: rgba(250,248,245,0.92);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 1px 0 rgba(26,15,46,0.07);
-    }
-
-    .step-connector {
-      width: 40px;
-      height: 2px;
-      background: linear-gradient(90deg, rgba(227,59,197,0.3), rgba(204,255,0,0.3));
-      flex-shrink: 0;
-    }
-
+    #navbar.scrolled { background: rgba(250,248,245,0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 1px 0 rgba(26,15,46,0.07); }
+    .step-connector { width: 40px; height: 2px; background: linear-gradient(90deg, rgba(227,59,197,0.3), rgba(204,255,0,0.3)); flex-shrink: 0; }
     @media (max-width: 640px) {
       .steps-row { flex-direction: column !important; }
       .step-connector { width: 2px; height: 24px; }
       .tiers-grid { grid-template-columns: 1fr !important; }
     }
-
-    /* Language dropdown */
     .lang-dropdown { position: relative; display: inline-block; }
-    .lang-btn {
-      display: flex; align-items: center; gap: 6px;
-      background: rgba(26,15,46,0.06); border: none; border-radius: 100px;
-      padding: 8px 14px; font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 13px; font-weight: 600; color: #1A0F2E; cursor: pointer;
-      transition: background 0.2s;
-    }
+    .lang-btn { display: flex; align-items: center; gap: 6px; background: rgba(26,15,46,0.06); border: none; border-radius: 100px; padding: 8px 14px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 600; color: #1A0F2E; cursor: pointer; transition: background 0.2s; }
     .lang-btn:hover { background: rgba(26,15,46,0.12); }
-    .lang-menu {
-      display: none; position: absolute; top: 100%; right: 0; margin-top: 6px;
-      background: #fff; border-radius: 12px; box-shadow: 0 8px 32px rgba(26,15,46,0.15);
-      overflow: hidden; min-width: 140px; z-index: 200;
-    }
+    .lang-menu { display: none; position: absolute; top: 100%; right: 0; margin-top: 6px; background: #fff; border-radius: 12px; box-shadow: 0 8px 32px rgba(26,15,46,0.15); overflow: hidden; min-width: 140px; z-index: 200; }
     .lang-dropdown.open .lang-menu { display: block; }
-    .lang-menu a {
-      display: flex; align-items: center; gap: 8px; padding: 10px 16px;
-      font-size: 13px; font-weight: 500; color: #1A0F2E; text-decoration: none;
-      transition: background 0.15s;
-    }
+    .lang-menu a { display: flex; align-items: center; gap: 8px; padding: 10px 16px; font-size: 13px; font-weight: 500; color: #1A0F2E; text-decoration: none; transition: background 0.15s; }
     .lang-menu a:hover { background: rgba(26,15,46,0.04); }
     .lang-menu a.active { font-weight: 700; background: rgba(204,255,0,0.15); }
   </style>
 </head>
 <body>
 
-<!-- NAVBAR -->
 <nav id="navbar" style="position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 24px;transition:background 0.3s,box-shadow 0.3s;">
   <div style="max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;">
     <a href="/" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
@@ -190,63 +95,53 @@
     </a>
     <div style="display:flex;align-items:center;gap:12px;">
       <div class="lang-dropdown" onclick="this.classList.toggle('open')" onmouseleave="this.classList.remove('open')">
-        <button class="lang-btn">🌐 EN ▾</button>
+        <button class="lang-btn">🌐 RU ▾</button>
         <div class="lang-menu">
-          <a href="/agent" class="active">🇬🇧 English</a>
-          <a href="/agent/ru">🇷🇺 Русский</a>
+          <a href="/agent">🇬🇧 English</a>
+          <a href="/agent/ru" class="active">🇷🇺 Русский</a>
           <a href="/agent/pt">🇧🇷 Português</a>
         </div>
       </div>
-      <a href="#apply" class="font-heading" style="font-size:13px;font-weight:700;color:#fff;background:#E33BC5;padding:10px 20px;border-radius:100px;text-decoration:none;transition:filter 0.2s;" onmouseover="this.style.filter='brightness(1.1)'" onmouseout="this.style.filter='none'">Apply Now</a>
+      <a href="#apply" class="font-heading" style="font-size:13px;font-weight:700;color:#fff;background:#E33BC5;padding:10px 20px;border-radius:100px;text-decoration:none;transition:filter 0.2s;" onmouseover="this.style.filter='brightness(1.1)'" onmouseout="this.style.filter='none'">Подать заявку</a>
     </div>
   </div>
 </nav>
 
-
-<!-- HERO -->
 <section style="padding:140px 20px 80px;text-align:center;position:relative;z-index:10;">
   <div style="max-width:720px;margin:0 auto;">
-
     <div class="animate-fade-up" style="animation-delay:0.1s;">
       <span style="display:inline-block;background:#CCFF00;color:#1A0F2E;font-size:12px;font-weight:800;padding:6px 16px;border-radius:100px;margin-bottom:24px;letter-spacing:0.05em;font-family:'Outfit',sans-serif;">
-        REMOTE OPPORTUNITY
+        УДАЛЁННАЯ РАБОТА
       </span>
     </div>
-
     <h1 class="font-heading animate-fade-up" style="font-size:clamp(2.4rem,6vw,4rem);font-weight:900;line-height:1.05;letter-spacing:-0.03em;color:#1A0F2E;margin-bottom:20px;animation-delay:0.2s;">
-      Become a<br><span class="text-gradient">Talent Scout</span>
+      Стань<br><span class="text-gradient">Talent Scout</span>
     </h1>
-
-    <p class="animate-fade-up" style="font-size:clamp(1.05rem,2.5vw,1.25rem);line-height:1.7;opacity:0.65;max-width:560px;margin:0 auto 24px;animation-delay:0.35s;">
-      Recruit models from anywhere in the world for our streaming entertainment platform.
-      Earn <strong style="opacity:1;">$10 per shift</strong> per model — passive income for 12 months.
+    <p class="animate-fade-up" style="font-size:clamp(1.05rem,2.5vw,1.25rem);line-height:1.7;opacity:0.65;max-width:560px;margin:0 auto 32px;animation-delay:0.35s;">
+      Рекрутируй моделей со всего мира для стриминговой платформы.
+      Получай <strong style="opacity:1;">$10 за каждую смену</strong> модели — пассивный доход 12 месяцев.
     </p>
-
     <div class="animate-fade-up" style="animation-delay:0.45s;margin-bottom:28px;">
       <div style="display:inline-block;background:linear-gradient(135deg,#1A0F2E 0%,#2D1B4E 100%);border-radius:16px;padding:16px 28px;position:relative;overflow:hidden;">
         <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(204,255,0,0.2) 0%,transparent 70%);"></div>
-        <span style="font-size:13px;color:rgba(255,255,255,0.6);font-weight:500;">Average scouts earn from the 1st month</span>
-        <div class="font-heading" style="font-size:clamp(1.8rem,4vw,2.4rem);font-weight:900;color:#CCFF00;letter-spacing:-0.02em;">$500+<span style="font-size:0.5em;color:rgba(255,255,255,0.5);font-weight:600;">/month</span></div>
+        <span style="font-size:13px;color:rgba(255,255,255,0.6);font-weight:500;">В среднем скауты зарабатывают с 1-го месяца</span>
+        <div class="font-heading" style="font-size:clamp(1.8rem,4vw,2.4rem);font-weight:900;color:#CCFF00;letter-spacing:-0.02em;">$500+<span style="font-size:0.5em;color:rgba(255,255,255,0.5);font-weight:600;">/мес</span></div>
       </div>
     </div>
-
     <div class="animate-fade-up" style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;animation-delay:0.55s;">
       <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(26,15,46,0.05);border-radius:100px;padding:8px 16px;font-size:13px;font-weight:600;">
-        <span style="font-size:16px;">📱</span> Work from your phone
+        <span style="font-size:16px;">📱</span> Работай с телефона
       </span>
       <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(26,15,46,0.05);border-radius:100px;padding:8px 16px;font-size:13px;font-weight:600;">
-        <span style="font-size:16px;">💰</span> Weekly USD payments
+        <span style="font-size:16px;">💰</span> Выплаты каждую неделю в USD
       </span>
       <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(26,15,46,0.05);border-radius:100px;padding:8px 16px;font-size:13px;font-weight:600;">
-        <span style="font-size:16px;">🌍</span> Recruit globally
+        <span style="font-size:16px;">🌍</span> Глобальный рекрутинг
       </span>
     </div>
-
   </div>
 </section>
 
-
-<!-- VIDEO -->
 <section style="padding:0 20px 80px;position:relative;z-index:10;">
   <div class="reveal" style="max-width:640px;margin:0 auto;">
     <div style="border-radius:20px;overflow:hidden;box-shadow:0 20px 60px -15px rgba(26,15,46,0.2);">
@@ -255,69 +150,44 @@
         <source src="/agent/video/agent-intro.mp4" type="video/mp4">
       </video>
     </div>
-    <p style="text-align:center;font-size:13px;opacity:0.45;margin-top:12px;">Watch: how Talent Scouts work at Apex Talent</p>
+    <p style="text-align:center;font-size:13px;opacity:0.45;margin-top:12px;">Видео: как работают Talent Scout в Apex Talent</p>
   </div>
 </section>
 
-
-<!-- ABOUT THE ROLE — DETAILS -->
 <section style="padding:0 20px 80px;position:relative;z-index:10;">
   <div style="max-width:760px;margin:0 auto;">
     <div class="reveal" style="text-align:center;margin-bottom:48px;">
-      <h2 class="font-heading" style="font-size:clamp(1.6rem,4vw,2.4rem);font-weight:900;letter-spacing:-0.02em;">What Does a Talent Scout Do?</h2>
-      <p style="font-size:15px;opacity:0.5;margin-top:8px;">Three simple steps — no management, just recruiting</p>
+      <h2 class="font-heading" style="font-size:clamp(1.6rem,4vw,2.4rem);font-weight:900;letter-spacing:-0.02em;">Что делает Talent Scout?</h2>
+      <p style="font-size:15px;opacity:0.5;margin-top:8px;">Три простых шага — без менеджмента, только рекрутинг</p>
     </div>
     <div style="display:flex;flex-direction:column;gap:24px;">
-      <!-- Card 1: What models do -->
       <div class="card reveal" style="padding:32px 28px;display:flex;gap:24px;align-items:flex-start;overflow:hidden;position:relative;">
         <div style="flex-shrink:0;width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,#FFF0FB 0%,#FFE0F5 100%);display:flex;align-items:center;justify-content:center;">
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style="animation:floatY 3s ease-in-out infinite;">
-            <circle cx="16" cy="10" r="5" stroke="#E33BC5" stroke-width="2" fill="none"/>
-            <path d="M8 26c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="#E33BC5" stroke-width="2" fill="none" stroke-linecap="round"/>
-            <circle cx="24" cy="8" r="2" fill="#CCFF00"/>
-            <path d="M26 6l1-2M28 8l2 0M26 10l1 2" stroke="#CCFF00" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style="animation:floatY 3s ease-in-out infinite;"><circle cx="16" cy="10" r="5" stroke="#E33BC5" stroke-width="2" fill="none"/><path d="M8 26c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="#E33BC5" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="24" cy="8" r="2" fill="#CCFF00"/><path d="M26 6l1-2M28 8l2 0M26 10l1 2" stroke="#CCFF00" stroke-width="1.5" stroke-linecap="round"/></svg>
         </div>
         <div style="flex:1;">
-          <h3 class="font-heading" style="font-size:1.05rem;font-weight:800;margin-bottom:8px;">Models stream — you earn</h3>
-          <p style="font-size:14px;line-height:1.7;opacity:0.6;">
-            Models perform live streams on our platform — chatting, singing, dancing, playing games. They earn from viewers' gifts and tips. <strong style="opacity:1;">You get $10 for every shift</strong> a model you recruited works. Automatically. For 12 months.
-          </p>
+          <h3 class="font-heading" style="font-size:1.05rem;font-weight:800;margin-bottom:8px;">Модели стримят — ты зарабатываешь</h3>
+          <p style="font-size:14px;line-height:1.7;opacity:0.6;">Модели ведут прямые эфиры на платформе — общение, пение, танцы, игры. Они зарабатывают на подарках и чаевых от зрителей. <strong style="opacity:1;">Ты получаешь $10 за каждую смену</strong> привлечённой модели. Автоматически. 12 месяцев.</p>
         </div>
         <div style="position:absolute;top:-30px;right:-30px;width:100px;height:100px;background:radial-gradient(circle,rgba(227,59,197,0.06) 0%,transparent 70%);pointer-events:none;"></div>
       </div>
-      <!-- Card 2: What you do -->
       <div class="card reveal reveal-delay-1" style="padding:32px 28px;display:flex;gap:24px;align-items:flex-start;overflow:hidden;position:relative;">
         <div style="flex-shrink:0;width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,#F0FFF0 0%,#E8FFD0 100%);display:flex;align-items:center;justify-content:center;">
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style="animation:floatY 3s ease-in-out infinite 0.5s;">
-            <rect x="6" y="4" width="20" height="24" rx="3" stroke="#1A0F2E" stroke-width="2" fill="none"/>
-            <path d="M11 12h10M11 16h7M11 20h9" stroke="#CCFF00" stroke-width="2" stroke-linecap="round"/>
-            <path d="M22 22l4 4" stroke="#E33BC5" stroke-width="2" stroke-linecap="round"/>
-          </svg>
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style="animation:floatY 3s ease-in-out infinite 0.5s;"><rect x="6" y="4" width="20" height="24" rx="3" stroke="#1A0F2E" stroke-width="2" fill="none"/><path d="M11 12h10M11 16h7M11 20h9" stroke="#CCFF00" stroke-width="2" stroke-linecap="round"/><path d="M22 22l4 4" stroke="#E33BC5" stroke-width="2" stroke-linecap="round"/></svg>
         </div>
         <div style="flex:1;">
-          <h3 class="font-heading" style="font-size:1.05rem;font-weight:800;margin-bottom:8px;">Find, send, done</h3>
-          <p style="font-size:14px;line-height:1.7;opacity:0.6;">
-            Find potential models on social media, job boards, or Telegram. Send them our ready-made scripts. Guide them to sign up. <strong style="opacity:1;">That's it</strong> — our team handles onboarding, training, and support after that.
-          </p>
+          <h3 class="font-heading" style="font-size:1.05rem;font-weight:800;margin-bottom:8px;">Нашёл, отправил, готово</h3>
+          <p style="font-size:14px;line-height:1.7;opacity:0.6;">Находи потенциальных моделей в соцсетях, на job-площадках, в Telegram. Отправляй готовые скрипты. Проводи до регистрации. <strong style="opacity:1;">Всё</strong> — дальше команда берёт на себя онбординг, обучение и поддержку.</p>
         </div>
         <div style="position:absolute;bottom:-30px;left:-30px;width:100px;height:100px;background:radial-gradient(circle,rgba(204,255,0,0.08) 0%,transparent 70%);pointer-events:none;"></div>
       </div>
-      <!-- Card 3: Income grows -->
       <div class="card reveal reveal-delay-2" style="padding:32px 28px;display:flex;gap:24px;align-items:flex-start;overflow:hidden;position:relative;border:2px solid rgba(204,255,0,0.4);">
         <div style="flex-shrink:0;width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,#FFFDE0 0%,#FFF8B0 100%);display:flex;align-items:center;justify-content:center;">
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style="animation:floatY 3s ease-in-out infinite 1s;">
-            <path d="M6 24L12 16L18 20L26 8" stroke="#E33BC5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-            <path d="M22 8h4v4" stroke="#E33BC5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="12" cy="16" r="2" fill="#CCFF00"/>
-            <circle cx="18" cy="20" r="2" fill="#CCFF00"/>
-          </svg>
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style="animation:floatY 3s ease-in-out infinite 1s;"><path d="M6 24L12 16L18 20L26 8" stroke="#E33BC5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M22 8h4v4" stroke="#E33BC5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="16" r="2" fill="#CCFF00"/><circle cx="18" cy="20" r="2" fill="#CCFF00"/></svg>
         </div>
         <div style="flex:1;">
-          <h3 class="font-heading" style="font-size:1.05rem;font-weight:800;margin-bottom:8px;">Your income keeps growing</h3>
-          <p style="font-size:14px;line-height:1.7;opacity:0.6;">
-            1 active model = <strong style="opacity:1;">~$200/month</strong>. 3 models = ~$600/month. 5 models = ~$1,000/month. Each model pays you for a <strong style="opacity:1;">full year</strong>. Last month's recruits still pay you this month — and next month you add more.
-          </p>
+          <h3 class="font-heading" style="font-size:1.05rem;font-weight:800;margin-bottom:8px;">Доход растёт каждый месяц</h3>
+          <p style="font-size:14px;line-height:1.7;opacity:0.6;">1 активная модель = <strong style="opacity:1;">~$200/мес</strong>. 3 модели = ~$600/мес. 5 моделей = ~$1,000/мес. Каждая модель платит тебе <strong style="opacity:1;">целый год</strong>. Прошлые рекруты продолжают приносить доход — а ты добавляешь новых.</p>
         </div>
         <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(204,255,0,0.1) 0%,transparent 70%);pointer-events:none;"></div>
       </div>
@@ -325,405 +195,300 @@
   </div>
 </section>
 
-
-<!-- HOW IT WORKS — 3 STEPS -->
 <section style="padding:0 20px 80px;position:relative;z-index:10;">
   <div style="max-width:800px;margin:0 auto;">
-
-    <div class="reveal text-center" style="text-align:center;margin-bottom:48px;">
-      <h2 class="font-heading" style="font-size:clamp(1.6rem,4vw,2.4rem);font-weight:900;letter-spacing:-0.02em;">How It Works</h2>
+    <div class="reveal" style="text-align:center;margin-bottom:48px;">
+      <h2 class="font-heading" style="font-size:clamp(1.6rem,4vw,2.4rem);font-weight:900;letter-spacing:-0.02em;">Как это работает</h2>
     </div>
-
     <div class="steps-row reveal" style="display:flex;align-items:center;justify-content:center;gap:0;">
-
-      <!-- Step 1 -->
       <div style="text-align:center;flex:1;max-width:200px;">
         <div style="width:64px;height:64px;border-radius:50%;background:#1A0F2E;color:#CCFF00;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-family:'Outfit',sans-serif;font-weight:900;font-size:24px;">1</div>
-        <h3 class="font-heading" style="font-size:0.95rem;font-weight:800;margin-bottom:6px;">Find Models</h3>
-        <p style="font-size:13px;opacity:0.55;line-height:1.5;">Social media, job boards, Telegram groups</p>
+        <h3 class="font-heading" style="font-size:0.95rem;font-weight:800;margin-bottom:6px;">Находи моделей</h3>
+        <p style="font-size:13px;opacity:0.55;line-height:1.5;">Соцсети, job-площадки, Telegram-группы</p>
       </div>
-
       <div class="step-connector"></div>
-
-      <!-- Step 2 -->
       <div style="text-align:center;flex:1;max-width:200px;">
         <div style="width:64px;height:64px;border-radius:50%;background:#1A0F2E;color:#CCFF00;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-family:'Outfit',sans-serif;font-weight:900;font-size:24px;">2</div>
-        <h3 class="font-heading" style="font-size:0.95rem;font-weight:800;margin-bottom:6px;">Send Scripts</h3>
-        <p style="font-size:13px;opacity:0.55;line-height:1.5;">Use our ready-made templates and scripts</p>
+        <h3 class="font-heading" style="font-size:0.95rem;font-weight:800;margin-bottom:6px;">Отправляй скрипты</h3>
+        <p style="font-size:13px;opacity:0.55;line-height:1.5;">Готовые шаблоны и скрипты — бери и используй</p>
       </div>
-
       <div class="step-connector"></div>
-
-      <!-- Step 3 -->
       <div style="text-align:center;flex:1;max-width:200px;">
         <div style="width:64px;height:64px;border-radius:50%;background:#1A0F2E;color:#CCFF00;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-family:'Outfit',sans-serif;font-weight:900;font-size:24px;">3</div>
-        <h3 class="font-heading" style="font-size:0.95rem;font-weight:800;margin-bottom:6px;">Get Paid</h3>
-        <p style="font-size:13px;opacity:0.55;line-height:1.5;">$10 per shift per model, every week in USD</p>
+        <h3 class="font-heading" style="font-size:0.95rem;font-weight:800;margin-bottom:6px;">Получай деньги</h3>
+        <p style="font-size:13px;opacity:0.55;line-height:1.5;">$10 за смену модели, каждую неделю в USD</p>
       </div>
-
     </div>
   </div>
 </section>
 
-
-<!-- EARNINGS -->
 <section style="padding:0 20px 80px;position:relative;z-index:10;">
   <div style="max-width:700px;margin:0 auto;">
-
     <div class="reveal" style="text-align:center;margin-bottom:48px;">
-      <h2 class="font-heading" style="font-size:clamp(1.6rem,4vw,2.4rem);font-weight:900;letter-spacing:-0.02em;">Your Earnings</h2>
-      <p style="font-size:15px;opacity:0.55;margin-top:8px;">Passive income that grows every month</p>
+      <h2 class="font-heading" style="font-size:clamp(1.6rem,4vw,2.4rem);font-weight:900;letter-spacing:-0.02em;">Твой заработок</h2>
+      <p style="font-size:15px;opacity:0.55;margin-top:8px;">Пассивный доход, который растёт каждый месяц</p>
     </div>
-
     <div class="tiers-grid reveal" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:32px;">
-
-      <!-- Tier 1 -->
       <div class="card" style="padding:32px 24px;text-align:center;">
-        <div style="font-size:13px;font-weight:700;opacity:0.4;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;font-family:'Outfit',sans-serif;">Per Model</div>
-        <div class="font-heading" style="font-size:2.2rem;font-weight:900;color:#1A0F2E;margin-bottom:8px;">$10<span style="font-size:1rem;opacity:0.5;">/shift</span></div>
-        <p style="font-size:13px;opacity:0.5;line-height:1.5;">~$200/month per model<br>Recurring for 12 months</p>
+        <div style="font-size:13px;font-weight:700;opacity:0.4;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;font-family:'Outfit',sans-serif;">За модель</div>
+        <div class="font-heading" style="font-size:2.2rem;font-weight:900;color:#1A0F2E;margin-bottom:8px;">$10<span style="font-size:1rem;opacity:0.5;">/смена</span></div>
+        <p style="font-size:13px;opacity:0.5;line-height:1.5;">~$200/мес за модель<br>Рекуррентно 12 месяцев</p>
       </div>
-
-      <!-- Tier 2 — highlighted -->
       <div class="card card-lime" style="padding:32px 24px;text-align:center;">
-        <div style="background:#1A0F2E;color:#CCFF00;font-weight:800;font-size:11px;letter-spacing:0.05em;padding:5px 12px;border-radius:8px;display:inline-block;margin-bottom:12px;font-family:'Outfit',sans-serif;">SCALES UP</div>
-        <div class="font-heading" style="font-size:2.2rem;font-weight:900;color:#1A0F2E;margin-bottom:8px;">$1,000<span style="font-size:1rem;opacity:0.5;">/mo</span></div>
-        <p style="font-size:13px;opacity:0.5;line-height:1.5;">With just 5 active models<br>Income keeps growing</p>
+        <div style="background:#1A0F2E;color:#CCFF00;font-weight:800;font-size:11px;letter-spacing:0.05em;padding:5px 12px;border-radius:8px;display:inline-block;margin-bottom:12px;font-family:'Outfit',sans-serif;">МАСШТАБИРУЕТСЯ</div>
+        <div class="font-heading" style="font-size:2.2rem;font-weight:900;color:#1A0F2E;margin-bottom:8px;">$1,000<span style="font-size:1rem;opacity:0.5;">/мес</span></div>
+        <p style="font-size:13px;opacity:0.5;line-height:1.5;">Всего 5 активных моделей<br>Доход продолжает расти</p>
       </div>
-
     </div>
-
-    <!-- Example calculation -->
     <div class="card reveal" style="padding:24px 28px;background:#1A0F2E;color:#fff;text-align:center;">
-      <p style="font-size:14px;opacity:0.6;margin-bottom:8px;">Example: recruit 3 models this month</p>
-      <div class="font-heading" style="font-size:1.8rem;font-weight:900;color:#CCFF00;">~$600/month</div>
-      <p style="font-size:13px;opacity:0.45;margin-top:6px;">Passive income for a full year per model</p>
+      <p style="font-size:14px;opacity:0.6;margin-bottom:8px;">Пример: привлёк 3 модели за месяц</p>
+      <div class="font-heading" style="font-size:1.8rem;font-weight:900;color:#CCFF00;">~$600/мес</div>
+      <p style="font-size:13px;opacity:0.45;margin-top:6px;">Пассивный доход на целый год с каждой модели</p>
     </div>
-
-    <p class="reveal" style="text-align:center;font-size:13px;opacity:0.45;margin-top:20px;">Average scouts earn <strong style="opacity:1;">$500+</strong> from the first month. Payments weekly in USD.</p>
-
+    <p class="reveal" style="text-align:center;font-size:13px;opacity:0.45;margin-top:20px;">В среднем скауты зарабатывают <strong style="opacity:1;">$500+</strong> с первого месяца. Выплаты еженедельно в USD.</p>
   </div>
 </section>
 
-
-<!-- WHAT YOU GET -->
 <section style="padding:0 20px 80px;position:relative;z-index:10;">
   <div style="max-width:700px;margin:0 auto;">
-
     <div class="reveal" style="text-align:center;margin-bottom:48px;">
-      <h2 class="font-heading" style="font-size:clamp(1.6rem,4vw,2.4rem);font-weight:900;letter-spacing:-0.02em;">What You Get</h2>
+      <h2 class="font-heading" style="font-size:clamp(1.6rem,4vw,2.4rem);font-weight:900;letter-spacing:-0.02em;">Что ты получаешь</h2>
     </div>
-
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-
       <div class="card reveal reveal-delay-1" style="padding:28px 22px;">
         <div style="font-size:28px;margin-bottom:14px;">📋</div>
-        <h3 class="font-heading" style="font-size:0.95rem;font-weight:800;margin-bottom:6px;">Ready-Made Scripts</h3>
-        <p style="font-size:13px;opacity:0.5;line-height:1.5;">Templates for social media, job boards, and messaging. Just copy, paste, send.</p>
+        <h3 class="font-heading" style="font-size:0.95rem;font-weight:800;margin-bottom:6px;">Готовые скрипты</h3>
+        <p style="font-size:13px;opacity:0.5;line-height:1.5;">Шаблоны для соцсетей, площадок и мессенджеров. Копируй, отправляй, зарабатывай.</p>
       </div>
-
       <div class="card reveal reveal-delay-2" style="padding:28px 22px;">
         <div style="font-size:28px;margin-bottom:14px;">👥</div>
-        <h3 class="font-heading" style="font-size:0.95rem;font-weight:800;margin-bottom:6px;">Team Leader + Chat</h3>
-        <p style="font-size:13px;opacity:0.5;line-height:1.5;">Dedicated team leader who guides you. 24/7 support in the team chat.</p>
+        <h3 class="font-heading" style="font-size:0.95rem;font-weight:800;margin-bottom:6px;">Тимлид + чат</h3>
+        <p style="font-size:13px;opacity:0.5;line-height:1.5;">Персональный тимлид, который ведёт тебя. Поддержка 24/7 в командном чате.</p>
       </div>
-
       <div class="card reveal reveal-delay-3" style="padding:28px 22px;">
         <div style="font-size:28px;margin-bottom:14px;">💵</div>
-        <h3 class="font-heading" style="font-size:0.95rem;font-weight:800;margin-bottom:6px;">Weekly USD Payments</h3>
-        <p style="font-size:13px;opacity:0.5;line-height:1.5;">Paid every week in USD. Transparent earnings tracking in your dashboard.</p>
+        <h3 class="font-heading" style="font-size:0.95rem;font-weight:800;margin-bottom:6px;">Еженедельные выплаты</h3>
+        <p style="font-size:13px;opacity:0.5;line-height:1.5;">Каждую неделю в USD. Прозрачное отслеживание заработка.</p>
       </div>
-
       <div class="card reveal" style="padding:28px 22px;">
         <div style="font-size:28px;margin-bottom:14px;">📱</div>
-        <h3 class="font-heading" style="font-size:0.95rem;font-weight:800;margin-bottom:6px;">Work From Your Phone</h3>
-        <p style="font-size:13px;opacity:0.5;line-height:1.5;">No PC, no equipment. Just your phone, internet, and your own schedule.</p>
+        <h3 class="font-heading" style="font-size:0.95rem;font-weight:800;margin-bottom:6px;">Работай с телефона</h3>
+        <p style="font-size:13px;opacity:0.5;line-height:1.5;">Без ПК, без оборудования. Только телефон, интернет и свой график.</p>
       </div>
-
     </div>
   </div>
 </section>
 
-
-<!-- REQUIREMENTS -->
 <section style="padding:0 20px 80px;position:relative;z-index:10;">
   <div style="max-width:500px;margin:0 auto;">
     <div class="card reveal" style="padding:36px 32px;">
-      <h2 class="font-heading" style="font-size:1.3rem;font-weight:900;margin-bottom:24px;text-align:center;">Requirements</h2>
+      <h2 class="font-heading" style="font-size:1.3rem;font-weight:900;margin-bottom:24px;text-align:center;">Требования</h2>
       <div style="display:flex;flex-direction:column;gap:14px;">
         <div style="display:flex;align-items:center;gap:12px;">
           <span style="width:28px;height:28px;border-radius:50%;background:#CCFF00;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">✓</span>
-          <span style="font-size:14px;font-weight:500;">18+ years old</span>
+          <span style="font-size:14px;font-weight:500;">18+ лет</span>
         </div>
         <div style="display:flex;align-items:center;gap:12px;">
           <span style="width:28px;height:28px;border-radius:50%;background:#CCFF00;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">✓</span>
-          <span style="font-size:14px;font-weight:500;">Active on social media or Telegram</span>
+          <span style="font-size:14px;font-weight:500;">Активность в соцсетях или Telegram</span>
         </div>
         <div style="display:flex;align-items:center;gap:12px;">
           <span style="width:28px;height:28px;border-radius:50%;background:#CCFF00;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">✓</span>
-          <span style="font-size:14px;font-weight:500;">English B1+ (intermediate or higher)</span>
+          <span style="font-size:14px;font-weight:500;">Хорошие коммуникативные навыки</span>
         </div>
         <div style="display:flex;align-items:center;gap:12px;">
           <span style="width:28px;height:28px;border-radius:50%;background:#CCFF00;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">✓</span>
-          <span style="font-size:14px;font-weight:500;">Good communication skills</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:12px;">
-          <span style="width:28px;height:28px;border-radius:50%;background:#CCFF00;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">✓</span>
-          <span style="font-size:14px;font-weight:500;">No PC or equipment needed</span>
+          <span style="font-size:14px;font-weight:500;">ПК и оборудование не нужны</span>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-
-<!-- APPLICATION FORM -->
 <section id="apply" style="padding:0 20px 96px;position:relative;z-index:10;">
   <div style="max-width:600px;margin:0 auto;">
-
     <div class="reveal" style="text-align:center;margin-bottom:48px;">
       <span style="display:inline-block;background:#CCFF00;color:#1A0F2E;font-size:12px;font-weight:800;padding:6px 16px;border-radius:100px;margin-bottom:16px;letter-spacing:0.05em;font-family:'Outfit',sans-serif;">
-        APPLY NOW
+        ПОДАТЬ ЗАЯВКУ
       </span>
       <h2 class="font-heading" style="font-size:clamp(2rem,5vw,3.2rem);font-weight:900;line-height:1.05;letter-spacing:-0.02em;margin-bottom:12px;">
-        Start Your<br>Application
+        Начни<br>прямо сейчас
       </h2>
       <p class="font-serif" style="font-style:italic;opacity:0.6;font-size:1rem;">
-        1 minute here, then 2 minutes in Telegram. No resume needed.
+        1 минута здесь, потом 2 минуты в Telegram. Резюме не нужно.
       </p>
     </div>
-
     <div class="card reveal" style="padding:clamp(24px,6vw,48px);">
-
       <form id="applicationForm" onsubmit="handleSubmit(event)">
-        <input type="hidden" name="language" value="en">
+        <input type="hidden" name="language" value="ru">
         <input type="hidden" name="candidate_type" value="agent">
-
         <div id="formStep1" style="display:flex;flex-direction:column;gap:18px;">
-
           <div>
-            <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;">Full Name *</label>
-            <input type="text" class="form-input" name="name" placeholder="Your full name" required>
+            <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;">Имя и Фамилия *</label>
+            <input type="text" class="form-input" name="name" placeholder="Ваше полное имя" required>
           </div>
-
           <div>
-            <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;">Telegram or WhatsApp *</label>
-            <p style="font-size:12px;opacity:0.4;margin-bottom:8px;line-height:1.4;">Telegram username (@handle) or WhatsApp number (+63...)</p>
-            <input type="text" class="form-input" name="contact" placeholder="@username or +639171234567" required>
+            <label style="display:block;font-size:13px;font-weight:600;opacity:0.6;margin-bottom:6px;">Telegram или WhatsApp *</label>
+            <p style="font-size:12px;opacity:0.4;margin-bottom:8px;line-height:1.4;">Telegram (@username) или номер WhatsApp (+7...)</p>
+            <input type="text" class="form-input" name="contact" placeholder="@username или +79171234567" required>
             <div id="contactError" style="color:#EF4444;font-size:12px;margin-top:4px;display:none;"></div>
           </div>
-
-          <button type="submit"
-                  class="btn-pulse font-heading"
+          <button type="submit" class="btn-pulse font-heading"
                   style="background:#E33BC5;color:#fff;font-size:1.1rem;font-weight:900;padding:18px 24px;width:100%;margin-top:4px;border:none;cursor:pointer;border-radius:16px;letter-spacing:-0.01em;transition:all 0.2s;">
-            Continue in Telegram →
+            Продолжить в Telegram →
           </button>
-
           <p style="text-align:center;font-size:12px;opacity:0.35;line-height:1.5;">
-            By submitting you agree to be contacted via Telegram.<br>No spam — only job-related messages.
+            Нажимая кнопку, вы соглашаетесь на связь через Telegram.<br>Без спама — только по работе.
           </p>
         </div>
-
       </form>
-
-      <!-- Success state -->
       <div id="successMsg">
         <div style="text-align:center;padding:24px 16px 32px;">
           <div style="display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#CCFF00 0%,#E33BC5 100%);margin-bottom:20px;">
             <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
-          <h3 class="font-heading" style="font-size:1.6rem;font-weight:900;margin-bottom:10px;">Almost there!</h3>
+          <h3 class="font-heading" style="font-size:1.6rem;font-weight:900;margin-bottom:10px;">Почти готово!</h3>
           <p style="font-size:15px;line-height:1.65;margin-bottom:20px;opacity:0.7;">
-            Answer 2 quick questions in Telegram<br>to complete your application:
+            Ответь на 2 быстрых вопроса в Telegram,<br>чтобы завершить заявку:
           </p>
           <a id="tgDeepLink" href="https://t.me/apextalent_bot" target="_blank" rel="noopener"
              class="btn-pulse font-heading"
              style="display:inline-block;background:#0EA5E9;color:#fff;font-size:1.15rem;font-weight:900;padding:18px 36px;border:none;cursor:pointer;text-decoration:none;border-radius:16px;transition:all 0.2s;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:8px;margin-top:-2px;"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-            Open Telegram
+            Открыть Telegram
           </a>
           <p style="font-size:13px;opacity:0.45;margin-top:16px;line-height:1.5;">
-            Don't have Telegram? Download free:
+            Нет Telegram? Скачай бесплатно:
             <a href="https://apps.apple.com/app/telegram-messenger/id686449807" target="_blank" style="color:#0EA5E9;text-decoration:underline;">iOS</a> /
             <a href="https://play.google.com/store/apps/details?id=org.telegram.messenger" target="_blank" style="color:#0EA5E9;text-decoration:underline;">Android</a>
           </p>
         </div>
       </div>
-
     </div>
   </div>
 </section>
 
-
-<!-- FAQ -->
 <section style="padding:0 20px 80px;position:relative;z-index:10;">
   <div style="max-width:600px;margin:0 auto;">
     <div class="reveal" style="text-align:center;margin-bottom:40px;">
-      <h2 class="font-heading" style="font-size:clamp(1.4rem,3.5vw,2rem);font-weight:900;">Questions?</h2>
+      <h2 class="font-heading" style="font-size:clamp(1.4rem,3.5vw,2rem);font-weight:900;">Вопросы?</h2>
     </div>
-
     <div class="card reveal" style="padding:8px 24px;">
-
       <div class="faq-item" onclick="toggleFaq(this)" style="cursor:pointer;padding:18px 0;">
         <div style="display:flex;align-items:center;justify-content:space-between;">
-          <span style="font-weight:700;font-size:15px;">Do I need experience recruiting?</span>
+          <span style="font-weight:700;font-size:15px;">Нужен ли опыт в рекрутинге?</span>
           <span class="faq-icon font-heading" style="font-size:22px;color:#E33BC5;flex-shrink:0;margin-left:12px;">+</span>
         </div>
         <div class="faq-answer">
           <p style="padding-top:12px;font-size:14px;opacity:0.6;line-height:1.7;">
-            No! We provide full training, ready-made scripts, templates, and a team leader who guides you step by step. Most of our successful scouts had zero recruiting experience when they started.
+            Нет! Мы проводим полное обучение, даём готовые скрипты, шаблоны и тимлида, который ведёт тебя шаг за шагом. Большинство успешных скаутов начинали без опыта.
           </p>
         </div>
       </div>
-
       <div class="faq-item" onclick="toggleFaq(this)" style="cursor:pointer;padding:18px 0;">
         <div style="display:flex;align-items:center;justify-content:space-between;">
-          <span style="font-weight:700;font-size:15px;">Where do I find models?</span>
+          <span style="font-weight:700;font-size:15px;">Где искать моделей?</span>
           <span class="faq-icon font-heading" style="font-size:22px;color:#E33BC5;flex-shrink:0;margin-left:12px;">+</span>
         </div>
         <div class="faq-answer">
           <p style="padding-top:12px;font-size:14px;opacity:0.6;line-height:1.7;">
-            Social media (Instagram, TikTok, Facebook groups), Telegram groups, job boards, and freelance platforms. We teach you exactly where and how to look — you'll get a playbook with proven channels.
+            Соцсети (Instagram, TikTok, Facebook-группы), Telegram, job-площадки и фриланс-платформы. Мы научим, где и как искать — дадим плейбук с проверенными каналами.
           </p>
         </div>
       </div>
-
       <div class="faq-item" onclick="toggleFaq(this)" style="cursor:pointer;padding:18px 0;">
         <div style="display:flex;align-items:center;justify-content:space-between;">
-          <span style="font-weight:700;font-size:15px;">When and how do I get paid?</span>
+          <span style="font-weight:700;font-size:15px;">Когда и как получаю деньги?</span>
           <span class="faq-icon font-heading" style="font-size:22px;color:#E33BC5;flex-shrink:0;margin-left:12px;">+</span>
         </div>
         <div class="faq-answer">
           <p style="padding-top:12px;font-size:14px;opacity:0.6;line-height:1.7;">
-            Weekly, every Monday, in USD. You earn $10 for every shift your recruited model works — and this continues for 12 months per model. Payments via crypto or bank transfer depending on your region.
+            Еженедельно, каждый понедельник, в USD. Ты получаешь $10 за каждую смену привлечённой модели — и это продолжается 12 месяцев. Выплаты криптой или на карту.
           </p>
         </div>
       </div>
-
       <div class="faq-item" onclick="toggleFaq(this)" style="cursor:pointer;padding:18px 0;">
         <div style="display:flex;align-items:center;justify-content:space-between;">
-          <span style="font-weight:700;font-size:15px;">Is this a legitimate opportunity?</span>
+          <span style="font-weight:700;font-size:15px;">Это легальная работа?</span>
           <span class="faq-icon font-heading" style="font-size:22px;color:#E33BC5;flex-shrink:0;margin-left:12px;">+</span>
         </div>
         <div class="faq-answer">
           <p style="padding-top:12px;font-size:14px;opacity:0.6;line-height:1.7;">
-            Yes. We never ask for any upfront payment. You'll have a video call with our team before starting. We've been operating with a team across 15+ countries, with consistent weekly payouts. You can verify everything during your onboarding call.
+            Да. Мы никогда не просим предоплату. Перед началом работы — видеозвонок с командой. Мы работаем с командой в 15+ странах с стабильными еженедельными выплатами.
           </p>
         </div>
       </div>
-
     </div>
   </div>
 </section>
 
-
-<!-- FOOTER -->
 <footer style="border-top:1px solid rgba(26,15,46,0.08);padding:40px 20px;text-align:center;position:relative;z-index:10;">
   <div style="max-width:800px;margin:0 auto;">
     <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px;">
       <svg width="20" height="20" viewBox="0 0 80 80" fill="none"><polygon points="40,16 18,62 30,62 40,38 50,62 62,62" fill="#1A0F2E"/></svg>
       <span class="font-heading" style="font-size:12px;font-weight:800;letter-spacing:0.1em;color:#1A0F2E;">APEX TALENT</span>
     </div>
-    <div style="display:flex;align-items:center;justify-content:center;gap:20px;margin-bottom:16px;flex-wrap:wrap;">
-      <a href="/privacy" style="font-size:12px;opacity:0.45;color:inherit;text-decoration:none;">Privacy Policy</a>
-      <span style="font-size:12px;opacity:0.2;">·</span>
-      <a href="/terms" style="font-size:12px;opacity:0.45;color:inherit;text-decoration:none;">Terms of Service</a>
-      <span style="font-size:12px;opacity:0.2;">·</span>
-      <a href="mailto:hello@apextalent.pro" style="font-size:12px;opacity:0.45;color:inherit;text-decoration:none;">hello@apextalent.pro</a>
-    </div>
     <p style="font-size:12px;opacity:0.35;line-height:1.7;">
-      © 2026 Apex Talent. All rights reserved.<br>
-      Legitimate opportunity — zero fees, zero hidden costs, weekly USD payouts.
+      © 2026 Apex Talent. Все права защищены.<br>
+      Легальная работа — без взносов, без скрытых расходов, еженедельные выплаты в USD.
     </p>
   </div>
 </footer>
 
-
 <script>
-  // Scroll reveal
   (function() {
     var obs = new IntersectionObserver(function(entries) {
       entries.forEach(function(e) { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
     }, { threshold: 0.15 });
     document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
   })();
-
-  // FAQ toggle
   function toggleFaq(item) {
     var isOpen = item.classList.contains('open');
     document.querySelectorAll('.faq-item.open').forEach(function(i) { i.classList.remove('open'); });
     if (!isOpen) item.classList.add('open');
   }
-
-  // Form submit
   async function handleSubmit(e) {
     e.preventDefault();
     var btn = e.target.querySelector('button[type="submit"]');
     var errorDiv = document.getElementById('contactError');
     var form = document.getElementById('applicationForm');
     var contactInput = form.querySelector('[name="contact"]').value.trim();
-
-    // Validate: either TG username or phone number
     var isTg = /^@?[a-zA-Z0-9_]{5,32}$/.test(contactInput);
     var isPhone = /^\+?\d[\d\s\-()]{6,}$/.test(contactInput);
-
     if (!isTg && !isPhone) {
-      errorDiv.textContent = 'Enter a valid Telegram username (@handle) or phone number (+63...)';
+      errorDiv.textContent = 'Введите Telegram (@username) или номер телефона (+7...)';
       errorDiv.style.display = 'block';
       return;
     }
     errorDiv.style.display = 'none';
-
-    btn.innerHTML = 'Redirecting\u2026';
+    btn.innerHTML = 'Перенаправляем\u2026';
     btn.disabled = true;
-
     var data = {
       name: form.querySelector('[name="name"]').value.trim(),
       language: form.querySelector('[name="language"]').value,
       candidate_type: form.querySelector('[name="candidate_type"]').value,
     };
-
-    // Route TG usernames to 'telegram' field, phone numbers to 'contact'
-    if (isTg) {
-      data.telegram = contactInput.replace(/^@/, '');
-    } else {
-      data.contact = contactInput;
-    }
-
+    if (isTg) { data.telegram = contactInput.replace(/^@/, ''); } else { data.contact = contactInput; }
     var candidateId = null;
     try {
       var res = await fetch('https://apex-talent-bot.onrender.com/webhook/landing', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data),
       });
       var json = await res.json();
       candidateId = json.id;
     } catch (_) {}
-
-    var deepLink = candidateId
-      ? 'https://t.me/apextalent_bot?start=agent_' + candidateId
-      : 'https://t.me/apextalent_bot?start=agent';
-
-    // Show success state
+    var deepLink = candidateId ? 'https://t.me/apextalent_bot?start=agent_' + candidateId : 'https://t.me/apextalent_bot?start=agent';
     document.getElementById('formStep1').style.display = 'none';
     var success = document.getElementById('successMsg');
     success.style.display = 'block';
     setTimeout(function() { success.classList.add('show'); }, 50);
     document.getElementById('tgDeepLink').href = deepLink;
-
-    // Auto-redirect
     setTimeout(function() { window.location.href = deepLink; }, 1500);
   }
-
-  // Navbar scroll
   (function() {
     var nav = document.getElementById('navbar');
-    window.addEventListener('scroll', function() {
-      nav.classList.toggle('scrolled', window.scrollY > 40);
-    }, { passive: true });
+    window.addEventListener('scroll', function() { nav.classList.toggle('scrolled', window.scrollY > 40); }, { passive: true });
   })();
 </script>
-
 </body>
 </html>
