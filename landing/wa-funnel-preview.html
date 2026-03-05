@@ -2,349 +2,880 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Воронка Габи — WA Preview</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WA Funnel Preview — Apex Talent</title>
 <meta name="robots" content="noindex, nofollow">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{--bg:#0b141a;--hdr:#202c33;--bin:#202c33;--bout:#005c4b;--txt:#e9edef;--txt2:#8696a0;--tm:rgba(255,255,255,.5);--acc:#00a884;--div:rgba(255,255,255,.06)}
-html,body{height:100%;overflow:hidden}
-body{font-family:'Roboto','Segoe UI',sans-serif;background:#111b21;color:var(--txt);display:flex;justify-content:center;align-items:center}
-.ph{width:100%;max-width:412px;height:100dvh;max-height:896px;display:flex;flex-direction:column;background:var(--bg);position:relative;overflow:hidden}
-@media(min-width:500px){.ph{border-radius:20px;border:1.5px solid #2a3942;height:90vh;box-shadow:0 20px 60px rgba(0,0,0,.6)}}
-.hdr{background:var(--hdr);height:56px;display:flex;align-items:center;padding:0 6px 0 4px;flex-shrink:0;z-index:5}
-.hdr-back{width:36px;height:40px;display:flex;align-items:center;justify-content:center;color:var(--txt2)}
-.hdr-back svg{width:20px;height:20px}
-.hdr-ava{width:40px;height:40px;border-radius:50%;margin:0 10px 0 0;flex-shrink:0;background:linear-gradient(135deg,#e8576d,#d63384);display:flex;align-items:center;justify-content:center;font-size:17px;color:#fff;font-weight:500}
-.hdr-info{flex:1;min-width:0}
-.hdr-name{font-size:16px;font-weight:500;color:var(--txt)}
-.hdr-st{font-size:13px;color:var(--acc)}
-.hdr-ic{display:flex;gap:20px;margin-left:auto;padding-right:4px}
-.hdr-ic svg{width:22px;height:22px;color:var(--txt2)}
-.chat{flex:1;overflow-y:auto;padding:6px 10px 10px;scroll-behavior:smooth}
-.chat::-webkit-scrollbar{width:4px}
-.chat::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
-.b{max-width:82%;padding:6px 7px 4px 9px;margin-bottom:1px;font-size:14.2px;line-height:1.35;word-wrap:break-word;white-space:pre-wrap;position:relative;animation:bI .25s ease-out}
-@keyframes bI{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.b.in{background:var(--bin);border-radius:0 8px 8px 8px;margin-right:auto}
-.b.out{background:var(--bout);border-radius:8px 0 8px 8px;margin-left:auto}
-.b.tl{margin-bottom:6px}
-.bt{font-size:11px;color:var(--tm);float:right;margin:2px 0 -3px 8px;display:flex;align-items:center;gap:3px}
-.ck{display:inline-flex;color:#53bdeb}
-.ck svg{width:16px;height:11px}
-.dc{text-align:center;margin:10px 0}
-.dc span{background:#182229;color:var(--txt2);font-size:12.5px;padding:5px 12px;border-radius:8px;display:inline-block}
-.ba{display:flex;align-items:center;gap:8px;min-width:220px;padding:4px 0}
-.aa{width:34px;height:34px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,#e8576d,#d63384);display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;order:3}
-.ap{width:28px;height:28px;border-radius:50%;border:none;background:none;color:var(--txt2);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.ap svg{width:18px;height:18px}
-.aw{flex:1;height:24px;display:flex;align-items:center;gap:1.5px}
-.aw i{width:2.5px;border-radius:1.5px;display:block;background:rgba(255,255,255,.4)}
-.ad{font-size:11px;color:var(--txt2);flex-shrink:0}
-.bi{border-radius:6px;overflow:hidden;margin:-2px -3px 3px -5px;width:calc(100% + 8px)}
-.ip{width:100%;aspect-ratio:4/3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:12px;color:var(--txt2)}
-.ip.cs{background:linear-gradient(145deg,#1a2b30,#1f3535,#1a2b2e)}
-.ip.mm{background:linear-gradient(145deg,#1c2e1c,#233a23,#1c2e1c);aspect-ratio:1/1;max-height:200px}
-.ip.pf{background:linear-gradient(145deg,#2a1a2e,#352035,#2e1a2b)}
-.ip .ic{font-size:36px;opacity:.5}
-.ip .su{font-size:11px;opacity:.6;max-width:80%;text-align:center;line-height:1.3}
-.tw{margin-bottom:6px}
-.ty{display:inline-flex;gap:4px;padding:10px 14px;background:var(--bin);border-radius:0 8px 8px 8px}
-.ty i{width:6px;height:6px;border-radius:50%;background:var(--txt2);display:block;animation:tb 1.4s infinite}
-.ty i:nth-child(2){animation-delay:.2s}
-.ty i:nth-child(3){animation-delay:.4s}
-@keyframes tb{0%,60%,100%{transform:translateY(0);opacity:.35}30%{transform:translateY(-4px);opacity:.9}}
-.ia{background:var(--bg);padding:4px 6px 6px;display:flex;align-items:flex-end;gap:4px;flex-shrink:0}
-.iw{flex:1;background:var(--hdr);border-radius:22px;display:flex;align-items:center;padding:4px 8px 4px 12px}
-.ie{font-size:22px;color:var(--txt2);cursor:pointer;margin-right:6px;line-height:1}
-.if{flex:1;background:none;border:none;color:var(--txt);font:15px/1.3 'Roboto',sans-serif;outline:none;padding:6px 0;min-height:22px}
-.if::placeholder{color:var(--txt2)}
-.is{width:42px;height:42px;border-radius:50%;border:none;background:var(--acc);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .12s}
-.is:active{transform:scale(.88)}
-.is svg{width:20px;height:20px}
-.qr{padding:0 10px 2px;flex-shrink:0;display:flex;gap:6px;flex-wrap:wrap}
-.qb{padding:8px 16px;border-radius:20px;border:1.2px solid var(--acc);background:transparent;color:var(--acc);font:13px/1 'Roboto',sans-serif;cursor:pointer;transition:background .15s}
-.qb:active{background:rgba(0,168,132,.2);transform:scale(.96)}
-.rs{position:absolute;bottom:60px;right:10px;font-size:11px;color:var(--txt2);cursor:pointer;opacity:.4;z-index:10;background:var(--hdr);padding:3px 8px;border-radius:10px;transition:opacity .2s}
-.rs:hover{opacity:.8}
-.dl{text-align:center;font-size:11px;color:var(--txt2);font-style:italic;margin:4px 0 6px;padding:0 20px}
-.ec{text-align:center;padding:30px 20px;animation:bI .4s ease-out}
-.ec .ei{font-size:48px;margin-bottom:12px}
-.ec .et{font-size:18px;font-weight:500;margin-bottom:8px}
-.ec .es{font-size:13px;color:var(--txt2);line-height:1.4}
-.ec .eb{margin-top:18px;padding:10px 24px;border-radius:20px;border:none;background:var(--acc);color:#fff;font:14px/1 'Roboto',sans-serif;cursor:pointer}
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: #0B141A;
+    color: #E9EDEF;
+    min-height: 100vh;
+  }
+
+  .page-header {
+    background: linear-gradient(135deg, #1A0F2E 0%, #2D1B4E 100%);
+    padding: 32px 20px 24px;
+    text-align: center;
+    border-bottom: 1px solid rgba(227,59,197,0.3);
+  }
+  .page-header h1 { font-size: 22px; font-weight: 800; color: #fff; }
+  .page-header p { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 6px; }
+
+  .nav-tabs {
+    display: flex;
+    gap: 0;
+    background: #1A1A2E;
+    border-bottom: 1px solid #2A2A3E;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    overflow-x: auto;
+  }
+  .nav-tab {
+    flex: 1;
+    min-width: max-content;
+    padding: 12px 16px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.4);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .nav-tab:hover { color: rgba(255,255,255,0.7); }
+  .nav-tab.active { color: #25D366; border-bottom-color: #25D366; }
+
+  .chat-section {
+    display: none;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+  .chat-section.active { display: block; }
+
+  .section-label {
+    text-align: center;
+    margin: 24px 0 16px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #25D366;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .section-label:first-child { margin-top: 8px; }
+
+  .section-note {
+    background: rgba(37,211,102,0.08);
+    border: 1px solid rgba(37,211,102,0.2);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin: 0 0 16px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.5;
+  }
+  .section-note strong { color: #25D366; }
+
+  /* Chat bubbles */
+  .msg {
+    max-width: 85%;
+    margin-bottom: 6px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+    position: relative;
+    word-wrap: break-word;
+  }
+  .msg-out {
+    background: #005C4B;
+    margin-left: auto;
+    border-top-right-radius: 0;
+  }
+  .msg-in {
+    background: #202C33;
+    margin-right: auto;
+    border-top-left-radius: 0;
+  }
+
+  .msg-gap { margin-bottom: 16px; }
+
+  .msg-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: #25D366;
+    margin-bottom: 2px;
+  }
+
+  .msg-time {
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+    text-align: right;
+    margin-top: 2px;
+  }
+
+  .msg-media {
+    background: #202C33;
+    margin-right: auto;
+    border-top-left-radius: 0;
+    max-width: 280px;
+    padding: 4px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+  }
+  .msg-media-inner {
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px;
+  }
+  .media-placeholder {
+    width: 100%;
+    padding: 24px 16px;
+    text-align: center;
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    border-radius: 6px;
+  }
+  .media-photo { background: linear-gradient(135deg, #1a2a3a, #2a3a4a); }
+  .media-video { background: linear-gradient(135deg, #2a1a3a, #3a2a4a); }
+  .media-audio { background: linear-gradient(135deg, #1a3a2a, #2a4a3a); }
+  .media-album { background: linear-gradient(135deg, #3a2a1a, #4a3a2a); }
+  .media-meme { background: linear-gradient(135deg, #3a3a1a, #4a4a2a); }
+  .media-icon { font-size: 28px; margin-bottom: 6px; }
+
+  .typing-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 12px 16px;
+    background: #202C33;
+    border-radius: 8px;
+    border-top-left-radius: 0;
+    margin-bottom: 6px;
+  }
+  .typing-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    animation: typingBounce 1.4s infinite;
+  }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typingBounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-4px); opacity: 1; }
+  }
+
+  .delay-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 4px 10px;
+    margin: 8px auto 8px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    width: fit-content;
+  }
+  .delay-badge::before { content: ""; }
+
+  .branch-card {
+    background: rgba(37,211,102,0.06);
+    border: 1px dashed rgba(37,211,102,0.3);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin: 16px 0;
+    text-align: center;
+  }
+  .branch-card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #25D366;
+    margin-bottom: 6px;
+  }
+  .branch-card-text {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .scoring-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 12px;
+  }
+  .scoring-table th {
+    background: rgba(37,211,102,0.15);
+    color: #25D366;
+    padding: 8px 10px;
+    text-align: left;
+    font-weight: 700;
+  }
+  .scoring-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.7);
+  }
+  .scoring-table .approve { color: #25D366; }
+  .scoring-table .reject { color: #F44; }
+  .scoring-table .hold { color: #FFA726; }
+
+  .footer-note {
+    text-align: center;
+    padding: 32px 20px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.25);
+  }
+
+  /* WA date chip */
+  .date-chip {
+    text-align: center;
+    margin: 16px 0 12px;
+  }
+  .date-chip span {
+    background: rgba(255,255,255,0.06);
+    padding: 5px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+  }
+
+  .emoji-big { font-size: 20px; }
 </style>
 </head>
 <body>
-<div class="ph">
-  <div class="hdr">
-    <div class="hdr-back"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2H7.83l5.58-5.59z"/></svg></div>
-    <div class="hdr-ava">G</div>
-    <div class="hdr-info"><div class="hdr-name">Габи</div><div class="hdr-st">в сети</div></div>
-    <div class="hdr-ic">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+
+<div class="page-header">
+  <h1>WA-воронка Габи</h1>
+  <p>Сжатая воронка для трафика с лендинга</p>
+</div>
+
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="showTab('step1')">Приветствие</div>
+  <div class="nav-tab" onclick="showTab('scenario1')">Узнать больше</div>
+  <div class="nav-tab" onclick="showTab('qualification')">Квалификация</div>
+  <div class="nav-tab" onclick="showTab('scoring')">Скоринг</div>
+  <div class="nav-tab" onclick="showTab('followup')">Follow-up</div>
+  <div class="nav-tab" onclick="showTab('delays')">Задержки</div>
+</div>
+
+<!-- ============ STEP 1: WELCOME ============ -->
+<div class="chat-section active" id="step1">
+  <div class="date-chip"><span>Сегодня</span></div>
+
+  <div class="section-note">
+    <strong>Маршрутизация:</strong> Сообщение содержит <code>[vagas]</code> → сжатая воронка. Без тега → полная воронка (25 шагов).
+  </div>
+
+  <!-- Lead's first message -->
+  <div class="msg msg-out">
+    <div class="msg-name" style="color: #FF9800">Лид</div>
+    Oi! Vi a vaga no site [vagas]
+    <div class="msg-time">14:02</div>
+  </div>
+  <div class="msg msg-out msg-gap" style="font-size:11px; color:rgba(255,255,255,0.35); background:transparent; padding:2px 12px;">
+    (Пришла с лендинга, сообщение содержит [vagas])
+  </div>
+
+  <div class="delay-badge">&#9202; Задержка 1-2 сек (прочтение)</div>
+
+  <div class="section-label">Сообщение 1.1 — Представление</div>
+
+  <div class="typing-indicator">
+    <div class="typing-dot"></div>
+    <div class="typing-dot"></div>
+    <div class="typing-dot"></div>
+  </div>
+
+  <div class="msg msg-in">
+    <div class="msg-name">Габи</div>
+    Привет! <span class="emoji-big">&#128155;</span> Меня зовут Габи, мне 24 года, и я очень рада, что тебя заинтересовала эта возможность!<br><br>
+    Я сама начинала с нуля — работала продавщицей, зарабатывала копейки и не верила, что смогу что-то поменять. Сейчас я в стриминге уже 3 года и помогаю другим девушкам пройти тот же путь.<br><br>
+    Если ты здесь — значит, ты из тех, кто хочет большего. И я обожаю таких людей &#128293;
+    <div class="msg-time">14:02</div>
+  </div>
+
+  <div class="delay-badge">&#9202; Задержка ~2 сек</div>
+
+  <div class="section-label">Фото — Аватар Габи</div>
+
+  <div class="msg-media">
+    <div class="msg-media-inner">
+      <div class="media-placeholder media-photo">
+        <div class="media-icon">&#128248;</div>
+        Селфи Габи — улыбка, casual
+      </div>
     </div>
   </div>
-  <div class="rs" onclick="reset()">&#8635; сначала</div>
-  <div class="chat" id="c"></div>
-  <div class="qr" id="q"></div>
-  <div class="ia">
-    <div class="iw">
-      <span class="ie">&#9786;</span>
-      <input class="if" id="inp" placeholder="Сообщение" autocomplete="off">
+
+  <div class="delay-badge">&#9202; Задержка ~3 сек</div>
+
+  <div class="section-label">ГС-1 — Голосовое приветствие (20-25 сек)</div>
+
+  <div class="msg-media">
+    <div class="msg-media-inner">
+      <div class="media-placeholder media-audio">
+        <div class="media-icon">&#127908;</div>
+        <b>Голосовое сообщение (20-25 сек)</b><br><br>
+        «Привет! Я так рада, что ты написала. Знаешь, я сама три года назад была в ситуации, когда денег вообще не хватало — работала продавщицей и думала, что так и будет. А потом попала в стриминг, и за первый месяц заработала больше, чем за три на прежней работе. Сейчас я помогаю девушкам, которые тоже хотят попробовать. Почитай что я написала ниже, и если откликнется — напиши мне!»
+      </div>
     </div>
-    <button class="is" onclick="send()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+  </div>
+
+  <div class="delay-badge">&#9202; Задержка ~3 сек</div>
+
+  <div class="section-label">Фото — До/После</div>
+
+  <div class="msg-media">
+    <div class="msg-media-inner">
+      <div class="media-placeholder media-photo">
+        <div class="media-icon">&#127775;</div>
+        Коллаж До/После<br>
+        Слева: Габи-продавщица (R$1.200/мес)<br>
+        Справа: Габи сейчас (R$12.000/мес)
+      </div>
+    </div>
+  </div>
+
+  <div class="delay-badge">&#9202; «Печатает» ~5 сек</div>
+
+  <div class="section-label">Сообщение 1.3 — Тезисы + Выбор</div>
+
+  <div class="msg msg-in msg-gap">
+    <div class="msg-name">Габи</div>
+    Вот что это за возможность:<br><br>
+    &#128176; Доход: $500–1.200/мес на старте, топ — $3.000+<br>
+    &#127919; Формат: стримы развлечений, от 6ч/день, 5 смен/неделю<br>
+    &#128274; Полная анонимность — геоблок на твою страну<br>
+    &#127891; Бесплатное обучение + личный ментор<br>
+    &#128181; Выплаты каждый день во время стажировки, потом каждые 5 смен. В долларах<br>
+    &#128241; Нужен только телефон или ноутбук<br><br>
+    Хочешь узнать подробнее — отправь <b>1</b><br>
+    Готова записаться на интервью — отправь <b>2</b><br>
+    Есть вопросы — просто напиши, отвечу &#128522;
+    <div class="msg-time">14:03</div>
+  </div>
+
+  <div class="branch-card">
+    <div class="branch-card-title">&#8594; Разветвление</div>
+    <div class="branch-card-text">
+      <b>«1»</b> → Сценарий «Узнать больше» (вкладка)<br>
+      <b>«2»</b> → Сразу квалификация (вкладка)<br>
+      <b>Свободный текст</b> → AI отвечает от лица Габи (A-A-R)
+    </div>
   </div>
 </div>
+
+<!-- ============ SCENARIO 1: LEARN MORE ============ -->
+<div class="chat-section" id="scenario1">
+  <div class="date-chip"><span>Сегодня</span></div>
+
+  <div class="msg msg-out">
+    <div class="msg-name" style="color: #FF9800">Лид</div>
+    1
+    <div class="msg-time">14:05</div>
+  </div>
+
+  <div class="delay-badge">&#9202; Прочтение ~1 сек + «Печатает» ~5 сек</div>
+
+  <div class="section-label">Сообщение 2.1 — Что такое стриминг</div>
+
+  <div class="msg msg-in">
+    <div class="msg-name">Габи</div>
+    Расскажу &#128522;<br><br>
+    Стриминг развлечений — это когда ты общаешься с аудиторией в прямом эфире. Танцуешь, болтаешь, играешь, поёшь — кто что любит. Зрители отправляют подарки, и это твой доход.<br><br>
+    Это как быть блогером, только с мгновенной монетизацией — с первого же дня.
+    <div class="msg-time">14:05</div>
+  </div>
+
+  <div class="delay-badge">&#9202; Задержка ~2 сек</div>
+
+  <div class="section-label">Видео-примеры стримов (2-3 клипа)</div>
+
+  <div class="msg-media">
+    <div class="msg-media-inner">
+      <div class="media-placeholder media-video">
+        <div class="media-icon">&#127909;</div>
+        Видео-примеры стримов<br>
+        <span style="font-size:11px; opacity:0.6">из папки «Видео-примеры стримов/»</span><br>
+        <span style="font-size:11px; opacity:0.6">&#8226; пример1.mp4<br>&#8226; пример_музыка+волосы делает.mp4<br>&#8226; IMG_4660.mp4</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="delay-badge">&#9202; Задержка ~4 сек</div>
+
+  <div class="section-label">ГС-2 — «После 5-й смены всё меняется» (15-20 сек)</div>
+
+  <div class="msg-media">
+    <div class="msg-media-inner">
+      <div class="media-placeholder media-audio">
+        <div class="media-icon">&#127908;</div>
+        <b>Голосовое сообщение (15-20 сек)</b><br><br>
+        «Скажу тебе по-честному — большинство девушек первые дни вообще не верят, что это сработает. Но после пятой смены всё меняется. Потому что ты видишь, как деньги приходят каждый день. Не обещания, не "потом" — прямо на счёт. И вот тогда включается: блин, это реально работает.»
+      </div>
+    </div>
+  </div>
+
+  <div class="delay-badge">&#9202; Задержка ~3 сек</div>
+
+  <div class="section-label">Скрины отзывов (альбом 4 фото)</div>
+
+  <div class="msg-media">
+    <div class="msg-media-inner">
+      <div class="media-placeholder media-album">
+        <div class="media-icon">&#128444;&#65039; &times;4</div>
+        <b>Альбом: скриншоты WA-переписок</b><br><br>
+        <div style="text-align:left; font-size:11px; line-height:1.6">
+          <b>Скрин 1 — Джессика (Ресифи):</b><br>
+          &#128994; «Габи, первая неделя — $187!! Я плакала от счастья»<br>
+          &#128309; «Я ж говорила!! А ты в первый день хотела всё бросить»<br>
+          &#128994; «Хорошо что ты не дала kkk»<br><br>
+          <b>Скрин 2 — Камила (Белу-Оризонти):</b><br>
+          &#128994; «3 месяца. R$4.200 в этом. Мама до сих пор не верит»<br>
+          &#128309; «Покажи ей стрим, пусть увидит что ты звезда»<br>
+          &#128994; «Она говорит "дочь работает в интернете" и хватит kkkk»<br><br>
+          <b>Скрин 3 — Летисия (Форталеза):</b><br>
+          &#128994; «Сегодня первый раз заработала за смену больше чем за неделю в магазине»<br>
+          &#128309; «ВОТ. Помнишь я говорила — после 5-й смены всё изменится?»<br>
+          &#128994; «Жалею только что не начала раньше»<br><br>
+          <b>Скрин 4 — Ана (Сан-Паулу):</b><br>
+          &#128994; «1-й месяц $1.100. 2-й $1.800. 3-й пока $2.300 и ещё неделя»<br>
+          &#128309; «Растёшь как ракета!»<br>
+          &#128994; «Лучшее решение — тебе тогда написать»
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="msg msg-in" style="font-size:13px;">
+    <div class="msg-name">Габи</div>
+    Вот что девушки пишут после первых недель работы &#128155;
+    <div class="msg-time">14:06</div>
+  </div>
+
+  <div class="delay-badge">&#9202; Задержка ~2 сек</div>
+
+  <div class="section-label">Мем</div>
+
+  <div class="msg-media">
+    <div class="msg-media-inner">
+      <div class="media-placeholder media-meme">
+        <div class="media-icon">&#128514;</div>
+        <b>Мем</b><br><br>
+        <div style="text-align:left; font-size:11px;">
+        Два кадра:<br>
+        &#9757; Девушка грустная за кассой<br>
+        &#9758; Та же девушка довольная дома с телефоном<br><br>
+        «6 часов за кассой: R$50<br>
+        6 часов дома на стриме: R$500»
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="delay-badge">&#9202; «Печатает» ~5 сек</div>
+
+  <div class="section-label">Сообщение 2.5 — Путь + призыв</div>
+
+  <div class="msg msg-in msg-gap">
+    <div class="msg-name">Габи</div>
+    Вот как выглядит путь:<br><br>
+    &#128203; Разговор 30 мин с членом моей команды — ответим на все вопросы<br>
+    &#127891; Бесплатное обучение: от настройки профиля до первых денег<br>
+    &#128105;&#8205;&#127979; Личный ментор на связи<br>
+    &#128184; Первые выплаты — уже после первой смены<br><br>
+    Без вложений. Без обязательств. Начнём с разговора.<br><br>
+    Готова записаться? Отправь <b>+</b> &#10024;<br>
+    Остались вопросы — просто напиши
+    <div class="msg-time">14:06</div>
+  </div>
+
+  <div class="branch-card">
+    <div class="branch-card-title">&#8594; После «+»</div>
+    <div class="branch-card-text">Переход к квалификации (вкладка)</div>
+  </div>
+</div>
+
+<!-- ============ QUALIFICATION ============ -->
+<div class="chat-section" id="qualification">
+  <div class="date-chip"><span>Сегодня</span></div>
+
+  <div class="msg msg-out">
+    <div class="msg-name" style="color: #FF9800">Лид</div>
+    +
+    <div class="msg-time">14:08</div>
+  </div>
+
+  <div class="delay-badge">&#9202; Прочтение ~1 сек + «Печатает» ~3 сек</div>
+
+  <div class="section-label">3.1 — Имя</div>
+
+  <div class="msg msg-in">
+    <div class="msg-name">Габи</div>
+    Отлично! &#127881; Давай познакомимся поближе.<br><br>
+    Как тебя зовут? &#128522;
+    <div class="msg-time">14:08</div>
+  </div>
+
+  <div class="msg msg-out">
+    <div class="msg-name" style="color: #FF9800">Лид</div>
+    Марина
+    <div class="msg-time">14:08</div>
+  </div>
+
+  <div class="delay-badge">&#9202; Прочтение ~1 сек + «Печатает» ~3 сек</div>
+
+  <div class="section-label">3.2 — Возраст</div>
+
+  <div class="msg msg-in">
+    <div class="msg-name">Габи</div>
+    Приятно познакомиться, Марина! Сколько тебе лет?
+    <div class="msg-time">14:09</div>
+  </div>
+
+  <div class="msg msg-out">
+    <div class="msg-name" style="color: #FF9800">Лид</div>
+    22
+    <div class="msg-time">14:09</div>
+  </div>
+
+  <div class="delay-badge">&#9202; Прочтение ~1 сек + «Печатает» ~5 сек</div>
+
+  <div class="section-label">3.3 — О себе</div>
+
+  <div class="msg msg-in">
+    <div class="msg-name">Габи</div>
+    Расскажи немного о себе) Чем увлекаешься, может-быть у тебя есть какие-то таланты. Если ведёшь соцсети, приложи ссылки
+    <div class="msg-time">14:09</div>
+  </div>
+
+  <div class="msg msg-out">
+    <div class="msg-name" style="color: #FF9800">Лид</div>
+    Люблю танцевать, немного пою. Инста: @marina_danca
+    <div class="msg-time">14:10</div>
+  </div>
+
+  <div class="delay-badge">&#9202; Прочтение ~2 сек + «Печатает» ~4 сек</div>
+
+  <div class="section-label">3.4 — Отдельное место (обязательный)</div>
+
+  <div class="msg msg-in">
+    <div class="msg-name">Габи</div>
+    Важный момент: есть ли у тебя отдельное место для стримов, где тебя не будут тревожить? &#127968;
+    <div class="msg-time">14:10</div>
+  </div>
+
+  <div class="msg msg-out">
+    <div class="msg-name" style="color: #FF9800">Лид</div>
+    Да, у меня своя комната
+    <div class="msg-time">14:11</div>
+  </div>
+
+  <div class="delay-badge">&#9202; Прочтение ~1 сек + «Печатает» ~4 сек</div>
+
+  <div class="section-label">3.5 — Модель телефона</div>
+
+  <div class="msg msg-in">
+    <div class="msg-name">Габи</div>
+    С какого телефона будешь стримить? Напиши точную модель — например, iPhone 13 или Samsung Galaxy S24 &#128241;
+    <div class="msg-time">14:11</div>
+  </div>
+
+  <div class="msg msg-out">
+    <div class="msg-name" style="color: #FF9800">Лид</div>
+    iPhone 14
+    <div class="msg-time">14:11</div>
+  </div>
+
+  <div class="delay-badge">&#9202; Прочтение ~1 сек + «Печатает» ~3 сек</div>
+
+  <div class="section-label">3.6 — Ноутбук (не обязательно)</div>
+
+  <div class="msg msg-in">
+    <div class="msg-name">Габи</div>
+    А есть ли ноутбук или компьютер с веб-камерой? Это не обязательно, но будет плюсом &#128187;
+    <div class="msg-time">14:12</div>
+  </div>
+
+  <div class="msg msg-out msg-gap">
+    <div class="msg-name" style="color: #FF9800">Лид</div>
+    Нет, только телефон
+    <div class="msg-time">14:12</div>
+  </div>
+
+  <div class="branch-card">
+    <div class="branch-card-title">&#8594; AI-скоринг</div>
+    <div class="branch-card-text">Все ответы собраны → автоматический анализ (вкладка «Скоринг»)</div>
+  </div>
+</div>
+
+<!-- ============ SCORING ============ -->
+<div class="chat-section" id="scoring">
+
+  <div class="section-label">AI-скоринг (автоматический)</div>
+
+  <div class="section-note">
+    После получения всех ответов AI анализирует заявку. Лид <b>не видит</b> процесс скоринга — только результат.
+  </div>
+
+  <table class="scoring-table">
+    <tr>
+      <th>Критерий</th>
+      <th class="approve">APPROVE</th>
+      <th class="reject">REJECT</th>
+      <th class="hold">HOLD</th>
+    </tr>
+    <tr>
+      <td><b>Возраст</b></td>
+      <td>18+</td>
+      <td>&lt; 18</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><b>Устройство</b></td>
+      <td>iPhone 11+ / Android 2023+ / ноутбук с камерой</td>
+      <td>iPhone X и старше / Android до 2023 / нет устройства</td>
+      <td>«просто iPhone» без модели, пограничные</td>
+    </tr>
+    <tr>
+      <td><b>Отдельное место</b></td>
+      <td>Да</td>
+      <td>Твёрдое «нет»</td>
+      <td>«пока нет, но планирую»</td>
+    </tr>
+  </table>
+
+  <div class="section-label" style="color: #25D366;">&#10004; Auto-Approve</div>
+
+  <div class="section-note">Все критерии зелёные → выбор слота</div>
+
+  <div class="msg msg-in msg-gap">
+    <div class="msg-name">Габи</div>
+    Супер, Марина! &#128155; Осталось выбрать время для разговора с членом моей команды (30 мин):<br><br>
+    1 &#8212; Пн, 10 марта, 14:00<br>
+    2 &#8212; Вт, 11 марта, 11:00<br>
+    3 &#8212; Ср, 12 марта, 16:00<br><br>
+    <i>(слоты подгружаются из CRM)</i>
+    <div class="msg-time">14:12</div>
+  </div>
+
+  <div class="msg msg-out">
+    <div class="msg-name" style="color: #FF9800">Лид</div>
+    2
+    <div class="msg-time">14:13</div>
+  </div>
+
+  <div class="msg msg-in msg-gap">
+    <div class="msg-name">Габи</div>
+    Записала! &#9989;<br><br>
+    &#128197; Вторник, 11 марта, 11:00<br>
+    &#128105; С тобой свяжется Карла<br><br>
+    Напомню за день до встречи &#128155;<br>
+    Если что-то поменяется или будут вопросы — пиши, всегда на связи!
+    <div class="msg-time">14:13</div>
+  </div>
+
+  <div class="section-label" style="color: #F44;">&#10008; Auto-Reject: возраст &lt; 18</div>
+
+  <div class="msg msg-in msg-gap">
+    <div class="msg-name">Габи</div>
+    {имя}, к сожалению, для этой работы нужно быть старше 18 лет. Но спасибо, что написала! Если хочешь — напиши мне, когда исполнится 18, и мы с удовольствием пообщаемся &#128155;
+    <div class="msg-time">14:12</div>
+  </div>
+
+  <div class="section-label" style="color: #F44;">&#10008; Auto-Reject: устройство</div>
+
+  <div class="msg msg-in msg-gap">
+    <div class="msg-name">Габи</div>
+    {имя}, для стримов нужен телефон с хорошей камерой — от iPhone 11 или Android 2023 года. Либо ноутбук/компьютер с веб-камерой. Если обновишь устройство — напиши, буду рада помочь! &#128241;
+    <div class="msg-time">14:12</div>
+  </div>
+
+  <div class="section-label" style="color: #F44;">&#10008; Auto-Reject: нет места</div>
+
+  <div class="msg msg-in msg-gap">
+    <div class="msg-name">Габи</div>
+    {имя}, для стримов важно иметь спокойное место, где никто не помешает — это влияет на качество эфиров и доход. Если ситуация изменится — пиши, всегда буду рада! &#127968;
+    <div class="msg-time">14:12</div>
+  </div>
+
+  <div class="section-label" style="color: #FFA726;">&#9888; Hold (ручная проверка)</div>
+
+  <div class="section-note">
+    Лиду <b>ничего не отправляем</b>. Админу приходит уведомление с данными заявки и причиной HOLD. Ждём ручной approve/reject.
+  </div>
+</div>
+
+<!-- ============ FOLLOW-UP ============ -->
+<div class="chat-section" id="followup">
+
+  <div class="section-label">Follow-up: После шага 1 (до выбора 1/2)</div>
+
+  <div class="section-note"><strong>+1 час</strong></div>
+  <div class="msg msg-in">
+    <div class="msg-name">Габи</div>
+    Привет ещё раз &#128522; Видела, что ты заглянула. Если интересно узнать подробности — отправь 1, а если уже готова — отправь 2
+    <div class="msg-time">15:02</div>
+  </div>
+
+  <div class="section-note"><strong>+24 часа</strong> — голосовое</div>
+  <div class="msg-media">
+    <div class="msg-media-inner">
+      <div class="media-placeholder media-audio">
+        <div class="media-icon">&#127908;</div>
+        <b>ГС-3 — Мягкий nudge (10-15 сек)</b><br><br>
+        «Эй, это Габи! Я тут подумала о тебе. Понимаю, что нужно время — это нормально. Но если есть вопросы или сомнения, просто напиши. Я не кусаюсь, обещаю!»
+      </div>
+    </div>
+  </div>
+
+  <div class="section-note"><strong>+72 часа</strong> — финальное</div>
+  <div class="msg msg-in msg-gap">
+    <div class="msg-name">Габи</div>
+    Не буду надоедать &#128522; Просто знай — если когда-нибудь захочешь попробовать, я здесь &#128155;
+    <div class="msg-time">14:02</div>
+  </div>
+
+  <div class="section-label">Follow-up: Сценарий 1 (до «+»)</div>
+
+  <div class="section-note"><strong>+1 час</strong></div>
+  <div class="msg msg-in">
+    <div class="msg-name">Габи</div>
+    Кстати, записаться — это просто пара вопросов и минута времени. Попробуешь? Отправь + &#10024;
+    <div class="msg-time">15:06</div>
+  </div>
+
+  <div class="section-note"><strong>+24 часа</strong> — голосовое</div>
+  <div class="msg-media">
+    <div class="msg-media-inner">
+      <div class="media-placeholder media-audio">
+        <div class="media-icon">&#127908;</div>
+        <b>ГС-4 — FOMO (10-15 сек)</b><br><br>
+        «Привет! На этой неделе как раз открылись удобные слоты для разговора — а они обычно быстро разбирают. Если хочешь, запишу тебя. Просто отправь плюсик!»
+      </div>
+    </div>
+  </div>
+
+  <div class="section-note"><strong>+72 часа</strong> — финальное</div>
+  <div class="msg msg-in msg-gap">
+    <div class="msg-name">Габи</div>
+    Если надумаешь — просто напиши. Буду рада &#128155;
+    <div class="msg-time">14:06</div>
+  </div>
+
+  <div class="section-label">Follow-up: Квалификация (не ответила)</div>
+
+  <div class="section-note"><strong>+1 час</strong></div>
+  <div class="msg msg-in">
+    <div class="msg-name">Габи</div>
+    Ой, кажется мы остановились на полпути &#128522; Осталось совсем чуть-чуть!
+    <div class="msg-time">15:12</div>
+  </div>
+
+  <div class="section-note"><strong>+24 часа</strong></div>
+  <div class="msg msg-in">
+    <div class="msg-name">Габи</div>
+    {имя}, хочешь продолжим? Мне осталось спросить ещё буквально пару вещей — и можно выбирать время для разговора
+    <div class="msg-time">14:12</div>
+  </div>
+
+  <div class="section-note"><strong>+72 часа</strong> — финальное</div>
+  <div class="msg msg-in msg-gap">
+    <div class="msg-name">Габи</div>
+    Если что-то смутило — спрашивай, не стесняйся. А если просто было не до того — напиши когда будет удобно &#128155;
+    <div class="msg-time">14:12</div>
+  </div>
+</div>
+
+<!-- ============ DELAYS ============ -->
+<div class="chat-section" id="delays">
+
+  <div class="section-label">Задержки и «печатание»</div>
+
+  <div class="section-note">
+    Все сообщения отправляются с задержками, имитирующими живого человека. Перед отправкой отображается индикатор «печатает».
+  </div>
+
+  <table class="scoring-table">
+    <tr>
+      <th>Действие</th>
+      <th>Задержка</th>
+    </tr>
+    <tr>
+      <td>Прочтение входящего</td>
+      <td>1-3 сек (пропорционально длине)</td>
+    </tr>
+    <tr>
+      <td>Начало «печатает»</td>
+      <td>сразу после прочтения</td>
+    </tr>
+    <tr>
+      <td>Длительность «печатает»</td>
+      <td>3-7 сек (пропорционально длине ответа)</td>
+    </tr>
+    <tr>
+      <td>Между сообщениями в серии</td>
+      <td>2-5 сек</td>
+    </tr>
+    <tr>
+      <td>Перед фото/видео</td>
+      <td>2-3 сек</td>
+    </tr>
+    <tr>
+      <td>Перед аудио</td>
+      <td>3-4 сек</td>
+    </tr>
+  </table>
+
+  <div class="section-label" style="margin-top:32px;">Пример последовательности</div>
+
+  <div class="section-note" style="font-family: monospace; font-size: 11px; line-height: 2;">
+    14:02:00 — Лид отправила сообщение<br>
+    14:02:01 — &#9745; Прочитано (задержка 1 сек)<br>
+    14:02:02 — <i>Габи печатает...</i> (5 сек)<br>
+    14:02:07 — &#9993; Сообщение 1.1 отправлено<br>
+    14:02:09 — &#9993; Фото Габи отправлено (+2 сек)<br>
+    14:02:12 — <i>&#127908; Записывает аудио...</i> (+3 сек)<br>
+    14:02:13 — &#9993; Голосовое ГС-1 отправлено<br>
+    14:02:16 — &#9993; Фото До/После (+3 сек)<br>
+    14:02:17 — <i>Габи печатает...</i> (5 сек)<br>
+    14:02:22 — &#9993; Сообщение 1.3 (тезисы) отправлено
+  </div>
+
+  <div class="section-label" style="margin-top:32px;">AI-ответы на свободный текст</div>
+
+  <div class="section-note">
+    На <b>любом</b> шаге, если лид пишет текст вместо «+»/«1»/«2» → AI (Groq) отвечает от лица Габи.<br><br>
+    <b>Фреймворк A-A-R:</b><br>
+    &#8226; <b>Acknowledge</b> — признать вопрос/эмоцию<br>
+    &#8226; <b>Answer</b> — ответить по сути<br>
+    &#8226; <b>Redirect</b> — вернуть в воронку
+  </div>
+</div>
+
+<div class="footer-note">
+  Apex Talent &bull; WA Funnel Preview &bull; Только для внутреннего использования
+</div>
+
 <script>
-const CK='<span class="ck"><svg viewBox="0 0 16 11"><path fill="currentColor" d="M11.07.65l-6.37 6.4L2.35 4.7a.5.5 0 00-.71 0l-.7.71a.5.5 0 000 .7l3.37 3.38a.5.5 0 00.7 0L12.48 2.06a.5.5 0 000-.71l-.7-.7a.5.5 0 00-.71 0z"/><path fill="currentColor" d="M15.07.65l-6.37 6.4a.5.5 0 01-.7 0 .5.5 0 010-.71l6.36-6.39a.5.5 0 01.7 0l.71.7a.5.5 0 010 .71l-7.07 7.07a.5.5 0 01-.7 0" opacity=".7"/></svg></span>';
-
-const F=[
-  // ─── ШАГ 0: Стартовый мем ───
-  {t:'d',v:'Сегодня'},
-  {t:'m',ico:'🦫',sub:'КОГДА СТАЛА ЧАСТЬЮ ПРОЕКТА ГАБИ'},
-
-  // ─── ШАГ 1: Фото + отсылка к мему ───
-  {t:'g',cls:'pf',ico:'📸',lb:'Фото Габи',sub:'кафе, улыбается, casual'},
-  {t:'i',v:'👆 Этот мем с капибарой — совсем не шутка,\nобычно всё именно так и происходит ✌️'},
-
-  // ─── ШАГ 2: Знакомство ───
-  {t:'i',v:'✌️ Привет! Меня зовут Габи, мне 26 лет и я очень рада что тебя зацепил мой проект и ты сейчас читаешь это сообщение'},
-  {t:'i',v:'Это значит что ты, так же как я и другие участницы нашего проекта, хочешь взять от этой жизни максимум и...'},
-  {t:'i',v:'...я обожаю таких людей, ведь именно так и нужно жить эту жизнь!! 💗'},
-  {t:'m',ico:'🦫',sub:'ПОГНАЛИ'},
-  {t:'i',v:'⭐ Не будем тянуть — обещаю, впереди самое интересное, и эта информация может полностью изменить твою жизнь! Ты готова?\n\nОтправь + 🍓',cta:'+',cl:'+ давай рассказывай!'},
-
-  // ─── ШАГ 3: Lifestyle proof ───
-  {t:'g',cls:'pf',ico:'📸',lb:'Фото Габи',sub:'на фоне города, другое фото'},
-  {t:'i',v:'🌙 Сан-Паулу, периферия — стартовая точка\n\n3 года назад я тоже была на твоём месте и думала:\n\n«Как же они все это делают? Как люди живут такой классной жизнью, путешествуют и зарабатывают кучу денег?»'},
-  {t:'i',v:'🙌 Но сегодня я путешествую, радуюсь вашим результатам и наслаждаюсь своей жизнью:'},
-  {t:'g',cls:'cs',ico:'✈️',lb:'Дубай',sub:'пляж, набережная'},
-  {t:'g',cls:'cs',ico:'🌴',lb:'Бали',sub:'красивое место'},
-  {t:'a',dur:'0:15'},
-
-  // ─── ШАГ 4: Куда потратила деньги ───
-  {t:'i',v:'💸 Куда я потратила свои первые большие деньги?\n\nНа них я закрыла все долги, отправила маме R$3.000 на лечение и купила билет в Дубай\n\nНовый макбук, куча одежды и первое путешествие за пределы Бразилии — всё за первые 6 месяцев'},
-  {t:'i',v:'🎬 Но не переживай, скоро и ты так сможешь — устраивайся поудобнее и читай внимательно!\n\nСейчас расскажу как именно ✨ ТЕБЕ ✨ прийти к жизни, о которой большинство только мечтает, в то время как мои девочки берут и делают это реальностью'},
-  {t:'m',ico:'🦫',sub:'Если я смогла, смогли мои девочки — сможешь и ты!'},
-  {t:'i',v:'Отправь + чтобы узнать что нужно делать 🎯',cta:'+',cl:'+ что нужно делать?'},
-
-  // ─── ШАГ 5: Философия ───
-  {t:'i',v:'Если ты не хочешь застрять на кассе или в офисе за R$1.800 в месяц, то вот мой главный совет'},
-  {t:'m',ico:'🦫',sub:'ООО ВОЗМОЖНОСТИ'},
-  {t:'i',v:'💡 В жизни нужно как можно раньше понять одну важную вещь — вокруг каждой из нас всегда есть огромное количество возможностей\n\nГлавное — научиться их замечать и использовать. И это правда!'},
-  {t:'i',v:'💀 Люди живут словно с плёнкой на глазах, следуя стратегии из школы: сиди тихо, не высовывайся, будь обычной, выполняй задания\n\nХотя на самом деле вокруг каждой из нас есть огромное пространство для выбора — нужно лишь немного расширить рамки мышления'},
-  {t:'m',ico:'🦫',sub:'СЕКРЕТ УСПЕХА ПРОСТ'},
-  {t:'i',v:'🧡 Если научишься замечать и использовать возможности — сможешь добиться чего угодно\n\nПотому что в этом и есть тот самый «секрет успеха» — чувствовать себя, замечать возможности и ловить их двумя руками!'},
-
-  // ─── ШАГ 6: CTA «Заметить возможность» ───
-  {t:'i',v:'🙌 Отправь + чтобы заметить, какая возможность у тебя есть прямо сейчас\n\nОтправь + 👀',cta:'+',cl:'+ заметить возможность'},
-  {t:'m',ico:'⭐',sub:'обучение + мой опыт + план = успех'},
-
-  // ─── ШАГ 7: Раскрытие проекта (мягкое, без названия) ───
-  {t:'i',v:'✌️ Как ты уже поняла, у меня есть свой закрытый проект. Я была на твоём месте, поэтому создала его, чтобы ты смогла начать жить так же'},
-  {t:'i',v:'Где я, на основе своего опыта, помогаю прийти к тому, к чему пришла сама — это моя миссия\n\n🎉 И не только я! У меня есть целая команда, которую я лично собрала, чтобы раскрыть твой потенциал и поддержать на каждом шаге!'},
-
-  // ─── ШАГ 8: Отзыв участницы ───
-  {t:'g',cls:'cs',ico:'💬',lb:'Скриншот переписки',sub:'Отзыв участницы проекта'},
-  {t:'i',v:'Мы получаем кучу благодарностей от девушек, которые уже стали частью проекта и добились успеха! Это значит что я вкладываю силы не зря 🌸\n\n💸 Вот результаты некоторых наших участниц'},
-
-  // ─── ШАГ 9: Кейс 1 — Жулиана ДО ───
-  {t:'i',v:'Жулиана / 24 года\nГород Сан-Паулу\nРаботала кассиром в супермаркете\nМать-одиночка\n💸 Зарплата R$1.700/мес'},
-  {t:'g',cls:'cs',ico:'📸',lb:'ДО',sub:'Жулиана · в форме кассира'},
-  {t:'i',v:'Отправь + чтобы узнать ПОСЛЕ ✨',cta:'+',cl:'+ узнать ПОСЛЕ'},
-
-  // ─── ШАГ 10: Жулиана ПОСЛЕ ───
-  {t:'g',cls:'pf',ico:'📸',lb:'ПОСЛЕ · коллаж',sub:'селфи, покупки, путешествие, дома с сыном'},
-  {t:'i',v:'ПОСЛЕ (5 месяцев в проекте):\n\nЖулиана / 24 года\nРаботает из дома, рядом с сыном\nОплатила все долги, купила новый телефон и ноутбук\nПервая поездка на пляж с сыном за 2 года\n\n💸 Зарабатывает R$7.000/мес — и всё в долларах!'},
-
-  // ─── ШАГ 11: Кейс 2 — Камила ДО ───
-  {t:'i',v:'Камила / 21 год\nInterior de Minas Gerais\nУниверситет, долг по FIES\nСтажировка за R$1.200/мес\n💸 Еле хватало на еду'},
-  {t:'g',cls:'cs',ico:'📸',lb:'ДО',sub:'Камила · с учебниками'},
-  {t:'i',v:'Отправь + чтобы узнать ПОСЛЕ ✨',cta:'+',cl:'+ узнать ПОСЛЕ'},
-
-  // ─── ШАГ 12: Камила ПОСЛЕ ───
-  {t:'g',cls:'pf',ico:'📸',lb:'ПОСЛЕ · коллаж',sub:'путешествие, покупки, техника, вечер с подругами'},
-  {t:'i',v:'ПОСЛЕ (6 месяцев в проекте):\n\nКамила / 22 года\nЗакрыла FIES полностью — больше нет долга\nПервое путешествие — Буэнос-Айрес на каникулах\nНовая техника, вещи, время на себя\n\n💸 Зарабатывает R$8.000/мес — и всё в долларах!'},
-
-  // ─── ШАГ 13: Переход ───
-  {t:'i',v:'Какие умницы, правда? Очень горжусь ими, надеюсь что на их месте будешь и ты ✨'},
-  {t:'i',v:'Но ладно, немного отвлеклась — люблю хвастаться своими девочками 🤩'},
-  {t:'m',ico:'🦫',sub:'НУ ДАВАЙ РАССКАЗЫВАЙ ЧТО МНЕ НУЖНО ДЕЛАТЬ???'},
-  {t:'i',v:'Ты сможешь точно так же, если будешь двигаться с нами — мой проект предоставляет всё что нужно 🫧\n\nОтправь + 👀',cta:'+',cl:'+ я тоже хочу!'},
-
-  // ─── ШАГ 14: Origin story глубже ───
-  {t:'i',v:'🐇 Хорошо, рассказываю!\nНо для полного погружения вернёмся к моменту, когда я сама была на твоём месте:'},
-  {t:'g',cls:'cs',ico:'📸',lb:'Коллаж',sub:'молодая Габи + периферия SP'},
-  {t:'i',v:'— В маленьком районе на окраине\n— Без денег и перспектив\n— Без хороших знакомств\n— Без малейшего понятия куда двигаться\n\n🛒 В 17 была продавщицей за R$1.200\n☕ В 19 — кассиром в кафе за R$1.500\n📋 В 21 — ресепшн в клинике за R$1.800\n\nКаждый раз думала: ну вот, сейчас будет лучше.\nНо R$1.800 — это потолок для девушки без диплома'},
-  {t:'i',v:'И тут ко мне прибегает подруга и чуть ли не кричит что нам нужно срочно поговорить и что я могу увольняться 💗'},
-  {t:'m',ico:'😱',sub:'реакция «что за дичь»'},
-  {t:'i',v:'Реакция у меня была именно такая — какую дичь собирается мне втирать эта особа 🤷‍♀️✌️'},
-  {t:'a',dur:'0:20'},
-  {t:'i',v:'Именно этот момент и стал ✨ той самой случайностью ✨, после которой я уволилась с работы, а моя жизнь приобрела совсем другие обороты'},
-
-  // ─── ШАГ 15: «Я стану твоей подругой» ───
-  {t:'g',cls:'pf',ico:'📸',lb:'Габи сейчас',sub:'путешествия, красивые места'},
-  {t:'i',v:'И сейчас, прямо как в тот вечер, я стану для тебя этой самой подругой и расскажу всё в мельчайших подробностях о том, как ты можешь зарабатывать уже сейчас прямо с нами ✍️💸'},
-  {t:'i',v:'А ты будешь в моей роли — той девушкой, которая и мечтать не могла о том, что будет происходить в её жизни дальше'},
-  {t:'m',ico:'🦫',sub:'Я ТЕБЯ СЛУШАЮ'},
-
-  // ─── ШАГ 16: Переломный момент ───
-  {t:'i',v:'Теперь внимательно слушай — мы подходим к твоему переломному моменту!\n\nОтправь + 🎀',cta:'+',cl:'+ я тебя слушаю!'},
-  {t:'m',ico:'🦫',sub:'I\'M A BUSINESS CAPYBARA'},
-  {t:'i',v:'Итак, давай для начала рассмотрим какие варианты есть, чтобы зарабатывать большие деньги:'},
-
-  // ─── ШАГ 17: Elimination ───
-  {t:'i',v:'❌ Открыть свой бизнес — сюда нужны вложения, но ты сможешь прийти к этому позже с нашей помощью'},
-  {t:'i',v:'❌ Занять высокую должность — нужен опыт, отработанные часы, и это скучно если честно'},
-  {t:'i',v:'❌ Заняться чем-то незаконным — мы же не преступницы, правильно?'},
-  {t:'i',v:'❌ Уйти во фриланс — уже интереснее, но платят копейки и нужно много времени на портфолио'},
-  {t:'i',v:'Круто если хочешь открыть бизнес или фриланс — это тоже интересно и прибыльно\n\nНо делать это намного приятнее, когда базовые потребности уже закрыты: хорошая квартира, качественные вещи, и не думаешь что будешь есть завтра! ⌛💸👑'},
-  {t:'i',v:'Прямо как Жулиана и Камила, которые начали строить планы на будущее, заработав на всё это в моём проекте!'},
-  {t:'m',ico:'🦫',sub:'ВАМ ДОСТУПНА ИНСТРУКЦИЯ'},
-
-  // ─── ШАГ 18: Раскрытие пути ───
-  {t:'i',v:'Поэтому, отчасти благодаря подруге, для себя я нашла безопасный, простой и быстрый путь к деньгам и свободе\n\nИ тебе сейчас тоже предлагаю попробовать пройти этот путь\n\nОтправь + ⭐',cta:'+',cl:'+ использовать возможность'},
-  {t:'i',v:'Первое что нужно сделать — закрыть все базовые потребности и начать жить комфортно\n\nКогда ты в комфорте, можешь сама управлять жизнью и ни от кого не зависеть — именно тогда начинаешь понимать чем реально хочешь заниматься и куда двигаться'},
-  {t:'m',ico:'🦫',sub:'капибара в наушниках, чилл'},
-
-  // ─── ШАГ 19: Называние деятельности ───
-  {t:'i',v:'🌸 Деятельность, которая позволяет закрыть все базовые потребности и начать жить ярко — развлекательный стриминг из дома'},
-  {t:'g',cls:'cs',ico:'📸',lb:'Рабочее место',sub:'кольцевая лампа, ноутбук, уютная комната'},
-  {t:'i',v:'Подруга тогда рассказала мне о том же самом — на тот момент она работала уже 2 месяца и держала всё в тайне'},
-
-  // ─── ШАГ 20: Подруга заработала ───
-  {t:'i',v:'За первые 2 месяца она заработала около R$12.000, что для меня были просто бешеные деньги\n\nЭто же столько всего можно купить на эту сумму...'},
-  {t:'m',ico:'🦫',sub:'капибара с большими глазами'},
-  {t:'i',v:'💸 Это меня и заинтересовало — я реально могу просто выходить в эфиры дома, тратить на работу меньше времени и за месяц зарабатывать столько, сколько вышло бы с 4+ моих зарплат?!'},
-
-  // ─── ШАГ 21: Что такое стриминг ───
-  {t:'i',v:'🎮 Что такое стриминг, откуда берутся деньги и что нужно делать, чтобы на этом зарабатывать\n\nГотова погрузиться дальше?\n\nОтправь + 🔄',cta:'+',cl:'+ продолжить погружение'},
-  {t:'g',cls:'cs',ico:'📸',lb:'Рабочее место',sub:'монитор, штатив, кольцевая лампа'},
-  {t:'i',v:'🎮 Что такое развлекательный стриминг?\n\nСтриминг — это прямые эфиры на международных платформах, где ты общаешься с аудиторией. Основная суть — создать уютную атмосферу, уметь немного флиртовать и поддерживать общение'},
-  {t:'i',v:'Многие донатят просто за то, что ты проявляешь внимание, рассказываешь как прошёл день и общаешься на темы, которые интересны аудитории'},
-  {t:'i',v:'🇺🇸 Вся аудитория — это иностранцы, пользователей из Бразилии нет совсем. С такой аудиторией работать одно удовольствие: они часто делают комплименты и отправляют большие донаты'},
-  {t:'i',v:'🔒 И самое важное — на всех платформах стоит гео-блокировка. Зрители из ТВОЕЙ страны НЕ ВИДЯТ твои эфиры вообще. Никто из знакомых не наткнётся. Аудитория — иностранцы из других часовых поясов'},
-  {t:'i',v:'💵 А выплаты — в ДОЛЛАРАХ. Пока реал слабеет, твой доход только растёт. R$5.000 сегодня — это уже больше чем R$5.000 через полгода, а ты получаешь в валюте 😉'},
-  {t:'i',v:'У одной девушки из проекта был случай, когда американец предложил обеспечивать её ежемесячно, просто чтобы она стримила только для него... да, и такое бывает 😏'},
-  {t:'m',ico:'🦫',sub:'ДЕНЬГИ — МОЁ ВСЁ'},
-
-  // ─── ШАГ 22: Откуда деньги ───
-  {t:'i',v:'💡 Откуда берутся деньги?\n\nДеньги берутся от иностранных зрителей, которые донатят за то что ты весёлая, внимательная, интересная — ты делаешь контент, зрители платят\n\nЧтобы зарабатывать хорошо, нужно понимать какой контент любят зрители и что делать, чтобы зритель отправил донат (и побольше)'},
-  {t:'m',ico:'🦫',sub:'У МЕНЯ ЛАПКИ, НО Я БУДУ ХОРОШЕЙ СТРИМЕРШЕЙ'},
-
-  // ─── ШАГ 23: Инструкция + поддержка ───
-  {t:'i',v:'🧩 Так, с базой разобрались!\n\nТеперь переходим к главному — как зарабатывать R$5.000, R$8.000, R$10.000+\n\nОтправь + ✍️',cta:'+',cl:'+ начать зарабатывать'},
-  {t:'i',v:'Не нужно иметь никакой опыт — в этом и есть прелесть! Ты можешь ничего не уметь совершенно!\n\nЯ занимаюсь стримингом больше 2 лет, за это время наработала огромный опыт — знаю как привлечь внимание, какие образы и форматы приносят больше всего денег'},
-  {t:'i',v:'📋 У меня буквально есть план действий, выполнив который ты сможешь с первого дня получать донаты!\n\nТебя будет сопровождать моя команда:\n\n🐇 Собрать образ\n✍️ Найти свой стиль и фишки\n🎯 Определить тип харизмы\n🏠 Наладить контакт со зрителем\n🌸 Раскрыться и перестать стесняться\n\nА самое главное — полное бесплатное обучение и всё что нужно для заработка'},
-  {t:'m',ico:'🦫',sub:'капибара в очках на фоне долларов'},
-
-  // ─── ШАГ 24: Финальная мотивация + CTA ───
-  {t:'i',v:'🚀 Многие девушки, которые вступают в проект, через 2-3 месяца выходят на стабильный доход R$5.000-8.000 и начинают строить жизнь мечты\n\n💸 Кто-то закрывает долги, кто-то помогает семье, кто-то начинает путешествовать — каждая использует эту возможность по-своему'},
-  {t:'g',cls:'pf',ico:'📸',lb:'Фото Габи',sub:'путешествие, уверенная'},
-  {t:'a',dur:'0:15'},
-  {t:'i',v:'⭐ Всё что тебе осталось — написать «хочу»\n\nНа этой неделе в проект вступают 5 новых девушек. Мы поговорим 30 минут, я отвечу на все вопросы, а ты решишь — воспользоваться возможностью или нет\n\nНапиши «хочу» 💬',cta:'хочу',cl:'Хочу! 💬'},
-
-  // ─── ШАГ 25-29: Квалификация ───
-  {t:'i',v:'Отлично! 🎉 Рада что решилась!\n\nЧтобы подготовить твой профиль, мне нужно знать пару вещей. Всего 4 вопроса, ок?\n\nКак тебя зовут? 😊',cta:'name',cl:'Марианна'},
-  {id:'nr',t:'dyn'},
-  {t:'it',tpl:'Приятно познакомиться, {name}! 💛\n\nСколько тебе лет?',cta:'age',cl:'23'},
-  {id:'ar',t:'dyn'},
-  {t:'i',v:'Для стримов используем телефон или ноутбук с камерой\n\nКакой у тебя? (например: iPhone 13, Samsung S23...)',cta:'device',cl:'iPhone 14'},
-  {id:'dr',t:'dyn'},
-  {t:'it',tpl:'Отлично, {device} подходит! 🔥\n\nПоследний! Когда удобно поговорить 30 минут?',cta:'slot'},
-  {id:'sr',t:'dyn'},
-  {t:'it',tpl:'Готово, {name}! 🎊\n\nЗаписала тебя на {slot}\n\nПеред интервью:\n✅ Стабильный интернет\n✅ Тихое место\n✅ Подготовь вопросы\n\nДо встречи! 💛'},
-  {t:'m',ico:'🦫',sub:'жду нашу встречу'},
-];
-
-let S={step:0,data:{},wait:null},el;
-const now=()=>{const d=new Date();return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')};
-const scroll=()=>setTimeout(()=>{if(el.scrollHeight-el.scrollTop-el.clientHeight<150)el.scrollTop=el.scrollHeight},40);
-const wait=ms=>new Promise(r=>setTimeout(r,ms));
-const tpl=s=>s.replace(/\{(\w+)\}/g,(_,k)=>S.data[k]||`{${k}}`);
-
-function addB(text,dir='in',tail=true){
-  const d=document.createElement('div');d.className=`b ${dir}${tail?' tl':''}`;
-  const tm=dir==='out'?`<span class="bt">${now()} ${CK}</span>`:`<span class="bt">${now()}</span>`;
-  d.innerHTML=text+tm;el.appendChild(d);scroll();
+function showTab(id) {
+  document.querySelectorAll('.chat-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-function addD(v){const d=document.createElement('div');d.className='dc';d.innerHTML=`<span>${v}</span>`;el.appendChild(d)}
-function addA(dur){
-  const bars=Array.from({length:30},()=>`<i style="height:${3+Math.random()*18}px"></i>`).join('');
-  const d=document.createElement('div');d.className='b in tl';
-  d.innerHTML=`<div class="ba"><button class="ap"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button><div class="aw">${bars}</div><span class="ad">${dur}</span><div class="aa">G</div></div><span class="bt">${now()}</span>`;
-  el.appendChild(d);scroll();
-}
-function addG(cls,ico,lb,sub){
-  const d=document.createElement('div');d.className='b in tl';
-  d.innerHTML=`<div class="bi"><div class="ip ${cls}"><span class="ic">${ico}</span>${lb?`<span>${lb}</span>`:''}<span class="su">${sub}</span></div></div><span class="bt">${now()}</span>`;
-  el.appendChild(d);scroll();
-}
-function addM(ico,sub){
-  const d=document.createElement('div');d.className='b in tl';
-  d.innerHTML=`<div class="bi"><div class="ip mm"><span class="ic">${ico}</span><span class="su">${sub}</span></div></div><span class="bt">${now()}</span>`;
-  el.appendChild(d);scroll();
-}
-function addDl(v){const d=document.createElement('div');d.className='dl';d.textContent=v;el.appendChild(d)}
-function addT(){const w=document.createElement('div');w.className='tw';w.id='tp';w.innerHTML='<div class="ty"><i></i><i></i><i></i></div>';el.appendChild(w);scroll()}
-function rmT(){const e=document.getElementById('tp');if(e)e.remove()}
-function setQ(bs){const c=document.getElementById('q');c.innerHTML='';bs.forEach(b=>{const e=document.createElement('button');e.className='qb';e.textContent=b.l;e.onclick=()=>{c.innerHTML='';act(b.v)};c.appendChild(e)})}
-function clrQ(){document.getElementById('q').innerHTML=''}
-
-async function run(from){
-  let i=from;
-  while(i<F.length){
-    const m=F[i];
-    if(m.t==='dyn'){i++;continue}
-    if(m.t==='d'){addD(m.v);i++;continue}
-    if(m.t==='dl'){addDl(m.v);i++;continue}
-
-    addT();
-    const len=m.v?.length||60;
-    const ms=m.t==='a'?700:Math.min(2000,500+len*3.5);
-    await wait(ms);rmT();
-
-    if(m.t==='i') addB(m.v);
-    else if(m.t==='it') addB(tpl(m.tpl));
-    else if(m.t==='a') addA(m.dur);
-    else if(m.t==='g') addG(m.cls,m.ico,m.lb,m.sub);
-    else if(m.t==='m') addM(m.ico,m.sub);
-
-    i++;
-
-    if(m.cta){
-      S.step=i;S.wait=m.cta;
-      if(m.cta==='+') setQ([{l:m.cl||'+ продолжить',v:'+'}]);
-      else if(m.cta==='хочу') setQ([{l:m.cl,v:'хочу'}]);
-      else if(m.cta==='slot') setQ([{l:'Пт 10:00',v:'Пятница, 10:00'},{l:'Пт 14:00',v:'Пятница, 14:00'},{l:'Сб 11:00',v:'Суббота, 11:00'}]);
-      else if(m.cta==='name') setQ([{l:m.cl,v:m.cl}]);
-      else if(m.cta==='age') setQ([{l:m.cl,v:m.cl}]);
-      else if(m.cta==='device') setQ([{l:m.cl,v:m.cl}]);
-      return;
-    }
-    await wait(300);
-  }
-  S.wait=null;clrQ();await wait(500);
-  const card=document.createElement('div');card.className='ec';
-  card.innerHTML=`<div class="ei">🎊</div><div class="et">Воронка пройдена!</div><div class="es">~25 шагов · структура G2G<br>Кандидат записан в CRM</div><button class="eb" onclick="reset()">Сначала</button>`;
-  el.appendChild(card);scroll();
-}
-
-function act(v){
-  addB(v,'out');
-  if(S.wait==='+'||S.wait==='хочу') run(S.step);
-  else if(S.wait==='name'){S.data.name=v;run(S.step)}
-  else if(S.wait==='age'){S.data.age=v;run(S.step)}
-  else if(S.wait==='device'){S.data.device=v;run(S.step)}
-  else if(S.wait==='slot'){S.data.slot=v;run(S.step)}
-}
-function send(){const i=document.getElementById('inp');const v=i.value.trim();if(!v)return;i.value='';clrQ();act(v)}
-function reset(){S={step:0,data:{},wait:null};el.innerHTML='';clrQ();run(0)}
-document.addEventListener('DOMContentLoaded',()=>{el=document.getElementById('c');document.getElementById('inp').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();send()}});run(0)});
 </script>
 </body>
 </html>
