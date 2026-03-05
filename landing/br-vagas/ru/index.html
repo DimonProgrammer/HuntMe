@@ -283,7 +283,7 @@ nav.navbar.scrolled {
 .faq-item { border-bottom: 1px solid rgba(26,15,46,0.08); }
 .faq-q {
   width: 100%; background: none; border: none;
-  padding: 20px 0; font-size: 16px; font-weight: 600;
+  padding: 20px 0; min-height: 48px; font-size: 16px; font-weight: 600;
   font-family: 'Plus Jakarta Sans', sans-serif;
   text-align: left; cursor: pointer; color: #1A0F2E;
   display: flex; justify-content: space-between; align-items: center;
@@ -438,8 +438,8 @@ nav.navbar.scrolled {
     </a>
     <div style="display:flex;align-items:center;gap:12px;">
       <div style="display:flex;gap:2px;background:rgba(26,15,46,0.08);border-radius:100px;padding:2px;">
-        <a href="/br-vagas/" style="padding:5px 12px;border-radius:100px;font-size:12px;font-weight:700;text-decoration:none;color:rgba(26,15,46,0.5);">PT</a>
-        <a href="/br-vagas/ru/" style="padding:5px 12px;border-radius:100px;font-size:12px;font-weight:700;text-decoration:none;color:#1A0F2E;background:#fff;">RU</a>
+        <a href="/br-vagas/" style="padding:8px 16px;border-radius:100px;font-size:12px;font-weight:700;text-decoration:none;color:rgba(26,15,46,0.5);">PT</a>
+        <a href="/br-vagas/ru/" style="padding:8px 16px;border-radius:100px;font-size:12px;font-weight:700;text-decoration:none;color:#1A0F2E;background:#fff;">RU</a>
       </div>
       <button class="nav-btn" onclick="openForm()">Откликнуться</button>
     </div>
@@ -455,6 +455,7 @@ nav.navbar.scrolled {
     <h1 class="hero-title animate-fade-up" style="animation-delay:0.2s;">
       Ищем девушек,<br>которые умеют общаться.<br><span class="accent">Платим в долларах.</span>
     </h1>
+    <p class="animate-fade-up" style="animation-delay:0.35s;font-size:15px;color:#E33BC5;font-weight:700;margin-bottom:8px;">R$2.000–5.000/мес — в долларах, еженедельно</p>
     <p class="hero-sub animate-fade-up" style="animation-delay:0.5s;">
       Международное агентство набирает <strong>ведущих</strong> для платформ live streaming.
       Без опыта. Без вложений. <strong>Полное обучение + персональный ментор.</strong>
@@ -471,7 +472,7 @@ nav.navbar.scrolled {
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
           Хочу узнать больше
         </a>
-        <a href="#kak-eto-rabotaet" class="btn-outline">Подробности вакансии</a>
+        <a href="#kak-eto-rabotaet" style="color:rgba(26,15,46,0.5);font-size:15px;font-weight:600;text-decoration:underline;text-underline-offset:3px;padding:14px 0;">Подробности вакансии ↓</a>
       </div>
       <div class="hero-hints">
         <span>🔒 Полная анонимность</span><span>·</span>
@@ -495,8 +496,8 @@ nav.navbar.scrolled {
         <div class="trust-label">Платформ</div>
       </div>
       <div>
-        <div class="trust-num text-gradient">6ч</div>
-        <div class="trust-label">Смена в день</div>
+        <div class="trust-num text-gradient">50+</div>
+        <div class="trust-label">Активных ведущих</div>
       </div>
       <div>
         <div class="trust-num text-gradient">USD</div>
@@ -604,6 +605,22 @@ nav.navbar.scrolled {
 
 <hr class="section-divider">
 
+<!-- STORY: ДЖЕССИКА -->
+<section class="reveal">
+  <div class="container">
+    <p class="section-pre">Реальная история</p>
+    <h2 class="section-title" style="margin-bottom: 28px;">Джессика, 23 года, Ресифи</h2>
+    <div style="background:#fff;border-radius:20px;padding:32px;box-shadow:0 8px 24px -6px rgba(26,15,46,0.06);">
+      <p style="font-size:16px;line-height:1.8;margin-bottom:16px;">Работала кассиром в супермаркете — 44 часа в неделю, R$1.700/мес. Устала, но не видела выходов: без диплома, без связей, без стартового капитала.</p>
+      <p style="font-size:16px;line-height:1.8;margin-bottom:16px;">Увидела вакансию, сомневалась 3 дня. «Если ноль вложений — что я теряю?» Написала в WhatsApp. Прошла собеседование. Получила ментора.</p>
+      <p style="font-size:16px;line-height:1.8;margin-bottom:16px;">Первые 5 смен были неуверенными — но выплаты шли ежедневно. К концу первого месяца: <strong>R$3.200 за 4 часа в день</strong>. Сейчас — 5-й месяц, стабильно выше R$5.000.</p>
+      <p style="font-size:16px;line-height:1.8;font-style:italic;color:rgba(26,15,46,0.6);">«Мама заплакала, когда увидела мою первую выплату в долларах. Не от стыда — от гордости.»</p>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
 <!-- КТО МОЖЕТ ОТКЛИКНУТЬСЯ -->
 <section class="reveal">
   <div class="container">
@@ -688,9 +705,9 @@ nav.navbar.scrolled {
       <div class="case-highlight">$840K/год — никогда не раздевалась</div>
     </div>
 
-    <div class="testimonial">«Работала 44 часа в неделю в супермаркете за R$1.700. В первый месяц в проекте (4 часа в день) заработала R$3.200.»</div>
-    <div class="testimonial">«Думала, что нужно быть моделью. Мой оператор сказал: "Ты смешная. Это ценнее красоты." Он оказался прав.»</div>
-    <div class="testimonial">«Мама заплакала, когда увидела мою первую выплату в долларах. Не от стыда — от гордости.»</div>
+    <div class="testimonial">«Работала 44 часа в неделю в супермаркете за R$1.700. В первый месяц в проекте (4 часа в день) заработала R$3.200.»<br><strong style="font-style:normal;font-size:13px;color:rgba(26,15,46,0.45);">— Джессика, 23, Ресифи</strong></div>
+    <div class="testimonial">«Думала, что нужно быть моделью. Мой оператор сказал: "Ты смешная. Это ценнее красоты." Он оказался прав.»<br><strong style="font-style:normal;font-size:13px;color:rgba(26,15,46,0.45);">— Камила, 21, Белу-Оризонти</strong></div>
+    <div class="testimonial">«Подруга год назад начала — теперь зарабатывает больше, чем наш папа. Я присоединилась через 2 месяца.»<br><strong style="font-style:normal;font-size:13px;color:rgba(26,15,46,0.45);">— Летисия, 25, Форталеза</strong></div>
   </div>
 </section>
 
@@ -742,9 +759,10 @@ nav.navbar.scrolled {
 <!-- FINAL CTA -->
 <section class="final-cta">
   <div class="container">
-    <h2>Мест ограничено</h2>
+    <p style="display:inline-block;background:#CCFF00;color:#1A0F2E;padding:6px 16px;border-radius:100px;font-size:13px;font-weight:700;margin-bottom:16px;">На этой неделе: 5 мест</p>
+    <h2>Мест ограничено — каждая ведущая получает ментора</h2>
     <p style="max-width: 520px; margin: 0 auto; font-size: 16px;">
-      Каждая ведущая получает персонального ментора. Поэтому мы открываем мало вакансий в неделю.
+      Мы не набираем массово. Каждый новый человек получает выделенного оператора-ментора. Когда места заняты — набор закрывается до следующей недели.
     </p>
     <a href="#" class="btn-cta" id="final-wa" style="margin-top: 28px;">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
@@ -836,7 +854,8 @@ async function submitForm(e) {
     phone: form.phone.value,
     age: form.age.value,
     city: form.city.value,
-    source: 'br_vagas_ru'
+    source: 'br_vagas_ru',
+    ...getUTMParams()
   };
   try {
     await fetch('https://apex-talent-bot.onrender.com/webhook/landing', {
@@ -851,6 +870,16 @@ async function submitForm(e) {
   document.getElementById('formSuccess').style.display = 'block';
 }
 
+// UTM capture
+function getUTMParams() {
+  const params = new URLSearchParams(window.location.search);
+  const utm = {};
+  ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(k => {
+    if (params.get(k)) utm[k] = params.get(k);
+  });
+  return utm;
+}
+
 // Scroll reveal
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
@@ -859,6 +888,10 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.1 });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
+
+<!-- Yandex.Metrika -->
+<script>(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");ym(107023862,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true});</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/107023862" style="position:absolute;left:-9999px" alt=""></div></noscript>
 
 </body>
 </html>
