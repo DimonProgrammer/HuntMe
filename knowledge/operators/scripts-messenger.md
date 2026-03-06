@@ -31,7 +31,7 @@
 
 **[COLD]**
 
-> **TEMPLATE:** Hello, **[Name]**! My name is **[Your Name]** from **[Company Name]** -- a talent agency for streamers. We have an urgent opening for a **Remote Streaming Operator**. Key highlights: **$150+/week**, paid every Sunday, fully remote, no experience needed. Would you like to know more?
+> **TEMPLATE:** Hello, **[Name]**! My name is **[Your Name]** from **[Company Name]** -- a talent agency for streamers. We have an urgent opening for a **Remote Streaming Operator**. Key highlights: **$150+/week**, paid every Monday, fully remote, no experience needed. Would you like to know more?
 
 ### Variant B -- Warm (Responded to Job Ad)
 
@@ -61,7 +61,7 @@
 ### Message 1 -- Compensation
 
 > **TEMPLATE:** Let me start with the most important -- compensation:
-> - Weekly payments, every Sunday
+> - Weekly payments, every Monday
 > - Starting from **$150/week**
 > - You receive a **% of total stream revenue** (donations, ads, platform monetization)
 > - As your skills grow, your % increases

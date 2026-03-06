@@ -141,7 +141,7 @@ Candidate raised an objection not covered above? See the Complete Objection Hand
 - **Starting base:** from **$150 per week**
 - **With experience (1-2 months):** **$200-300 per week**
 - **Top operators:** **$350-400+ per week**
-- **That's $1,400-1,600/month** -- working from home, with weekly Sunday payments
+- **That's $1,400-1,600/month** -- working from home, with weekly Monday payments
 
 Your income grows as your skills improve -- the company increases your **revenue share percentage** over time.
 

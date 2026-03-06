@@ -61,7 +61,7 @@ The paid training period is **3-5 days (5 shifts)**. During training:
 - You receive **daily payouts** after each completed stream
 - All software setup and platform onboarding is handled for you
 
-After training, payouts switch to weekly (every Sunday).
+After training, payouts switch to weekly (every Monday).
 
 ---
 

@@ -21,7 +21,7 @@ What you get:
 - $150/week starting, up to $400+
 - Paid training ($30/shift, personal mentor)
 - Pick your own shift (4 options)
-- Payout every Sunday
+- Payout every Monday
 
 If your PC can run Valorant smoothly — it can run this job.
 
@@ -45,7 +45,7 @@ Benefits:
 💰 $150/week → $400+/week with experience
 🎓 5-7 days paid training with mentor
 🏠 100% work from home
-💸 Sunday payouts (GCash/Wise/USDT)
+💸 Monday payouts (GCash/Wise/USDT)
 
 No experience needed — if you can install OBS, you can do this.
 
@@ -93,7 +93,7 @@ Remote Live Stream Operator:
 → All behind the scenes, never on camera
 
 Paid training included ($30/shift with personal mentor).
-Payouts every Sunday. Flexible shifts.
+Payouts every Monday. Flexible shifts.
 
 Comment your GPU model and I'll tell you if you qualify 😎
 
@@ -132,7 +132,7 @@ I know what you're thinking — "another work from home scam" 😅
 Let me be upfront:
 - No fees. Ever. Not now, not later.
 - You earn FROM DAY ONE of training ($30/shift)
-- Payouts every Sunday, no exceptions
+- Payouts every Monday, no exceptions
 - Zoom interview first so you can ask anything
 
 We need Live Stream Operators — people who set up OBS, moderate chats, manage broadcasts. Never on camera.

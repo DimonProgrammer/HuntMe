@@ -31,7 +31,7 @@ from bot.services.huntme_crm import _MANILA_TZ
 logger = logging.getLogger(__name__)
 
 # FSM state prefixes we monitor for inactivity
-_MONITORED_PREFIXES = ("OperatorForm:", "InterviewBooking:")
+_MONITORED_PREFIXES = ("OperatorForm:", "InterviewBooking:", "ModelForm:")
 # States where we should NOT send inactivity reminders
 # (candidate is waiting for admin action or flow is complete)
 _SKIP_STATES = frozenset({

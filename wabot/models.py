@@ -32,7 +32,11 @@ class WaLead(Base):
 
     # Status
     status: Mapped[str] = mapped_column(String(20), default="active")
-    # active | qualified | booked | approved | rejected | paused
+    # active | qualified | booked | approved | rejected | paused | cold | agent
+
+    # Role track: "model" (default) or "agent" (fallback)
+    role: Mapped[str] = mapped_column(String(20), default="model")
+    disqualify_reason: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
 
     # HuntMe CRM
     huntme_slot: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
@@ -41,6 +45,11 @@ class WaLead(Base):
     # Follow-up tracking
     last_message_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     followup_count: Mapped[int] = mapped_column(Integer, default=0)
+
+    # Retention tracking (post-booking milestones)
+    interview_date: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    shifts_completed: Mapped[int] = mapped_column(Integer, default=0)
+    retention_day: Mapped[int] = mapped_column(Integer, default=0)  # last retention message sent (day number)
 
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())

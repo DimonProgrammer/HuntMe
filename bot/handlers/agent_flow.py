@@ -192,7 +192,7 @@ async def agent_phone(message: Message, state: FSMContext):
     data = await state.get_data()
     await state.clear()
 
-    # Update candidate status in DB
+    # Update or create candidate in DB
     tg_user_id = message.from_user.id
     try:
         async with async_session() as session:
@@ -202,9 +202,29 @@ async def agent_phone(message: Message, state: FSMContext):
             cand = result.scalar_one_or_none()
             if cand:
                 cand.status = "agent_applied"
-                await session.commit()
+                cand.candidate_type = "agent"
+                cand.name = data.get("name", cand.name)
+                cand.birth_date = data.get("dob")
+                cand.phone_number = digits
+                cand.phone_country = country
+                cand.contact_info = phone
+            else:
+                cand = Candidate(
+                    tg_user_id=tg_user_id,
+                    tg_username=message.from_user.username,
+                    name=data.get("name", "N/A"),
+                    candidate_type="agent",
+                    status="agent_applied",
+                    language=data.get("language", "en"),
+                    birth_date=data.get("dob"),
+                    phone_number=digits,
+                    phone_country=country,
+                    contact_info=phone,
+                )
+                session.add(cand)
+            await session.commit()
     except Exception:
-        logger.exception("Failed to update candidate status to agent_applied")
+        logger.exception("Failed to save agent candidate to DB")
 
     # Auto-submit to CRM
     digits, country = huntme_crm.parse_phone(phone)

@@ -17,7 +17,7 @@ from bot.database import init_db
 from bot.database.connection import async_session
 from bot.database.models import Candidate
 from sqlalchemy import select
-from bot.handlers import admin, agent_flow, interview_booking, menu, operator_flow
+from bot.handlers import admin, agent_flow, interview_booking, menu, model_flow, operator_flow
 from bot.services import live_feed
 from bot.services import reminder
 from bot.services import chatwoot_client
@@ -338,6 +338,7 @@ async def main():
     dp.include_router(admin.router)
     dp.include_router(interview_booking.router)
     dp.include_router(agent_flow.router)
+    dp.include_router(model_flow.router)
     dp.include_router(menu.router)
     dp.include_router(operator_flow.router)
 

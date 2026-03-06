@@ -150,11 +150,130 @@ STEPS: dict[int, list[str]] = {
 }
 
 # Follow-up messages (sent when lead goes silent)
+# Key = followup_count (1=1h, 2=24h, 3=72h)
 FOLLOWUP = {
-    1: "Oi! Tudo bem? Vi que você parou por aqui... tem alguma dúvida que posso te ajudar? 😊",
-    2: "Oi de novo! 👋 Sei que a vida é corrida... mas não queria que você perdesse essa oportunidade. Quer continuar de onde parou?",
-    3: "Última mensagem, prometo! 😅 Se mudar de ideia, é só me chamar. O projeto continua aberto pra você 💗",
+    1: "Oi! Ainda está aí? 😊 Qualquer dúvida, é só perguntar!",
+    2: (
+        "Oi de novo! 👋 Lembra da Gabi? Eu era vendedora ganhando R$1.800/mês. "
+        "Hoje? R$12K+, trabalhando de casa no meu horário. "
+        "Sei que a vida é corrida, mas não queria que você perdesse essa oportunidade. "
+        "Quer continuar de onde parou? Manda *+* ✨"
+    ),
+    3: (
+        "Última mensagem que vou te mandar sobre isso... 🙏\n\n"
+        "Se mudar de ideia, é só me chamar. "
+        "O Projeto Centelha continua aberto pra você 💗"
+    ),
 }
+
+# --- AGENT FALLBACK BRANCH ---
+# Shown when model candidate is disqualified but may work as a referral agent
+
+AGENT_DISQUALIFY_TEMPLATES = {
+    "age": (
+        "{name}, para ser modelo digital precisa ter 18 anos ou mais. "
+        "Mas tenho outra oportunidade incrível: você pode ganhar $10 por turno "
+        "por cada pessoa que indicar! Quer saber mais?"
+    ),
+    "device": (
+        "{name}, para os streams precisa de um celular com câmera boa "
+        "(a partir do iPhone 11 ou Android 2023). "
+        "Mas tenho outra oportunidade incrível: você pode ganhar $10 por turno "
+        "por cada pessoa que indicar! Quer saber mais?"
+    ),
+    "generic": (
+        "Olha, para ser modelo digital precisa de alguns requisitos específicos. "
+        "Mas tenho outra oportunidade incrível: você pode ganhar $10 por turno "
+        "por cada pessoa que indicar! Quer saber mais?"
+    ),
+}
+
+# Agent branch FSM steps (100+ range to avoid collision with model funnel)
+AGENT_STEPS: dict[int, list[str]] = {
+    # AGENT_INTRO (step 100) — explain agent role
+    100: [
+        "Legal! 🙌 Deixa eu te explicar:",
+        (
+            "O Projeto Centelha tem um programa de indicadores. "
+            "Você indica meninas que querem fazer streaming de entretenimento, "
+            "e ganha *$10 por turno* que cada uma trabalhar. 💰"
+        ),
+        (
+            "É renda recorrente — cada modelo que você indicar te gera "
+            "$10/turno por até 1 ano. Indica 5 meninas e já são $50/turno!"
+        ),
+        "Quer participar? Manda *+* 👇",
+    ],
+
+    # AGENT_NAME (step 101) — collect name
+    101: [
+        "Ótimo! Primeiro, como posso te chamar? 😊",
+    ],
+
+    # AGENT_CONTACT (step 102) — collect contact method
+    102: [
+        "Prazer, {name}! 💛 E qual a melhor forma de te contatar além do WhatsApp? "
+        "(Instagram, Telegram, email...)",
+    ],
+
+    # AGENT_HOW (step 103) — how they'll recruit
+    103: [
+        "E como você pretende indicar meninas? "
+        "(redes sociais, amigas, grupos, comunidades...)",
+    ],
+
+    # AGENT_CONFIRM (step 104) — confirmation
+    104: [
+        (
+            "Perfeito, {name}! 🎉 Você está no programa de indicadores!\n\n"
+            "Vou te conectar com nossa equipe para te dar todos os materiais "
+            "e links de indicação.\n\n"
+            "Lembra: cada modelo indicada = $10/turno pra você. "
+            "Sem limite de indicações! 🚀"
+        ),
+    ],
+}
+
+# --- RETENTION MESSAGES (post-booking / post-interview) ---
+
+RETENTION_BOOKING_CONFIRMED = (
+    "Parabéns! 🎉 Seu horário está marcado para {date}.\n"
+    "Vou te mandar umas dicas até lá!"
+)
+
+RETENTION_POST_INTERVIEW = (
+    "Oi! Como foi a conversa? 😊 Qualquer dúvida estou aqui!"
+)
+
+# Rotating motivational messages for first 5 working days
+RETENTION_DAILY_MOTIVATION = [
+    (
+        "Dia {day} de trabalho! 💪 Lembra: as primeiras streams são as mais difíceis. "
+        "Depois fica natural. Você consegue! ✨"
+    ),
+    (
+        "Dia {day}! 🌟 Dica da Gabi: sorria bastante e faça perguntas ao público. "
+        "Quanto mais você interage, mais donates recebe! 💰"
+    ),
+    (
+        "Dia {day}! 🎬 Você sabia que a maioria das modelos top começaram "
+        "exatamente como você? A diferença é consistência. Continue! 🚀"
+    ),
+    (
+        "Dia {day}! 💃 Hoje tenta algo diferente na stream — uma música nova, "
+        "um visual diferente. Variedade = mais audiência! 🎶"
+    ),
+    (
+        "Dia {day}! 🌈 A Camila (Recife) fez R$8.900/mês em 4 meses. "
+        "Tudo começou com esses primeiros dias. Você está no caminho certo! 💫"
+    ),
+]
+
+RETENTION_7_SHIFTS = (
+    "🎉 Você completou 7 turnos! A maioria das modelos que chega aqui "
+    "fica meses. Parabéns! 🌟\n\n"
+    "A partir de agora, a tendência é só melhorar. Continue assim! 💪"
+)
 
 # Capybara meme image URL (step 0)
 CAPYBARA_MEME_URL = "https://apextalent.pro/assets/capybara-money.jpg"

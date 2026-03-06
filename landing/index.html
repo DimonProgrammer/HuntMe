@@ -249,6 +249,8 @@
     }
     @media (max-width: 640px) {
       .nav-links { display: none !important; }
+      #hamburger { display: block !important; }
+      .mobile-menu-open { display: block !important; }
     }
 
     /* Float animation for icons */
@@ -462,11 +464,21 @@
         <a href="/" class="lang-btn lang-active" style="padding:5px 12px;border-radius:100px;font-size:12px;font-weight:700;text-decoration:none;color:#1A0F2E;background:#fff;">EN</a>
         <a href="/ru" class="lang-btn" style="padding:5px 12px;border-radius:100px;font-size:12px;font-weight:700;text-decoration:none;color:rgba(26,15,46,0.5);">RU</a>
       </div>
+      <!-- Hamburger (mobile only) -->
+      <button id="hamburger" onclick="document.getElementById('mobile-menu').classList.toggle('mobile-menu-open')" style="display:none;background:none;border:none;cursor:pointer;padding:6px;" aria-label="Menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1A0F2E" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
       <a href="#apply"
-         class="bg-ink text-white font-heading font-bold text-sm px-5 py-2.5 rounded-full transition-all duration-200 hover:bg-magenta hover:scale-105">
+         class="nav-apply-btn bg-ink text-white font-heading font-bold text-sm px-5 py-2.5 rounded-full transition-all duration-200 hover:bg-magenta hover:scale-105">
         Apply Now
       </a>
     </div>
+  </div>
+  <!-- Mobile menu -->
+  <div id="mobile-menu" style="display:none;padding:12px 20px 16px;background:rgba(255,255,255,0.97);border-top:1px solid rgba(26,15,46,0.06);">
+    <a href="#earnings" onclick="document.getElementById('mobile-menu').classList.remove('mobile-menu-open')" style="display:block;padding:10px 0;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;color:#1A0F2E;text-decoration:none;opacity:0.7;">Earnings</a>
+    <a href="#how-it-works" onclick="document.getElementById('mobile-menu').classList.remove('mobile-menu-open')" style="display:block;padding:10px 0;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;color:#1A0F2E;text-decoration:none;opacity:0.7;">How It Works</a>
+    <a href="#faq" onclick="document.getElementById('mobile-menu').classList.remove('mobile-menu-open')" style="display:block;padding:10px 0;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;color:#1A0F2E;text-decoration:none;opacity:0.7;">FAQ</a>
   </div>
 </nav>
 
@@ -494,7 +506,7 @@
         <span class="word-wrap"><span class="word-inner" style="animation-delay:0.42s;">REMOTE</span></span>&nbsp;
         <span class="word-wrap"><span class="word-inner" style="animation-delay:0.56s;">STREAM</span></span>
         <br>
-        <span class="word-wrap"><span class="word-inner" style="animation-delay:0.7s; color:#E33BC5;">MODERATOR</span></span>
+        <span class="word-wrap"><span class="word-inner" style="animation-delay:0.7s; color:#E33BC5;">OPERATOR</span></span>
       </h1>
 
       <!-- Subtitle -->
@@ -708,7 +720,7 @@
         <div class="font-heading font-black" style="font-size:1.6rem;color:#1A0F2E;margin-bottom:4px;">$390</div>
         <div style="font-size:12px;opacity:0.45;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:12px;">3 months experience</div>
         <div style="font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;opacity:0.6;line-height:1.5;">
-          Sofia R. — Month 3<br>
+          Stefan R. — Month 3<br>
           <span style="color:#22c55e;font-weight:600;">Received Monday 4:15 PM</span>
         </div>
       </div>
@@ -891,7 +903,7 @@
             <span style="font-family:'Outfit',sans-serif;font-weight:800;font-size:15px;color:#CCFF00;">SR</span>
           </div>
           <div>
-            <div class="font-heading font-bold" style="font-size:0.9rem;line-height:1.2;">Sofia R.</div>
+            <div class="font-heading font-bold" style="font-size:0.9rem;line-height:1.2;">Stefan R.</div>
             <div style="font-size:12px;opacity:0.5;font-family:'Plus Jakarta Sans',sans-serif;">🌍 Latin America</div>
           </div>
         </div>
@@ -925,7 +937,7 @@
             <span style="font-family:'Outfit',sans-serif;font-weight:800;font-size:15px;color:#1A0F2E;">LN</span>
           </div>
           <div>
-            <div class="font-heading font-bold" style="font-size:0.9rem;line-height:1.2;">Lisa N.</div>
+            <div class="font-heading font-bold" style="font-size:0.9rem;line-height:1.2;">Leo N.</div>
             <div style="font-size:12px;opacity:0.5;font-family:'Plus Jakarta Sans',sans-serif;">🌍 Southeast Asia</div>
           </div>
         </div>
@@ -1043,6 +1055,22 @@
 
 
 <!-- ═══════════════════════════════════════════
+     ABOUT US — STORY
+════════════════════════════════════════════ -->
+<section style="padding:0 20px 96px;position:relative;z-index:10;">
+  <div class="max-w-2xl mx-auto reveal text-center">
+    <p class="font-serif" style="font-style:italic;color:#E33BC5;font-size:1.1rem;margin-bottom:10px;">About Apex Talent</p>
+    <h2 class="font-heading font-black text-ink tracking-tighter" style="font-size:clamp(1.6rem,4vw,2.4rem);line-height:1.1;margin-bottom:20px;">
+      A talent agency built by operators, for operators
+    </h2>
+    <p style="font-size:15px;line-height:1.8;opacity:0.65;max-width:560px;margin:0 auto;">
+      Apex Talent started when our founders — themselves former stream operators — realized that the best talent was being overlooked simply because nobody was looking in the right places. Today we work with streamers across 15+ countries, matching skilled operators with content creators who need reliable, professional support. Every Monday payout, every mentor session, every shift — we built it the way we wished someone had built it for us.
+    </p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
      FAQ — ACCORDION
 ════════════════════════════════════════════ -->
 <section style="padding:0 20px 96px;position:relative;z-index:10;">
@@ -1086,12 +1114,12 @@
       <!-- Q1 -->
       <div class="faq-item" onclick="toggleFaq(this)" style="cursor:pointer;padding:24px 28px;">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
-          <h3 class="font-heading font-bold" style="font-size:0.95rem;">Is this related to adult (18+) content?</h3>
+          <h3 class="font-heading font-bold" style="font-size:0.95rem;">What kind of content do streamers produce?</h3>
           <span class="faq-icon" style="font-size:1.5rem;font-weight:300;color:#E33BC5;flex-shrink:0;line-height:1;">+</span>
         </div>
         <div class="faq-answer">
           <p style="font-size:14px;line-height:1.7;opacity:0.65;padding-top:14px;padding-bottom:4px;">
-            No. We work exclusively with mainstream platforms similar to Twitch — gaming, music, talk shows, lifestyle. Zero adult content, full stop.
+            Mainstream entertainment — similar to Twitch. Gaming, music, talk shows, lifestyle. All content follows standard platform community guidelines.
           </p>
         </div>
       </div>
@@ -1099,12 +1127,12 @@
       <!-- Q2 -->
       <div class="faq-item" onclick="toggleFaq(this)" style="cursor:pointer;padding:24px 28px;">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
-          <h3 class="font-heading font-bold" style="font-size:0.95rem;">How do I know this isn't a scam?</h3>
+          <h3 class="font-heading font-bold" style="font-size:0.95rem;">How can I verify this is legitimate?</h3>
           <span class="faq-icon" style="font-size:1.5rem;font-weight:300;color:#E33BC5;flex-shrink:0;line-height:1;">+</span>
         </div>
         <div class="faq-answer">
           <p style="font-size:14px;line-height:1.7;opacity:0.65;padding-top:14px;padding-bottom:4px;">
-            We never charge you anything. Not before you start, not after. You receive payment starting from your very first training shift, every Monday. We never ask for bank access, passport scans, or "equipment deposits." If anyone asks you to pay, that is not us.
+            Apex Talent is a registered talent agency working with streamers across 15+ countries. You receive payment from your very first training shift, every Monday. We charge zero fees at any stage — you only earn, never pay. The interview is a transparent 30-minute Zoom call with our team.
           </p>
         </div>
       </div>
@@ -1117,7 +1145,7 @@
         </div>
         <div class="faq-answer">
           <p style="font-size:14px;line-height:1.7;opacity:0.65;padding-top:14px;padding-bottom:4px;">
-            A 30–40 minute video call where the studio explains everything: the role, platform, tools, schedule, and pay. You briefly show your ID for age verification. We do <strong style="opacity:1;">not collect copies</strong> or store your personal data.
+            A 30-minute video call where we walk you through everything: the role, platform, tools, schedule, and pay. You briefly show your ID for age verification — we verify on screen only and store nothing.
           </p>
         </div>
       </div>
@@ -1161,7 +1189,7 @@
 
     <div class="reveal text-center" style="margin-bottom:48px;">
       <span style="display:inline-block;background:#CCFF00;color:#1A0F2E;font-size:12px;font-weight:800;padding:6px 16px;border-radius:100px;margin-bottom:16px;letter-spacing:0.05em;font-family:'Outfit',sans-serif;">
-        🔥 NOW HIRING — APPLY TODAY
+        🔥 LIMITED INTERVIEW SLOTS THIS WEEK
       </span>
       <h2 class="font-heading font-black text-ink tracking-tighter" style="font-size:clamp(2rem,5vw,3.2rem);line-height:1.05;margin-bottom:12px;">
         Start Your<br>Application

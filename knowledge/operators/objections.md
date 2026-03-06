@@ -324,11 +324,11 @@ Every objection is handled in three steps. This applies to phone calls, messenge
 
 **Phone Script:**
 
-> **REBUTTAL:** Very fair question. Payments are made weekly, every Sunday, without exception. During training, you're paid from $30 per shift. There are no delays and no deductions. You'll see your first payment after your very first training shifts. We can also share the payment structure in detail during the interview. Does that address your concern?
+> **REBUTTAL:** Very fair question. Payments are made weekly, every Monday, without exception. During training, you're paid from $30 per shift. There are no delays and no deductions. You'll see your first payment after your very first training shifts. We can also share the payment structure in detail during the interview. Does that address your concern?
 
 **Messenger Template:**
 
-> **TEMPLATE:** Great question! Payments are made weekly, every Sunday, without exception. During training you earn from $30 per shift. No delays, no deductions. You'll receive your first payment after your very first training shifts. We can share the full payment structure during the interview. Does that help?
+> **TEMPLATE:** Great question! Payments are made weekly, every Monday, without exception. During training you earn from $30 per shift. No delays, no deductions. You'll receive your first payment after your very first training shifts. We can share the full payment structure during the interview. Does that help?
 
 > **Pro Tip:** The "first payment after first shifts" is the strongest proof point. Fast, tangible evidence beats any promise. Emphasize **weekly** and **no exceptions** -- these are trust-building keywords.
 

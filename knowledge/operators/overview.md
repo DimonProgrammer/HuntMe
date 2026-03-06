@@ -35,7 +35,7 @@ A Live Stream Operator is a **technical and organizational role** behind the sce
 | Starting pay | **$150/week** ($600/month) |
 | After 1-2 months | **$200-300/week** ($800-1,200/month) |
 | Top performers | **$400+/week** ($1,600+/month) |
-| Payment day | **Every Sunday**, without exception |
+| Payment day | **Every Monday**, without exception |
 | Payment methods | GCash, Wise, USDT -- candidate's choice |
 | Income model | Revenue share (donations, ads, platform monetization) |
 
@@ -103,7 +103,7 @@ When describing the role to candidates:
 - **Behind the scenes** -- you never appear on camera
 - **Like a sound engineer** -- you manage the tech, not the content
 - **No experience needed** -- full paid training provided
-- **Weekly pay** -- every Sunday, starting from day one of training
+- **Weekly pay** -- every Monday, starting from day one of training
 - **Growth trajectory** -- $150/week is the floor, not the ceiling
 - **International team** -- 15+ countries, remote culture
 - **Mainstream platforms** -- similar to Twitch, all content follows platform guidelines

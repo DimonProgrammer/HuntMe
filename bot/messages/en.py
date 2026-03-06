@@ -741,6 +741,188 @@ APPLICATION_RECEIVED = (
     "You can return to the main menu anytime by typing /menu."
 )
 
+# ═══ MODEL FLOW ═══
+
+MODEL_WELCOME = (
+    "Hi {name}! 👋\n\n"
+    "Thanks for your interest in becoming a Live Stream Entertainer with Apex Talent!\n\n"
+    "Here's what we offer:\n\n"
+    "💰 $500-1,200/month — paid in USD\n"
+    "🏠 100% remote — stream from home\n"
+    "📅 Flexible schedule — you choose your hours\n"
+    "🎓 Full training with a personal mentor\n"
+    "💵 Daily payments during training, then every 5 shifts\n"
+    "🛡 Zero fees — we pay you, never the other way\n\n"
+    "This is a streaming entertainment role — you connect with a live audience, "
+    "share your personality, and earn from viewer engagement.\n\n"
+    "Let me ask a few quick questions to see if this is a good fit. "
+    "It'll take about 3 minutes! 🙂\n\n"
+    "What is your full name?"
+)
+
+MODEL_WELCOME_LANDING = (
+    "Hi {name}! 👋\n\n"
+    "Thanks for your interest in becoming a Live Stream Entertainer!\n\n"
+    "Here's what we offer:\n\n"
+    "💰 $500-1,200/month — paid in USD\n"
+    "🏠 100% remote — stream from home\n"
+    "📅 Flexible schedule — you choose your hours\n"
+    "🎓 Full training with a personal mentor\n"
+    "💵 Daily payments during training, then every 5 shifts\n"
+    "🛡 Zero fees — we pay you, never the other way\n\n"
+    "Let me ask a few quick questions to see if this is a good fit. "
+    "It'll take about 3 minutes!"
+)
+
+MODEL_STEP_NAME = "What is your full name?"
+
+MODEL_STEP_AGE = "How old are you?"
+MODEL_STEP_AGE_VALIDATION = "Please enter your age as a number (e.g., 22)."
+
+MODEL_STEP_COUNTRY = (
+    "Where are you located?\n\n"
+    "Please share your country and city."
+)
+
+MODEL_STEP_PHOTO = (
+    "Now for a quick selfie! 📸\n\n"
+    "Please send a recent photo of yourself — a clear, well-lit selfie works great.\n\n"
+    "This helps us match you with the right audience and platform. "
+    "No filters needed — just be yourself!"
+)
+MODEL_STEP_PHOTO_VALIDATION = (
+    "Please send a photo (selfie). "
+    "You can take one now or send from your gallery. 📸"
+)
+MODEL_STEP_PHOTO_RECEIVED = "Great photo! Thanks! 🙂"
+
+MODEL_STEP_DEVICE = (
+    "What device do you have for streaming?\n\n"
+    "We need a smartphone or laptop/PC with a camera."
+)
+BTN_MODEL_PHONE_ONLY = "📱 Smartphone only"
+BTN_MODEL_LAPTOP = "💻 Laptop/PC with camera"
+BTN_MODEL_BOTH = "📱💻 Both"
+
+MODEL_STEP_DEVICE_PHONE_MODEL = (
+    "What's your phone model?\n\n"
+    "For example: iPhone 13, Samsung Galaxy A54, Xiaomi Redmi Note 12"
+)
+
+MODEL_STEP_INTERNET = (
+    "How's your internet connection?\n\n"
+    "Streaming needs a stable connection. "
+    "If you're not sure about speed, just tell us:\n"
+    "• Can you watch videos without buffering?\n"
+    "• Wi-Fi or mobile data?"
+)
+
+MODEL_STEP_EXPERIENCE = (
+    "Have you ever streamed or created content before?\n\n"
+    "For example: TikTok, Instagram Live, YouTube, Twitch — "
+    "or any social media where you post videos/photos.\n\n"
+    "It's completely fine if you're just starting out! 🙂"
+)
+
+MODEL_STEP_AVAILABILITY = (
+    "What's your availability?\n\n"
+    "We need a minimum of 6 hours/day, 5 days/week.\n\n"
+    "Which shifts work best for you?"
+)
+BTN_MODEL_SCHED_MORNING = "🌅 Morning (6:00-12:00)"
+BTN_MODEL_SCHED_DAY = "☀️ Day (12:00-18:00)"
+BTN_MODEL_SCHED_EVENING = "🌆 Evening (18:00-00:00)"
+BTN_MODEL_SCHED_NIGHT = "🌙 Night (00:00-6:00)"
+BTN_MODEL_SCHED_FLEXIBLE = "🔄 Flexible / Multiple shifts"
+
+MODEL_STEP_PHONE = (
+    "Last question! 🙂\n\n"
+    "What is your phone number (with country code)?\n"
+    "For example: +5511912345678 or +639171234567"
+)
+
+MODEL_APPLICATION_COMPLETE = (
+    "Thank you for completing the application! 🎉\n\n"
+    "I'm reviewing your information now..."
+)
+
+MODEL_APPLICATION_FALLBACK = (
+    "Thank you for applying! 🎉\n\n"
+    "Our team will review your application and get back to you "
+    "within 24 hours.\n\n"
+    "Talk to you soon!"
+)
+
+MODEL_DECLINE_GENERIC = (
+    "Thank you for your interest! 🙏\n\n"
+    "We can't move forward with your application right now, "
+    "but we appreciate your time."
+)
+
+MODEL_SOCIAL_PROOF = (
+    "You're doing great! Almost there. 🙂\n\n"
+    "Girls like you are already earning with us:\n"
+    "  Sofia from Brazil — $800/month in her 2nd month\n"
+    "  Camila from Colombia — started from zero, now $600/month\n\n"
+    "Just a few more questions!"
+)
+
+# Model screening system prompt (different from operator)
+MODEL_SCREENER_SYSTEM = """\
+You are an HR screening assistant for a Live Stream Entertainer position at a talent agency.
+Evaluate candidates and return ONLY valid JSON — no markdown, no extra text.
+
+IMPORTANT CONTEXT:
+- This is a STREAMING ENTERTAINMENT role — the model appears on camera on live-streaming platforms
+- Job: engage with live audience, chat, share personality, earn from viewer engagement
+- Pay: $500-1,200/month in USD
+- Schedule: minimum 6h/day, 5 shifts/week, flexible timing
+- Training provided with personal mentor
+- Daily payments during training, then every 5 shifts in USD
+- NEVER mention "HuntMe" — the company name shown to candidates is "Apex Talent"
+- This is entertainment streaming (NOT adult/webcam content)
+
+HARD DISQUALIFIERS (auto-REJECT if any is true):
+- age < 18 → REJECT (legal requirement)
+
+Scoring criteria (each 1-10):
+1. appearance_score: Based on selfie — clear photo, presentable, camera-ready. No photo = 5
+2. device_score: Has smartphone with camera = 7, has laptop+phone = 10, no camera = 3
+3. internet_score: Stable connection = 8, unstable/mobile only = 4
+4. availability_score: Can do 6h/5days = 10, less = proportional
+5. experience_score: Previous streaming/content = bonus. No experience = 5 (not penalized)
+6. motivation_score: Enthusiasm, response quality, engagement during application
+
+overall_score = weighted average (appearance 25%, device 15%, internet 15%, availability 20%, motivation 15%, experience 10%), scaled to 1-100.
+
+Recommendation:
+- overall_score >= 60 AND no hard disqualifiers: "PASS"
+- overall_score 40-59: "MAYBE"
+- overall_score < 40 OR any hard disqualifier: "REJECT"
+
+For PASS: invite to interview, be enthusiastic
+For MAYBE: ask 1-2 specific clarifying questions
+For REJECT: polite, warm decline — do NOT mention other roles (the system handles that separately)\
+"""
+
+MODEL_SCREENER_TEMPLATE = """\
+Screen this candidate for a Live Stream Entertainer position:
+
+Name: {name}
+Age: {age}
+Country/City: {country_city}
+Photo: {photo_status}
+Device: {device_type} ({phone_model})
+Internet: {internet}
+Streaming Experience: {experience}
+Availability: {availability}
+Phone: {phone}
+Telegram: @{tg_username}
+
+Return JSON:
+{{"appearance_score": <int>, "device_score": <int>, "internet_score": <int>, "availability_score": <int>, "experience_score": <int>, "motivation_score": <int>, "overall_score": <int 1-100>, "recommendation": "PASS"|"MAYBE"|"REJECT", "reasoning": "<brief>", "suggested_response": "<message to candidate>"}}\
+"""
+
 # ═══ AGENT REDIRECT (operator → agent) ═══
 
 BTN_BECOME_AGENT = "🔄 Tell me about the Agent role"

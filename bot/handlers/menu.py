@@ -81,7 +81,7 @@ async def _build_status_banner(
 
     # Active form in progress → offer Continue button
     if paused:
-        if paused.startswith("OperatorForm:") or paused.startswith("AgentForm:"):
+        if paused.startswith("OperatorForm:") or paused.startswith("AgentForm:") or paused.startswith("ModelForm:"):
             kb = InlineKeyboardMarkup(inline_keyboard=[
                 [InlineKeyboardButton(text=m.BTN_CONTINUE, callback_data="resume_form")],
             ])
@@ -160,6 +160,10 @@ async def cmd_start(message: Message, state: FSMContext):
             # Agent landing lead → auto-start agent flow (skip menu)
             await _handle_agent_deeplink(message, state, param)
             return
+        elif param.startswith("model_"):
+            # Model deep link → auto-start model flow
+            await _handle_model_deeplink(message, state, param)
+            return
         elif param.startswith("land_"):
             # Landing lead → auto-start operator flow (skip menu + name)
             lang = detect_lang_from_deeplink(param)
@@ -183,7 +187,7 @@ async def cmd_start(message: Message, state: FSMContext):
 
     # Determine if user had an active form (preserve so resume_form callback still works).
     # Also handle the case where user was in waiting_question with a paused form step.
-    _form_prefixes = ("OperatorForm:", "InterviewBooking:", "AgentForm:")
+    _form_prefixes = ("OperatorForm:", "InterviewBooking:", "AgentForm:", "ModelForm:")
     prev_paused = prev_data.get("paused_state")
     is_active_form = (
         prev_state and any(prev_state.startswith(p) for p in _form_prefixes)
@@ -286,6 +290,64 @@ async def _handle_landing_deeplink(
     await _send_step_prompt(message, state)
 
 
+async def _handle_model_deeplink(
+    message: Message, state: FSMContext, param: str,
+) -> None:
+    """Model deep link clicked → load name from DB if available → auto-start model flow."""
+    raw_id = param.removeprefix("model_")
+    lang = "en"
+    m = msg(lang)
+
+    candidate_name = None
+    try:
+        cid = int(raw_id)
+        async with async_session() as session:
+            result = await session.execute(
+                select(Candidate).where(Candidate.id == cid)
+            )
+            candidate = result.scalar_one_or_none()
+            if candidate:
+                candidate_name = candidate.name
+                candidate.tg_user_id = message.from_user.id
+                candidate.status = "in_bot"
+                candidate.language = lang
+                candidate.candidate_type = "model"
+                await session.commit()
+    except (ValueError, Exception) as exc:
+        logger.debug("Model deep link parse error: %s", exc)
+
+    name = candidate_name or message.from_user.first_name or "there"
+
+    await state.update_data(
+        utm_source="model_landing",
+        candidate_type="model",
+        name=name,
+        language=lang,
+    )
+    await _track_event(
+        message.from_user.id, "bot_started", "start",
+        {"source": "model_landing", "lang": lang},
+    )
+
+    # Track in Notion
+    notion_page_id = await notion_leads.on_start(
+        tg_id=message.from_user.id,
+        tg_username=message.from_user.username,
+        utm_source="model_landing",
+    )
+    if notion_page_id:
+        await state.update_data(notion_page_id=notion_page_id)
+        await notion_leads.on_name(notion_page_id, name)
+
+    # Greeting → start model flow from age (name already known)
+    from bot.handlers.model_flow import ModelForm
+    greeting = m.MODEL_WELCOME_LANDING.format(name=name)
+    await message.answer(greeting)
+    await state.set_state(ModelForm.waiting_age)
+    from bot.handlers.model_flow import _send_step_prompt
+    await _send_step_prompt(message, state)
+
+
 async def _handle_agent_deeplink(
     message: Message, state: FSMContext, param: str,
 ) -> None:
@@ -362,7 +424,7 @@ async def cmd_menu(message: Message, state: FSMContext):
     data = await state.get_data()
     lang = _get_lang(data)
     paused = data.get("paused_state")
-    _form_prefixes = ("OperatorForm:", "InterviewBooking:", "AgentForm:")
+    _form_prefixes = ("OperatorForm:", "InterviewBooking:", "AgentForm:", "ModelForm:")
     # Also check if current state is a form (e.g., user types /menu mid-form)
     current = await state.get_state()
     if current and any(current.startswith(p) for p in _form_prefixes):
@@ -392,7 +454,7 @@ async def cb_back_main(callback: CallbackQuery, state: FSMContext):
     data = await state.get_data()
     lang = _get_lang(data)
     paused = data.get("paused_state")
-    _form_prefixes = ("OperatorForm:", "InterviewBooking:", "AgentForm:")
+    _form_prefixes = ("OperatorForm:", "InterviewBooking:", "AgentForm:", "ModelForm:")
     await state.clear()
     update: dict = {"language": lang}
     if paused and any(paused.startswith(p) for p in _form_prefixes):
@@ -432,7 +494,7 @@ async def cmd_continue(message: Message, state: FSMContext):
     }
 
     # If actively in a form step → resume immediately
-    _form_prefixes = ("OperatorForm:", "InterviewBooking:", "AgentForm:")
+    _form_prefixes = ("OperatorForm:", "InterviewBooking:", "AgentForm:", "ModelForm:")
     if current and any(current.startswith(p) for p in _form_prefixes):
         # For wait-only states show status banner instead of confusing resume
         if current.startswith("InterviewBooking:") and current.split(":")[-1] in _wait_only_steps:
@@ -445,6 +507,9 @@ async def cmd_continue(message: Message, state: FSMContext):
         if current.startswith("OperatorForm:"):
             from bot.handlers.operator_flow import _send_step_prompt
             await _send_step_prompt(message, state)
+        elif current.startswith("ModelForm:"):
+            from bot.handlers.model_flow import _send_step_prompt as _model_prompt
+            await _model_prompt(message, state)
         elif current.startswith("InterviewBooking:"):
             step = current.split(":")[-1]
             await message.answer(_booking_prompts(m).get(step, m.RESUME_FALLBACK))
@@ -468,6 +533,9 @@ async def cmd_continue(message: Message, state: FSMContext):
         if paused.startswith("OperatorForm:"):
             from bot.handlers.operator_flow import _send_step_prompt
             await _send_step_prompt(message, state)
+        elif paused.startswith("ModelForm:"):
+            from bot.handlers.model_flow import _send_step_prompt as _model_prompt
+            await _model_prompt(message, state)
         elif paused.startswith("InterviewBooking:"):
             step = paused.split(":")[-1]
             await message.answer(_booking_prompts(m).get(step, m.RESUME_FALLBACK))
@@ -611,6 +679,9 @@ async def cb_resume_form(callback: CallbackQuery, state: FSMContext):
     if paused.startswith("OperatorForm:"):
         from bot.handlers.operator_flow import _send_step_prompt
         await _send_step_prompt(callback, state)
+    elif paused.startswith("ModelForm:"):
+        from bot.handlers.model_flow import _send_step_prompt as _model_send_step_prompt
+        await _model_send_step_prompt(callback, state)
     elif paused.startswith("InterviewBooking:"):
         step = paused.split(":")[-1]
         booking_prompts = {

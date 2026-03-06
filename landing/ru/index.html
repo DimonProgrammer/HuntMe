@@ -249,6 +249,8 @@
     }
     @media (max-width: 640px) {
       .nav-links { display: none !important; }
+      #hamburger { display: block !important; }
+      .mobile-menu-open { display: block !important; }
     }
 
     /* Float animation for icons */
@@ -466,7 +468,15 @@
          class="bg-ink text-white font-heading font-bold text-sm px-5 py-2.5 rounded-full transition-all duration-200 hover:bg-magenta hover:scale-105">
         Откликнуться
       </a>
+      <button id="hamburger" onclick="document.getElementById('mobile-menu').classList.toggle('mobile-menu-open')" style="display:none;background:none;border:none;cursor:pointer;padding:6px;" aria-label="Меню">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1A0F2E" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
     </div>
+  </div>
+  <div id="mobile-menu" style="display:none;padding:12px 20px 16px;background:rgba(255,255,255,0.97);border-top:1px solid rgba(26,15,46,0.06);">
+    <a href="#earnings" onclick="document.getElementById('mobile-menu').classList.remove('mobile-menu-open')" style="display:block;padding:10px 0;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;color:#1A0F2E;text-decoration:none;opacity:0.7;">Заработок</a>
+    <a href="#how-it-works" onclick="document.getElementById('mobile-menu').classList.remove('mobile-menu-open')" style="display:block;padding:10px 0;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;color:#1A0F2E;text-decoration:none;opacity:0.7;">Как это работает</a>
+    <a href="#faq" onclick="document.getElementById('mobile-menu').classList.remove('mobile-menu-open')" style="display:block;padding:10px 0;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;color:#1A0F2E;text-decoration:none;opacity:0.7;">Вопросы</a>
   </div>
 </nav>
 
@@ -697,7 +707,7 @@
         <div class="font-heading font-black" style="font-size:1.6rem;color:#1A0F2E;margin-bottom:4px;">$260</div>
         <div style="font-size:12px;opacity:0.45;font-family:'Inter',sans-serif;margin-bottom:12px;">Со второго месяца</div>
         <div style="font-size:13px;font-family:'Inter',sans-serif;opacity:0.6;line-height:1.5;">
-          Дана М.<br>
+          Данияр М.<br>
           <span style="color:#22c55e;font-weight:600;">Каждый понедельник ✓</span>
         </div>
       </div>
@@ -813,7 +823,7 @@
           <span class="font-heading font-black text-white" style="font-size:1.8rem;">2</span>
         </div>
         <h3 class="font-heading font-bold" style="font-size:1rem;margin-bottom:6px;">Видео-собеседование</h3>
-        <p style="font-size:13px;opacity:0.55;line-height:1.6;">30–40 минут: расскажем про платформу, расписание и оплату.</p>
+        <p style="font-size:13px;opacity:0.55;line-height:1.6;">30 минут: расскажем про платформу, расписание и оплату.</p>
       </div>
 
       <div class="reveal reveal-delay-3 text-center">
@@ -874,12 +884,12 @@
             <span style="font-family:'Rubik',sans-serif;font-weight:800;font-size:15px;color:#1A0F2E;">ДМ</span>
           </div>
           <div>
-            <div class="font-heading font-bold" style="font-size:0.9rem;line-height:1.2;">Дана М., 21</div>
+            <div class="font-heading font-bold" style="font-size:0.9rem;line-height:1.2;">Данияр М., 21</div>
             <div style="font-size:12px;opacity:0.5;font-family:'Inter',sans-serif;">🌍 Казахстан</div>
           </div>
         </div>
         <p class="font-serif" style="font-style:italic;font-size:14px;line-height:1.7;opacity:0.75;margin-bottom:16px;">
-          "Переживала, что ноутбук не потянет – у меня ASUS с GTX 1060. На собеседовании проверили через Zoom, оказалось, что железо проходит нормально. Обучение заняло 5 дней, наставник объяснял каждый шаг."
+          "Переживал, что ноутбук не потянет – у меня ASUS с GTX 1060. На собеседовании проверили через Zoom, оказалось, что железо проходит нормально. Обучение заняло 5 дней, наставник объяснял каждый шаг."
         </p>
         <span style="display:inline-block;background:#CCFF00;color:#1A0F2E;font-size:11px;font-weight:800;padding:5px 12px;border-radius:100px;font-family:'Rubik',sans-serif;">Сейчас получает $210/нед</span>
       </div>
@@ -908,12 +918,12 @@
             <span style="font-family:'Rubik',sans-serif;font-weight:800;font-size:15px;color:#fff;">АС</span>
           </div>
           <div>
-            <div class="font-heading font-bold" style="font-size:0.9rem;line-height:1.2;">Анна С., 29</div>
+            <div class="font-heading font-bold" style="font-size:0.9rem;line-height:1.2;">Андрей С., 29</div>
             <div style="font-size:12px;opacity:0.5;font-family:'Inter',sans-serif;">🌍 Украина</div>
           </div>
         </div>
         <p class="font-serif" style="font-style:italic;font-size:14px;line-height:1.7;opacity:0.75;margin-bottom:16px;">
-          "Раньше фрилансила, доход скакал от месяца к месяцу. Здесь фиксированный график, понятная ставка и выплата каждый понедельник в долларах. Для меня это стабильность, которой не хватало."
+          "Раньше фрилансил, доход скакал от месяца к месяцу. Здесь фиксированный график, понятная ставка и выплата каждый понедельник в долларах. Для меня это стабильность, которой не хватало."
         </p>
         <span style="display:inline-block;background:#CCFF00;color:#1A0F2E;font-size:11px;font-weight:800;padding:5px 12px;border-radius:100px;font-family:'Rubik',sans-serif;">Сейчас получает $260/нед</span>
       </div>
@@ -939,15 +949,15 @@
       <div class="card p-7 reveal reveal-delay-3">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
           <div style="width:44px;height:44px;border-radius:50%;background:#1A0F2E;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <span style="font-family:'Rubik',sans-serif;font-weight:800;font-size:15px;color:#CCFF00;">НП</span>
+            <span style="font-family:'Rubik',sans-serif;font-weight:800;font-size:15px;color:#CCFF00;">ГП</span>
           </div>
           <div>
-            <div class="font-heading font-bold" style="font-size:0.9rem;line-height:1.2;">Нино П., 25</div>
+            <div class="font-heading font-bold" style="font-size:0.9rem;line-height:1.2;">Георгий П., 25</div>
             <div style="font-size:12px;opacity:0.5;font-family:'Inter',sans-serif;">🌍 Грузия</div>
           </div>
         </div>
         <p class="font-serif" style="font-style:italic;font-size:14px;line-height:1.7;opacity:0.75;margin-bottom:16px;">
-          "До этого со стримами не сталкивалась вообще, работала в розничной торговле. На обучении всё показали: как настраивать OBS, как модерировать чат, как реагировать на технические проблемы. Через неделю уже работала самостоятельно."
+          "До этого со стримами не сталкивался вообще, работал в розничной торговле. На обучении всё показали: как настраивать OBS, как модерировать чат, как реагировать на технические проблемы. Через неделю уже работал самостоятельно."
         </p>
         <span style="display:inline-block;background:#CCFF00;color:#1A0F2E;font-size:11px;font-weight:800;padding:5px 12px;border-radius:100px;font-family:'Rubik',sans-serif;">Сейчас получает $220/нед</span>
       </div>
@@ -1043,6 +1053,21 @@
 
 
 <!-- ═══════════════════════════════════════════
+     О НАС — ИСТОРИЯ
+════════════════════════════════════════════ -->
+<section style="padding:0 20px 96px;position:relative;z-index:10;">
+  <div class="max-w-2xl mx-auto reveal text-center">
+    <p class="font-serif" style="font-style:italic;color:#E33BC5;font-size:1.1rem;margin-bottom:10px;">Об Apex Talent</p>
+    <h2 class="font-heading font-black text-ink tracking-tighter" style="font-size:clamp(1.6rem,4vw,2.4rem);line-height:1.1;margin-bottom:20px;">
+      Агентство, созданное операторами для операторов
+    </h2>
+    <p style="font-size:15px;line-height:1.8;opacity:0.65;max-width:560px;margin:0 auto;">
+      Apex Talent появился, когда наши основатели — сами бывшие операторы стримов — поняли, что лучшие специалисты остаются незамеченными просто потому, что никто не ищет в правильных местах. Сегодня мы работаем со стримерами в 15+ странах, соединяя талантливых операторов с контент-мейкерами. Каждая выплата по понедельникам, каждая менторская сессия, каждая смена — мы построили всё так, как хотели бы, чтобы кто-то построил для нас.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
      FAQ — ACCORDION
 ════════════════════════════════════════════ -->
 <section style="padding:0 20px 96px;position:relative;z-index:10;">
@@ -1099,12 +1124,12 @@
       <!-- Q1 -->
       <div class="faq-item" onclick="toggleFaq(this)" style="cursor:pointer;padding:24px 28px;">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
-          <h3 class="font-heading font-bold" style="font-size:0.95rem;">Это связано с контентом 18+?</h3>
+          <h3 class="font-heading font-bold" style="font-size:0.95rem;">Какой контент у стримеров?</h3>
           <span class="faq-icon" style="font-size:1.5rem;font-weight:300;color:#E33BC5;flex-shrink:0;line-height:1;">+</span>
         </div>
         <div class="faq-answer">
           <p style="font-size:14px;line-height:1.7;opacity:0.65;padding-top:14px;padding-bottom:4px;">
-            Нет. Мы работаем исключительно с мейнстримовыми платформами, аналогичными Twitch — гейминг, музыка, ток-шоу, лайфстайл. Никакого контента для взрослых, точка.
+            Мейнстрим-развлечения — аналог Twitch. Гейминг, музыка, ток-шоу, лайфстайл. Весь контент соответствует стандартным правилам платформ.
           </p>
         </div>
       </div>
@@ -1112,12 +1137,12 @@
       <!-- Q2 -->
       <div class="faq-item" onclick="toggleFaq(this)" style="cursor:pointer;padding:24px 28px;">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
-          <h3 class="font-heading font-bold" style="font-size:0.95rem;">Как убедиться, что это не мошенничество?</h3>
+          <h3 class="font-heading font-bold" style="font-size:0.95rem;">Как убедиться в надёжности?</h3>
           <span class="faq-icon" style="font-size:1.5rem;font-weight:300;color:#E33BC5;flex-shrink:0;line-height:1;">+</span>
         </div>
         <div class="faq-answer">
           <p style="font-size:14px;line-height:1.7;opacity:0.65;padding-top:14px;padding-bottom:4px;">
-            Мы не берём с вас денег. Ни до начала работы, ни после. Вы получаете оплату с первой тренировочной смены, каждый понедельник. Мы никогда не просим доступ к банковским данным, паспортные сканы или «депозит за оборудование». Если кто-то просит вас заплатить, это не мы.
+            Apex Talent — зарегистрированное агентство, работающее со стримерами в 15+ странах. Оплата с первой же тренировочной смены, каждый понедельник. Мы не берём никаких комиссий — вы только зарабатываете. Собеседование — прозрачный 30-минутный Zoom-звонок с командой.
           </p>
         </div>
       </div>
@@ -1130,7 +1155,7 @@
         </div>
         <div class="faq-answer">
           <p style="font-size:14px;line-height:1.7;opacity:0.65;padding-top:14px;padding-bottom:4px;">
-            Видеозвонок на 30–40 минут. Вам расскажут про платформу, расписание и оплату. Вы кратко показываете документ для подтверждения возраста. Мы <strong style="opacity:1;">не собираем копии</strong> и не храним ваши персональные данные.
+            Видеозвонок на 30 минут. Вам расскажут про платформу, расписание и оплату. Вы кратко показываете документ для подтверждения возраста. Мы <strong style="opacity:1;">не собираем копии</strong> и не храним ваши персональные данные.
           </p>
         </div>
       </div>
@@ -1174,7 +1199,7 @@
 
     <div class="reveal text-center" style="margin-bottom:48px;">
       <span style="display:inline-block;background:#CCFF00;color:#1A0F2E;font-size:12px;font-weight:800;padding:6px 16px;border-radius:100px;margin-bottom:16px;letter-spacing:0.05em;font-family:'Rubik',sans-serif;">
-        🔥 НАБОР ОТКРЫТ — ОТКЛИКНИТЕСЬ СЕЙЧАС
+        СЛОТЫ НА СОБЕСЕДОВАНИЯ НА ЭТОЙ НЕДЕЛЕ ОГРАНИЧЕНЫ
       </span>
       <h2 class="font-heading font-black text-ink tracking-tighter" style="font-size:clamp(2rem,5vw,3.2rem);line-height:1.05;margin-bottom:12px;">
         Оставьте заявку
