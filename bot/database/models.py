@@ -65,8 +65,17 @@ class Candidate(Base):
     huntme_crm_submitted: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True, default=False)
     huntme_crm_slot: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
 
+    huntme_crm_app_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     interview_morning_sent: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True, default=False)
     interview_reminder_sent: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True, default=False)
+    interview_confirmed: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)  # confirmed / cancelled / no_response
+    interview_retry_sent: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True, default=False)
+
+    # Userbot personal outreach tracking
+    personal_msg_sent: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    noshow_msg_sent: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    agent_welcome_sent: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    agent_reengagement_sent: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
 
     # Slot waiting queue
     waiting_for_slot: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True, default=False)

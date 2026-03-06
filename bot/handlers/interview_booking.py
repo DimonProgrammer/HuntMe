@@ -880,7 +880,7 @@ async def on_crm_approve(callback: CallbackQuery):
     )
 
     # Submit to CRM
-    success, error, qa_saved = await huntme_crm.submit_application(
+    success, error, qa_saved, crm_app_id = await huntme_crm.submit_application(
         name=candidate.name,
         birth_date=candidate.birth_date or "01.01.2000",
         phone=candidate.phone_number or "",
@@ -902,6 +902,8 @@ async def on_crm_approve(callback: CallbackQuery):
                 if cand:
                     cand.status = "interview_invited"
                     cand.huntme_crm_submitted = True
+                    if crm_app_id:
+                        cand.huntme_crm_app_id = crm_app_id
                     await session.commit()
         except Exception:
             logger.exception("Failed to update CRM status")
@@ -1373,6 +1375,10 @@ async def on_interview_confirm(callback: CallbackQuery):
     await callback.answer()
     tg_user_id = callback.from_user.id
     cand_lang = "en"
+    cand_name = ""
+    cand_tg = ""
+    cand_slot = ""
+    crm_app_id = None
     try:
         async with async_session() as session:
             result = await session.execute(
@@ -1381,13 +1387,34 @@ async def on_interview_confirm(callback: CallbackQuery):
             cand = result.scalar_one_or_none()
             if cand:
                 cand_lang = cand.language or "en"
+                cand_name = cand.name or ""
+                cand_tg = cand.tg_username or ""
+                cand_slot = cand.huntme_crm_slot or ""
+                crm_app_id = cand.huntme_crm_app_id
+                cand.interview_confirmed = "confirmed"
+                await session.commit()
     except Exception:
-        pass
+        logger.exception("Failed to update interview_confirmed")
     m = msg(cand_lang)
     try:
         await callback.message.edit_text(m.INTERVIEW_CONFIRMED_REPLY)
     except Exception:
         pass
+    # Update CRM status to "Confirmed"
+    if crm_app_id:
+        ok, err = await huntme_crm.update_application_status(
+            crm_app_id, huntme_crm.CRM_STATUS_CONFIRMED
+        )
+        if not ok:
+            logger.warning("CRM confirm status failed for app %s: %s", crm_app_id, err)
+    # Notify admin
+    try:
+        admin_msg = m.ADMIN_INTERVIEW_CONFIRMED.format(
+            name=cand_name, tg=cand_tg, slot=cand_slot,
+        )
+        await callback.bot.send_message(config.ADMIN_CHAT_ID, admin_msg)
+    except Exception:
+        logger.exception("Failed to notify admin about interview confirmation")
 
 
 @router.callback_query(F.data == "interview_cancel")
@@ -1396,6 +1423,10 @@ async def on_interview_cancel(callback: CallbackQuery):
     await callback.answer()
     tg_user_id = callback.from_user.id
     cand_lang = "en"
+    cand_name = ""
+    cand_tg = ""
+    cand_slot = ""
+    crm_app_id = None
     try:
         async with async_session() as session:
             result = await session.execute(
@@ -1404,13 +1435,34 @@ async def on_interview_cancel(callback: CallbackQuery):
             cand = result.scalar_one_or_none()
             if cand:
                 cand_lang = cand.language or "en"
+                cand_name = cand.name or ""
+                cand_tg = cand.tg_username or ""
+                cand_slot = cand.huntme_crm_slot or ""
+                crm_app_id = cand.huntme_crm_app_id
+                cand.interview_confirmed = "cancelled"
+                await session.commit()
     except Exception:
-        pass
+        logger.exception("Failed to update interview_confirmed")
     m = msg(cand_lang)
     try:
         await callback.message.edit_text(m.INTERVIEW_CANCEL_REPLY)
     except Exception:
         pass
+    # Update CRM status to "Not confirmed"
+    if crm_app_id:
+        ok, err = await huntme_crm.update_application_status(
+            crm_app_id, huntme_crm.CRM_STATUS_NOT_CONFIRMED
+        )
+        if not ok:
+            logger.warning("CRM cancel status failed for app %s: %s", crm_app_id, err)
+    # Notify admin
+    try:
+        admin_msg = m.ADMIN_INTERVIEW_CANCELLED.format(
+            name=cand_name, tg=cand_tg, slot=cand_slot,
+        )
+        await callback.bot.send_message(config.ADMIN_CHAT_ID, admin_msg)
+    except Exception:
+        logger.exception("Failed to notify admin about interview cancellation")
 
 
 def _format_slot_display(slot_str: str) -> str:

@@ -990,10 +990,17 @@ INTERVIEW_CONFIRMED_REPLY = "✅ Отлично, до встречи!"
 INTERVIEW_CANCEL_REPLY = (
     "Понял. Свяжись с @hr_helper31 или отправь \"+\" на wa.me/14433037260 (WhatsApp) для переноса."
 )
+INTERVIEW_RETRY_CONFIRM = (
+    "Привет, {name}! Мы пока не получили ответ — у тебя сегодня интервью в {time} (время Манилы, GMT+8).\n\n"
+    "Ты придёшь? Подтверди, пожалуйста, чтобы мы всё подготовили."
+)
 INTERVIEW_1H_REMINDER = (
     "⏰ Твоё интервью начинается через 1 час — {time} (время Манилы)!\n\n"
     "@hr_helper31 свяжется с тобой через Telegram или WhatsApp. Будь онлайн! 📞"
 )
+ADMIN_INTERVIEW_CONFIRMED = "Подтверждён: {name} (@{tg}) придёт на интервью в {slot}. CRM обновлена."
+ADMIN_INTERVIEW_CANCELLED = "ОТМЕНА: {name} (@{tg}) отменил интервью в {slot}. CRM: не подтверждён. Нужен перенос!"
+ADMIN_INTERVIEW_NO_RESPONSE = "НЕТ ОТВЕТА: {name} (@{tg}) не подтвердил интервью в {slot}. CRM: не подтверждён."
 BOOKING_SOFT_REJECT = (
     "Спасибо за терпение! Наша команда свяжется в течение 24 часов "
     "для обсуждения следующих шагов.\n\n"

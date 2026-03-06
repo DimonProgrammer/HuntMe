@@ -986,10 +986,17 @@ INTERVIEW_CONFIRMED_REPLY = "✅ Great, see you soon!"
 INTERVIEW_CANCEL_REPLY = (
     "Got it. Please contact @hr_helper31 or send \"+\" to wa.me/14433037260 (WhatsApp) to reschedule."
 )
+INTERVIEW_RETRY_CONFIRM = (
+    "Hey {name}! We haven't heard back — your interview is today at {time} (Manila time, GMT+8).\n\n"
+    "Will you be there? Please confirm so we can prepare everything for you."
+)
 INTERVIEW_1H_REMINDER = (
     "⏰ Your interview starts in 1 hour — {time} Manila time!\n\n"
     "@hr_helper31 will reach out to you via Telegram or WhatsApp. Stay online! 📞"
 )
+ADMIN_INTERVIEW_CONFIRMED = "Confirmed: {name} (@{tg}) will attend interview at {slot}. CRM updated."
+ADMIN_INTERVIEW_CANCELLED = "CANCELLED: {name} (@{tg}) cancelled interview at {slot}. CRM set to 'not confirmed'. Reschedule needed!"
+ADMIN_INTERVIEW_NO_RESPONSE = "NO RESPONSE: {name} (@{tg}) hasn't confirmed interview at {slot}. CRM set to 'not confirmed'."
 BOOKING_SOFT_REJECT = (
     "Thank you for your patience! Our team will contact you within 24 hours "
     "to discuss next steps.\n\n"

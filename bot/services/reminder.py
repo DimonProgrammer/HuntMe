@@ -22,6 +22,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from sqlalchemy import select, update
 
 from bot.database.connection import async_session
+from bot.config import config
 from bot.database.models import Candidate, FsmState
 from bot.messages import msg
 from bot.services import huntme_crm
@@ -285,6 +286,17 @@ async def _process_interview_reminders(bot: Bot):
         ):
             await _send_interview_morning(bot, cand, m, time_str)
 
+        # Retry reminder: 2h after morning send, if no response yet
+        retry_time = morning_time + timedelta(hours=2)
+        if (
+            cand.interview_morning_sent
+            and not cand.interview_retry_sent
+            and not cand.interview_confirmed
+            and now_manila >= retry_time
+            and (slot_dt - now_manila).total_seconds() > 3600
+        ):
+            await _send_interview_retry(bot, cand, m, time_str)
+
         # 1-hour reminder
         one_hour_before = slot_dt - timedelta(hours=1)
         if (
@@ -292,6 +304,9 @@ async def _process_interview_reminders(bot: Bot):
             and now_manila >= one_hour_before
         ):
             await _send_interview_1h(bot, cand, m, time_str)
+            # Admin alert if not confirmed at 1h mark
+            if cand.interview_confirmed != "confirmed":
+                await _send_admin_no_response_alert(bot, cand, m)
 
 
 async def _send_interview_morning(bot: Bot, cand: Candidate, m, time_str: str):
@@ -339,6 +354,57 @@ async def _send_interview_1h(bot: Bot, cand: Candidate, m, time_str: str):
         logger.info("Interview 1h reminder sent to %s", cand.tg_user_id)
     except Exception:
         logger.debug("Failed to send interview 1h reminder to %s", cand.tg_user_id)
+
+
+async def _send_interview_retry(bot: Bot, cand: Candidate, m, time_str: str):
+    """Send retry confirmation prompt if candidate didn't respond to morning reminder."""
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text=m.BTN_INTERVIEW_YES, callback_data="interview_confirm"),
+            InlineKeyboardButton(text=m.BTN_INTERVIEW_NO, callback_data="interview_cancel"),
+        ]
+    ])
+    try:
+        await bot.send_message(
+            cand.tg_user_id,
+            m.INTERVIEW_RETRY_CONFIRM.format(name=cand.name or "there", time=time_str),
+            reply_markup=kb,
+        )
+        async with async_session() as session:
+            await session.execute(
+                update(Candidate)
+                .where(Candidate.tg_user_id == cand.tg_user_id)
+                .values(interview_retry_sent=True)
+            )
+            await session.commit()
+        logger.info("Interview retry reminder sent to %s", cand.tg_user_id)
+    except Exception:
+        logger.debug("Failed to send interview retry reminder to %s", cand.tg_user_id)
+
+
+async def _send_admin_no_response_alert(bot: Bot, cand: Candidate, m):
+    """Alert admin about unconfirmed candidate 1h before interview. Auto-set CRM to not confirmed."""
+    slot = cand.huntme_crm_slot or "?"
+    tg = cand.tg_username or str(cand.tg_user_id)
+    status_label = cand.interview_confirmed or "no response"
+    try:
+        text = m.ADMIN_INTERVIEW_NO_RESPONSE.format(
+            name=cand.name or "?", tg=tg, slot=slot,
+        )
+        if status_label == "cancelled":
+            text = m.ADMIN_INTERVIEW_CANCELLED.format(
+                name=cand.name or "?", tg=tg, slot=slot,
+            )
+        await bot.send_message(config.ADMIN_CHAT_ID, text)
+    except Exception:
+        logger.debug("Failed to send admin no-response alert for %s", cand.tg_user_id)
+    # Auto-set CRM to "not confirmed" if app_id exists and not already cancelled
+    if cand.huntme_crm_app_id and cand.interview_confirmed != "cancelled":
+        ok, err = await huntme_crm.update_application_status(
+            cand.huntme_crm_app_id, huntme_crm.CRM_STATUS_NOT_CONFIRMED
+        )
+        if not ok:
+            logger.warning("CRM auto not-confirmed failed for app %s: %s", cand.huntme_crm_app_id, err)
 
 
 # ═══ SLOT WAITING QUEUE ═══

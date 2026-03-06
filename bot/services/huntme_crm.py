@@ -34,6 +34,11 @@ _token_obtained_at: Optional[datetime] = None
 # CRM form question IDs for office_id=95 (ENG+OTHER)
 _QUESTION_IDS = {"company_name": "49", "english": "50", "experience": "51", "additional": "52"}
 
+# CRM application status codes (from UI dropdown analysis)
+CRM_STATUS_SCHEDULED = "i-0"       # Назначено (default after booking)
+CRM_STATUS_CONFIRMED = "i-10"      # Подтвержден(-а)
+CRM_STATUS_NOT_CONFIRMED = "i-60"  # Не подтвержден(-а)
+
 
 def _base_url() -> str:
     return config.HUNTME_CRM_BASE_URL.rstrip("/")
@@ -544,20 +549,73 @@ async def submit_application(
         result, error = await _create_application(form_data2, url)
 
     if error:
-        return False, error, False
+        return False, error, False, None
 
     # Application created — try to PATCH Q&A onto it
     app_id = _extract_app_id(result)
     if not app_id:
         logger.warning("Cannot extract app ID from CRM response: %s", result)
-        return True, None, False
+        return True, None, False, None
 
     qa_ok, qa_err = await _update_questions(app_id, crm_answers)
     if qa_ok:
-        return True, None, True
+        return True, None, True, app_id
     else:
         logger.warning("Q&A PATCH failed for app %s: %s", app_id, qa_err)
-        return True, None, False
+        return True, None, False, app_id
+
+
+async def update_application_status(app_id: int, status_code: str) -> tuple:
+    """Update CRM application status (e.g. confirmed/not confirmed).
+
+    Status codes: CRM_STATUS_SCHEDULED, CRM_STATUS_CONFIRMED, CRM_STATUS_NOT_CONFIRMED.
+    Returns: (success: bool, error: Optional[str])
+    """
+    token = await _ensure_token()
+    if not token:
+        return False, "Auth failed"
+
+    base = _base_url()
+    headers = {**_base_headers(), "Content-Type": "application/json"}
+
+    try:
+        async with aiohttp.ClientSession(
+            headers=headers, cookies=_auth_cookies()
+        ) as session:
+            async with session.patch(
+                f"{base}/api/backend/requests/{app_id}/status",
+                json={"status": status_code},
+                timeout=aiohttp.ClientTimeout(total=20),
+            ) as resp:
+                if resp.status in (401, 403):
+                    global _session_token, _token_obtained_at
+                    _session_token = None
+                    _token_obtained_at = None
+                    new_token = await _ensure_token()
+                    if not new_token:
+                        return False, "CRM re-auth failed"
+                    async with aiohttp.ClientSession(
+                        headers=headers, cookies=_auth_cookies()
+                    ) as session2:
+                        async with session2.patch(
+                            f"{base}/api/backend/requests/{app_id}/status",
+                            json={"status": status_code},
+                            timeout=aiohttp.ClientTimeout(total=20),
+                        ) as resp2:
+                            if resp2.status == 200:
+                                logger.info("CRM status updated (retry) for app %s → %s", app_id, status_code)
+                                return True, None
+                            text = await resp2.text()
+                            return False, "CRM status retry %s: %s" % (resp2.status, text[:200])
+                if resp.status == 200:
+                    logger.info("CRM status updated for app %s → %s", app_id, status_code)
+                    return True, None
+                text = await resp.text()
+                logger.warning("CRM status update failed for app %s: %s %s", app_id, resp.status, text[:300])
+                return False, "CRM error %s" % resp.status
+    except Exception:
+        logger.exception("CRM status update exception for app %s", app_id)
+        return False, "CRM request failed"
 
 
 # ═══ AGENT CRM SUBMISSION ═══
