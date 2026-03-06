@@ -57,6 +57,7 @@
 
 ### Принципы
 
+- Always use Context7 MCP when needing library/API documentation, code generation, setup or configuration steps — without waiting for explicit request
 - Один чат = одна задача. Не смешивать контексты
 - Нетривиальная задача → Plan Mode сначала
 - Контекст в файлах (knowledge/, CLAUDE.md), НЕ в голове

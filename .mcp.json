@@ -2,7 +2,32 @@
   "mcpServers": {
     "huntme-crm": {
       "command": "crm-mcp/.venv/bin/python3",
-      "args": ["crm-mcp/server.py"]
+      "args": [
+        "crm-mcp/server.py"
+      ]
+    },
+    "ticktick": {
+      "command": "node",
+      "args": [
+        "/Users/admin/Projects/ticktick-mcp-server/src/index.js"
+      ],
+      "env": {
+        "TICKTICK_ACCESS_TOKEN": "a10fda26-800f-4d2b-83f8-243262a21b7e",
+        "TICKTICK_CLIENT_ID": "P9H1pdW43ozVsKoot7",
+        "TICKTICK_CLIENT_SECRET": "L57WHsU1b2M51d0U5Z8TPCpBe5Lm0hYn"
+      }
+    },
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp@latest"
+      ],
+      "env": {
+        "DEFAULT_MINIMUM_TOKENS": "10000",
+        "CONTEXT7_API_KEY": "ctx7sk-1fa26201-949c-44c1-b5ca-a9b02ade5f8c"
+      }
     }
   }
 }

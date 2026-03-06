@@ -15,3 +15,12 @@ node_modules/
 landing/freepik__*.png
 .agents/
 .claude/
+*.session
+*.session-journal
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

@@ -57,7 +57,7 @@
 - WA Engine: WAHA Plus ($19/мес, движок NOWEB, Docker)
 - CRM: Битрикс24 Базовый (~990 ₽/мес, помесячно) — REST API + MCP
 - VPS: Hetzner CX22 (€3.29/мес, Ubuntu 22.04)
-- BR номер: Airalo Brazil eSIM (~$7 разово)
+- BR номер: sms-activate.org (~$1-3 за активацию, без KYC). Постоянный номер — когда пойдёт объём
 - WA→CRM: прямой REST API из Python (без Wazzup)
 - MCP: `bitrix24-mcp-server` (npm) — управление лидами из Claude
 
@@ -68,7 +68,7 @@
 - Follow-up: APScheduler → 1ч/24ч/72ч при молчании
 
 **Ожидает ручных действий:**
-- Купить Airalo eSIM → зарегистрировать WA
+- Купить временный BR номер (sms-activate.org) → зарегистрировать WA
 - Создать Hetzner VPS
 - Зарегистрировать Битрикс24 → получить webhook URL → добавить в `.env` + `.mcp.json`
 
