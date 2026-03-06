@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meta Ads Strategy — Apex Talent BR</title>
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --card: #1a1a1a;
+    --border: #2a2a2a;
+    --text: #e0e0e0;
+    --muted: #888;
+    --accent: #f59e0b;
+    --accent2: #8b5cf6;
+    --green: #22c55e;
+    --red: #ef4444;
+    --blue: #3b82f6;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: -apple-system, 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; padding: 2rem; max-width: 960px; margin: 0 auto; }
+  h1 { font-size: 2rem; color: #fff; margin-bottom: .5rem; }
+  h2 { font-size: 1.5rem; color: var(--accent); margin: 2.5rem 0 1rem; border-bottom: 1px solid var(--border); padding-bottom: .5rem; }
+  h3 { font-size: 1.15rem; color: var(--accent2); margin: 1.5rem 0 .75rem; }
+  h4 { font-size: 1rem; color: var(--muted); margin: 1rem 0 .5rem; text-transform: uppercase; letter-spacing: .05em; }
+  p, li { margin-bottom: .5rem; }
+  ul, ol { padding-left: 1.5rem; }
+  .subtitle { color: var(--muted); font-size: 1rem; margin-bottom: 2rem; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin: 1rem 0; }
+  .card-accent { border-left: 3px solid var(--accent); }
+  .card-green { border-left: 3px solid var(--green); }
+  .card-red { border-left: 3px solid var(--red); }
+  .card-blue { border-left: 3px solid var(--blue); }
+  .card-purple { border-left: 3px solid var(--accent2); }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; }
+  th { background: var(--card); color: var(--accent); text-align: left; padding: .6rem .75rem; border-bottom: 2px solid var(--border); }
+  td { padding: .6rem .75rem; border-bottom: 1px solid var(--border); }
+  tr:hover td { background: rgba(245,158,11,.05); }
+  code { background: #252525; padding: 2px 6px; border-radius: 4px; font-size: .85rem; }
+  .tag { display: inline-block; background: rgba(245,158,11,.15); color: var(--accent); padding: 2px 8px; border-radius: 6px; font-size: .8rem; margin-right: .25rem; }
+  .tag-green { background: rgba(34,197,94,.15); color: var(--green); }
+  .tag-red { background: rgba(239,68,68,.15); color: var(--red); }
+  .tag-blue { background: rgba(59,130,246,.15); color: var(--blue); }
+  .funnel { display: flex; flex-direction: column; gap: .5rem; margin: 1rem 0; }
+  .funnel-step { background: var(--card); border-radius: 8px; padding: .75rem 1rem; border-left: 3px solid var(--accent); position: relative; }
+  .funnel-step::before { content: attr(data-num); position: absolute; right: 1rem; top: .75rem; color: var(--muted); font-size: 2rem; font-weight: 700; opacity: .15; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media(max-width:640px) { .grid-2 { grid-template-columns: 1fr; } body { padding: 1rem; } }
+  .metric { text-align: center; }
+  .metric-value { font-size: 2rem; font-weight: 700; color: var(--accent); }
+  .metric-label { font-size: .8rem; color: var(--muted); }
+  .warn { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3); border-radius: 8px; padding: 1rem; margin: 1rem 0; }
+  .info { background: rgba(59,130,246,.1); border: 1px solid rgba(59,130,246,.3); border-radius: 8px; padding: 1rem; margin: 1rem 0; }
+  .phase { background: linear-gradient(135deg, var(--card), #1f1f2e); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  .phase-num { font-size: .75rem; color: var(--accent); text-transform: uppercase; letter-spacing: .1em; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+</style>
+</head>
+<body>
+
+<h1>🎯 Meta Ads Strategy — Apex Talent BR</h1>
+<p class="subtitle">Рекрутинг live-stream моделей в Бразилии | Бюджет: $100/нед ($400/мес) | Март 2026</p>
+
+<!-- ═══════════════════════════════════ -->
+<h2>📊 Исходные данные и бенчмарки</h2>
+
+<div class="grid-2">
+  <div class="card metric"><div class="metric-value">$1.80–3.30</div><div class="metric-label">CPM Бразилия (Meta, Q1 2026)</div></div>
+  <div class="card metric"><div class="metric-value">$0.15–0.40</div><div class="metric-label">CPC (клик на лендинг)</div></div>
+  <div class="card metric"><div class="metric-value">$1–3</div><div class="metric-label">Ожидаемый CPL (WA-клик)</div></div>
+  <div class="card metric"><div class="metric-value">130–400</div><div class="metric-label">Лидов/мес при $400</div></div>
+</div>
+
+<div class="info">
+  <strong>Почему Бразилия — золотое дно:</strong> CPM в 3–5× дешевле РФ/Европы. По данным HuntMe wiki — 250+ откликов за $100 на job boards. Meta Ads дают ещё более точный таргетинг + визуальный формат Reels, идеальный для lifestyle-контента.
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<h2>🏗 Архитектура воронки</h2>
+
+<div class="funnel">
+  <div class="funnel-step" data-num="1">
+    <strong>Meta Ad (Reels / Stories / Feed)</strong><br>
+    <span class="tag">Entretenimento digital</span> <span class="tag">Renda extra</span> <span class="tag">Trabalho remoto</span><br>
+    Креатив от лица Габи → lifestyle + curiosity gap → CTA на лендинг
+  </div>
+  <div class="funnel-step" data-num="2">
+    <strong>Landing Page (apextalent.pro)</strong><br>
+    Hero: «A Economia da Carisma™» → social proof → CTA «Fale com a Gabi» → WA link<br>
+    <span class="tag-green">Meta Pixel: ViewContent</span> <span class="tag-green">WhatsApp Click: Lead event</span>
+  </div>
+  <div class="funnel-step" data-num="3">
+    <strong>WhatsApp Bot (WAHA Plus)</strong><br>
+    5 фаз → квалификация → CRM booking → интервью<br>
+    <span class="tag-blue">Офлайн-конверсия: CompleteRegistration</span>
+  </div>
+  <div class="funnel-step" data-num="4">
+    <strong>Интервью → Онбординг</strong><br>
+    Approve/Reject (ручное решение) → модель начинает работу
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<h2>🎯 Таргетинг</h2>
+
+<h3>Основные аудитории (Ad Sets)</h3>
+
+<table>
+  <tr><th>Ad Set</th><th>Тип</th><th>Описание</th><th>Размер</th></tr>
+  <tr>
+    <td><strong>BROAD_18-27_BR</strong></td>
+    <td><span class="tag">Broad</span></td>
+    <td>Ж 18-27, Бразилия. Без интересов — отдаём алгоритму Meta Advantage+. Лучший старт при малом бюджете</td>
+    <td>~35M</td>
+  </tr>
+  <tr>
+    <td><strong>INTEREST_renda</strong></td>
+    <td><span class="tag-blue">Interest</span></td>
+    <td>Ж 18-27, BR. Интересы: <code>trabalho remoto</code>, <code>renda extra</code>, <code>empreendedorismo feminino</code>, <code>marketing digital</code>, <code>influenciador digital</code></td>
+    <td>~8-12M</td>
+  </tr>
+  <tr>
+    <td><strong>INTEREST_lifestyle</strong></td>
+    <td><span class="tag-blue">Interest</span></td>
+    <td>Ж 18-27, BR. Интересы: <code>viagem</code>, <code>moda</code>, <code>beleza</code>, <code>estilo de vida</code> + поведение: <code>online shopping</code></td>
+    <td>~10-15M</td>
+  </tr>
+  <tr>
+    <td><strong>LAL_leads_1%</strong></td>
+    <td><span class="tag-green">Lookalike</span></td>
+    <td>1% Lookalike от WA-лидов (создаём после 100+ лидов). <strong>Самый ценный — запускаем в Фазе 2</strong></td>
+    <td>~2M</td>
+  </tr>
+  <tr>
+    <td><strong>RETARGET_site</strong></td>
+    <td><span class="tag-red">Retarget</span></td>
+    <td>Посетили лендинг, НЕ кликнули WA (7-30 дней). Запускаем при 1000+ посетителей</td>
+    <td>Dynamic</td>
+  </tr>
+</table>
+
+<div class="card card-accent">
+  <strong>💡 Стратегия таргетинга при $400/мес:</strong><br>
+  Не распыляться. Старт с 2 ad sets: <code>BROAD_18-27_BR</code> + <code>INTEREST_renda</code>. Через 2 недели — оставляем победителя. Lookalike и ретаргетинг подключаем когда появятся данные (фаза 2-3).
+</div>
+
+<h3>Гео-приоритет (внутри Бразилии)</h3>
+<table>
+  <tr><th>Приоритет</th><th>Штаты</th><th>Почему</th></tr>
+  <tr><td><span class="tag-green">P1</span></td><td>São Paulo, Rio de Janeiro, Minas Gerais</td><td>Макс. концентрация ЦА, высокий интернет, R$/$ мотивация</td></tr>
+  <tr><td><span class="tag-blue">P2</span></td><td>Bahia, Paraná, Rio Grande do Sul, Pernambuco</td><td>Низкие зарплаты + хороший интернет = сильная мотивация</td></tr>
+  <tr><td><span class="tag">P3</span></td><td>Вся Бразилия (без ограничений)</td><td>Только на фазе масштабирования</td></tr>
+</table>
+
+<!-- ═══════════════════════════════════ -->
+<h2>🎨 Креативная стратегия</h2>
+
+<h3>Контент-пиллары</h3>
+<div class="grid-2">
+  <div class="card card-accent">
+    <strong>🌟 Трансформация</strong><br>
+    История Габи: от продавщицы R$1.800 → R$12K/мес. «Eu trabalhava em loja ganhando R$1.800. Hoje ganho isso em 3 dias.»
+  </div>
+  <div class="card card-green">
+    <strong>💰 Доход + Lifestyle</strong><br>
+    Рабочий день из дома, выплаты в долларах, путешествия. НЕ luxury porn (Gucci/Lambo) — реальный comfort lifestyle.
+  </div>
+  <div class="card card-blue">
+    <strong>🔥 Curiosity Gap</strong><br>
+    «Descubri uma forma de ganhar em dólar sem sair de casa. E não é o que você tá pensando.» → CTA лендинг
+  </div>
+  <div class="card card-purple">
+    <strong>💎 Social Proof</strong><br>
+    Кейсы (Juliana, Camila). ДО/ПОСЛЕ, скриншоты переписок, мини-отзывы 15 сек.
+  </div>
+</div>
+
+<h3>Форматы и приоритет</h3>
+<table>
+  <tr><th>Приоритет</th><th>Формат</th><th>Размещение</th><th>Длина</th><th>Кол-во</th></tr>
+  <tr>
+    <td><span class="tag-green">P1</span></td>
+    <td><strong>Reels Video</strong> (UGC-стиль)</td>
+    <td>Reels, Stories, Feed</td>
+    <td>15-30 сек</td>
+    <td>4-6 шт</td>
+  </tr>
+  <tr>
+    <td><span class="tag-blue">P2</span></td>
+    <td><strong>Stories карусель</strong></td>
+    <td>Stories</td>
+    <td>3-5 слайдов</td>
+    <td>2-3 шт</td>
+  </tr>
+  <tr>
+    <td><span class="tag">P3</span></td>
+    <td><strong>Static Image</strong> с текстом</td>
+    <td>Feed</td>
+    <td>—</td>
+    <td>3-4 шт</td>
+  </tr>
+</table>
+
+<h3>Хуки для видео (первые 3 сек)</h3>
+<div class="card">
+  <ol>
+    <li><strong>«Eu ganhava R$1.800 por mês. Hoje ganho isso em 3 dias trabalhando de casa.»</strong> — трансформация</li>
+    <li><strong>«Se você tem 18-27 anos e acesso à internet, precisa ver isso.»</strong> — прямой таргет</li>
+    <li><strong>«Descobri como ganhar em dólar usando só minha personalidade.»</strong> — curiosity + «Economia da Carisma»</li>
+    <li><strong>«Minha amiga me mostrou isso e eu achei que era golpe. Não era.»</strong> — objection flip</li>
+    <li><strong>«3 tipos de mulher que ganham R$5.000+ por mês de casa.»</strong> — listicle hook</li>
+  </ol>
+</div>
+
+<div class="warn">
+  <strong>⚠️ Compliance (обязательно):</strong>
+  <ul>
+    <li>НИКОГДА не упоминать: webcam, camgirl, adult, OnlyFans, nude, содержание 18+</li>
+    <li>Позиционирование: <strong>entretenimento digital</strong>, streaming, apresentadora, comunicadora</li>
+    <li>Не обещать конкретный доход как гарантию — «resultados médios do projeto», «potencial de ganho»</li>
+    <li>Без агрессивного FOMO («осталось 2 места!»)</li>
+    <li>Лицо Габи = AI-сгенерированное. Не выдавать за реальную фотографию</li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<h2>📐 Структура кампаний</h2>
+
+<h3>Naming Convention</h3>
+<p><code>[Objective]_[Audience]_[Creative]_[Date]</code></p>
+<p>Пример: <code>TRAFFIC_BROAD1827_ReelsGabi01_Mar26</code></p>
+
+<h3>Архитектура аккаунта</h3>
+<div class="card">
+<pre style="color: var(--text); font-size: .85rem; overflow-x: auto;">
+Meta Ads Account
+│
+├── 📢 Campaign 1: TRAFFIC (Фаза 1, $70/нед)
+│   ├── Ad Set: BROAD_18-27_BR
+│   │   ├── Ad: Reels_Gabi_Transform_01
+│   │   ├── Ad: Reels_Gabi_Curiosity_02
+│   │   └── Ad: Stories_Carousel_Income_03
+│   └── Ad Set: INTEREST_renda
+│       ├── Ad: Reels_Gabi_Transform_01
+│       ├── Ad: Reels_Gabi_DayInLife_04
+│       └── Ad: Static_SocialProof_05
+│
+├── 📢 Campaign 2: RETARGET (Фаза 2, $30/нед)
+│   └── Ad Set: RETARGET_site_7-30d
+│       ├── Ad: Reels_Testimonial_Juliana
+│       └── Ad: Static_CTA_WhatsApp
+│
+└── 📢 Campaign 3: SCALE (Фаза 3)
+    └── Ad Set: LAL_leads_1%
+        └── (Лучшие креативы из Campaign 1)
+</pre>
+</div>
+
+<h3>Настройки кампании</h3>
+<table>
+  <tr><th>Параметр</th><th>Значение</th><th>Почему</th></tr>
+  <tr><td>Objective</td><td><strong>Traffic</strong> (→ переход на Leads после 50+ конверсий)</td><td>При малом бюджете Traffic даёт больше данных для обучения</td></tr>
+  <tr><td>Optimization</td><td>Link Clicks → Landing Page Views</td><td>LPV фильтрует ботов и случайные клики</td></tr>
+  <tr><td>Budget type</td><td>CBO (Campaign Budget Optimization)</td><td>Meta сам распределяет между ad sets</td></tr>
+  <tr><td>Placements</td><td>Advantage+ Placements (авто)</td><td>При малом бюджете не ограничивать — дать алгоритму выбрать</td></tr>
+  <tr><td>Attribution</td><td>7-day click, 1-day view</td><td>Стандарт Meta</td></tr>
+  <tr><td>Scheduling</td><td>Весь день (24/7)</td><td>Алгоритм оптимизирует сам; при $10/день нет смысла ограничивать</td></tr>
+</table>
+
+<!-- ═══════════════════════════════════ -->
+<h2>📡 Конверсионный трекинг</h2>
+
+<h3>Что установить ДО запуска рекламы</h3>
+
+<div class="card card-red">
+  <strong>🔴 КРИТИЧНО: без трекинга реклама бессмысленна</strong><br>
+  Meta Pixel + события — обязательное условие. Без них нет данных для оптимизации, нет ретаргетинга, нет Lookalike.
+</div>
+
+<h4>Шаг 1: Meta Pixel на лендинге</h4>
+<div class="card">
+  <ol>
+    <li>Создать Meta Pixel в Events Manager (business.facebook.com → Events Manager → Data Sources)</li>
+    <li>Добавить base code в <code>&lt;head&gt;</code> лендинга (<code>landing/index.html</code>):
+      <pre style="color: var(--green); font-size: .8rem; margin-top: .5rem;">
+&lt;!-- Meta Pixel Code --&gt;
+&lt;script&gt;
+!function(f,b,e,v,n,t,s){...}(window,document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', 'YOUR_PIXEL_ID');
+fbq('track', 'PageView');
+&lt;/script&gt;</pre>
+    </li>
+    <li>Проверить через <strong>Meta Pixel Helper</strong> (Chrome extension)</li>
+  </ol>
+</div>
+
+<h4>Шаг 2: Событие Lead (клик на WhatsApp)</h4>
+<div class="card">
+  На кнопку «Fale com a Gabi» (WhatsApp link) повесить:
+  <pre style="color: var(--green); font-size: .8rem; margin-top: .5rem;">
+onclick="fbq('track', 'Lead', {content_name: 'whatsapp_click'});"</pre>
+  Это ключевое событие. По нему Meta будет оптимизировать показ рекламы (когда переключимся на Lead objective).
+</div>
+
+<h4>Шаг 3: UTM-метки в рекламных ссылках</h4>
+<div class="card">
+  <pre style="color: var(--blue); font-size: .8rem;">
+https://apextalent.pro/?utm_source=meta&utm_medium=paid&utm_campaign={{campaign.name}}&utm_content={{ad.name}}</pre>
+  Лендинг передаёт UTM в WA-ссылку → бот сохраняет в CRM → видим какой креатив привёл лида.
+</div>
+
+<h4>Шаг 4 (опционально, Фаза 2): CAPI</h4>
+<div class="card">
+  Conversions API (серверный трекинг) — подключить когда будет объём 50+ лидов/нед. Без CAPI теряем 30-40% данных из-за iOS ATT + блокировщиков. Реализация: бот при квалификации отправляет событие <code>CompleteRegistration</code> через CAPI.
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<h2>💰 Бюджет и распределение</h2>
+
+<h3>Месячный план ($400/мес = ~R$2,200)</h3>
+
+<table>
+  <tr><th>Месяц</th><th>Бюджет</th><th>Фокус</th><th>Ожидаемые лиды</th></tr>
+  <tr>
+    <td><strong>Месяц 1</strong></td>
+    <td>$400</td>
+    <td>Тестирование: 2 ad sets × 3-4 креатива. Цель — найти winning creative</td>
+    <td>80-150 (WA кликов)</td>
+  </tr>
+  <tr>
+    <td><strong>Месяц 2</strong></td>
+    <td>$400</td>
+    <td>Оптимизация: убить проигравших, масштабировать победителей. Запуск ретаргетинга</td>
+    <td>120-200</td>
+  </tr>
+  <tr>
+    <td><strong>Месяц 3</strong></td>
+    <td>$400</td>
+    <td>Масштабирование: Lookalike + лучшие креативы. Переход на Lead objective</td>
+    <td>150-250</td>
+  </tr>
+</table>
+
+<h3>Недельное распределение ($100/нед)</h3>
+<div class="grid-2">
+  <div class="card card-green">
+    <strong>Фаза 1 (месяц 1):</strong><br>
+    $70 — Campaign 1 (Traffic, проспектинг)<br>
+    $20 — Тест новых креативов<br>
+    $10 — Резерв
+  </div>
+  <div class="card card-blue">
+    <strong>Фаза 2+ (месяц 2-3):</strong><br>
+    $60 — Winning ad sets<br>
+    $25 — Ретаргетинг / Lookalike<br>
+    $15 — Тест новых хуков
+  </div>
+</div>
+
+<h3>Правила управления бюджетом</h3>
+<div class="card card-accent">
+  <ul>
+    <li><strong>3× Kill Rule:</strong> Если ad set потратил 3× целевого CPL и 0 лидов → пауза немедленно</li>
+    <li><strong>20% Scale Rule:</strong> Если CPL &lt; таргета на 10%+ → поднять бюджет на 20% (не больше!)</li>
+    <li><strong>Frequency &gt; 4.0:</strong> Креатив выгорел → заменить или расширить аудиторию</li>
+    <li><strong>Learning phase:</strong> Не трогать ad set первые 3-5 дней после изменений</li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<h2>📈 KPI и бенчмарки</h2>
+
+<table>
+  <tr><th>Метрика</th><th>Месяц 1 (baseline)</th><th>Месяц 3 (target)</th><th>Месяц 6 (scale)</th></tr>
+  <tr><td>CPM</td><td>$2.00–3.50</td><td>$1.50–2.50</td><td>$1.00–2.00</td></tr>
+  <tr><td>CPC (link click)</td><td>$0.20–0.50</td><td>$0.10–0.30</td><td>$0.08–0.20</td></tr>
+  <tr><td>CTR (link)</td><td>0.8–1.5%</td><td>1.5–3.0%</td><td>2.0–4.0%</td></tr>
+  <tr><td>CPL (WA click)</td><td>$2–5</td><td>$1–3</td><td>$0.50–2</td></tr>
+  <tr><td>WA → Qualified</td><td>20–30%</td><td>30–40%</td><td>35–50%</td></tr>
+  <tr><td>Qualified → Interview</td><td>40–60%</td><td>50–70%</td><td>60–80%</td></tr>
+  <tr><td>Interview → Approve</td><td>30–50%</td><td>40–60%</td><td>50–70%</td></tr>
+  <tr><td><strong>Cost per Approved Model</strong></td><td><strong>$20–50</strong></td><td><strong>$8–25</strong></td><td><strong>$5–15</strong></td></tr>
+</table>
+
+<div class="info">
+  <strong>Ориентир:</strong> При текущем бонусе $50 за LatAm-модель + рекуррент $10/рабочий день, даже CPL $50 окупается за 5 рабочих дней модели. Цель — снизить до $10-15 за approved модель к месяцу 3.
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<h2>🚀 Roadmap внедрения</h2>
+
+<div class="phase">
+  <div class="phase-num">Фаза 0 — Подготовка (3-5 дней)</div>
+  <h3>До запуска рекламы</h3>
+  <ul>
+    <li>☐ Создать Meta Business Suite аккаунт (личный, без юрлица)</li>
+    <li>☐ Создать рекламный аккаунт в Meta Ads Manager</li>
+    <li>☐ Создать Meta Pixel → установить на лендинг</li>
+    <li>☐ Настроить событие <code>Lead</code> на WA-кнопку</li>
+    <li>☐ Проверить Pixel через Meta Pixel Helper</li>
+    <li>☐ Адаптировать лендинг под PT-BR (уже есть EN-версия)</li>
+    <li>☐ Подготовить UTM-шаблоны для ссылок</li>
+    <li>☐ Создать 4-6 креативов (Reels-видео + статика)</li>
+    <li>☐ Привязать карту/PayPal для оплаты рекламы</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <div class="phase-num">Фаза 1 — Тестирование (Недели 1-3)</div>
+  <h3>Запуск и поиск winning creative</h3>
+  <ul>
+    <li>☐ Запустить Campaign 1 (Traffic) с 2 ad sets</li>
+    <li>☐ По 3-4 разных креатива в каждом ad set</li>
+    <li>☐ Бюджет: $10/день CBO</li>
+    <li>☐ Мониторинг ежедневно первые 7 дней</li>
+    <li>☐ День 4-5: выключить худшие креативы (CTR &lt; 0.5%)</li>
+    <li>☐ День 7-10: определить winning ad set и winning creative</li>
+    <li>☐ День 14: 3× Kill Rule — убить всё что не конвертирует</li>
+    <li>☐ Параллельно: проверить WA-бот на реальных BR-лидах</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <div class="phase-num">Фаза 2 — Оптимизация (Недели 4-6)</div>
+  <h3>Масштабировать победителей</h3>
+  <ul>
+    <li>☐ Увеличить бюджет winning ad set на 20%</li>
+    <li>☐ Запустить ретаргетинг (посетители лендинга → WA)</li>
+    <li>☐ Создать Custom Audience из WA-лидов (если 100+ контактов)</li>
+    <li>☐ Запустить Lookalike 1% от лидов</li>
+    <li>☐ Тестировать новые хуки (2-3 новых видео/неделю)</li>
+    <li>☐ Анализировать: какой креатив → лучшие лиды (качество, show-up rate)</li>
+    <li>☐ Рассмотреть переход objective Traffic → Leads (если 50+ конверсий/неделю)</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <div class="phase-num">Фаза 3 — Масштабирование (Недели 7-12)</div>
+  <h3>Расширение и автоматизация</h3>
+  <ul>
+    <li>☐ Подключить CAPI (серверный трекинг) для точной оптимизации</li>
+    <li>☐ Расширить гео: P1 → P2 штаты</li>
+    <li>☐ Тестировать Advantage+ (Meta AI полностью управляет таргетингом)</li>
+    <li>☐ A/B тест лендингов (разные hero-блоки)</li>
+    <li>☐ Запросить увеличение бюджета если unit economics положительная</li>
+    <li>☐ Начать подготовку к CO/AR рынкам (испанский контент)</li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<h2>🛡 Риски и митигация</h2>
+
+<table>
+  <tr><th>Риск</th><th>Вероятность</th><th>Митигация</th></tr>
+  <tr>
+    <td>Бан рекламного аккаунта (нарушение policy)</td>
+    <td><span class="tag-red">Средняя</span></td>
+    <td>Строго избегать adult-терминологии. «Entretenimento digital» + «comunicadora online». Не обещать гарантированный доход. Иметь запасной ad account</td>
+  </tr>
+  <tr>
+    <td>Низкое качество лидов (кликают но не пишут в WA)</td>
+    <td><span class="tag">Средняя</span></td>
+    <td>Оптимизировать на Landing Page Views (не Link Clicks). Лендинг должен фильтровать — чётко объяснить что это работа, не халява</td>
+  </tr>
+  <tr>
+    <td>WA-бот не справляется с объёмом</td>
+    <td><span class="tag-blue">Низкая</span></td>
+    <td>При $400/мес ожидаем 100-250 лидов — WAHA Plus справится. Авто-follow-up для молчунов</td>
+  </tr>
+  <tr>
+    <td>Креатив быстро выгорает</td>
+    <td><span class="tag-green">Высокая</span></td>
+    <td>Производить 2-3 новых видео/неделю. UGC-стиль (снимается на телефон) — быстро и дёшево. Менять хуки, не переделывать всё видео</td>
+  </tr>
+  <tr>
+    <td>Высокий CPL ($5+)</td>
+    <td><span class="tag">Средняя</span></td>
+    <td>Бразилия — дешёвый рынок, маловероятно. Если CPL высокий → проблема в креативе/лендинге, не в таргетинге</td>
+  </tr>
+</table>
+
+<!-- ═══════════════════════════════════ -->
+<h2>📋 Чеклист первого запуска</h2>
+
+<div class="card card-green">
+  <h4 style="color: var(--green);">Готовность к запуску (все пункты = ✅)</h4>
+  <ol>
+    <li>Meta Business Suite аккаунт создан</li>
+    <li>Рекламный аккаунт активен, карта привязана</li>
+    <li>Meta Pixel установлен, PageView fires на лендинге</li>
+    <li>Событие Lead fires при клике на WA-кнопку</li>
+    <li>Лендинг PT-BR готов (apextalent.pro или отдельный URL)</li>
+    <li>WA-бот работает, отвечает на входящие</li>
+    <li>4+ креатива готовы (минимум 2 Reels-видео)</li>
+    <li>UTM-шаблон настроен</li>
+    <li>CRM принимает заявки (name, phone, source)</li>
+    <li>Процесс обработки лидов определён (кто/когда проводит интервью)</li>
+  </ol>
+</div>
+
+<hr>
+
+<p style="color: var(--muted); font-size: .8rem; text-align: center; margin-top: 2rem;">
+  Apex Talent — Meta Ads Strategy v1.0 | Март 2026<br>
+  Источники бенчмарков: AdAmigo.ai, Lebesgue, SuperAds, WordStream, Flyweel<br>
+  Следующий шаг: <strong>подготовить креативы и установить Meta Pixel</strong>
+</p>
+
+</body>
+</html>

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Start Guide — HUNTME Recruitment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #F43F5E;
+            --accent-dark: #E3000F;
+            --accent-gradient: linear-gradient(135deg, #F43F5E 0%, #E3000F 100%);
+            --bg: #F0F2F5;
+            --card: #FFFFFF;
+            --text-primary: #1E1E2D;
+            --text-secondary: #6B7280;
+            --text-light: #9CA3AF;
+            --border: #E5E7EB;
+            --success: #10B981;
+            --success-bg: #ECFDF5;
+            --success-border: #A7F3D0;
+            --danger: #EF4444;
+            --danger-bg: #FEF2F2;
+            --danger-border: #FECACA;
+            --sidebar-dark: #1A1A2E;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.05);
+            --radius: 12px;
+            --blue: #3B82F6;
+            --blue-bg: #EFF6FF;
+            --blue-border: #BFDBFE;
+            --amber: #F59E0B;
+            --amber-bg: #FFFBEB;
+            --amber-border: #FDE68A;
+            --green: #10B981;
+            --green-bg: #ECFDF5;
+            --green-border: #A7F3D0;
+            --purple: #8B5CF6;
+            --purple-bg: #F5F3FF;
+            --purple-border: #DDD6FE;
+            --indigo: #6366F1;
+            --indigo-bg: #EEF2FF;
+            --indigo-border: #C7D2FE;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .header { background: var(--sidebar-dark); position: relative; }
+        .header::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+            height: 4px; background: var(--accent-gradient);
+        }
+        .header-inner {
+            max-width: 960px; margin: 0 auto; padding: 32px 40px;
+            display: flex; align-items: center; gap: 32px;
+        }
+        .header-logo img { height: 44px; width: auto; display: block; object-fit: contain; }
+        .header-divider { width: 1px; height: 40px; background: rgba(255,255,255,0.15); }
+        .header-text h1 { font-size: 22px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; }
+        .header-text p { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+        .container { max-width: 960px; margin: 0 auto; padding: 32px 40px 60px; }
+
+        .script-section { margin-bottom: 48px; }
+        .script-title {
+            display: flex; align-items: center; gap: 16px;
+            margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid var(--border);
+        }
+        .script-title .badge {
+            background: var(--accent-gradient); color: #fff;
+            font-size: 11px; font-weight: 700; padding: 4px 12px;
+            border-radius: 6px; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .script-title h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; }
+
+        .step-card {
+            background: var(--card); border-radius: var(--radius);
+            box-shadow: var(--shadow-sm); padding: 28px 32px; margin-bottom: 24px;
+            border-left: 4px solid var(--accent);
+        }
+        .step-card .step-num {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 32px; height: 32px; background: var(--accent-gradient);
+            border-radius: 8px; font-size: 14px; font-weight: 800;
+            color: #fff; margin-bottom: 12px;
+        }
+        .step-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+        .step-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 8px; }
+        .step-card p:last-child { margin-bottom: 0; }
+        .step-card p strong { color: var(--text-primary); font-weight: 600; }
+        .step-card ul { list-style: none; margin-top: 12px; }
+        .step-card ul li {
+            font-size: 14px; color: var(--text-secondary);
+            padding: 6px 0 6px 24px; position: relative; line-height: 1.6;
+        }
+        .step-card ul li::before {
+            content: ''; position: absolute; left: 0; top: 14px;
+            width: 6px; height: 6px; background: var(--accent); border-radius: 50%;
+        }
+
+        .card {
+            background: var(--card); border-radius: var(--radius);
+            box-shadow: var(--shadow-sm); padding: 28px 32px; margin-bottom: 24px;
+        }
+        .card h3 { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+        .card p { font-size: 14px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 8px; }
+        .card p strong { color: var(--text-primary); font-weight: 600; }
+        .card ul { list-style: none; margin-top: 12px; }
+        .card ul li {
+            font-size: 14px; color: var(--text-secondary);
+            padding: 6px 0 6px 24px; position: relative; line-height: 1.6;
+        }
+        .card ul li::before {
+            content: ''; position: absolute; left: 0; top: 14px;
+            width: 6px; height: 6px; background: var(--accent); border-radius: 50%;
+        }
+
+        .qual-table {
+            background: var(--card); border-radius: var(--radius);
+            box-shadow: var(--shadow-sm); overflow: hidden; margin-bottom: 24px;
+        }
+        .qual-table table {
+            width: 100%; border-collapse: collapse;
+        }
+        .qual-table th {
+            background: var(--accent-gradient); color: #fff;
+            font-size: 12px; font-weight: 700; text-transform: uppercase;
+            padding: 12px 16px; text-align: left; letter-spacing: 0.05em;
+        }
+        .qual-table td {
+            padding: 14px 16px; font-size: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+        .qual-table tr:last-child td { border-bottom: none; }
+        .qual-table .pass { color: var(--success); font-weight: 600; }
+        .qual-table .fail { color: var(--danger); font-weight: 600; }
+
+        .note {
+            background: var(--amber-bg); border: 1px solid var(--amber-border);
+            border-left: 4px solid var(--amber); border-radius: 0 var(--radius) var(--radius) 0;
+            padding: 16px 20px; margin-bottom: 16px;
+        }
+        .note-label {
+            font-size: 10px; font-weight: 700; color: var(--amber);
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;
+        }
+        .note p { font-size: 13px; color: #92400E; line-height: 1.6; }
+        .note p strong { font-weight: 600; }
+
+        .success-box {
+            background: var(--success-bg); border: 1px solid var(--success-border);
+            border-left: 4px solid var(--success); border-radius: 0 var(--radius) var(--radius) 0;
+            padding: 16px 20px; margin-bottom: 16px;
+        }
+        .success-label {
+            font-size: 10px; font-weight: 700; color: var(--success);
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;
+        }
+        .success-box p { font-size: 13px; color: #065F46; line-height: 1.6; }
+        .success-box p strong { font-weight: 600; }
+
+        .danger-box {
+            background: var(--danger-bg); border: 1px solid var(--danger-border);
+            border-left: 4px solid var(--danger); border-radius: 0 var(--radius) var(--radius) 0;
+            padding: 16px 20px; margin-bottom: 16px;
+        }
+        .danger-label {
+            font-size: 10px; font-weight: 700; color: var(--danger);
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;
+        }
+        .danger-box p { font-size: 13px; color: #991B1B; line-height: 1.6; }
+        .danger-box p strong { font-weight: 600; }
+
+        .back-to-top {
+            text-align: center; margin-top: 40px; padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        .back-to-top a {
+            text-decoration: none; color: var(--text-secondary);
+            font-size: 13px; font-weight: 600;
+            display: inline-flex; align-items: center; gap: 6px;
+            transition: color 0.15s;
+        }
+        .back-to-top a:hover { color: var(--accent); }
+
+        @media print {
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #fff; }
+            .container { padding: 24px 10px 20px; }
+            .card, .step-card, .qual-table, .note, .success-box, .danger-box {
+                box-shadow: none; break-inside: avoid;
+            }
+        }
+        @page { margin: 15mm; size: A4; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-inner">
+            <div class="header-logo">
+                <svg viewBox="195 80 205 70" xmlns="http://www.w3.org/2000/svg" style="height: 54px; width: auto; display: block;">
+                    <style>.logo-red{fill:#E3000F;}.logo-white{fill:#FFFFFF;}</style>
+                    <g>
+                        <path class="logo-red" d="M367.85,86.09h26.29v8.72h-17.57v14.74h14.04v3.59c0,1.54-0.48,2.78-1.41,3.72c-0.94,0.94-2.19,1.41-3.73,1.41h-8.89v14.66h17.57v8.72h-26.29V86.09z"/>
+                        <path class="logo-white" d="M240.83,86.18v43.53c0,0.99,0.3,1.76,0.87,2.34c0.58,0.58,1.35,0.87,2.34,0.87h2.83c0.99,0,1.78-0.3,2.35-0.87c0.58-0.58,0.86-1.35,0.86-2.34V86.18h8.72v45.85c0,2.91-0.87,5.23-2.64,7c-1.75,1.75-4.08,2.62-7,2.62h-7.43c-2.92,0-5.25-0.87-7-2.62c-1.76-1.76-2.64-4.09-2.64-7V86.18H240.83z M263.94,141.65V86.09h3.92c1.54,0,2.92,0.44,4.14,1.32c1.22,0.87,2.07,2.06,2.55,3.56l8.3,27.07l-0.32-31.96h8.75v55.56h-3.92c-1.54,0-2.93-0.44-4.15-1.32c-1.22-0.87-2.06-2.06-2.53-3.56l-8.29-27.07l0.32,31.96H263.94z M293.69,86.17h27.37v8.72h-9.32v46.76h-8.72V94.89h-9.32V86.17z M200.99,86.09h8.72v23.46h8.87V86.09h8.72v55.56h-8.72v-23.38h-8.87v23.38h-8.72V86.09z"/>
+                        <path class="logo-red" d="M344.09,141.65h-3.01c-1.17-5.66-7.57-3.88-7.48-10.43c0.05-3.91,3.31-5.61,3.92-9.53c0.72-4.65-0.78-8.31-3.09-10.3c1.76,2.11,2.82,6.72,0.48,10.79c-1.63,2.83-4,3.68-5.12,8.4c-1.11,4.66,1.27,8.52,2.98,11.07h-8.42V86.09h9.07c1.54,0,2.86,0.46,3.92,1.38c1.07,0.93,1.71,2.16,1.93,3.7l4.82,34.53l4.82-34.53c0.22-1.54,0.86-2.78,1.93-3.7c1.07-0.91,2.38-1.38,3.92-1.38h9.07v55.56h-8.42c1.71-2.55,4.09-6.41,2.98-11.07c-1.12-4.72-3.49-5.57-5.12-8.4c-2.34-4.07-1.28-8.68,0.48-10.79c-2.31,1.99-3.81,5.65-3.09,10.3c0.61,3.92,3.87,5.62,3.92,9.53c0.09,6.55-6.31,4.77-7.48,10.43H344.09z"/>
+                    </g>
+                </svg>
+            </div>
+            <div class="header-divider"></div>
+            <div class="header-text">
+                <h1>Quick Start Guide — First Day</h1>
+                <p>Step-by-Step Instructions for New Recruiters</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- FIRST 3 CALLS -->
+        <div class="script-section">
+            <div class="script-title">
+                <span class="badge">Day 1</span>
+                <h2>Your First 3 Calls (30 minutes)</h2>
+            </div>
+
+            <div class="step-card">
+                <div class="step-num">1</div>
+                <h3>Choose Your Campaign</h3>
+                <p><strong>Models</strong> (streaming talent) or <strong>Operators</strong> (technical moderators)? Your team lead will assign you a campaign. Do not mix them.</p>
+                <p>Open the corresponding Call Script from the <a href="00_START_HERE.html">START HERE</a> page.</p>
+            </div>
+
+            <div class="step-card">
+                <div class="step-num">2</div>
+                <h3>Read the Script Opening</h3>
+                <p>Read <strong>Phase 1: Opening</strong> in your Call Script. Identify which traffic variant applies to your first call:</p>
+                <ul>
+                    <li><strong>Warm:</strong> Candidate responded to a job ad</li>
+                    <li><strong>Cold:</strong> Outbound call, candidate has NOT expressed interest</li>
+                    <li><strong>Referral:</strong> Candidate was referred by someone</li>
+                </ul>
+            </div>
+
+            <div class="step-card">
+                <div class="step-num">3</div>
+                <h3>Make the Call</h3>
+                <p>Follow the script word-for-word. Keep the Call Script open in front of you. Use the Quick Navigation panel to jump between phases as needed.</p>
+                <p><strong>If the candidate raises an objection:</strong> Click the link to the Objection Handling Guide (linked in your Call Script). Find the objection, read the rebuttal, use it.</p>
+            </div>
+
+            <div class="success-box">
+                <div class="success-label">Success = Interview Booked</div>
+                <p>If the candidate books a Zoom interview: <strong>send the Interview Invitation template via Telegram or WhatsApp within 5 minutes.</strong> This reduces no-shows by 30-40%.</p>
+            </div>
+
+            <div class="note">
+                <div class="note-label">First Call Nerves</div>
+                <p>It's normal to feel uncertain on your first call. <strong>Read directly from the script.</strong> By your 5th call, you'll internalize the flow. By your 10th call, you'll feel confident.</p>
+            </div>
+        </div>
+
+        <!-- QUALIFICATION BASICS -->
+        <div class="script-section">
+            <div class="script-title">
+                <span class="badge">Basics</span>
+                <h2>Qualification Basics</h2>
+            </div>
+
+            <div class="card">
+                <h3>What is "Qualification"?</h3>
+                <p>Qualification = confirming the candidate meets the <strong>hard requirements</strong> for the role. If they don't meet a hard requirement (age, PC/smartphone, etc.), they cannot proceed to the interview.</p>
+                <p><strong>Your job:</strong> Filter out unqualified candidates BEFORE booking the interview. This saves time for the interviewer and improves your qualification accuracy KPI.</p>
+            </div>
+
+            <div class="qual-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Campaign</th>
+                            <th>Hard Requirements (Must Have)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Models</strong></td>
+                            <td>Age 18-25 • Height-Weight Formula (h-w ≥ 99) • Smartphone (iPhone 11+ or Android 2023+) • Private Room • 6h/day availability</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Operators</strong></td>
+                            <td>Age 18+ • PC/Laptop • CPU (Intel i3 10th gen+ or AMD Ryzen 3000+) • GPU (GTX 1060 6GB+ or AMD 2019+) • 100 Mbps Internet</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="danger-box">
+                <div class="danger-label">Instant Disqualification</div>
+                <p><strong>Models:</strong> Under 18, no smartphone, formula fails (h-w &lt; 99), cannot commit 6h/day</p>
+                <p><strong>Operators:</strong> No PC, CPU too old (Intel 9th gen or older, AMD FX series), no dedicated GPU, internet &lt; 100 Mbps</p>
+            </div>
+
+            <div class="card">
+                <h3>When in Doubt</h3>
+                <p>If a candidate's situation doesn't fit the qualification matrix clearly (edge case, unclear hardware specs, etc.), <strong>escalate to your team lead.</strong> Never improvise or make exceptions without approval.</p>
+            </div>
+        </div>
+
+        <!-- CALL FLOW SUMMARY -->
+        <div class="script-section">
+            <div class="script-title">
+                <span class="badge">Flow</span>
+                <h2>Call Flow (5-Phase Model)</h2>
+            </div>
+
+            <div class="card">
+                <h3>Phase 1: Opening (15 seconds)</h3>
+                <p>Introduce yourself, state the position, ask for permission to continue. If they say "not interested" — use the soft rebuttal. If they say "no" twice, thank them and end the call.</p>
+            </div>
+
+            <div class="card">
+                <h3>Phase 2: Quick Filter (30 seconds)</h3>
+                <p><strong>Models:</strong> Age check (18-25 required).</p>
+                <p><strong>Operators:</strong> PC ownership + age check (18+ required).</p>
+                <p>If they fail the quick filter, use the soft disqualification script and end the call politely.</p>
+            </div>
+
+            <div class="card">
+                <h3>Phase 3: Value Proposition (90 seconds)</h3>
+                <p>Explain what the job is, how earnings work, and what makes it attractive (flexible schedule, remote, training included, international team). Highlight social proof: "We work with models/moderators across more than 15 countries."</p>
+            </div>
+
+            <div class="card">
+                <h3>Phase 4: Qualification (2-3 minutes)</h3>
+                <p>Ask the qualification questions (8-11 questions depending on campaign). Cross-reference hardware specs against the compatibility tables (linked in your Call Script). If they fail a hard requirement, disqualify.</p>
+            </div>
+
+            <div class="card">
+                <h3>Phase 5: Closing (60 seconds)</h3>
+                <p>Use the <strong>alternative close</strong>: "Would [Day 1] or [Day 2] work better for you?" (Do NOT ask "Would you like to schedule?" — too easy to say no).</p>
+                <p>Once they pick a date, confirm the details and send the Interview Invitation within 5 minutes.</p>
+            </div>
+        </div>
+
+        <!-- COMMON MISTAKES -->
+        <div class="script-section">
+            <div class="script-title">
+                <span class="badge">Mistakes</span>
+                <h2>Common First-Day Mistakes</h2>
+            </div>
+
+            <div class="card">
+                <h3>❌ Mistake 1: Mixing Models and Operators</h3>
+                <p><strong>Wrong:</strong> "We have two positions — one for models, one for operators. Which interests you?"</p>
+                <p><strong>Right:</strong> Use the correct script for your assigned campaign. Never mention both roles on the same call.</p>
+            </div>
+
+            <div class="card">
+                <h3>❌ Mistake 2: Booking Unqualified Candidates</h3>
+                <p><strong>Wrong:</strong> Booking a Model candidate who is 17 years old ("they'll turn 18 soon").</p>
+                <p><strong>Right:</strong> Hard requirements are hard. If they don't meet the criteria, politely disqualify. No exceptions.</p>
+            </div>
+
+            <div class="card">
+                <h3>❌ Mistake 3: Pushing After Two "No"s</h3>
+                <p><strong>Wrong:</strong> Candidate says "not interested" twice, you keep pitching.</p>
+                <p><strong>Right:</strong> Respect the "Rule of One" — you get ONE soft rebuttal. If they say no twice, thank them and end the call.</p>
+            </div>
+
+            <div class="card">
+                <h3>❌ Mistake 4: Improvising Answers</h3>
+                <p><strong>Wrong:</strong> Candidate asks "What's the tax situation?" and you make up an answer.</p>
+                <p><strong>Right:</strong> "That's a great question — let me escalate that to my team lead so you get the accurate answer."</p>
+            </div>
+
+            <div class="card">
+                <h3>❌ Mistake 5: Forgetting to Send the Interview Invite</h3>
+                <p><strong>Wrong:</strong> Booking an interview but not sending the confirmation message.</p>
+                <p><strong>Right:</strong> Within 5 minutes of booking, send the Interview Invitation template (provided in your Call Script) via Telegram or WhatsApp.</p>
+            </div>
+        </div>
+
+        <!-- WHAT TO DO IF -->
+        <div class="script-section">
+            <div class="script-title">
+                <span class="badge">Scenarios</span>
+                <h2>What to Do If...</h2>
+            </div>
+
+            <div class="card">
+                <h3>🤔 Candidate Says "I Need to Think About It"</h3>
+                <p><strong>Action:</strong> Use the rebuttal in your Call Script: "Of course, what specifically would you like to think about? Maybe I can clarify right now." Then soft close: "Can I tentatively reserve a spot for [Day 1 or Day 2] while you decide? No commitment."</p>
+            </div>
+
+            <div class="card">
+                <h3>📱 Candidate Wants to Continue via Messenger Instead</h3>
+                <p><strong>Action:</strong> Get their Telegram or WhatsApp, send the opening message from your Messenger Script. Continue the conversation in messenger format (shorter messages, different pacing).</p>
+            </div>
+
+            <div class="card">
+                <h3>🔧 Candidate's Hardware is Unclear (Operators Only)</h3>
+                <p><strong>Action:</strong> Ask them to send a screenshot of their system specs via Telegram or WhatsApp. Cross-reference the screenshot against your Hardware Compatibility Guide. If still unclear, escalate.</p>
+            </div>
+
+            <div class="card">
+                <h3>🌍 Candidate is From a Different Country</h3>
+                <p><strong>Action:</strong> We work with candidates across more than 15 countries. As long as they meet the qualification criteria (age, hardware/smartphone, hours available) and can communicate in the working language, geography is not a blocker.</p>
+            </div>
+
+            <div class="card">
+                <h3>🚨 Candidate Mentions They Were Scammed Before</h3>
+                <p><strong>Action:</strong> Use the "Is this a scam?" objection from your Objection Handling Guide. Provide the company website, emphasize no upfront fees, transparent interview process. If they remain highly skeptical, escalate.</p>
+            </div>
+        </div>
+
+        <!-- NEXT STEPS -->
+        <div class="script-section">
+            <div class="script-title">
+                <span class="badge">Next</span>
+                <h2>After Your First 3 Calls</h2>
+            </div>
+
+            <div class="success-box">
+                <div class="success-label">You're Ready</div>
+                <p>After 3 calls, you'll have a feel for the script, the objections, and the qualification process. Continue using the Call Scripts and Objection Handling Guide as reference tools. By your 10th call, you'll be moving through the script fluidly.</p>
+            </div>
+
+            <div class="card">
+                <h3>📚 Deep Dive into Objections</h3>
+                <p>Read the full Objection Handling Guide for your campaign (Models or Operators). Familiarize yourself with all 14-21 objections so you're never caught off guard.</p>
+            </div>
+
+            <div class="card">
+                <h3>📊 Track Your KPIs</h3>
+                <p>Ask your team lead how to log your calls. Track: calls made, interviews booked, show-up rate, qualification accuracy.</p>
+            </div>
+        </div>
+
+        <div class="back-to-top">
+            <a href="00_START_HERE.html">&larr; Back to START HERE</a>
+        </div>
+
+    </div>
+
+</body>
+</html>

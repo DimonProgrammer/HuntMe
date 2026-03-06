@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meta Ads: Белый гайд для Apex Talent 2026</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #222536;
+    --border: #2e3248;
+    --accent: #5b6cf8;
+    --accent2: #7c8dff;
+    --green: #22c55e;
+    --yellow: #eab308;
+    --red: #ef4444;
+    --text: #e2e4f0;
+    --muted: #8b90a8;
+    --code-bg: #161929;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  /* Layout */
+  .container { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #1e2340 0%, #161929 60%, #0f1117 100%);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 48px 40px;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 240px; height: 240px;
+    background: radial-gradient(circle, rgba(91,108,248,0.12) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero .tag {
+    display: inline-block;
+    background: rgba(91,108,248,0.15);
+    color: var(--accent2);
+    border: 1px solid rgba(91,108,248,0.3);
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #fff 0%, #a0a8c8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p { color: var(--muted); font-size: 15px; max-width: 560px; }
+  .meta-row {
+    display: flex; gap: 24px; margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  .meta-item { font-size: 13px; color: var(--muted); }
+  .meta-item span { color: var(--text); font-weight: 500; }
+
+  /* TOC */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 40px;
+  }
+  .toc h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 16px; }
+  .toc ol { list-style: none; counter-reset: toc; }
+  .toc li { counter-increment: toc; margin-bottom: 8px; }
+  .toc li::before {
+    content: counter(toc) ".";
+    color: var(--accent2);
+    font-weight: 600;
+    font-size: 13px;
+    margin-right: 10px;
+  }
+  .toc a { color: var(--text); text-decoration: none; font-size: 14px; }
+  .toc a:hover { color: var(--accent2); }
+
+  /* Section */
+  section { margin-bottom: 48px; scroll-margin-top: 20px; }
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 24px; padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    width: 32px; height: 32px;
+    background: rgba(91,108,248,0.15);
+    border: 1px solid rgba(91,108,248,0.3);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: var(--accent2);
+    flex-shrink: 0;
+  }
+  h2 { font-size: 20px; font-weight: 700; }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+  .card h3 { font-size: 15px; font-weight: 600; margin-bottom: 10px; }
+  .card h4 { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; margin-top: 14px; }
+
+  /* Path cards */
+  .paths { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 600px) { .paths { grid-template-columns: 1fr; } }
+  .path-card {
+    border-radius: 12px; padding: 20px;
+    border: 1px solid;
+  }
+  .path-a { background: rgba(34,197,94,0.06); border-color: rgba(34,197,94,0.25); }
+  .path-b { background: rgba(91,108,248,0.06); border-color: rgba(91,108,248,0.25); }
+  .path-card .badge {
+    display: inline-block; padding: 3px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+  .path-a .badge { background: rgba(34,197,94,0.15); color: var(--green); }
+  .path-b .badge { background: rgba(91,108,248,0.15); color: var(--accent2); }
+  .path-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .path-card p { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+  .path-card ul { list-style: none; }
+  .path-card li { font-size: 13px; padding: 3px 0; padding-left: 16px; position: relative; color: var(--text); }
+  .path-card li::before { content: '→'; position: absolute; left: 0; color: var(--muted); }
+
+  /* Comparison table */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 600px) { .compare { grid-template-columns: 1fr; } }
+  .compare-box { border-radius: 10px; padding: 16px; border: 1px solid; }
+  .bad-box { background: rgba(239,68,68,0.06); border-color: rgba(239,68,68,0.25); }
+  .good-box { background: rgba(34,197,94,0.06); border-color: rgba(34,197,94,0.25); }
+  .compare-box .label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+  }
+  .bad-box .label { color: var(--red); }
+  .good-box .label { color: var(--green); }
+  .compare-box .item {
+    font-size: 13px; padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--text);
+  }
+  .compare-box .item:last-child { border-bottom: none; }
+
+  /* Code block */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    font-family: 'Menlo', 'Monaco', 'Consolas', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    overflow-x: auto;
+    margin: 16px 0;
+  }
+  .code-block .comment { color: var(--muted); }
+  .code-block .step { color: var(--accent2); font-weight: 600; }
+  .code-block .arrow { color: var(--muted); }
+
+  /* Formula boxes */
+  .formula {
+    background: var(--surface2);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-size: 14px;
+  }
+  .formula .title { font-weight: 700; color: var(--accent2); margin-bottom: 6px; font-size: 13px; }
+  .formula .pattern { color: var(--muted); font-style: italic; font-size: 13px; margin-bottom: 6px; }
+  .formula .example { color: var(--green); font-size: 14px; }
+
+  /* Alert */
+  .alert {
+    border-radius: 10px; padding: 14px 18px;
+    margin: 16px 0; font-size: 14px;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .alert-red { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); }
+  .alert-yellow { background: rgba(234,179,8,0.08); border: 1px solid rgba(234,179,8,0.2); }
+  .alert-green { background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); }
+  .alert-blue { background: rgba(91,108,248,0.08); border: 1px solid rgba(91,108,248,0.2); }
+  .alert-icon { font-size: 16px; flex-shrink: 0; line-height: 1.5; }
+  .alert-red .alert-icon { color: var(--red); }
+  .alert-yellow .alert-icon { color: var(--yellow); }
+  .alert-green .alert-icon { color: var(--green); }
+  .alert-blue .alert-icon { color: var(--accent2); }
+
+  /* Funnel viz */
+  .funnel {
+    display: flex; flex-direction: column; gap: 0; align-items: center;
+    margin: 20px 0;
+  }
+  .funnel-step {
+    width: 100%; max-width: 560px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 20px;
+    margin-bottom: 4px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .funnel-step .f-icon { font-size: 20px; flex-shrink: 0; }
+  .funnel-step .f-body h4 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+  .funnel-step .f-body p { font-size: 12px; color: var(--muted); }
+  .funnel-connector { color: var(--muted); font-size: 18px; margin: -2px 0; }
+
+  /* Checklist */
+  .checklist { list-style: none; }
+  .checklist li {
+    display: flex; gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 14px;
+    align-items: flex-start;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist .check {
+    width: 20px; height: 20px; min-width: 20px;
+    border: 2px solid var(--border);
+    border-radius: 5px;
+    margin-top: 1px;
+  }
+  .checklist .check.green { border-color: var(--green); background: rgba(34,197,94,0.1); }
+
+  /* Tags */
+  .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  .tag-pill {
+    padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;
+    border: 1px solid;
+  }
+  .tag-green { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.25); color: var(--green); }
+  .tag-red { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.25); color: var(--red); }
+  .tag-blue { background: rgba(91,108,248,0.1); border-color: rgba(91,108,248,0.25); color: var(--accent2); }
+
+  /* Budget bars */
+  .budget-row { margin-bottom: 14px; }
+  .budget-label { font-size: 13px; font-weight: 600; margin-bottom: 5px; display: flex; justify-content: space-between; }
+  .budget-bar-bg { background: var(--border); border-radius: 4px; height: 8px; overflow: hidden; }
+  .budget-bar { height: 100%; border-radius: 4px; background: var(--accent); }
+
+  /* Timeline */
+  .timeline { position: relative; }
+  .tl-item {
+    display: flex; gap: 20px; margin-bottom: 24px;
+  }
+  .tl-left { display: flex; flex-direction: column; align-items: center; }
+  .tl-dot {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: rgba(91,108,248,0.15);
+    border: 2px solid rgba(91,108,248,0.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: var(--accent2);
+    flex-shrink: 0;
+  }
+  .tl-line { flex: 1; width: 2px; background: var(--border); margin: 6px auto 0; }
+  .tl-body { padding-top: 6px; flex: 1; }
+  .tl-body h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .tl-body p, .tl-body li { font-size: 13px; color: var(--muted); }
+  .tl-body ul { list-style: none; margin-top: 6px; }
+  .tl-body li { padding: 2px 0; padding-left: 14px; position: relative; }
+  .tl-body li::before { content: '–'; position: absolute; left: 0; }
+
+  /* Stat cards */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; }
+  @media (max-width: 600px) { .stats { grid-template-columns: 1fr 1fr; } }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-card .num { font-size: 24px; font-weight: 800; color: var(--accent2); }
+  .stat-card .desc { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  /* Step list */
+  .steps { list-style: none; counter-reset: steps; }
+  .steps li {
+    counter-increment: steps;
+    padding: 12px 0 12px 48px;
+    position: relative;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 14px;
+  }
+  .steps li::before {
+    content: counter(steps);
+    position: absolute; left: 0; top: 12px;
+    width: 28px; height: 28px;
+    background: rgba(91,108,248,0.15);
+    border: 1px solid rgba(91,108,248,0.3);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: var(--accent2);
+    line-height: 28px; text-align: center;
+  }
+
+  p { margin-bottom: 12px; }
+  ul, ol { padding-left: 20px; margin-bottom: 12px; }
+  li { margin-bottom: 4px; }
+  strong { color: var(--text); font-weight: 600; }
+  em { color: var(--muted); }
+
+  /* Sources */
+  .sources { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; }
+  .sources h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 14px; }
+  .sources .src-list { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
+  .sources .src-list li a {
+    display: inline-block; padding: 4px 10px; border-radius: 6px;
+    background: var(--surface2); border: 1px solid var(--border);
+    font-size: 12px; color: var(--muted); text-decoration: none;
+  }
+  .sources .src-list li a:hover { color: var(--accent2); border-color: rgba(91,108,248,0.4); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="tag">Apex Talent · Meta Ads · 2026</div>
+    <h1>Белый гайд по рекламе в Meta<br>для рекрутинга моделей</h1>
+    <p>Как продвигать лендинг Apex Talent через Facebook и Instagram без банов и отклонений — полная инструкция на основе индустриального ресёрча 2025–2026.</p>
+    <div class="meta-row">
+      <div class="meta-item">Рынок: <span>Бразилия, LatAm</span></div>
+      <div class="meta-item">Бюджет: <span>$100/нед</span></div>
+      <div class="meta-item">Формат: <span>Click-to-WhatsApp · Reels · Lead Ads</span></div>
+      <div class="meta-item">Обновлён: <span>Март 2026</span></div>
+    </div>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <h3>Содержание</h3>
+    <ol>
+      <li><a href="#s1">Два пути: Employment vs Brand-фрейм</a></li>
+      <li><a href="#s2">Что триггерит отказ</a></li>
+      <li><a href="#s3">Формулы копирайтинга, которые проходят</a></li>
+      <li><a href="#s4">Архитектура воронки (белая)</a></li>
+      <li><a href="#s5">Прогрев аккаунта и здоровье Ads Manager</a></li>
+      <li><a href="#s6">Pixel, Conversions API, события</a></li>
+      <li><a href="#s7">Форматы и креативы</a></li>
+      <li><a href="#s8">Бюджет $100/нед — распределение</a></li>
+      <li><a href="#s9">Что делать при отказе</a></li>
+      <li><a href="#s10">Чеклист перед запуском</a></li>
+    </ol>
+  </div>
+
+  <!-- Section 1 -->
+  <section id="s1">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>Два пути: Employment Category vs Brand-фрейм</h2>
+    </div>
+
+    <div class="alert alert-blue">
+      <div class="alert-icon">⚡</div>
+      <div><strong>Ключевой выбор на старте.</strong> Meta требует указывать Special Ad Category "Employment" если реклама явно говорит о найме, работе или доходе. Для LatAm-рекрутинга в формате lifestyle/brand-awareness этого можно законно избежать.</div>
+    </div>
+
+    <div class="paths">
+      <div class="path-card path-a">
+        <div class="badge">Path A · Compliance</div>
+        <h3>Employment Category</h3>
+        <p>Если реклама явно упоминает заработок, вакансию, найм.</p>
+        <ul>
+          <li>Нет таргета по полу и возрасту</li>
+          <li>Нет ZIP/города (только страна)</li>
+          <li>Нет стандартных Lookalike</li>
+          <li>Интересы — доступны</li>
+          <li>Custom Audiences — с сертификацией</li>
+        </ul>
+      </div>
+      <div class="path-card path-b">
+        <div class="badge">Path B · Рекомендовано</div>
+        <h3>Brand / Community фрейм</h3>
+        <p>Реклама как lifestyle/community, без прямого mention найма.</p>
+        <ul>
+          <li>Таргет по полу: женщины 18–35</li>
+          <li>Таргет по городу/возрасту</li>
+          <li>Lookalike Audiences работают</li>
+          <li>Интересы — полный доступ</li>
+          <li>Весь арсенал Meta</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="alert alert-green">
+      <div class="alert-icon">✓</div>
+      <div><strong>Для Apex Talent (Бразилия, первый запуск):</strong> используем Path B. Объявление — "entretenimento digital", lifestyle, curiosity hook. Лендинг раскрывает подробности. Никакого "вакансия", "нанимаем", "earn $X/day" в самом объявлении.</div>
+    </div>
+
+    <div class="alert alert-yellow">
+      <div class="alert-icon">⚠</div>
+      <div><strong>Employment Category обязателен для Европы (включая Португалию).</strong> Если когда-нибудь запускаем в EU/PT — сразу категорию. Для BR/CO/AR — не обязательно при правильном фреймировании.</div>
+    </div>
+  </section>
+
+  <!-- Section 2 -->
+  <section id="s2">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>Что триггерит отказ — и как этого избежать</h2>
+    </div>
+
+    <p>Meta проверяет <strong>одновременно</strong>: текст объявления, визуал, лендинг по URL. Любой из трёх может стать причиной отказа.</p>
+
+    <div class="compare">
+      <div class="compare-box bad-box">
+        <div class="label">✗ Запрещено / триггерит отказ</div>
+        <div class="item">"Are you a beautiful woman?"</div>
+        <div class="item">"Earn $300/day — apply now!"</div>
+        <div class="item">"We're hiring webcam models"</div>
+        <div class="item">"Do you want to make money online?"</div>
+        <div class="item">Слова: webcam, adult, OnlyFans в URL</div>
+        <div class="item">Фото в контексте спальни</div>
+        <div class="item">Before/After с доходами в объявлении</div>
+        <div class="item">"Last spots! Apply before Friday!"</div>
+        <div class="item">"Struggling to earn enough?"</div>
+      </div>
+      <div class="compare-box good-box">
+        <div class="label">✓ Безопасно / проходит ревью</div>
+        <div class="item">"Criadores de conteúdo no Brasil..."</div>
+        <div class="item">"Descubra como funciona o entretenimento digital"</div>
+        <div class="item">"Digital entertainment creates new career paths"</div>
+        <div class="item">"Aprenda como criadores estão crescendo"</div>
+        <div class="item">URL: apextalent.pro (нейтральный)</div>
+        <div class="item">Фото в beach/city/home office контексте</div>
+        <div class="item">Цифры дохода — только на лендинге</div>
+        <div class="item">CTA: "Saiba mais" / "Fale conosco"</div>
+        <div class="item">"Renda média dos criadores em destaque"</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Правило Personal Attributes (главный триггер)</h3>
+      <p>Meta запрещает предполагать личные характеристики читателя: пол, возраст, внешность, финансовое положение. <strong>Никогда не используй "ты" в контексте этих атрибутов.</strong></p>
+      <div style="margin-top: 12px;">
+        <div style="font-size: 13px; color: var(--red); margin-bottom: 4px;">✗ Нарушение: "Are you attractive and want to earn?" — предполагает внешность</div>
+        <div style="font-size: 13px; color: var(--green);">✓ OK: "Criadores com carisma estão descobrindo novas formas de renda digital."</div>
+      </div>
+      <div style="margin-top: 8px;">
+        <div style="font-size: 13px; color: var(--red); margin-bottom: 4px;">✗ Нарушение: "Struggling to earn enough?" — предполагает финансовые трудности</div>
+        <div style="font-size: 13px; color: var(--green);">✓ OK: "A maioria das pessoas no Brasil ganha R$2.500/mês. Criadores digitais estão mudando isso."</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3 -->
+  <section id="s3">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2>Формулы копирайтинга, которые проходят ревью</h2>
+    </div>
+
+    <div class="formula">
+      <div class="title">Формула 1 — Social Proof (Самая безопасная)</div>
+      <div class="pattern">[Группа людей] + [достигают результата]. + [Как это работает?]</div>
+      <div class="example">«Criadores de entretenimento digital no Brasil estão construindo carreiras de R$12K/mês. Saiba como começa.»</div>
+    </div>
+
+    <div class="formula">
+      <div class="title">Формула 2 — Curiosity / Information Gap</div>
+      <div class="pattern">[Удивительный факт об индустрии] + [мягкий CTA]</div>
+      <div class="example">«O entretenimento digital é um dos segmentos que mais cresce na América Latina. Descubra se é para você.»</div>
+    </div>
+
+    <div class="formula">
+      <div class="title">Формула 3 — Third-Person Problem / Solution</div>
+      <div class="pattern">[Общая проблема в 3-м лице] + [решение существует]</div>
+      <div class="example">«A maioria das pessoas no Brasil ganha R$2.500/mês. Criadores digitais estão mudando essa equação.»</div>
+    </div>
+
+    <div class="formula">
+      <div class="title">Формула 4 — Identity / Aspiration (Lifestyle)</div>
+      <div class="pattern">[Аспирационная идентичность] + [как они этого достигли]</div>
+      <div class="example">«Os criadores que estão redefinindo o entretenimento no Brasil têm uma coisa em comum: eles começaram.»</div>
+    </div>
+
+    <div class="formula">
+      <div class="title">Формула 5 — Community / Belonging</div>
+      <div class="pattern">«Junte-se» + [число] + [нейтральное описание группы] + [результат]</div>
+      <div class="example">«Junte-se aos criadores de entretenimento digital que estão crescendo no Brasil este ano.»</div>
+    </div>
+
+    <div class="card" style="margin-top: 20px;">
+      <h3>Словарь безопасных слов (PT)</h3>
+      <div class="tag-row">
+        <span class="tag-pill tag-green">entretenimento digital</span>
+        <span class="tag-pill tag-green">criadores de conteúdo</span>
+        <span class="tag-pill tag-green">streaming ao vivo</span>
+        <span class="tag-pill tag-green">carisma</span>
+        <span class="tag-pill tag-green">renda digital</span>
+        <span class="tag-pill tag-green">economia criativa</span>
+        <span class="tag-pill tag-green">personalidade online</span>
+        <span class="tag-pill tag-green">saiba mais</span>
+        <span class="tag-pill tag-green">fale conosco</span>
+      </div>
+      <h4 style="margin-top: 16px;">Запрещённые слова</h4>
+      <div class="tag-row">
+        <span class="tag-pill tag-red">webcam</span>
+        <span class="tag-pill tag-red">modelo adulto</span>
+        <span class="tag-pill tag-red">OnlyFans</span>
+        <span class="tag-pill tag-red">adult content</span>
+        <span class="tag-pill tag-red">ganhe $X/dia</span>
+        <span class="tag-pill tag-red">estamos contratando</span>
+        <span class="tag-pill tag-red">vagas abertas</span>
+        <span class="tag-pill tag-red">conteúdo adulto</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4 -->
+  <section id="s4">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2>Архитектура воронки (белая)</h2>
+    </div>
+
+    <div class="alert alert-blue">
+      <div class="alert-icon">★</div>
+      <div><strong>Click-to-WhatsApp — основной формат для Бразилии.</strong> WhatsApp-пенетрация в BR близка к 100%. Нативный формат Meta, конвертит лучше ссылок на лендинг для латамского рынка.</div>
+    </div>
+
+    <div class="funnel">
+      <div class="funnel-step">
+        <div class="f-icon">📱</div>
+        <div class="f-body">
+          <h4>Instagram Reels / Facebook Ad</h4>
+          <p>SFW. Lifestyle/curiosity фрейм. Без дохода/вакансии. CTA: "Saiba mais" или "Enviar mensagem"</p>
+        </div>
+      </div>
+      <div class="funnel-connector">↓</div>
+      <div class="funnel-step">
+        <div class="f-icon">🌐</div>
+        <div class="f-body">
+          <h4>Лендинг apextalent.pro (Bridge Page)</h4>
+          <p>SFW. "Entretenimento digital". Soft reveal: цифры дохода, формат работы. CTA → WhatsApp / Telegram Bot</p>
+        </div>
+      </div>
+      <div class="funnel-connector">↓</div>
+      <div class="funnel-step">
+        <div class="f-icon">💬</div>
+        <div class="f-body">
+          <h4>WhatsApp / Telegram Bot (@apextalent_bot)</h4>
+          <p>Квалификация, скрининг, детальный reveal формата. AI-скрининг.</p>
+        </div>
+      </div>
+      <div class="funnel-connector">↓</div>
+      <div class="funnel-step">
+        <div class="f-icon">📅</div>
+        <div class="f-body">
+          <h4>Booking интервью → HuntMe CRM</h4>
+          <p>Слот, подтверждение. Ручной approve/reject от команды.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Требования к лендингу (Bridge Page)</h3>
+      <ul style="list-style: none; padding: 0;">
+        <li style="padding: 6px 0; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.04);">✅ HTTPS обязателен</li>
+        <li style="padding: 6px 0; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.04);">✅ Ссылка на Privacy Policy (видна без скролла)</li>
+        <li style="padding: 6px 0; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.04);">✅ Контактная информация бизнеса</li>
+        <li style="padding: 6px 0; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.04);">✅ Загрузка &lt;3 сек на мобиле</li>
+        <li style="padding: 6px 0; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.04);">✅ Контент совпадает с обещанием объявления</li>
+        <li style="padding: 6px 0; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.04);">✅ Нет сексуализированных изображений</li>
+        <li style="padding: 6px 0; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.04);">✅ Нет автоплея звука</li>
+        <li style="padding: 6px 0; font-size: 14px;">✅ Нет агрессивных попапов</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Опциональный промежуточный слой (Linktree)</h3>
+      <p style="font-size: 13px; color: var(--muted);">Ряд OF-агентств добавляют ещё один SFW-слой между рекламой и лендингом — Linktree или личный блог с lifestyle-контентом. Это создаёт дополнительный буфер при ревью:</p>
+      <div class="code-block">
+        <span class="comment"># Вариант с дополнительным буфером</span><br>
+        <span class="step">Ad</span> <span class="arrow">→</span> Linktree / Bio page (lifestyle)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="arrow">→</span> apextalent.pro (bridge)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="arrow">→</span> WhatsApp / Bot
+      </div>
+      <p style="font-size: 13px; color: var(--muted); margin-top: 8px;">Для начала достаточно прямой ссылки на лендинг. Linktree-слой добавить если первые объявления получают отказы по лендингу.</p>
+    </div>
+  </section>
+
+  <!-- Section 5 -->
+  <section id="s5">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2>Прогрев аккаунта и здоровье Ads Manager</h2>
+    </div>
+
+    <div class="alert alert-red">
+      <div class="alert-icon">🚫</div>
+      <div><strong>Новый Business Manager + сразу агрессивный рекрутинговый таргет = быстрый бан.</strong> Meta отслеживает накопительный рейтинг качества. Нужен прогрев.</div>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-left">
+          <div class="tl-dot">1–2</div>
+          <div class="tl-line"></div>
+        </div>
+        <div class="tl-body">
+          <h4>Недели 1–2: Прогрев Brand Awareness</h4>
+          <ul>
+            <li>100% безопасный контент: lifestyle, digital creator culture</li>
+            <li>Бюджет $5–10/день, цель: Reach или Brand Awareness</li>
+            <li>Даём алгоритму накапливать чистую историю</li>
+            <li>Проверяем Account Quality dashboard ежедневно</li>
+          </ul>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-left">
+          <div class="tl-dot">3–4</div>
+          <div class="tl-line"></div>
+        </div>
+        <div class="tl-body">
+          <h4>Недели 3–4: Traffic на лендинг</h4>
+          <ul>
+            <li>Цель: Traffic на apextalent.pro</li>
+            <li>Следим за флагами в Account Quality</li>
+            <li>Тестируем 3–5 вариантов копи</li>
+            <li>Pixel собирает данные для обучения</li>
+          </ul>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-left">
+          <div class="tl-dot">5+</div>
+          <div class="tl-line" style="display:none;"></div>
+        </div>
+        <div class="tl-body">
+          <h4>Неделя 5+: Lead Gen и конверсии</h4>
+          <ul>
+            <li>Click-to-WhatsApp или Lead Ad с формой</li>
+            <li>Бюджет наращивать не более +20%/день</li>
+            <li>Тест Advantage+ после 50+ лидов собрано</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>До первого объявления: настройка аккаунта</h3>
+      <ol class="steps">
+        <li>Создать Business Manager (не личный профиль). Верифицировать бизнес.</li>
+        <li>Создать Facebook Page для Apex Talent. SFW описание, логотип, контакты.</li>
+        <li>Опубликовать 5–10 органических постов ПЕРЕД запуском рекламы.</li>
+        <li>Привязать Instagram-аккаунт Apex Talent к BM.</li>
+        <li>Установить Pixel на apextalent.pro и проверить Events Manager.</li>
+        <li>Пройти Business Verification (паспорт / документы компании).</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Section 6 -->
+  <section id="s6">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2>Pixel, Conversions API, события</h2>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card">
+        <div class="num">7+/10</div>
+        <div class="desc">Event Match Quality Score — порог для эффективной оптимизации</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">50+</div>
+        <div class="desc">конверсий в неделю нужно для обучения алгоритма (Lead события)</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">-50%</div>
+        <div class="desc">CPA при правильной настройке CAPI + Pixel (источники: кейсы агентств)</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Минимальный набор событий Pixel</h3>
+      <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+        <tr style="border-bottom: 1px solid var(--border);">
+          <td style="padding: 8px 0; font-weight: 600; width: 160px;">PageView</td>
+          <td style="color: var(--muted);">Автоматически при посещении лендинга</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--border);">
+          <td style="padding: 8px 0; font-weight: 600;">Lead</td>
+          <td style="color: var(--muted);">Клик на WA-кнопку или отправка формы</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--border);">
+          <td style="padding: 8px 0; font-weight: 600;">Contact</td>
+          <td style="color: var(--muted);">Начало диалога в боте (webhook обратно в Pixel)</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; font-weight: 600;">CompleteRegistration</td>
+          <td style="color: var(--muted);">Заявка принята, кандидат записан на интервью</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Conversions API (CAPI) — обязательно</h3>
+      <p style="font-size: 13px; color: var(--muted);">Браузерный Pixel теряет данные из-за iOS ATT и adblock. CAPI отправляет события server-side → выше EMQ → лучше оптимизация.</p>
+      <p style="font-size: 13px; margin-top: 8px;">Для бота на Render: при успешной подаче заявки → POST в Meta CAPI endpoint с событием Lead + параметры пользователя (email/phone хеш если есть).</p>
+      <div class="alert alert-blue" style="margin-top: 12px;">
+        <div class="alert-icon">💡</div>
+        <div>Для Click-to-WhatsApp кампаний Meta автоматически отслеживает "Messaging Conversations Started" — CAPI для этого формата настраивать отдельно не нужно.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 7 -->
+  <section id="s7">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <h2>Форматы и креативы</h2>
+    </div>
+
+    <div class="card">
+      <h3>Приоритет форматов (2026)</h3>
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+        <div style="display: flex; align-items: center; gap: 12px; font-size: 14px;">
+          <span style="background: rgba(91,108,248,0.15); border: 1px solid rgba(91,108,248,0.3); border-radius: 6px; padding: 2px 10px; font-size: 12px; font-weight: 700; color: var(--accent2); min-width: 36px; text-align: center;">★★★</span>
+          <span><strong>Click-to-WhatsApp</strong> — основной для BR. Открывает WA-диалог напрямую. Обходит лендинг.</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; font-size: 14px;">
+          <span style="background: rgba(91,108,248,0.15); border: 1px solid rgba(91,108,248,0.3); border-radius: 6px; padding: 2px 10px; font-size: 12px; font-weight: 700; color: var(--accent2); min-width: 36px; text-align: center;">★★★</span>
+          <span><strong>Instagram / Facebook Reels (9:16)</strong> — наибольший охват, приоритизирован алгоритмом. 200B просмотров/день.</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; font-size: 14px;">
+          <span style="background: rgba(91,108,248,0.15); border: 1px solid rgba(91,108,248,0.3); border-radius: 6px; padding: 2px 10px; font-size: 12px; font-weight: 700; color: var(--accent2); min-width: 36px; text-align: center;">★★☆</span>
+          <span><strong>Lead Ads (Instant Form)</strong> — форма внутри Meta, не требует лендинга. Меньше трения.</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; font-size: 14px;">
+          <span style="background: rgba(91,108,248,0.15); border: 1px solid rgba(91,108,248,0.3); border-radius: 6px; padding: 2px 10px; font-size: 12px; font-weight: 700; color: var(--accent2); min-width: 36px; text-align: center;">★★☆</span>
+          <span><strong>Single Image (Feed)</strong> — дёшево, хорошо для тестирования копи.</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; font-size: 14px;">
+          <span style="background: rgba(91,108,248,0.15); border: 1px solid rgba(91,108,248,0.3); border-radius: 6px; padding: 2px 10px; font-size: 12px; font-weight: 700; color: var(--accent2); min-width: 36px; text-align: center;">★☆☆</span>
+          <span><strong>Carousel</strong> — для narrative-структуры (Проблема → Процесс → Результат → CTA).</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Reels: формула крео по плейбуку Meta</h3>
+      <ol style="margin-left: 0; padding-left: 0; list-style: none;">
+        <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 14px;"><strong style="color: var(--accent2);">0–3 сек:</strong> Хук с результатом/аутпутом — не интро. "Gabriela era vendedora, hoje faz R$12K/mês com entretenimento digital."</li>
+        <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 14px;"><strong style="color: var(--accent2);">3–20 сек:</strong> Контекст и процесс. Как она начала. Без лишних деталей о формате.</li>
+        <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 14px;"><strong style="color: var(--accent2);">20–30 сек:</strong> Мягкий CTA. "Quer saber se é para você? Clique e conheça."</li>
+        <li style="padding: 8px 0; font-size: 14px;"><strong style="color: var(--accent2);">Технически:</strong> 9:16, субтитры обязательно (60% смотрят без звука), реальные люди (не стоки).</li>
+      </ol>
+    </div>
+
+    <div class="compare">
+      <div class="compare-box bad-box">
+        <div class="label">✗ Визуал — стоп</div>
+        <div class="item">Фото в спальне / на кровати</div>
+        <div class="item">Сексуализированные позы</div>
+        <div class="item">Акцент на тело, декольте</div>
+        <div class="item">Контекст клуба/бара ночью</div>
+        <div class="item">Текст более 20% площади</div>
+      </div>
+      <div class="compare-box good-box">
+        <div class="label">✓ Визуал — OK</div>
+        <div class="item">Пляж / бассейн / курорт</div>
+        <div class="item">Home office, ноутбук, кольцевая лампа</div>
+        <div class="item">Городской лайфстайл, кафе</div>
+        <div class="item">Face-to-camera confessional</div>
+        <div class="item">Raw UGC-стиль (телефон, естественный)</div>
+      </div>
+    </div>
+
+    <div class="alert alert-green">
+      <div class="alert-icon">📊</div>
+      <div><strong>Данные по эффективности:</strong> Реальные лица в видео → +13% ROAS, -16% CPA, +29% конверсия. UGC-стиль vs. бренд-продакшн → -43% CPA, +25% ROAS. (House of Marketers, Revive Skincare кейсы, 2025)</div>
+    </div>
+  </section>
+
+  <!-- Section 8 -->
+  <section id="s8">
+    <div class="section-header">
+      <div class="section-num">8</div>
+      <h2>Бюджет $100/нед — распределение</h2>
+    </div>
+
+    <div class="budget-row">
+      <div class="budget-label">
+        <span>TOFU — Reels (Awareness/Video Views)</span>
+        <span style="color: var(--accent2);">$30 / нед</span>
+      </div>
+      <div class="budget-bar-bg"><div class="budget-bar" style="width: 30%;"></div></div>
+      <p style="font-size: 12px; color: var(--muted); margin-top: 4px;">Холодная аудитория. Цель: Video Views 50%+. Собираем warm аудиторию для ретаргета.</p>
+    </div>
+
+    <div class="budget-row">
+      <div class="budget-label">
+        <span>MOFU — Click-to-WhatsApp / Lead Ad</span>
+        <span style="color: var(--accent2);">$50 / нед</span>
+      </div>
+      <div class="budget-bar-bg"><div class="budget-bar" style="width: 50%;"></div></div>
+      <p style="font-size: 12px; color: var(--muted); margin-top: 4px;">Warm аудитория (видела TOFU). Цель: Messaging Conversations Started. Основной лидогенерирующий уровень.</p>
+    </div>
+
+    <div class="budget-row">
+      <div class="budget-label">
+        <span>BOFU — Ретаргет / Conversion</span>
+        <span style="color: var(--accent2);">$20 / нед</span>
+      </div>
+      <div class="budget-bar-bg"><div class="budget-bar" style="width: 20%;"></div></div>
+      <p style="font-size: 12px; color: var(--muted); margin-top: 4px;">Посетили лендинг, но не оставили заявку. Direct offer, booking CTA.</p>
+    </div>
+
+    <div class="card" style="margin-top: 20px;">
+      <h3>KPIs для отслеживания</h3>
+      <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+        <tr style="border-bottom: 1px solid var(--border);">
+          <td style="padding: 8px 0; font-weight: 600; width: 240px;">Cost Per Lead (CPL)</td>
+          <td style="color: var(--muted);">Старт WA-диалога или отправка формы. Целевой: &lt;$5 BR</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--border);">
+          <td style="padding: 8px 0; font-weight: 600;">Lead → Qualified rate</td>
+          <td style="color: var(--muted);">% лидов, прошедших AI-скрининг</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--border);">
+          <td style="padding: 8px 0; font-weight: 600;">Cost per Qualified Application</td>
+          <td style="color: var(--muted);">Ключевая метрика для ROI</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--border);">
+          <td style="padding: 8px 0; font-weight: 600;">Video Completion Rate 50%</td>
+          <td style="color: var(--muted);">Для TOFU Reels — сигнал качества крео</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; font-weight: 600;">Account Quality Score</td>
+          <td style="color: var(--muted);">Проверять раз в неделю в Business Settings</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="alert alert-yellow">
+      <div class="alert-icon">⚠</div>
+      <div><strong>Масштабирование:</strong> не более +20% бюджета в сутки. Резкий рост бюджета выбивает кампанию из фазы обучения и требует перезапуска.</div>
+    </div>
+  </section>
+
+  <!-- Section 9 -->
+  <section id="s9">
+    <div class="section-header">
+      <div class="section-num">9</div>
+      <h2>Протокол при отказе объявления</h2>
+    </div>
+
+    <ol class="steps">
+      <li>
+        <strong>Читаем конкретную причину.</strong> Ads Manager → Account Quality (Business Support Home). Причина говорит, что именно флагнуто: копи, визуал, лендинг.
+      </li>
+      <li>
+        <strong>Редактируем существующее — не создаём новое.</strong> Создание нового объявления вместо правки существующего может сигнализировать о попытке обхода. Исправить конкретный элемент и переотправить.
+      </li>
+      <li>
+        <strong>Апелляция (если уверены в compliance).</strong> Коротко и профессионально:
+        <div class="code-block" style="margin-top: 10px;">
+"This ad was rejected citing [policy name]. Our copy discusses creators as a general group, not individual viewer attributes. We believe this is a false positive and request manual review."
+        </div>
+      </li>
+      <li>
+        <strong>Если апелляция отклонена</strong> — существенно переработать крео: другой угол, другой визуал, другая формула копи.
+      </li>
+      <li>
+        <strong>Не подавать апелляцию повторно на тот же неизменённый креатив.</strong> Это повышает скрутинизацию аккаунта.
+      </li>
+      <li>
+        <strong>При накопленных ограничениях аккаунта</strong> — немедленно остановить ВСЕ активные объявления. Провести аудит. Устранить нарушения, затем возобновить с консервативными крео.
+      </li>
+    </ol>
+
+    <div class="alert alert-red">
+      <div class="alert-icon">🚫</div>
+      <div><strong>Не открывать новый рекламный аккаунт</strong> при ограничениях. Meta это детектирует и эскалирует до перманентного бана Business Manager.</div>
+    </div>
+  </section>
+
+  <!-- Section 10 -->
+  <section id="s10">
+    <div class="section-header">
+      <div class="section-num">10</div>
+      <h2>Чеклист перед запуском</h2>
+    </div>
+
+    <div class="card">
+      <h3>Аккаунт и техника</h3>
+      <ul class="checklist">
+        <li><div class="check"></div><span>Business Manager создан и верифицирован</span></li>
+        <li><div class="check"></div><span>Facebook Page настроена: описание, фото, 5+ постов</span></li>
+        <li><div class="check"></div><span>Instagram подключён к BM</span></li>
+        <li><div class="check"></div><span>Meta Pixel установлен на apextalent.pro</span></li>
+        <li><div class="check"></div><span>События PageView + Lead + Contact настроены</span></li>
+        <li><div class="check"></div><span>Conversions API подключён (или хотя бы браузерный Pixel)</span></li>
+        <li><div class="check"></div><span>Payment method добавлен, аккаунт активен</span></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Лендинг</h3>
+      <ul class="checklist">
+        <li><div class="check"></div><span>HTTPS без предупреждений браузера</span></li>
+        <li><div class="check"></div><span>Privacy Policy ссылка видна без скролла</span></li>
+        <li><div class="check"></div><span>Имя бизнеса и контакт на странице</span></li>
+        <li><div class="check"></div><span>Загрузка &lt;3 секунды на мобиле (проверить PageSpeed Insights)</span></li>
+        <li><div class="check"></div><span>Нет сексуализированных изображений</span></li>
+        <li><div class="check"></div><span>Нет слов: webcam, adult, OnlyFans, модель взрослого контента</span></li>
+        <li><div class="check"></div><span>Контент совпадает с обещанием объявления</span></li>
+        <li><div class="check"></div><span>CTA ведёт на WhatsApp / Bot / Форму (не на внешние платформы)</span></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Объявление</h3>
+      <ul class="checklist">
+        <li><div class="check"></div><span>Нет допущений о личных атрибутах читателя</span></li>
+        <li><div class="check"></div><span>Нет гарантий дохода ("зарабатывай $X гарантировано")</span></li>
+        <li><div class="check"></div><span>Нет прямого языка о найме (если не задана Employment Category)</span></li>
+        <li><div class="check"></div><span>Изображения: нейтральный контекст (не спальня, не сексуализировано)</span></li>
+        <li><div class="check"></div><span>Видео: 9:16, субтитры добавлены, хук в первые 3 секунды</span></li>
+        <li><div class="check"></div><span>CTA: "Saiba mais" / "Fale conosco" / "Enviar mensagem"</span></li>
+        <li><div class="check"></div><span>Employment Category не нужна (цель BR, нет явного job language)</span></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Запуск</h3>
+      <ul class="checklist">
+        <li><div class="check"></div><span>Запуск после 1–2 недель прогрева бренд-контентом</span></li>
+        <li><div class="check"></div><span>Начальный бюджет: $10–15/день (не весь $100 сразу)</span></li>
+        <li><div class="check"></div><span>Таргетинг: Женщины, 18–35, Бразилия, интересы: criadores, entretenimento, redes sociais</span></li>
+        <li><div class="check"></div><span>Account Quality dashboard открыт — проверять первые 3 дня ежедневно</span></li>
+        <li><div class="check"></div><span>Click-to-WhatsApp как основной формат</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Sources -->
+  <div class="sources">
+    <h3>Источники (30 материалов, 2025–2026)</h3>
+    <ul class="src-list">
+      <li><a href="#">adway.ai — Meta Recruitment Outcomes 2026</a></li>
+      <li><a href="#">recruitmenthaus.com — Social Media Recruitment Guide</a></li>
+      <li><a href="#">bir.ch — Meta Advertising Policies 2025</a></li>
+      <li><a href="#">adstellar.ai — Facebook Ads Policy Mastery</a></li>
+      <li><a href="#">optimal.to — Compliance Guide 2026</a></li>
+      <li><a href="#">benly.ai — Fix Disapproved Ads 2026</a></li>
+      <li><a href="#">madgicx.com — Facebook Ad Guidelines 2025</a></li>
+      <li><a href="#">phoenix-creators.com — Meta Ads for OnlyFans Guide</a></li>
+      <li><a href="#">ppchero.com — Full Funnel Meta Ads 2025</a></li>
+      <li><a href="#">godigitalalpha.com — Meta Ads AI Targeting 2025</a></li>
+      <li><a href="#">substy.ai — OnlyFans Agency Recruitment 2025</a></li>
+      <li><a href="#">house-of-marketers.com — TikTok/Meta Creative Benchmarks</a></li>
+      <li><a href="#">Ben Heath LinkedIn — Best Meta Ads Strategy 2026</a></li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

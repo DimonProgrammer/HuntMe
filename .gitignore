@@ -24,3 +24,12 @@ landing/freepik__*.png
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Large media/binary files
+assets/videos/
+*.pdf
+*.MP4
+*.MOV
+*.mp4
+*.mov
+*.mp3

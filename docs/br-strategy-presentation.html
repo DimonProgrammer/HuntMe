@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Стратегия BR-моделей — созвон с Ильёй</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #1a1d27;
+    --border: #2a2d3a;
+    --text: #e4e4e7;
+    --muted: #9ca3af;
+    --accent: #6366f1;
+    --accent2: #818cf8;
+    --green: #22c55e;
+    --green-bg: rgba(34,197,94,.12);
+    --yellow: #eab308;
+    --yellow-bg: rgba(234,179,8,.1);
+    --red: #ef4444;
+    --red-bg: rgba(239,68,68,.1);
+    --blue: #3b82f6;
+    --blue-bg: rgba(59,130,246,.1);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 24px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--accent2), var(--green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 36px 0 16px;
+    color: var(--accent2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h2 .num {
+    background: var(--accent);
+    color: #fff;
+    font-size: 13px;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 20px 0 10px;
+    color: var(--text);
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 12px 0;
+  }
+  .card.green { border-left: 3px solid var(--green); }
+  .card.blue { border-left: 3px solid var(--blue); }
+  .card.yellow { border-left: 3px solid var(--yellow); }
+  .card.accent { border-left: 3px solid var(--accent); }
+  ul { padding-left: 20px; margin: 8px 0; }
+  li { margin: 4px 0; }
+  li::marker { color: var(--muted); }
+  strong { color: #fff; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 14px;
+  }
+  th {
+    background: var(--card);
+    color: var(--accent2);
+    font-weight: 600;
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+  }
+  td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(99,102,241,.05); }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .badge-green { background: var(--green-bg); color: var(--green); }
+  .badge-yellow { background: var(--yellow-bg); color: var(--yellow); }
+  .badge-red { background: var(--red-bg); color: var(--red); }
+  .badge-blue { background: var(--blue-bg); color: var(--blue); }
+  .highlight {
+    background: linear-gradient(135deg, rgba(99,102,241,.15), rgba(34,197,94,.1));
+    border: 1px solid rgba(99,102,241,.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 16px 0;
+  }
+  .split-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 12px 0;
+  }
+  .phase-tag {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 32px 0;
+  }
+  .timeline-row {
+    display: flex;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .timeline-row:last-child { border-bottom: none; }
+  .timeline-when {
+    min-width: 80px;
+    font-weight: 700;
+    color: var(--accent2);
+    font-size: 14px;
+  }
+  .timeline-what { flex: 1; }
+  .timeline-result {
+    color: var(--muted);
+    font-size: 13px;
+    min-width: 200px;
+    text-align: right;
+  }
+  .ask-item {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+  .ask-item:last-child { border-bottom: none; }
+  .ask-num {
+    background: var(--accent);
+    color: #fff;
+    font-size: 12px;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  @media (max-width: 600px) {
+    .split-grid { grid-template-columns: 1fr; }
+    .timeline-result { display: none; }
+    table { font-size: 12px; }
+    th, td { padding: 6px 8px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Стратегия запуска BR-моделей</h1>
+<div class="subtitle">Тезисы для созвона с Ильёй &middot; 2 марта 2026 &middot; Черновик для согласования</div>
+
+<!-- ==================== ЗАЧЕМ БРАЗИЛИЯ ==================== -->
+<h2><span class="num">1</span> Зачем Бразилия</h2>
+
+<div class="split-grid">
+  <div class="card green">
+    <h3>Рынок</h3>
+    <ul>
+      <li>2-й рынок криэйторов в мире (110 млн)</li>
+      <li>215 млн населения, 93,7% WhatsApp</li>
+      <li>Женская ЗП: ~$450/мес. Наш оффер: $430-1,700/мес</li>
+      <li>Трафик в <strong>5-10x дешевле</strong> РФ</li>
+    </ul>
+  </div>
+  <div class="card blue">
+    <h3>Почему сейчас</h3>
+    <ul>
+      <li>Конкуренция &asymp; 0 (наша ниша)</li>
+      <li>Публикации без банов (в отличие от РФ)</li>
+      <li>Бонус $50/модель + $10/рабочий день</li>
+      <li>Подъёмный бонус x2 (2 месяца)</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card accent">
+  <strong>Наша ставка:</strong> Бразилия &rarr; Колумбия &rarr; Аргентина (последовательно)
+</div>
+
+<hr class="divider">
+
+<!-- ==================== 4 ФАЗЫ ==================== -->
+<h2><span class="num">2</span> План: 4 фазы</h2>
+
+<!-- ФАЗА 1 -->
+<h3><span class="phase-tag">Фаза 1</span> Бот + WhatsApp (дни 1-4, подготовка)</h3>
+<div class="card">
+  <ul>
+    <li>Адаптация бота под рекрутинг моделей</li>
+    <li>Настройка WhatsApp-канала (93,7% BR на WA, Telegram нишевый)</li>
+    <li>Двухступенчатое раскрытие: &laquo;entretenimento digital&raquo; &rarr; бот раскрывает формат</li>
+    <li>Автоматические ответы на возражения (A-A-R фреймворк)</li>
+    <li>Квалификация: возраст, город, интернет, устройство, готовность</li>
+  </ul>
+</div>
+
+<div class="card yellow">
+  <h3>Автоматизация WhatsApp</h3>
+  <p style="color:var(--muted);margin-bottom:12px">Официальный WA Business API требует юрлицо + Meta Business &rarr; у нас нет. Идём поэтапно:</p>
+
+  <table>
+    <tr>
+      <th>Этап</th>
+      <th>Решение</th>
+      <th>$/мес</th>
+      <th>Юрлицо?</th>
+    </tr>
+    <tr>
+      <td><span class="badge badge-green">Старт</span></td>
+      <td>WA Business App (бесплатное)<br><small style="color:var(--muted)">50 быстрых ответов, лейблы, авто-приветствие. Хватает на 10-30 диалогов/день</small></td>
+      <td><strong>$0</strong></td>
+      <td>Нет</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-yellow">20+ диалогов</span></td>
+      <td>WAHA Plus (неофиц. WA API)<br><small style="color:var(--muted)">Self-hosted: VPS $5 + WAHA $19. Python-бот как у TG. REST API</small></td>
+      <td><strong>$24</strong></td>
+      <td>Нет</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-blue">Масштаб</span></td>
+      <td>ChatPro Official или WA Business API через BSP<br><small style="color:var(--muted)">Если баны станут проблемой</small></td>
+      <td><strong>$83+</strong></td>
+      <td>Да</td>
+    </tr>
+  </table>
+  <p style="margin-top:12px;font-size:13px;color:var(--muted)"><strong style="color:var(--yellow)">Нужно для старта:</strong> бразильская SIM (Claro/Vivo, ~$3). Человек в BR купит и активирует. WA с BR-номером из России работает через Wi-Fi.</p>
+</div>
+
+<!-- ФАЗА 2 -->
+<h3><span class="phase-tag">Фаза 2</span> Job boards (бесплатные &rarr; платные)</h3>
+
+<div class="card">
+  <h3>Этап A &mdash; Бесплатные ($0)</h3>
+  <table>
+    <tr><th>Площадка</th><th>Тип</th><th>Охват</th></tr>
+    <tr><td><strong>OLX Brasil</strong></td><td>Классифайд</td><td>300K+ кандидатов/мес (3 бесплатных объявления)</td></tr>
+    <tr><td><strong>Indeed BR</strong></td><td>Job board</td><td>~15-20M визитов/мес</td></tr>
+    <tr><td><strong>Jooble BR</strong></td><td>Агрегатор</td><td>~5M визитов/мес</td></tr>
+    <tr><td><strong>Remotar</strong></td><td>Удалёнка</td><td>Нишевый, спец. &laquo;trabalho remoto&raquo;</td></tr>
+    <tr><td><strong>FreelaWeb</strong></td><td>Фриланс</td><td>Нишевый</td></tr>
+    <tr><td><strong>Workana</strong></td><td>Фриланс LatAm</td><td>Топ-1 фриланс региона</td></tr>
+    <tr><td><strong>Facebook Groups</strong></td><td>Соцсети</td><td>1M+ участников (&laquo;renda extra&raquo;, &laquo;home office&raquo;)</td></tr>
+    <tr><td><strong>WhatsApp Groups</strong></td><td>Мессенджер</td><td>3,000+ групп (gruposwhats.app)</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h3>Этап B &mdash; Платные (после оценки бесплатных)</h3>
+  <table>
+    <tr><th>Площадка</th><th>Визиты/мес</th><th>$/мес</th><th>Аудитория</th></tr>
+    <tr><td><strong>Catho</strong></td><td>~12M</td><td>$35-85</td><td>17M зарег. кандидатов</td></tr>
+    <tr><td><strong>InfoJobs</strong></td><td>~23M</td><td>$25-70</td><td>16M зарег., топ-2 в BR</td></tr>
+    <tr><td><strong>Trampos.co</strong></td><td>Нишевый</td><td>$17-50</td><td>Креатив, удалёнка</td></tr>
+    <tr><td><strong>LinkedIn</strong></td><td>~50M BR</td><td>$30-50/job</td><td>&laquo;Серьёзное&raquo; позиционирование</td></tr>
+    <tr><td><strong>Vagas.com</strong></td><td>~26M</td><td>Инд.</td><td>Топ-1 по трафику</td></tr>
+  </table>
+  <p style="margin-top:8px;font-size:13px;color:var(--muted)">Логика: сначала бесплатные (1 неделя), замер конверсии, потом масштаб на платные.</p>
+</div>
+
+<!-- ФАЗА 3 -->
+<h3><span class="phase-tag">Фаза 3</span> Лендинг (бренд Габи)</h3>
+<div class="card">
+  <p>Лендинг от лица <strong>Габи</strong> &mdash; девушки, прошедшей путь от продавщицы до R$12K/мес. Личная история + приглашение в проект.</p>
+  <ul style="margin-top:12px">
+    <li><strong>Big Idea:</strong> &laquo;Экономика Харизмы&raquo; (A Economia da Carisma&trade;)</li>
+    <li><strong>Уникальный механизм:</strong> M&eacute;todo C.H.A.V.E.&trade;</li>
+    <li><strong>Оффер:</strong> бесплатный вход в &laquo;Projeto Centelha&raquo; + наставник-оператор</li>
+    <li><strong>Раскрытие:</strong> лендинг нейтральный &rarr; бот раскрывает формат</li>
+  </ul>
+  <p style="margin-top:12px;font-size:13px;color:var(--muted)"><strong>Трафик:</strong> organic (Reels, Stories от Габи) + paid (таргет FB/IG/TikTok, $100/нед)</p>
+</div>
+
+<!-- ФАЗА 4 -->
+<h3><span class="phase-tag">Фаза 4</span> A/B тест подходов</h3>
+<div class="split-grid">
+  <div class="card green">
+    <h3>Подход A &mdash; Бренд Габи</h3>
+    <ul>
+      <li>От первого лица девушки</li>
+      <li>&laquo;Я была на твоём месте&raquo;</li>
+      <li>Проект = её агентство</li>
+      <li>Референс: girl2girls.ru</li>
+    </ul>
+  </div>
+  <div class="card blue">
+    <h3>Подход B &mdash; HR-агентство</h3>
+    <ul>
+      <li>От компании, деловой тон</li>
+      <li>Прямые формулировки</li>
+      <li>&laquo;Вакансия модели live-стриминга&raquo;</li>
+      <li>Apex Talent или новый бренд</li>
+    </ul>
+  </div>
+</div>
+<div class="card" style="font-size:14px">
+  <strong>Метрики:</strong> CTR, Conversion Rate, Show Rate, Close Rate, CPL, Retention (1 нед.)<br>
+  <strong>Формат:</strong> одинаковый бюджет ($50-100) на подход, одинаковый таргетинг, замер 2 недели. Победитель масштабируется.
+</div>
+
+<hr class="divider">
+
+<!-- ==================== РАСХОДЫ ==================== -->
+<h2><span class="num">3</span> Расходы (всё в USD)</h2>
+
+<div class="card">
+  <h3>Разовые (старт)</h3>
+  <table>
+    <tr><th>Статья</th><th>Сумма</th><th>Примечание</th></tr>
+    <tr><td>Бразильская SIM (Claro/Vivo)</td><td><strong>$3</strong></td><td>Нужен человек в BR</td></tr>
+    <tr><td>Запасная SIM</td><td><strong>$3</strong></td><td>На случай бана</td></tr>
+    <tr><td>WA-аккаунт (если нет контакта)</td><td>$5-20</td><td>Рискованно, лучше реальная SIM</td></tr>
+    <tr><td>Аккаунты для job boards</td><td>$0-10</td><td>Большинство &mdash; бесплатная регистрация</td></tr>
+    <tr><td><strong>Итого разовых</strong></td><td><strong>~$10-35</strong></td><td></td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h3>Ежемесячные (по фазам)</h3>
+  <table>
+    <tr><th>Фаза</th><th>Что входит</th><th>$/мес</th></tr>
+    <tr>
+      <td><span class="badge badge-green">0-1</span><br><small>ручной режим</small></td>
+      <td>WA Business App + бесплатные площадки + SIM</td>
+      <td><strong>$3</strong></td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-yellow">1</span><br><small>автоматизация</small></td>
+      <td>WAHA Plus $19 + VPS $5 + SIM $3</td>
+      <td><strong>$27</strong></td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-blue">2-3</span><br><small>лендинг + реклама</small></td>
+      <td>WA+VPS $24 + SIM $3 + платные площадки $60-150 + реклама $400 + домен $1</td>
+      <td><strong>$490-580</strong></td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-red">4</span><br><small>масштаб</small></td>
+      <td>Всё из Ф.2-3 + доп. A/B $100-200 + апгрейд WA $83</td>
+      <td><strong>$590-860</strong></td>
+    </tr>
+  </table>
+</div>
+
+<div class="card accent">
+  <h3>Кто платит что</h3>
+  <table>
+    <tr><th>Статья</th><th>Кто</th></tr>
+    <tr><td>Реклама ($400/мес)</td><td><strong>Илья</strong> (договорённость $100/нед)</td></tr>
+    <tr><td>Сервисы и расходники (WA, VPS, SIM, домен)</td><td><strong>Илья</strong> (расходники покрывает команда)</td></tr>
+    <tr><td>Платные job boards</td><td><strong>Запрос к Илье</strong> (после данных с бесплатных)</td></tr>
+    <tr><td>Моё время и работа</td><td><strong>Я</strong> (покрывается сплитом 80/20)</td></tr>
+  </table>
+</div>
+
+<hr class="divider">
+
+<!-- ==================== UNIT-ЭКОНОМИКА ==================== -->
+<h2><span class="num">4</span> Unit-экономика</h2>
+
+<div class="split-grid">
+  <div class="card green">
+    <h3>Модели (основной поток)</h3>
+    <ul>
+      <li><strong>$10</strong>/рабочий день (пока работает)</li>
+      <li>Бонус за 2-ю смену: <strong>$50</strong> (разовый)</li>
+      <li>Средний срок: <strong>~3 месяца</strong></li>
+      <li>Доход с 1 модели: <strong>$650</strong></li>
+    </ul>
+  </div>
+  <div class="card blue">
+    <h3>Операторы (параллельно)</h3>
+    <ul>
+      <li>Разовая: 1-3й = $50, 4-6й = $75, 7+ = $100</li>
+      <li>Шкала <strong>сбрасывается каждый месяц</strong></li>
+      <li>Набор на автомате через job boards</li>
+      <li>PH, ID, NG &mdash; параллельно с моделями</li>
+    </ul>
+  </div>
+</div>
+
+<div class="highlight">
+  <h3 style="margin-bottom:12px">Сценарий: 10 активных моделей + 3 оператора/мес</h3>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Для поддержания 10 активных (при среднем сроке 3 мес) нужно записывать ~3-4 новых/мес</p>
+
+  <table>
+    <tr><th>Источник</th><th>Расчёт</th><th>$/мес</th></tr>
+    <tr><td>Модели (10 активных)</td><td>10 &times; 20 дней &times; $10</td><td><strong>$2,000</strong></td></tr>
+    <tr><td>Бонусы за новых (~4/мес)</td><td>4 &times; $50</td><td><strong>$200</strong></td></tr>
+    <tr><td>Операторы (~3/мес)</td><td>3 &times; $50</td><td><strong>$150</strong></td></tr>
+    <tr style="background:rgba(99,102,241,.1)"><td><strong>ИТОГО</strong></td><td></td><td><strong>$2,350/мес</strong></td></tr>
+  </table>
+</div>
+
+<div class="card" style="font-size:15px">
+  <h3>Сплит 80/20</h3>
+  <table>
+    <tr><th></th><th>Общий</th><th>Моя доля (80%)</th><th>Доля Ильи (20%)</th></tr>
+    <tr><td><strong>Ежемесячно</strong></td><td>$2,350</td><td><strong style="color:var(--green)">$1,880</strong></td><td>$470</td></tr>
+    <tr><td><strong>За 6 мес</strong></td><td>$14,100</td><td><strong style="color:var(--green)">$11,280</strong></td><td>$2,820</td></tr>
+    <tr><td><strong>За 12 мес</strong></td><td>$28,200</td><td><strong style="color:var(--green)">$22,560</strong></td><td>$5,640</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h3>При масштабировании</h3>
+  <table>
+    <tr><th>Моделей</th><th>Операт./мес</th><th>Общий/мес</th><th>Мне (80%)</th><th>Илье (20%)</th></tr>
+    <tr><td>10</td><td>3</td><td>$2,350</td><td><strong>$1,880</strong></td><td>$470</td></tr>
+    <tr><td>20</td><td>5</td><td>$4,675</td><td><strong>$3,740</strong></td><td>$935</td></tr>
+    <tr><td>50</td><td>8</td><td>$10,775</td><td><strong>$8,620</strong></td><td>$2,155</td></tr>
+  </table>
+  <p style="margin-top:8px;font-size:12px;color:var(--muted)">5 оп/мес: 3&times;$50+2&times;$75=$300. 8 оп/мес: 3&times;$50+3&times;$75+2&times;$100=$575</p>
+</div>
+
+<div class="card green" style="font-size:14px">
+  <strong>Breakeven для Ильи:</strong> расходы ~$490-580/мес, доля при 10 моделях $470/мес &rarr; почти сразу окупается. При 13+ моделях &mdash; стабильно в плюсе.
+</div>
+
+<hr class="divider">
+
+<!-- ==================== ТАЙМЛАЙН ==================== -->
+<h2><span class="num">5</span> Таймлайн</h2>
+
+<div class="card">
+  <div class="timeline-row">
+    <div class="timeline-when">Д. 1-4</div>
+    <div class="timeline-what"><strong>Подготовка:</strong> маркетинговая база + адаптация бота + настройка WA</div>
+    <div class="timeline-result">Готовая воронка</div>
+  </div>
+  <div class="timeline-row">
+    <div class="timeline-when">Д. 5-6</div>
+    <div class="timeline-what"><strong>Размещение</strong> на 8 бесплатных площадках + FB/WA группы</div>
+    <div class="timeline-result">Первые лиды</div>
+  </div>
+  <div class="timeline-row">
+    <div class="timeline-when">Д. 7-10</div>
+    <div class="timeline-what"><strong>Обработка</strong> лидов, автоматизация (WAHA), первые собеседования</div>
+    <div class="timeline-result">Первые записанные модели</div>
+  </div>
+  <div class="timeline-row">
+    <div class="timeline-when">Нед. 3</div>
+    <div class="timeline-what"><strong>Лендинг</strong> (подход A: Габи) + запуск paid-рекламы</div>
+    <div class="timeline-result">Лендинг live + трафик</div>
+  </div>
+  <div class="timeline-row">
+    <div class="timeline-when">Нед. 4</div>
+    <div class="timeline-what"><strong>Данные конверсии</strong> &rarr; решение по платным площадкам</div>
+    <div class="timeline-result">Запрос бюджета с цифрами</div>
+  </div>
+  <div class="timeline-row">
+    <div class="timeline-when">Нед. 5</div>
+    <div class="timeline-what"><strong>Лендинг B</strong> (HR) + A/B тест</div>
+    <div class="timeline-result">Сравнение подходов</div>
+  </div>
+  <div class="timeline-row">
+    <div class="timeline-when">Нед. 6+</div>
+    <div class="timeline-what"><strong>Масштабирование</strong> победителя</div>
+    <div class="timeline-result">Стабильный поток</div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ==================== ЧТО НУЖНО ОТ ИЛЬИ ==================== -->
+<h2><span class="num">6</span> Что нужно от Ильи</h2>
+
+<div class="card accent">
+  <div class="ask-item">
+    <div class="ask-num">1</div>
+    <div><strong>Подтверждение стратегии</strong> &mdash; согласие на 4-фазный план</div>
+  </div>
+  <div class="ask-item">
+    <div class="ask-num">2</div>
+    <div><strong>Бюджет $100/нед</strong> на рекламу (как договаривались)</div>
+  </div>
+  <div class="ask-item">
+    <div class="ask-num">3</div>
+    <div><strong>Покрытие расходников</strong> &mdash; WA $27/мес, SIM $3 &mdash; мелочь, но подтвердить</div>
+  </div>
+  <div class="ask-item">
+    <div class="ask-num">4</div>
+    <div><strong>Бюджет на платные площадки</strong> (~$60-150/мес) &mdash; после Фазы 2A с данными конверсии</div>
+  </div>
+  <div class="ask-item">
+    <div class="ask-num">5</div>
+    <div><strong>Операторы для BR-моделей</strong> &mdash; есть ли португалоговорящие операторы в Online 7?</div>
+  </div>
+  <div class="ask-item">
+    <div class="ask-num">6</div>
+    <div><strong>Контакт в Бразилии</strong> &mdash; для покупки SIM-карты (или найдём сами)</div>
+  </div>
+  <div class="ask-item">
+    <div class="ask-num">7</div>
+    <div><strong>Регистрация команды</strong> &mdash; когда оформляем для подъёмного бонуса x2?</div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ==================== РИСКИ ==================== -->
+<h2><span class="num">7</span> Риски и митигация</h2>
+
+<div class="card">
+  <table>
+    <tr><th>Риск</th><th>Вероятность</th><th>Митигация</th></tr>
+    <tr>
+      <td>Площадки банят объявления</td>
+      <td><span class="badge badge-green">Низкая</span></td>
+      <td>Формулировка &laquo;entretenimento digital&raquo;</td>
+    </tr>
+    <tr>
+      <td>Низкая конверсия job boards</td>
+      <td><span class="badge badge-yellow">Средняя</span></td>
+      <td>A/B формулировок, переключение на FB/WA</td>
+    </tr>
+    <tr>
+      <td>Бан WA-номера</td>
+      <td><span class="badge badge-yellow">Средняя</span></td>
+      <td>Только входящие, не спамим, запасная SIM</td>
+    </tr>
+    <tr>
+      <td>Нет PT-BR операторов</td>
+      <td><span class="badge badge-yellow">Средняя</span></td>
+      <td>Уточнить у Ильи наличие в Online 7</td>
+    </tr>
+    <tr>
+      <td>Модели уходят после 1-й недели</td>
+      <td><span class="badge badge-yellow">Средняя</span></td>
+      <td>Сильный онбординг, ежедневная связь</td>
+    </tr>
+  </table>
+</div>
+
+<div style="text-align:center;color:var(--muted);font-size:13px;margin-top:40px;padding:20px 0;border-top:1px solid var(--border)">
+  Документ подготовлен для устного обсуждения. После согласования &rarr; финальная презентация.
+</div>
+
+</body>
+</html>

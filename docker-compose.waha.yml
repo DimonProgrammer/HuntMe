@@ -1,0 +1,43 @@
+version: "3.9"
+
+# Deploy on Hetzner VPS: docker compose -f docker-compose.waha.yml up -d
+# Before first run: docker login -u devlikeapro -p {WAHA_PLUS_KEY}
+
+services:
+  waha:
+    image: devlikeapro/waha-plus
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"   # localhost only — expose via nginx if needed
+    volumes:
+      - ./waha_sessions:/app/.sessions
+    environment:
+      WAHA_API_KEY: ${WAHA_API_KEY}
+      WHATSAPP_DEFAULT_ENGINE: NOWEB
+      WAHA_LOG_LEVEL: info
+
+  wabot:
+    build:
+      context: ./wabot
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      WAHA_URL: http://waha:3000
+      WAHA_API_KEY: ${WAHA_API_KEY}
+      WAHA_SESSION: ${WAHA_SESSION:-default}
+      GROQ_API_KEY: ${GROQ_API_KEY}
+      DATABASE_URL: ${DATABASE_URL}
+      BITRIX24_WEBHOOK_URL: ${BITRIX24_WEBHOOK_URL}
+      BOT_TOKEN: ${BOT_TOKEN}
+      ADMIN_CHAT_ID: ${ADMIN_CHAT_ID}
+      HUNTME_CRM_LOGIN: ${HUNTME_CRM_LOGIN}
+      HUNTME_CRM_PASSWORD: ${HUNTME_CRM_PASSWORD}
+      WEBHOOK_SECRET: ${WEBHOOK_SECRET}
+      WABOT_PORT: 8080
+    depends_on:
+      - waha
+
+volumes:
+  waha_sessions:

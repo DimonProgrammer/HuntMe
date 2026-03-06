@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LatAm Models Strategy — Apex Talent</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #232733;
+    --accent: #6c5ce7;
+    --accent-light: #a29bfe;
+    --green: #00b894;
+    --green-light: #55efc4;
+    --orange: #fdcb6e;
+    --red: #ff7675;
+    --text: #f0f0f5;
+    --text-muted: #9ba0b5;
+    --border: #2d3142;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .slide {
+    min-height: 100vh;
+    padding: 60px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  .slide-number {
+    position: absolute;
+    top: 30px;
+    right: 40px;
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  /* Title slide */
+  .slide-title {
+    text-align: center;
+    background: linear-gradient(135deg, #0f1117 0%, #1a1040 50%, #0f1117 100%);
+  }
+  .slide-title h1 {
+    font-size: 56px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent-light), var(--green-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+  }
+  .slide-title .subtitle {
+    font-size: 22px;
+    color: var(--text-muted);
+    margin-bottom: 40px;
+  }
+  .slide-title .meta {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    font-size: 15px;
+    color: var(--text-muted);
+  }
+  .slide-title .meta span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  h2 {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 32px;
+    color: var(--accent-light);
+  }
+  h2 .emoji { margin-right: 12px; }
+
+  h3 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  p { font-size: 17px; color: var(--text-muted); margin-bottom: 16px; }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 15px;
+  }
+  th {
+    background: var(--surface2);
+    padding: 14px 18px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--accent-light);
+    border-bottom: 2px solid var(--accent);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  td {
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  tr:hover td { background: rgba(108, 92, 231, 0.05); }
+
+  .highlight { color: var(--green-light); font-weight: 700; }
+  .warn { color: var(--orange); font-weight: 600; }
+  .dim { color: var(--text-muted); }
+
+  /* Metric cards */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin: 24px 0;
+  }
+  .metric-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 24px;
+    text-align: center;
+  }
+  .metric-card .value {
+    font-size: 40px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+  .metric-card .value.green { color: var(--green-light); }
+  .metric-card .value.accent { color: var(--accent-light); }
+  .metric-card .value.orange { color: var(--orange); }
+  .metric-card .label {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Funnel */
+  .funnel {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 24px auto;
+    max-width: 700px;
+  }
+  .funnel-step {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .funnel-step .num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .funnel-step:nth-child(1) { background: rgba(108,92,231,0.15); }
+  .funnel-step:nth-child(1) .num { background: var(--accent); color: white; }
+  .funnel-step:nth-child(2) { background: rgba(108,92,231,0.12); }
+  .funnel-step:nth-child(2) .num { background: rgba(108,92,231,0.7); color: white; }
+  .funnel-step:nth-child(3) { background: rgba(108,92,231,0.09); }
+  .funnel-step:nth-child(3) .num { background: rgba(108,92,231,0.5); color: white; }
+  .funnel-step:nth-child(4) { background: rgba(108,92,231,0.06); }
+  .funnel-step:nth-child(4) .num { background: rgba(108,92,231,0.35); color: white; }
+  .funnel-step:nth-child(5) { background: rgba(0,184,148,0.15); }
+  .funnel-step:nth-child(5) .num { background: var(--green); color: white; }
+  .funnel-step:nth-child(6) { background: rgba(0,184,148,0.1); }
+  .funnel-step:nth-child(6) .num { background: rgba(0,184,148,0.7); color: white; }
+  .funnel-step:nth-child(7) { background: rgba(0,184,148,0.07); }
+  .funnel-step:nth-child(7) .num { background: rgba(0,184,148,0.5); color: white; }
+  .funnel-arrow {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 18px;
+  }
+
+  /* Callout */
+  .callout {
+    background: var(--surface);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 12px 12px 0;
+    padding: 20px 24px;
+    margin: 20px 0;
+    font-size: 16px;
+  }
+  .callout.green { border-left-color: var(--green); }
+  .callout.orange { border-left-color: var(--orange); }
+
+  /* Timeline */
+  .timeline {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .tl-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 20px;
+    position: relative;
+  }
+  .tl-card.active { border-color: var(--accent); }
+  .tl-month {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent-light);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .tl-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .tl-result {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+  .tl-revenue {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--green-light);
+  }
+  .tl-list {
+    list-style: none;
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .tl-list li { padding: 4px 0; padding-left: 16px; position: relative; }
+  .tl-list li::before {
+    content: '>';
+    position: absolute;
+    left: 0;
+    color: var(--accent-light);
+    font-weight: 700;
+  }
+
+  /* Two columns */
+  .cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin: 20px 0;
+  }
+
+  /* Comparison bar */
+  .bar-compare {
+    margin: 16px 0;
+  }
+  .bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+  .bar-track {
+    height: 32px;
+    background: var(--surface2);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    padding-left: 12px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .bar-fill.green { background: linear-gradient(90deg, var(--green), var(--green-light)); color: #0a2e24; }
+  .bar-fill.accent { background: linear-gradient(90deg, var(--accent), var(--accent-light)); color: white; }
+  .bar-fill.orange { background: linear-gradient(90deg, #e17055, var(--orange)); color: #3d2510; }
+
+  /* Agenda */
+  .agenda-list {
+    list-style: none;
+    counter-reset: agenda;
+  }
+  .agenda-list li {
+    counter-increment: agenda;
+    padding: 16px 24px 16px 60px;
+    position: relative;
+    font-size: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .agenda-list li::before {
+    content: counter(agenda);
+    position: absolute;
+    left: 16px;
+    width: 32px;
+    height: 32px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: white;
+  }
+
+  /* Questions slide */
+  .question-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .q-card .q-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--accent-light);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .q-card .q-text {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  /* Print */
+  @media print {
+    .slide { min-height: auto; page-break-after: always; padding: 40px; }
+    body { background: white; color: #1a1a2e; }
+    .slide-title { background: white; }
+    .slide-title h1 { -webkit-text-fill-color: #6c5ce7; }
+    h2 { color: #6c5ce7; }
+    .metric-card, .tl-card, .q-card, .callout { background: #f8f9fa; border-color: #dee2e6; }
+    th { background: #f0f0f5; }
+    td { border-color: #dee2e6; }
+  }
+
+  @media (max-width: 768px) {
+    .slide { padding: 40px 24px; }
+    .slide-title h1 { font-size: 36px; }
+    h2 { font-size: 28px; }
+    .metrics { grid-template-columns: repeat(2, 1fr); }
+    .timeline { grid-template-columns: 1fr; }
+    .cols { grid-template-columns: 1fr; }
+    .question-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1: Title -->
+<section class="slide slide-title">
+  <h1>LatAm Models</h1>
+  <div class="subtitle">Стратегия запуска рекрутинга моделей в Бразилии</div>
+  <div class="meta">
+    <span>Apex Talent</span>
+    <span>28 февраля 2026</span>
+    <span>Online Offer</span>
+  </div>
+</section>
+
+<!-- SLIDE 2: Agenda -->
+<section class="slide">
+  <span class="slide-number">01</span>
+  <h2>Повестка</h2>
+  <ol class="agenda-list">
+    <li>Почему Бразилия — первый рынок</li>
+    <li>Модель монетизации: $10/день recurring</li>
+    <li>Юнит-экономика и break-even</li>
+    <li>Воронка: WhatsApp 7 шагов (доказанный кейс)</li>
+    <li>Каналы и тактика по месяцам</li>
+    <li>Инструменты и бюджет</li>
+    <li>Прогноз revenue на 4 месяца</li>
+    <li>Вопросы для согласования</li>
+  </ol>
+</section>
+
+<!-- SLIDE 3: Why Brazil -->
+<section class="slide">
+  <span class="slide-number">02</span>
+  <h2>Почему Бразилия</h2>
+  <p>Сравнение трёх рынков LatAm для запуска модельного рекрутинга</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Фактор</th>
+        <th>Бразилия</th>
+        <th>Колумбия</th>
+        <th>Аргентина</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Население</td>
+        <td><span class="highlight">210M</span></td>
+        <td>52M</td>
+        <td>46M</td>
+      </tr>
+      <tr>
+        <td>Интернет</td>
+        <td><span class="highlight">87% (176M)</span></td>
+        <td>73%</td>
+        <td>87%</td>
+      </tr>
+      <tr>
+        <td>WhatsApp</td>
+        <td><span class="highlight">93.7% (177M)</span></td>
+        <td>~85%</td>
+        <td>~90%</td>
+      </tr>
+      <tr>
+        <td>CPL Meta Ads</td>
+        <td><span class="highlight">$1.50-3.00</span></td>
+        <td>$3-5</td>
+        <td>$3-5</td>
+      </tr>
+      <tr>
+        <td>Конкуренция</td>
+        <td><span class="highlight">Низкая</span></td>
+        <td class="dim">Высокая (400K моделей)</td>
+        <td>Минимальная</td>
+      </tr>
+      <tr>
+        <td>Средняя зарплата (жен.)</td>
+        <td>~$455/мес</td>
+        <td>~$350/мес</td>
+        <td>~$500/мес</td>
+      </tr>
+      <tr>
+        <td>Наш оффер</td>
+        <td><span class="highlight">$500+/мес = 1.1x средней</span></td>
+        <td>$500+/мес = 1.4x</td>
+        <td>$500+/мес = 1x</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout green">
+    <strong>Вывод:</strong> Бразилия — кратно больше аудитория (210M vs 52M), дешевле трафик ($1.50-3 vs $3-5 CPL), меньше конкуренция.
+    Кейс HuntMe: партнёр в BR вышел на <strong>400+ бронирований/мес за 8 недель</strong>.
+  </div>
+</section>
+
+<!-- SLIDE 4: Revenue Model -->
+<section class="slide">
+  <span class="slide-number">03</span>
+  <h2>Модель монетизации</h2>
+  <p>Online Offer — рекуррентный доход за каждый рабочий день модели</p>
+
+  <div class="metrics">
+    <div class="metric-card">
+      <div class="value green">$10</div>
+      <div class="label">за рабочий день модели</div>
+    </div>
+    <div class="metric-card">
+      <div class="value green">$200</div>
+      <div class="label">в месяц (20 дней)</div>
+    </div>
+    <div class="metric-card">
+      <div class="value green">$2,400</div>
+      <div class="label">LTV за 12 месяцев</div>
+    </div>
+    <div class="metric-card">
+      <div class="value accent">80/20</div>
+      <div class="label">наш сплит</div>
+    </div>
+  </div>
+
+  <div class="cols">
+    <div>
+      <h3>Наш доход с одной модели</h3>
+      <table>
+        <tr><td>Gross/мес</td><td class="highlight">$200</td></tr>
+        <tr><td>Нам (80%)</td><td class="highlight">$160/мес</td></tr>
+        <tr><td>LTV нам (12 мес)</td><td class="highlight">$1,920</td></tr>
+      </table>
+
+      <div class="callout orange" style="margin-top: 16px;">
+        Бонус $50 за 2-ю смену (LatAm) = НЕ доход.<br>
+        Идёт только на маркетинг/расходники команды.
+      </div>
+    </div>
+    <div>
+      <h3>Другие направления</h3>
+      <table>
+        <thead><tr><th>Тип</th><th>Компенсация</th></tr></thead>
+        <tr><td>Операторы</td><td>$50 / $75 / $100 (разово)</td></tr>
+        <tr><td>Агенты-рефералы</td><td>$90 / $135 / $180 (ежемесячно)</td></tr>
+      </table>
+      <p style="margin-top: 16px; font-size: 14px;">Операторы (PH/NG/ID) — уже работает.<br>Модели LatAm — новое направление, основной фокус.</p>
+    </div>
+  </div>
+
+  <div class="callout green" style="margin-top: 8px;">
+    <strong>Главное:</strong> доход <strong>recurring</strong> — каждая новая модель прибавляет $160/мес к нашему MRR. Не разовые платежи.
+  </div>
+</section>
+
+<!-- SLIDE 5: Unit Economics -->
+<section class="slide">
+  <span class="slide-number">04</span>
+  <h2>Юнит-экономика</h2>
+  <p>При бюджете $100/нед ($430/мес на рекламу, ~$573/мес с инструментами)</p>
+
+  <div class="metrics">
+    <div class="metric-card">
+      <div class="value orange">~4</div>
+      <div class="label">модели для break-even</div>
+    </div>
+    <div class="metric-card">
+      <div class="value accent">$1.50-3</div>
+      <div class="label">CPL Brazil (Meta Ads)</div>
+    </div>
+    <div class="metric-card">
+      <div class="value green">12-48x</div>
+      <div class="label">ROI на модель</div>
+    </div>
+    <div class="metric-card">
+      <div class="value accent">$4.40</div>
+      <div class="label">break-even CPL (пессим.)</div>
+    </div>
+  </div>
+
+  <h3>Break-even расчёт</h3>
+  <table>
+    <thead>
+      <tr><th></th><th>Значение</th><th>Комментарий</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Расходы/мес</td><td><span class="warn">$573</span></td><td>$430 реклама + $143 инструменты</td></tr>
+      <tr><td>Доход с модели (нам)</td><td><span class="highlight">$160/мес</span></td><td>$200 gross x 80%</td></tr>
+      <tr><td>Break-even</td><td><span class="highlight">3.6 модели</span></td><td>$573 / $160 = нужно ~4 работающие модели</td></tr>
+      <tr><td>Break-even CPL</td><td><span class="highlight">$4.40</span></td><td>Даже пессимистичный > Brazil CPL $1.50-3</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout green">
+    <strong>Запас прочности:</strong> break-even CPL $4.40 при реальном CPL $1.50-3.00 в Бразилии.
+    Даже пессимистичный сценарий (3% конверсия) прибыльный на платном трафике.
+  </div>
+</section>
+
+<!-- SLIDE 6: Proven Funnel -->
+<section class="slide">
+  <span class="slide-number">05</span>
+  <h2>Воронка: WhatsApp 7 шагов</h2>
+  <p>Доказанный кейс бразильского партнёра HuntMe</p>
+
+  <div class="cols">
+    <div>
+      <h3>До (звонки)</h3>
+      <div class="bar-compare">
+        <div class="bar-label"><span>Контактов/день</span><span class="dim">40-60</span></div>
+        <div class="bar-track"><div class="bar-fill orange" style="width: 15%">40-60</div></div>
+      </div>
+      <div class="bar-compare">
+        <div class="bar-label"><span>Response rate</span><span class="dim">15-20%</span></div>
+        <div class="bar-track"><div class="bar-fill orange" style="width: 20%">15-20%</div></div>
+      </div>
+      <div class="bar-compare">
+        <div class="bar-label"><span>Бронирований/мес</span><span class="dim">20-40</span></div>
+        <div class="bar-track"><div class="bar-fill orange" style="width: 10%">20-40</div></div>
+      </div>
+    </div>
+    <div>
+      <h3>После (WhatsApp API)</h3>
+      <div class="bar-compare">
+        <div class="bar-label"><span>Контактов/день</span><span class="highlight">200-400+</span></div>
+        <div class="bar-track"><div class="bar-fill green" style="width: 100%">200-400+</div></div>
+      </div>
+      <div class="bar-compare">
+        <div class="bar-label"><span>Response rate</span><span class="highlight">65-80%</span></div>
+        <div class="bar-track"><div class="bar-fill green" style="width: 80%">65-80%</div></div>
+      </div>
+      <div class="bar-compare">
+        <div class="bar-label"><span>Бронирований/мес</span><span class="highlight">200-400</span></div>
+        <div class="bar-track"><div class="bar-fill green" style="width: 100%">200-400</div></div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top: 32px;">7-шаговая воронка</h3>
+  <div class="funnel">
+    <div class="funnel-step"><div class="num">1</div>CTWA-реклама (IG/FB) &rarr; клик &rarr; WhatsApp</div>
+    <div class="funnel-step"><div class="num">2</div>Автоприветствие + mini-pitch (entertainment model, USD, flexible)</div>
+    <div class="funnel-step"><div class="num">3</div>Intent check: "Ищете работу сейчас или просто смотрите?"</div>
+    <div class="funnel-step"><div class="num">4</div>Квалификация: 8 вопросов (возраст, телефон, комната, график)</div>
+    <div class="funnel-step"><div class="num">5</div>Objection handling (A-A-R: Acknowledge &rarr; Answer &rarr; Redirect)</div>
+    <div class="funnel-step"><div class="num">6</div>Interview booking &rarr; HuntMe CRM &rarr; Zoom 40 мин</div>
+    <div class="funnel-step"><div class="num">7</div>Подтверждение за 24ч + brief утром в день интервью</div>
+  </div>
+
+  <div class="callout">
+    <strong>Результат за 8 недель:</strong> 0 &rarr; 400+ бронирований/мес с одним рекрутером. Ключевой фактор — WhatsApp Business API + Click-to-WhatsApp реклама.
+  </div>
+</section>
+
+<!-- SLIDE 7: Channels -->
+<section class="slide">
+  <span class="slide-number">06</span>
+  <h2>Каналы и тактика</h2>
+
+  <div class="cols">
+    <div>
+      <h3>Месяц 1: Organic + setup ($0 ads)</h3>
+      <table>
+        <thead><tr><th>Действие</th><th>Стоимость</th></tr></thead>
+        <tbody>
+          <tr><td>IG Business аккаунт BR (talent agency)</td><td>$0</td></tr>
+          <tr><td>5 Reels: "Ganhe em dolares de casa"</td><td>$0</td></tr>
+          <tr><td>ManyChat: comment "QUERO" &rarr; auto-DM</td><td>$15/мес</td></tr>
+          <tr><td>Job boards BR (Catho, Vagas, InfoJobs, OLX)</td><td>$0</td></tr>
+          <tr><td>10 FB групп: trabalho em casa, renda extra</td><td>$0</td></tr>
+          <tr><td>WhatsApp Business API (WATI)</td><td>$59/мес</td></tr>
+          <tr><td>Meta Business Verification</td><td>$0</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h3>Месяц 2+: Paid ($100/нед)</h3>
+      <table>
+        <thead><tr><th>Действие</th><th>Бюджет</th></tr></thead>
+        <tbody>
+          <tr><td>Meta Ads Click-to-WhatsApp (CTWA)</td><td>$70/нед</td></tr>
+          <tr><td>Таргет: женщины 18-27, BR, "renda extra"</td><td>&mdash;</td></tr>
+          <tr><td>Креатив: PT-BR, entertainment positioning</td><td>&mdash;</td></tr>
+          <tr><td>WATI (WA Business API)</td><td>$59/мес</td></tr>
+          <tr><td>ManyChat (IG comment-to-DM)</td><td>$15/мес</td></tr>
+          <tr><td>Резерв</td><td>$30/нед</td></tr>
+        </tbody>
+      </table>
+      <div class="callout" style="margin-top: 16px;">
+        <strong>Позиционирование:</strong> "Modelo de entretenimento para plataformas de streaming"<br>
+        Никогда: webcam, adult, OnlyFans, 18+, HuntMe
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 8: Tools & Budget -->
+<section class="slide">
+  <span class="slide-number">07</span>
+  <h2>Инструменты и бюджет</h2>
+  <p>Ежемесячные расходы при полном запуске</p>
+
+  <table>
+    <thead>
+      <tr><th>Инструмент</th><th>Назначение</th><th>Стоимость/мес</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Meta Ads</strong></td>
+        <td>Click-to-WhatsApp (CTWA) рекламa в BR</td>
+        <td class="highlight">$430</td>
+      </tr>
+      <tr>
+        <td><strong>WATI</strong></td>
+        <td>WhatsApp Business API: авто-ответы, шаблоны, несколько агентов на 1 номер</td>
+        <td>$59</td>
+      </tr>
+      <tr>
+        <td><strong>ManyChat Pro</strong></td>
+        <td>Instagram comment-to-DM автоматизация</td>
+        <td>$15</td>
+      </tr>
+      <tr>
+        <td><strong>OnlineJobs.ph</strong></td>
+        <td>Операторы PH (уже оплачен)</td>
+        <td class="dim">$69 (оплачен)</td>
+      </tr>
+      <tr style="background: rgba(0,184,148,0.05);">
+        <td><strong>ИТОГО</strong></td>
+        <td></td>
+        <td><strong class="highlight">~$573/мес</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="cols" style="margin-top: 24px;">
+    <div class="callout">
+      <strong>Почему WATI:</strong><br>
+      Meta-approved BSP, несколько рекрутеров на одном номере,
+      CRM-интеграция, чатбот-автоматизация, масштабируемость 250 &rarr; 10,000+ сообщений/день.
+      Нулевой риск бана (в отличие от обычного WA).
+    </div>
+    <div class="callout green">
+      <strong>Кто оплачивает:</strong><br>
+      $430 = реклама (из бюджета $100/нед).<br>
+      $143 = сервисы — покрывает команда.<br>
+      $69 OnlineJobs.ph — уже оплачен Ильёй.
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 9: Revenue Forecast -->
+<section class="slide">
+  <span class="slide-number">08</span>
+  <h2>Прогноз revenue</h2>
+  <p>Три сценария при бюджете $100/нед, recurring модель ($10/день)</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Месяц 2 (старт)</th>
+        <th>Месяц 3</th>
+        <th>Месяц 4 (кумулятивно)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Бронирований</td>
+        <td>30-80</td>
+        <td>100-200</td>
+        <td>200-400</td>
+      </tr>
+      <tr>
+        <td>Show-up</td>
+        <td>60%+</td>
+        <td>70-85%</td>
+        <td>70-85%</td>
+      </tr>
+      <tr>
+        <td>Конверсия &rarr; работает</td>
+        <td>10-20%</td>
+        <td>10-20%</td>
+        <td>10-20%</td>
+      </tr>
+      <tr style="background: rgba(0,184,148,0.05);">
+        <td><strong>Работающих моделей</strong></td>
+        <td><strong>2-10</strong></td>
+        <td><strong>7-34</strong></td>
+        <td><strong>14-68</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin-top: 32px;">NET нам (80% сплит, минус $573 расходов)</h3>
+  <div class="timeline">
+    <div class="tl-card">
+      <div class="tl-month">Месяц 1</div>
+      <div class="tl-title">Setup</div>
+      <div class="tl-result">Органика, инструменты, воронка</div>
+      <div class="tl-revenue">$0</div>
+      <ul class="tl-list">
+        <li>IG аккаунт BR</li>
+        <li>WATI + ManyChat</li>
+        <li>Meta верификация</li>
+        <li>Job boards BR</li>
+      </ul>
+    </div>
+    <div class="tl-card active">
+      <div class="tl-month">Месяц 2</div>
+      <div class="tl-title">Запуск</div>
+      <div class="tl-result">2-10 работающих моделей</div>
+      <div class="tl-revenue">-$130 &mdash; +$1,070</div>
+      <ul class="tl-list">
+        <li>CTWA $100/нед</li>
+        <li>Первые бронирования</li>
+        <li>Замер конверсий</li>
+      </ul>
+    </div>
+    <div class="tl-card">
+      <div class="tl-month">Месяц 3</div>
+      <div class="tl-title">Рост</div>
+      <div class="tl-result">7-34 модели (кумулятивно)</div>
+      <div class="tl-revenue">+$550 &mdash; +$4,870</div>
+      <ul class="tl-list">
+        <li>Оптимизация воронки</li>
+        <li>A/B тесты креативов</li>
+        <li>Рост бюджета 20-30%/нед</li>
+      </ul>
+    </div>
+    <div class="tl-card">
+      <div class="tl-month">Месяц 4+</div>
+      <div class="tl-title">Масштаб</div>
+      <div class="tl-result">14-68 моделей (кумулятивно)</div>
+      <div class="tl-revenue">+$2,670 &mdash; +$10,670</div>
+      <ul class="tl-list">
+        <li>Удвоение кампаний</li>
+        <li>Автоматизация / 2й рекрутер</li>
+        <li>Реферальная программа</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout green">
+    <strong>Ключевое:</strong> revenue накапливается. Каждая новая модель добавляет $160/мес к нашему recurring.
+    К месяцу 4 при нейтральном сценарии — <strong>$5,870/мес recurring NET</strong>.
+  </div>
+</section>
+
+<!-- SLIDE 10: Critical Unknown -->
+<section class="slide">
+  <span class="slide-number">09</span>
+  <h2>Критическая неизвестная</h2>
+  <p>Конверсия "интервью &rarr; модель начала работать" — ключевая переменная</p>
+
+  <div class="metrics">
+    <div class="metric-card">
+      <div class="value orange">10-20%</div>
+      <div class="label">оценка конверсии</div>
+    </div>
+    <div class="metric-card">
+      <div class="value accent">2 мес</div>
+      <div class="label">срок замера</div>
+    </div>
+  </div>
+
+  <div class="cols">
+    <div>
+      <h3>Что мы знаем</h3>
+      <table>
+        <tr><td>Кейс HuntMe</td><td>400+ бронирований/мес</td></tr>
+        <tr><td>Show-up rate</td><td>70-85% (с подтверждением)</td></tr>
+        <tr><td>Завершённых интервью</td><td>~240/мес</td></tr>
+        <tr><td>Начали работать</td><td class="warn">??? (нет данных)</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>Что нужно замерить</h3>
+      <table>
+        <tr><td>Chat &rarr; booking</td><td>конверсия скрипта</td></tr>
+        <tr><td>Booking &rarr; show-up</td><td>эффективность напоминаний</td></tr>
+        <tr><td>Interview &rarr; working</td><td class="warn">главная метрика</td></tr>
+        <tr><td>Working &rarr; retention</td><td>LTV модели</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="callout orange">
+    <strong>Единственный реальный риск:</strong> если конверсия &lt; 5% (менее 2 моделей со 100 лидов) — marginal на платном трафике.
+    Поэтому месяц 1 = organic test + setup, месяц 2 = первые данные.
+  </div>
+</section>
+
+<!-- SLIDE 11: Questions -->
+<section class="slide">
+  <span class="slide-number">10</span>
+  <h2>Вопросы для согласования</h2>
+
+  <div class="question-grid">
+    <div class="q-card">
+      <div class="q-label">Обработка лидов</div>
+      <div class="q-text">Кто обрабатывает модельных лидов в WhatsApp? Мы сами или нанимаем PT-BR менеджера?</div>
+    </div>
+    <div class="q-card">
+      <div class="q-label">CRM</div>
+      <div class="q-text">Office_id для моделей LatAm в HuntMe CRM? Доступ для бронирования?</div>
+    </div>
+    <div class="q-card">
+      <div class="q-label">Бюджет на Tools</div>
+      <div class="q-text">Согласование ~$143/мес на WATI ($59) + ManyChat ($15) + OJP ($69)</div>
+    </div>
+    <div class="q-card">
+      <div class="q-label">Agent Flow</div>
+      <div class="q-text">Детали по вакансии агента: куда направлять не прошедших по HW операторов?</div>
+    </div>
+    <div class="q-card">
+      <div class="q-label">Бренд</div>
+      <div class="q-text">Создаём новый бренд для BR или используем Apex Talent? (Starmore & Co.?)</div>
+    </div>
+    <div class="q-card">
+      <div class="q-label">WhatsApp номер</div>
+      <div class="q-text">Нужен BR номер для WhatsApp Business API. Варианты: купить SIM / виртуальный номер</div>
+    </div>
+    <div class="q-card">
+      <div class="q-label">PT-BR контент</div>
+      <div class="q-text">Кто делает контент на португальском: AI-перевод + вычитка или нанять VA?</div>
+    </div>
+    <div class="q-card">
+      <div class="q-label">Конверсия</div>
+      <div class="q-text">Есть ли у HuntMe данные по конверсии interview &rarr; working model? Это ключевая метрика</div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 12: Next Steps -->
+<section class="slide">
+  <span class="slide-number">11</span>
+  <h2>Следующие шаги</h2>
+
+  <div class="cols">
+    <div>
+      <h3>Tech (эта неделя)</h3>
+      <table>
+        <thead><tr><th>#</th><th>Задача</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Активировать model_flow в боте (main.py + menu.py)</td></tr>
+          <tr><td>2</td><td>Admin callbacks для моделей (approve/reject)</td></tr>
+          <tr><td>3</td><td>Сообщения для model flow (en.py + ru.py)</td></tr>
+          <tr><td>4</td><td>Deep links: land_model_* для модельного лендинга</td></tr>
+          <tr><td>5</td><td>Подготовить PT-BR landing page (позже)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h3>Маркетинг (первые 2 недели)</h3>
+      <table>
+        <thead><tr><th>#</th><th>Задача</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>IG Business аккаунт BR (talent agency)</td></tr>
+          <tr><td>2</td><td>5 Reels на PT-BR (entertainment model positioning)</td></tr>
+          <tr><td>3</td><td>ManyChat: comment "QUERO" &rarr; auto-DM</td></tr>
+          <tr><td>4</td><td>Вступить в 10 FB групп BR</td></tr>
+          <tr><td>5</td><td>Meta Business Verification</td></tr>
+          <tr><td>6</td><td>WATI setup + шаблоны сообщений</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="callout green" style="margin-top: 24px; text-align: center; font-size: 18px;">
+    <strong>Цель месяца 2:</strong> 30-80 бронирований &rarr; замерить реальную конверсию &rarr; принять решение о масштабировании
+  </div>
+</section>
+
+</body>
+</html>

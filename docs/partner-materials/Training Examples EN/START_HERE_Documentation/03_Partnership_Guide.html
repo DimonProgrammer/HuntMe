@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partnership Guide — HUNTME Recruitment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #F43F5E;
+            --accent-dark: #E3000F;
+            --accent-gradient: linear-gradient(135deg, #F43F5E 0%, #E3000F 100%);
+            --bg: #F0F2F5;
+            --card: #FFFFFF;
+            --text-primary: #1E1E2D;
+            --text-secondary: #6B7280;
+            --text-light: #9CA3AF;
+            --border: #E5E7EB;
+            --success: #10B981;
+            --success-bg: #ECFDF5;
+            --success-border: #A7F3D0;
+            --danger: #EF4444;
+            --danger-bg: #FEF2F2;
+            --danger-border: #FECACA;
+            --sidebar-dark: #1A1A2E;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.05);
+            --radius: 12px;
+            --blue: #3B82F6;
+            --blue-bg: #EFF6FF;
+            --blue-border: #BFDBFE;
+            --amber: #F59E0B;
+            --amber-bg: #FFFBEB;
+            --amber-border: #FDE68A;
+            --green: #10B981;
+            --green-bg: #ECFDF5;
+            --green-border: #A7F3D0;
+            --purple: #8B5CF6;
+            --purple-bg: #F5F3FF;
+            --purple-border: #DDD6FE;
+            --indigo: #6366F1;
+            --indigo-bg: #EEF2FF;
+            --indigo-border: #C7D2FE;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .header { background: var(--sidebar-dark); position: relative; }
+        .header::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+            height: 4px; background: var(--accent-gradient);
+        }
+        .header-inner {
+            max-width: 960px; margin: 0 auto; padding: 32px 40px;
+            display: flex; align-items: center; gap: 32px;
+        }
+        .header-logo img { height: 44px; width: auto; display: block; object-fit: contain; }
+        .header-divider { width: 1px; height: 40px; background: rgba(255,255,255,0.15); }
+        .header-text h1 { font-size: 22px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; }
+        .header-text p { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+        .container { max-width: 960px; margin: 0 auto; padding: 32px 40px 60px; }
+
+        .script-section { margin-bottom: 48px; }
+        .script-title {
+            display: flex; align-items: center; gap: 16px;
+            margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid var(--border);
+        }
+        .script-title .badge {
+            background: var(--accent-gradient); color: #fff;
+            font-size: 11px; font-weight: 700; padding: 4px 12px;
+            border-radius: 6px; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .script-title h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; }
+
+        .card {
+            background: var(--card); border-radius: var(--radius);
+            box-shadow: var(--shadow-sm); padding: 28px 32px; margin-bottom: 24px;
+        }
+        .card h3 { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+        .card p { font-size: 14px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 12px; }
+        .card p:last-child { margin-bottom: 0; }
+        .card p strong { color: var(--text-primary); font-weight: 600; }
+        .card ul { list-style: none; margin-top: 12px; }
+        .card ul li {
+            font-size: 14px; color: var(--text-secondary);
+            padding: 6px 0 6px 24px; position: relative; line-height: 1.6;
+        }
+        .card ul li::before {
+            content: ''; position: absolute; left: 0; top: 14px;
+            width: 6px; height: 6px; background: var(--accent); border-radius: 50%;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+            border: 2px solid var(--accent); border-radius: var(--radius);
+            padding: 28px 32px; margin-bottom: 24px;
+        }
+        .highlight-box h3 {
+            font-size: 18px; font-weight: 800; color: var(--accent-dark);
+            margin-bottom: 12px;
+        }
+        .highlight-box p {
+            font-size: 14px; color: var(--accent-dark); line-height: 1.65;
+            margin-bottom: 8px;
+        }
+        .highlight-box p:last-child { margin-bottom: 0; }
+        .highlight-box p strong { font-weight: 700; }
+
+        .note {
+            background: var(--amber-bg); border: 1px solid var(--amber-border);
+            border-left: 4px solid var(--amber); border-radius: 0 var(--radius) var(--radius) 0;
+            padding: 16px 20px; margin-bottom: 16px;
+        }
+        .note-label {
+            font-size: 10px; font-weight: 700; color: var(--amber);
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;
+        }
+        .note p { font-size: 13px; color: #92400E; line-height: 1.6; }
+        .note p strong { font-weight: 600; }
+
+        .success-box {
+            background: var(--success-bg); border: 1px solid var(--success-border);
+            border-left: 4px solid var(--success); border-radius: 0 var(--radius) var(--radius) 0;
+            padding: 16px 20px; margin-bottom: 16px;
+        }
+        .success-label {
+            font-size: 10px; font-weight: 700; color: var(--success);
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;
+        }
+        .success-box p { font-size: 13px; color: #065F46; line-height: 1.6; }
+        .success-box p strong { font-weight: 600; }
+
+        /* REVENUE TABLES */
+        .revenue-table {
+            background: var(--card); border-radius: var(--radius);
+            box-shadow: var(--shadow-sm); overflow: hidden; margin-bottom: 24px;
+        }
+        .revenue-table table {
+            width: 100%; border-collapse: collapse;
+        }
+        .revenue-table th {
+            background: var(--accent-gradient); color: #fff;
+            font-size: 11px; font-weight: 700; text-transform: uppercase;
+            padding: 12px 16px; text-align: left; letter-spacing: 0.05em;
+        }
+        .revenue-table td {
+            padding: 14px 16px; font-size: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+        .revenue-table tr:last-child td { border-bottom: none; }
+        .revenue-table .num { font-weight: 600; color: var(--text-primary); }
+        .revenue-table .highlight { background: var(--green-bg); font-weight: 700; color: var(--green); }
+
+        /* JOB AD TEMPLATE */
+        .job-template {
+            background: var(--indigo-bg); border: 1px solid var(--indigo-border);
+            border-radius: var(--radius); padding: 20px 24px; margin-bottom: 16px;
+            font-family: 'Courier New', monospace;
+        }
+        .job-template h4 {
+            font-size: 14px; font-weight: 700; color: var(--indigo);
+            margin-bottom: 10px; font-family: 'Inter', sans-serif;
+        }
+        .job-template p {
+            font-size: 13px; line-height: 1.7; color: #4338CA;
+            margin-bottom: 8px;
+        }
+        .job-template p:last-child { margin-bottom: 0; }
+
+        .back-to-top {
+            text-align: center; margin-top: 40px; padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        .back-to-top a {
+            text-decoration: none; color: var(--text-secondary);
+            font-size: 13px; font-weight: 600;
+            display: inline-flex; align-items: center; gap: 6px;
+            transition: color 0.15s;
+        }
+        .back-to-top a:hover { color: var(--accent); }
+
+        @media print {
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #fff; }
+            .container { padding: 24px 10px 20px; }
+            .card, .highlight-box, .note, .success-box, .revenue-table, .job-template {
+                box-shadow: none; break-inside: avoid;
+            }
+        }
+        @page { margin: 15mm; size: A4; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-inner">
+            <div class="header-logo">
+                <svg viewBox="195 80 205 70" xmlns="http://www.w3.org/2000/svg" style="height: 54px; width: auto; display: block;">
+                    <style>.logo-red{fill:#E3000F;}.logo-white{fill:#FFFFFF;}</style>
+                    <g>
+                        <path class="logo-red" d="M367.85,86.09h26.29v8.72h-17.57v14.74h14.04v3.59c0,1.54-0.48,2.78-1.41,3.72c-0.94,0.94-2.19,1.41-3.73,1.41h-8.89v14.66h17.57v8.72h-26.29V86.09z"/>
+                        <path class="logo-white" d="M240.83,86.18v43.53c0,0.99,0.3,1.76,0.87,2.34c0.58,0.58,1.35,0.87,2.34,0.87h2.83c0.99,0,1.78-0.3,2.35-0.87c0.58-0.58,0.86-1.35,0.86-2.34V86.18h8.72v45.85c0,2.91-0.87,5.23-2.64,7c-1.75,1.75-4.08,2.62-7,2.62h-7.43c-2.92,0-5.25-0.87-7-2.62c-1.76-1.76-2.64-4.09-2.64-7V86.18H240.83z M263.94,141.65V86.09h3.92c1.54,0,2.92,0.44,4.14,1.32c1.22,0.87,2.07,2.06,2.55,3.56l8.3,27.07l-0.32-31.96h8.75v55.56h-3.92c-1.54,0-2.93-0.44-4.15-1.32c-1.22-0.87-2.06-2.06-2.53-3.56l-8.29-27.07l0.32,31.96H263.94z M293.69,86.17h27.37v8.72h-9.32v46.76h-8.72V94.89h-9.32V86.17z M200.99,86.09h8.72v23.46h8.87V86.09h8.72v55.56h-8.72v-23.38h-8.87v23.38h-8.72V86.09z"/>
+                        <path class="logo-red" d="M344.09,141.65h-3.01c-1.17-5.66-7.57-3.88-7.48-10.43c0.05-3.91,3.31-5.61,3.92-9.53c0.72-4.65-0.78-8.31-3.09-10.3c1.76,2.11,2.82,6.72,0.48,10.79c-1.63,2.83-4,3.68-5.12,8.4c-1.11,4.66,1.27,8.52,2.98,11.07h-8.42V86.09h9.07c1.54,0,2.86,0.46,3.92,1.38c1.07,0.93,1.71,2.16,1.93,3.7l4.82,34.53l4.82-34.53c0.22-1.54,0.86-2.78,1.93-3.7c1.07-0.91,2.38-1.38,3.92-1.38h9.07v55.56h-8.42c1.71-2.55,4.09-6.41,2.98-11.07c-1.12-4.72-3.49-5.57-5.12-8.4c-2.34-4.07-1.28-8.68,0.48-10.79c-2.31,1.99-3.81,5.65-3.09,10.3c0.61,3.92,3.87,5.62,3.92,9.53c0.09,6.55-6.31,4.77-7.48,10.43H344.09z"/>
+                    </g>
+                </svg>
+            </div>
+            <div class="header-divider"></div>
+            <div class="header-text">
+                <h1>Partnership Guide — For Call Center Directors</h1>
+                <p>Economics, Lead Generation, and Operations</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- PARTNERSHIP ECONOMICS -->
+        <div class="script-section">
+            <div class="script-title">
+                <span class="badge">Economics</span>
+                <h2>Partnership Revenue Model</h2>
+            </div>
+
+            <div class="highlight-box">
+                <h3>💰 Earning Potential</h3>
+                <p>You are paid per <strong>completed interview</strong> (candidate shows up and completes the interview process). Rates are <strong>fixed by region</strong> — and can increase based on campaign demand and partnership scale:</p>
+                <ul>
+                    <li><strong>Europe (East + West):</strong> $40 per interview</li>
+                    <li><strong>Latin America:</strong> $30 per interview</li>
+                    <li><strong>Asia:</strong> $20 per interview</li>
+                    <li><strong>Operators (all regions):</strong> $20 per interview</li>
+                </ul>
+                <p>Below are revenue projections based on experienced manager performance (150 calls/day, 16 bookings/day, 40% show-up rate = <strong>6-7 interviews/day</strong>).</p>
+            </div>
+
+            <div class="card">
+                <h3>📊 Revenue Per Manager (Experienced, 8-hour shift)</h3>
+            </div>
+
+            <div class="revenue-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Period</th>
+                            <th>Interviews</th>
+                            <th>Asia / Operators @$20</th>
+                            <th>LatAm @$30</th>
+                            <th>Europe @$40</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="num">Day</td>
+                            <td>6</td>
+                            <td>$120</td>
+                            <td class="highlight">$180</td>
+                            <td class="highlight">$240</td>
+                        </tr>
+                        <tr>
+                            <td class="num">Week (5 days)</td>
+                            <td>30</td>
+                            <td>$600</td>
+                            <td class="highlight">$900</td>
+                            <td class="highlight">$1,200</td>
+                        </tr>
+                        <tr>
+                            <td class="num">Month (22 days)</td>
+                            <td>132</td>
+                            <td>$2,640</td>
+                            <td class="highlight">$3,960</td>
+                            <td class="highlight">$5,280</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <h3>🚀 Revenue at Scale (Team Performance, monthly)</h3>
+            </div>
+
+            <div class="revenue-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Team Size</th>
+                            <th>Asia / Operators @$20</th>
+                            <th>LatAm @$30</th>
+                            <th>Europe @$40</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="num">5 Managers</td>
+                            <td>$13,200</td>
+                            <td class="highlight">$19,800</td>
+                            <td class="highlight">$26,400</td>
+                        </tr>
+                        <tr>
+                            <td class="num">10 Managers</td>
+                            <td>$26,400</td>
+                            <td class="highlight">$39,600</td>
+                            <td class="highlight">$52,800</td>
+                        </tr>
+                        <tr>
+                            <td class="num">30 Managers</td>
+                            <td>$79,200</td>
+                            <td class="highlight">$118,800</td>
+                            <td class="highlight">$158,400</td>
+                        </tr>
+                        <tr>
+                            <td class="num">50 Managers</td>
+                            <td>$132,000</td>
+                            <td class="highlight">$198,000</td>
+                            <td class="highlight">$264,000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="note">
+                <div class="note-label">Rate Flexibility</div>
+                <p>The regional rates above are <strong>base rates</strong>. They can increase based on current campaign demand and the scale of your partnership. Discuss your specific terms with your HUNT ME manager.</p>
+            </div>
+        </div>
+
+        <!-- HOW THIS PARTNERSHIP WORKS -->
+        <div class="script-section">
+            <div class="script-title">
+                <span class="badge">Model</span>
+                <h2>How This Partnership Works</h2>
+            </div>
+
+            <div class="card">
+                <h3>🤝 Partnership Structure</h3>
+                <p><strong>You generate traffic.</strong> You are responsible for sourcing candidate leads through job boards, social media ads, referrals, and other channels (detailed below).</p>
+                <p><strong>HUNTME provides the tools.</strong> HUNTME is a talent platform that provides call scripts, qualification criteria, and connects you with streaming agencies and studios looking for talent.</p>
+                <p><strong>You recruit and qualify.</strong> Your team uses our scripts to call candidates, qualify them against hard requirements, and book Zoom interviews.</p>
+                <p><strong>Agencies conduct interviews.</strong> HUNTME transfers qualified candidates to streaming agencies and studios (our clients). These agencies conduct interviews, select candidates, and handle onboarding.</p>
+                <p><strong>You get paid per completed interview.</strong> Payment is made for interviews where the candidate shows up and completes the interview process with the agency/studio.</p>
+            </div>
+
+            <div class="highlight-box">
+                <h3>⚡ What You Need to Start</h3>
+                <p><strong>Telephony:</strong> Your own phone system (VoIP, cloud dialer, or traditional). Call recording required for quality assurance.</p>
+                <p><strong>CRM:</strong> Your own candidate tracking system (Google Sheets, Airtable, or any CRM). We provide reporting templates.</p>
+                <p><strong>Team:</strong> Recruitment managers trained on our scripts (training time: 30 minutes using documents 01-02).</p>
+            </div>
+        </div>
+
+        <!-- LEAD GENERATION STRATEGY -->
+        <div class="script-section">
+            <div class="script-title">
+                <span class="badge">Traffic</span>
+                <h2>Lead Generation Strategy</h2>
+            </div>
+
+            <div class="card">
+                <h3>🎯 Recommended Traffic Sources</h3>
+                <p>We recommend a mix of <strong>job boards</strong> (primary), <strong>social media ads</strong> (secondary), and <strong>referrals</strong> (high conversion). Use generic job titles to maximize lead volume — qualify specifics during the call.</p>
+            </div>
+
+            <div class="card">
+                <h3>📋 Job Boards (Primary Source)</h3>
+                <p><strong>Strategy:</strong> Post generalized remote job ads. Avoid mentioning "HUNTME" or specific streaming platforms. Use broad titles like "Stream Manager," "Content Manager," "Chat Moderator."</p>
+                <p><strong>🇪🇺 Europe:</strong></p>
+                <ul>
+                    <li>Indeed Europe (indeed.co.uk, indeed.de, indeed.fr, indeed.es)</li>
+                    <li>StepStone (Germany, Belgium, Netherlands)</li>
+                    <li>Reed.co.uk, TotalJobs (UK)</li>
+                    <li>Jobrapido (pan-European)</li>
+                    <li>Local job boards (Work.ua for Ukraine, Rabota.ru for Russia, etc.)</li>
+                </ul>
+                <p><strong>🌎 Latin America:</strong></p>
+                <ul>
+                    <li>Bumeran (Argentina, Mexico, Chile, Peru)</li>
+                    <li>CompuTrabajo (Mexico, Colombia, Peru, Chile)</li>
+                    <li>Trabajando.com (regional)</li>
+                    <li>OLX (regional classifieds — Argentina, Colombia, etc.)</li>
+                </ul>
+                <p><strong>🇺🇸 USA / North America:</strong></p>
+                <ul>
+                    <li>Indeed (primary)</li>
+                    <li>LinkedIn</li>
+                    <li>Glassdoor</li>
+                    <li>ZipRecruiter</li>
+                    <li>Monster</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>📱 Facebook / Instagram Ads (Secondary Source)</h3>
+                <p><strong>Strategy:</strong> Run lead generation ads with generic messaging. Target demographics: women 18-25 (Models), tech-savvy 18+ (Operators). Use phrases like "Remote Work Opportunity," "Become a Stream Manager," "Work From Home."</p>
+                <p><strong>Creative Examples:</strong></p>
+                <ul>
+                    <li>"Earn $500+/month working remotely as a Content Manager. Flexible hours. Apply now."</li>
+                    <li>"Become a Stream Manager — no experience needed. Full training provided."</li>
+                    <li>"Remote Chat Moderator position. Work from home. $150+/week."</li>
+                </ul>
+                <p><strong>Landing Page:</strong> Simple form collecting Name, Age, Phone, Telegram/WhatsApp. Follow up with calls using our scripts.</p>
+            </div>
+
+            <div class="card">
+                <h3>🤝 Referrals (High Conversion)</h3>
+                <p><strong>Strategy:</strong> Ask every candidate at the end of the call: "Do you know anyone who might be interested in a similar opportunity?" If yes, get their contact info and note the referrer's name.</p>
+                <p><strong>Referral Script:</strong> "Hi [Name], [Referrer Name] recommended you for a remote position we're filling. Do you have 5 minutes to hear about it?"</p>
+                <p>Referrals convert 2-3x higher than cold traffic because of built-in social proof.</p>
+            </div>
+
+            <div class="note">
+                <div class="note-label">Important</div>
+                <p>Never mention "HUNTME" in job ads or social media. Use the talent agency brand name assigned to your campaign (see Call Scripts for brand details).</p>
+            </div>
+        </div>
+
+        <!-- JOB AD TEMPLATES -->
+        <div class="script-section">
+            <div class="script-title">
+                <span class="badge">Templates</span>
+                <h2>Job Ad Templates (Copy & Paste)</h2>
+            </div>
+
+            <div class="card">
+                <h3>📹 For Models Campaign</h3>
+                <p>Use generic, aspirational job titles. Avoid "model" or "webcam" — use "Stream Manager," "Content Manager," "Live Host."</p>
+            </div>
+
+            <div class="job-template">
+                <h4>Template 1: Stream Manager (Remote)</h4>
+                <p><strong>Position:</strong> Stream Manager — Remote, Flexible Schedule</p>
+                <p><strong>Earn:</strong> $500+/month starting, $300+ per stream with experience</p>
+                <p><strong>Requirements:</strong> Age 18-25, smartphone, private workspace, 6 hours/day availability</p>
+                <p><strong>What You'll Do:</strong> Host live broadcasts on international platforms — interactive conversations, music, entertainment shows. Full training provided.</p>
+                <p><strong>Apply:</strong> Send your name, age, and phone to [contact details]</p>
+            </div>
+
+            <div class="job-template">
+                <h4>Template 2: Content Manager (Live Streams)</h4>
+                <p><strong>Remote Content Manager — Live Streaming</strong></p>
+                <p>We're hiring content managers for live streaming platforms. No experience needed — we provide full training.</p>
+                <p><strong>Earn:</strong> $500-$1,500/month depending on hours</p>
+                <p><strong>Requirements:</strong> Age 18-25, smartphone (iPhone 11+ or recent Android), internet connection, flexible schedule</p>
+                <p><strong>Apply Now:</strong> [contact form or phone]</p>
+            </div>
+
+            <div class="job-template">
+                <h4>Template 3: Live Show Host (English Speaking)</h4>
+                <p><strong>Live Show Host — Work From Home</strong></p>
+                <p>International streaming agency seeks hosts for live entertainment broadcasts. Weekly pay, flexible hours.</p>
+                <p><strong>Requirements:</strong> English communication, smartphone, availability 6+ hours/day</p>
+                <p><strong>Start Earning:</strong> $500+ per month, $300+ per stream for experienced hosts</p>
+                <p><strong>Contact:</strong> [phone or Telegram/WhatsApp]</p>
+            </div>
+
+            <div class="card">
+                <h3>🎮 For Operators Campaign</h3>
+                <p>Use technical moderator terminology. Emphasize "behind-the-scenes" work, not on-camera.</p>
+            </div>
+
+            <div class="job-template">
+                <h4>Template 1: Live Stream Moderator (Remote)</h4>
+                <p><strong>Position:</strong> Live Stream Moderator — Remote Technical Role</p>
+                <p><strong>Earn:</strong> $150/week starting → $300+/week within 3 months</p>
+                <p><strong>Requirements:</strong> PC/laptop, Intel i3 10th gen+ or AMD Ryzen 3000+, 100 Mbps internet</p>
+                <p><strong>What You'll Do:</strong> Operate streaming software (OBS), moderate chat, manage technical setup. No on-camera work. Full training provided.</p>
+                <p><strong>Apply:</strong> Send your name, age, and PC specs to [contact details]</p>
+            </div>
+
+            <div class="job-template">
+                <h4>Template 2: Chat Moderator (Streaming Platform)</h4>
+                <p><strong>Chat Moderator — Remote, Part-Time or Full-Time</strong></p>
+                <p>We're hiring chat moderators for international streaming platforms. Technical role — no camera required.</p>
+                <p><strong>Earn:</strong> $150-$300/week</p>
+                <p><strong>Requirements:</strong> PC, stable internet (100 Mbps), basic English, technical aptitude</p>
+                <p><strong>Apply Now:</strong> [contact form or phone]</p>
+            </div>
+
+            <div class="job-template">
+                <h4>Template 3: Technical Moderator (Streaming)</h4>
+                <p><strong>Technical Moderator — Live Streaming Platforms</strong></p>
+                <p>Behind-the-scenes technical role. Operate streaming software, moderate chat, optimize stream quality.</p>
+                <p><strong>Requirements:</strong> PC with dedicated GPU (GTX 1060 6GB+ or AMD 2019+), 100 Mbps internet, age 18+</p>
+                <p><strong>Start Earning:</strong> $600+/month</p>
+                <p><strong>Contact:</strong> [phone or Telegram/WhatsApp]</p>
+            </div>
+
+            <div class="note">
+                <div class="note-label">Customization</div>
+                <p>Adjust salary figures based on local market rates. Replace [contact details] with your phone, Telegram, or WhatsApp. Test multiple variants to see which job titles generate the most responses.</p>
+            </div>
+        </div>
+
+        <!-- PERFORMANCE BENCHMARKS -->
+        <div class="script-section">
+            <div class="script-title">
+                <span class="badge">KPIs</span>
+                <h2>Performance Benchmarks & KPIs</h2>
+            </div>
+
+            <div class="card">
+                <h3>📊 Manager Performance Targets (Experienced, 8-hour shift)</h3>
+                <ul>
+                    <li><strong>Calls per day:</strong> 150</li>
+                    <li><strong>Interviews booked per day:</strong> 16 (8 Models + 8 Operators, or 16 of one campaign)</li>
+                    <li><strong>Booking rate:</strong> ~10-11% (16 bookings / 150 calls)</li>
+                    <li><strong>Show-up rate:</strong> 40%+ (target: 60% with proper follow-up)</li>
+                    <li><strong>Completed interviews per day:</strong> 6-7 (with 40% show-up rate)</li>
+                    <li><strong>Qualification accuracy:</strong> 90%+ (don't book unqualified candidates)</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>🎯 Traffic-Specific Conversion Rates</h3>
+                <ul>
+                    <li><strong>Warm Traffic (job ad responses):</strong> 15-25% booking rate</li>
+                    <li><strong>Cold Traffic (outbound database calls):</strong> 5-10% booking rate</li>
+                    <li><strong>Referral Traffic:</strong> 25-40% booking rate</li>
+                </ul>
+                <p>Mix traffic sources to optimize for volume and conversion. Warm + Referral = higher efficiency.</p>
+            </div>
+
+            <div class="success-box">
+                <div class="success-label">Show-Up Rate Optimization</div>
+                <p>Send the interview confirmation message <strong>within 5 minutes</strong> of booking via Telegram or WhatsApp. This single action reduces no-shows by 30-40% and increases show-up rate from 40% to 60%+.</p>
+            </div>
+
+            <div class="card">
+                <h3>📈 New Manager Ramp-Up Timeline</h3>
+                <ul>
+                    <li><strong>Week 1:</strong> 50-80 calls/day, 3-5 bookings/day (learning scripts, slow pace)</li>
+                    <li><strong>Week 2-3:</strong> 100-120 calls/day, 8-10 bookings/day (building confidence)</li>
+                    <li><strong>Week 4+:</strong> 150 calls/day, 15+ bookings/day (experienced performance)</li>
+                </ul>
+                <p>Training time: 30 minutes (read Campaign Brief + Quick Start Guide). First 3 calls should be supervised.</p>
+            </div>
+        </div>
+
+        <!-- TECHNICAL REQUIREMENTS -->
+        <div class="script-section">
+            <div class="script-title">
+                <span class="badge">Tech</span>
+                <h2>Technical & Operational Requirements</h2>
+            </div>
+
+            <div class="card">
+                <h3>☎️ Telephony</h3>
+                <p><strong>You provide:</strong> Your own phone system (VoIP, cloud dialer like Aircall/RingCentral, or traditional telephony).</p>
+                <p><strong>Call recording:</strong> Required for quality assurance and training purposes.</p>
+                <p><strong>Dialing capacity:</strong> 150+ calls/day per manager (approximately 1 call every 3 minutes during 8-hour shift).</p>
+            </div>
+
+            <div class="card">
+                <h3>💻 CRM & Tracking</h3>
+                <p><strong>You provide:</strong> Your own candidate tracking system (can be as simple as Google Sheets or Airtable, or a full CRM like HubSpot).</p>
+                <p><strong>We provide:</strong> Weekly reporting template (track: calls made, bookings, show-ups, campaign type).</p>
+                <p><strong>Minimum fields:</strong> Candidate Name, Phone, Campaign (Models/Operators), Booking Date, Show-Up Status, Qualification Notes.</p>
+            </div>
+
+            <div class="card">
+                <h3>📊 Reporting</h3>
+                <p><strong>Frequency:</strong> Weekly reports submitted to HUNTME.</p>
+                <p><strong>Required metrics:</strong> Total calls, interviews booked, interviews completed (show-ups), booking rate, show-up rate.</p>
+                <p><strong>Format:</strong> CSV or Google Sheets (template provided upon partnership agreement).</p>
+            </div>
+        </div>
+
+        <!-- LEGAL & COMPLIANCE -->
+        <div class="script-section">
+            <div class="script-title">
+                <span class="badge">Legal</span>
+                <h2>Legal & Compliance</h2>
+            </div>
+
+            <div class="card">
+                <h3>🔒 Data Privacy (GDPR Compliance)</h3>
+                <p><strong>Call recording consent:</strong> Inform candidates at the beginning of the call that the conversation is being recorded for quality assurance and training purposes.</p>
+                <p><strong>Data handling:</strong> Candidate personal data (name, phone, age, location) must not be shared with third parties outside of HUNTME.</p>
+                <p><strong>Data retention:</strong> Retain candidate data only as long as necessary for recruitment purposes. Delete data upon request.</p>
+            </div>
+
+            <div class="card">
+                <h3>⚖️ Recruitment Compliance</h3>
+                <p><strong>Age verification:</strong> Never recruit candidates under 18 for Models campaign. Operators can be 18+.</p>
+                <p><strong>No misleading claims:</strong> Do not promise guaranteed income, guaranteed placement, or make false claims about the role.</p>
+                <p><strong>Respectful communication:</strong> Follow the "Rule of One" — if a candidate says "not interested" twice, end the call politely.</p>
+            </div>
+
+            <div class="note">
+                <div class="note-label">Important</div>
+                <p>Never improvise policy or make promises outside of the provided scripts. If a candidate asks about payment methods, tax documentation, legal contracts, or other edge cases, escalate to HUNTME support.</p>
+            </div>
+        </div>
+
+        <!-- SUPPORT CONTACTS -->
+        <div class="script-section">
+            <div class="script-title">
+                <span class="badge">Support</span>
+                <h2>Support Contacts</h2>
+            </div>
+
+            <div class="card">
+                <h3>📞 Contact HUNTME</h3>
+                <p>For partnership inquiries, technical support, escalations, or operational questions:</p>
+                <ul>
+                    <li><strong>Email:</strong> <a href="mailto:contact@huntme.partners">contact@huntme.partners</a></li>
+                    <li><strong>WhatsApp:</strong> <a href="https://wa.me/447999158524" target="_blank">https://wa.me/447999158524</a></li>
+                </ul>
+                <p><strong>Response time:</strong> Within 24 hours for operational inquiries, within 1 hour for urgent escalations during business hours.</p>
+            </div>
+
+            <div class="highlight-box">
+                <h3>🚀 Next Steps</h3>
+                <p>1. Review documents <strong>01_Campaign_Brief.html</strong> and <strong>02_Quick_Start_Guide.html</strong> to understand the recruitment process.</p>
+                <p>2. Train your team using the Call Scripts (Models: 04, Operators: 08) and Objection Handling Guides (Models: 06, Operators: 10).</p>
+                <p>3. Set up your lead generation campaigns using the job ad templates and traffic sources outlined above.</p>
+                <p>4. Contact HUNTME to finalize partnership terms and receive reporting templates.</p>
+            </div>
+        </div>
+
+        <div class="back-to-top">
+            <a href="00_START_HERE.html">&larr; Back to START HERE</a>
+        </div>
+
+    </div>
+
+</body>
+</html>

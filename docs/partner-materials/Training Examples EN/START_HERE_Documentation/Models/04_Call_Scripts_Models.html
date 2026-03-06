@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call Scripts — Streaming Model Position — HUNTME</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #F43F5E;
+            --accent-dark: #E3000F;
+            --accent-gradient: linear-gradient(135deg, #F43F5E 0%, #E3000F 100%);
+            --bg: #F0F2F5;
+            --card: #FFFFFF;
+            --text-primary: #1E1E2D;
+            --text-secondary: #6B7280;
+            --text-light: #9CA3AF;
+            --border: #E5E7EB;
+            --success: #10B981;
+            --success-bg: #ECFDF5;
+            --success-border: #A7F3D0;
+            --danger: #EF4444;
+            --danger-bg: #FEF2F2;
+            --danger-border: #FECACA;
+            --sidebar-dark: #1A1A2E;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.05);
+            --radius: 12px;
+            --blue: #3B82F6;
+            --blue-bg: #EFF6FF;
+            --blue-border: #BFDBFE;
+            --amber: #F59E0B;
+            --amber-bg: #FFFBEB;
+            --amber-border: #FDE68A;
+            --green: #10B981;
+            --green-bg: #ECFDF5;
+            --green-border: #A7F3D0;
+            --purple: #8B5CF6;
+            --purple-bg: #F5F3FF;
+            --purple-border: #DDD6FE;
+            --indigo: #6366F1;
+            --indigo-bg: #EEF2FF;
+            --indigo-border: #C7D2FE;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ========== HEADER ========== */
+        .header { background: var(--sidebar-dark); position: relative; }
+        .header::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+            height: 4px; background: var(--accent-gradient);
+        }
+        .header-inner {
+            max-width: 960px; margin: 0 auto; padding: 32px 40px;
+            display: flex; align-items: center; gap: 32px;
+        }
+        .header-logo img { height: 44px; width: auto; display: block; object-fit: contain; }
+        .header-divider { width: 1px; height: 40px; background: rgba(255,255,255,0.15); }
+        .header-text h1 { font-size: 22px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; }
+        .header-text p { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+        /* ========== CONTAINER ========== */
+        .container { max-width: 960px; margin: 0 auto; padding: 32px 40px 60px; }
+
+        /* ========== TOC ========== */
+        .toc {
+            background: var(--card); border-radius: var(--radius);
+            box-shadow: var(--shadow-md); padding: 32px; margin-bottom: 32px;
+            position: relative; overflow: hidden;
+        }
+        .toc::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent-gradient); }
+        .toc h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+        .toc-list { list-style: none; }
+        .toc-list li { padding: 8px 16px; border-radius: 8px; margin-bottom: 2px; transition: background 0.15s; }
+        .toc-list li:hover { background: var(--bg); }
+        .toc-list li a {
+            text-decoration: none; color: var(--text-primary); font-size: 14px; font-weight: 500;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .toc-num {
+            width: 28px; height: 28px; background: var(--accent-gradient); border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0;
+        }
+        .toc-list .toc-sub { padding-left: 56px; }
+        .toc-list .toc-sub a { font-size: 13px; color: var(--text-secondary); font-weight: 400; }
+
+        /* ========== SECTION TITLE ========== */
+        .script-section { margin-bottom: 48px; }
+        .script-title {
+            display: flex; align-items: center; gap: 16px;
+            margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid var(--border);
+        }
+        .script-title .badge {
+            background: var(--accent-gradient); color: #fff;
+            font-size: 11px; font-weight: 700; padding: 4px 12px;
+            border-radius: 6px; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap;
+        }
+        .script-title h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; }
+
+        /* ========== PHASE INDICATOR ========== */
+        .phase {
+            display: flex; align-items: center; gap: 14px;
+            margin: 32px 0 20px; padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .phase:first-child { margin-top: 0; }
+        .phase-num {
+            width: 40px; height: 40px; background: var(--accent-gradient); border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; font-weight: 800; color: #fff; flex-shrink: 0;
+        }
+        .phase-info h3 { font-size: 17px; font-weight: 700; }
+        .phase-info p { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
+
+        /* ========== VARIANT BADGE ========== */
+        .variant {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 10px; font-weight: 700; padding: 3px 10px;
+            border-radius: 5px; text-transform: uppercase; letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+        .variant-warm { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+        .variant-cold { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); }
+        .variant-referral { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); }
+        .variant-all { background: var(--bg); color: var(--text-secondary); border: 1px solid var(--border); }
+
+        /* ========== SPEECH BUBBLE (SAY) ========== */
+        .speech {
+            background: var(--blue-bg); border: 1px solid var(--blue-border);
+            border-radius: var(--radius); padding: 20px 24px;
+            margin-bottom: 16px; position: relative;
+        }
+        .speech::before {
+            content: 'SAY'; position: absolute; top: -10px; left: 16px;
+            background: var(--blue); color: #fff;
+            font-size: 10px; font-weight: 700; padding: 2px 10px;
+            border-radius: 4px; letter-spacing: 0.05em;
+        }
+        .speech p { font-size: 14px; color: var(--text-primary); line-height: 1.7; }
+        .speech p strong { font-weight: 600; }
+        .speech ul { list-style: none; margin-top: 6px; }
+        .speech ul li { font-size: 14px; padding: 3px 0 3px 18px; position: relative; }
+        .speech ul li::before {
+            content: ''; position: absolute; left: 0; top: 11px;
+            width: 5px; height: 5px; background: var(--blue); border-radius: 50%;
+        }
+
+        /* ========== REBUTTAL (green response to objection) ========== */
+        .rebuttal {
+            background: var(--green-bg); border: 1px solid var(--green-border);
+            border-radius: var(--radius); padding: 20px 24px;
+            margin-bottom: 12px; position: relative;
+        }
+        .rebuttal::before {
+            content: 'REBUTTAL'; position: absolute; top: -10px; left: 16px;
+            background: var(--green); color: #fff;
+            font-size: 10px; font-weight: 700; padding: 2px 10px;
+            border-radius: 4px; letter-spacing: 0.05em;
+        }
+        .rebuttal p { font-size: 14px; color: var(--text-primary); line-height: 1.7; }
+        .rebuttal p strong { font-weight: 600; }
+        .rebuttal .rebuttal-label {
+            font-size: 11px; font-weight: 700; color: var(--green);
+            text-transform: uppercase; margin-bottom: 4px;
+        }
+
+        /* ========== INTERNAL NOTE ========== */
+        .note {
+            background: var(--amber-bg); border: 1px solid var(--amber-border);
+            border-left: 4px solid var(--amber);
+            border-radius: 0 var(--radius) var(--radius) 0;
+            padding: 16px 20px; margin-bottom: 16px;
+        }
+        .note-label {
+            font-size: 10px; font-weight: 700; color: var(--amber);
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;
+        }
+        .note p { font-size: 13px; color: #92400E; line-height: 1.6; }
+        .note p strong { font-weight: 600; }
+
+        /* ========== STOP CARD (disqualification) ========== */
+        .stop {
+            background: var(--danger-bg); border: 1px solid var(--danger-border);
+            border-left: 4px solid var(--danger);
+            border-radius: 0 var(--radius) var(--radius) 0;
+            padding: 16px 20px; margin-bottom: 16px;
+        }
+        .stop-label {
+            font-size: 10px; font-weight: 700; color: var(--danger);
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;
+        }
+        .stop p { font-size: 13px; color: #991B1B; line-height: 1.6; }
+
+        /* ========== CARD ========== */
+        .card {
+            background: var(--card); border-radius: var(--radius);
+            box-shadow: var(--shadow-sm); padding: 28px 32px; margin-bottom: 16px;
+            transition: box-shadow 0.2s;
+        }
+        .card:hover { box-shadow: var(--shadow-md); }
+        .card h3 { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+        .card p { font-size: 14px; color: var(--text-secondary); line-height: 1.65; }
+        .card p strong { color: var(--text-primary); font-weight: 600; }
+        .card ul { list-style: none; margin-top: 8px; }
+        .card ul li { font-size: 14px; color: var(--text-secondary); padding: 4px 0 4px 20px; position: relative; }
+        .card ul li::before {
+            content: ''; position: absolute; left: 0; top: 12px;
+            width: 6px; height: 6px; background: var(--accent); border-radius: 50%;
+        }
+
+        /* ========== BRAND NOTICE ========== */
+        .brand-notice {
+            background: linear-gradient(135deg, #1A1A2E 0%, #2D2D44 100%);
+            border-radius: var(--radius); padding: 32px; margin-bottom: 32px;
+            border: 2px solid rgba(99, 102, 241, 0.3);
+        }
+        .brand-notice h2 { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+        .brand-notice h2 .icon { font-size: 20px; }
+        .brand-notice p { font-size: 14px; color: rgba(255,255,255,0.75); line-height: 1.7; margin-bottom: 10px; }
+        .brand-notice p strong { color: #fff; font-weight: 600; }
+        .brand-notice .rule {
+            background: rgba(255,255,255,0.06); border-radius: 8px;
+            padding: 12px 16px; margin-bottom: 8px;
+            font-size: 13px; color: rgba(255,255,255,0.8);
+            display: flex; align-items: flex-start; gap: 10px;
+        }
+        .brand-notice .rule .bullet {
+            width: 6px; height: 6px; background: var(--indigo); border-radius: 50%;
+            flex-shrink: 0; margin-top: 7px;
+        }
+        .brand-notice .highlight { color: var(--accent); font-weight: 600; }
+
+        /* ========== DARK BOX ========== */
+        .dark-box {
+            background: linear-gradient(135deg, #1A1A2E 0%, #2D2D44 100%);
+            border-radius: var(--radius); padding: 28px 32px; margin-bottom: 16px;
+        }
+        .dark-box h3 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 12px; }
+        .dark-box p { font-size: 14px; color: rgba(255,255,255,0.75); line-height: 1.7; }
+        .dark-box p strong { color: #fff; font-weight: 600; }
+        .dark-box .accent-text { color: var(--accent); font-weight: 600; }
+        .dark-box ul { list-style: none; margin-top: 8px; }
+        .dark-box ul li { font-size: 14px; color: rgba(255,255,255,0.75); padding: 4px 0 4px 20px; position: relative; }
+        .dark-box ul li::before {
+            content: ''; position: absolute; left: 0; top: 12px;
+            width: 6px; height: 6px; background: var(--accent); border-radius: 50%;
+        }
+
+        /* ========== CHECKLIST ========== */
+        .checklist-item {
+            background: var(--card); border-radius: var(--radius);
+            box-shadow: var(--shadow-sm); padding: 16px 20px; margin-bottom: 8px;
+            display: flex; gap: 14px; align-items: flex-start;
+        }
+        .checklist-item .q-num {
+            width: 28px; height: 28px; background: var(--bg); border: 2px solid var(--border);
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 700; color: var(--text-secondary); flex-shrink: 0;
+        }
+        .checklist-item .q-body { flex: 1; }
+        .checklist-item .q-body p { font-size: 14px; color: var(--text-primary); line-height: 1.6; }
+        .checklist-item .q-body p.hint { font-size: 13px; color: var(--text-secondary); font-style: italic; margin-top: 4px; }
+
+        /* ========== HIGHLIGHT BOX ========== */
+        .highlight-box {
+            background: var(--card); border-radius: var(--radius);
+            box-shadow: var(--shadow-md); padding: 28px 32px; margin-bottom: 16px;
+            border-left: 4px solid var(--accent);
+        }
+        .highlight-box h3 { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+        .highlight-box p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-top: 8px; }
+        .highlight-box p strong { color: var(--text-primary); }
+        .highlight-box ul { list-style: none; margin-top: 8px; }
+        .highlight-box ul li { font-size: 14px; color: var(--text-secondary); padding: 4px 0 4px 20px; position: relative; }
+        .highlight-box ul li::before {
+            content: ''; position: absolute; left: 0; top: 12px;
+            width: 6px; height: 6px; background: var(--accent); border-radius: 50%;
+        }
+
+        /* ========== INVITE CARD ========== */
+        .invite-card {
+            background: var(--card); border-radius: var(--radius);
+            box-shadow: var(--shadow-md); padding: 32px; margin-bottom: 16px;
+            border: 2px solid var(--accent); position: relative; overflow: hidden;
+        }
+        .invite-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--accent-gradient); }
+        .invite-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+        .invite-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 8px; }
+        .invite-card p strong { color: var(--text-primary); }
+        .invite-card .detail-row {
+            display: flex; gap: 8px; align-items: center;
+            background: var(--bg); border-radius: 8px;
+            padding: 10px 16px; margin-bottom: 8px; font-size: 14px; font-weight: 500;
+        }
+        .invite-card .detail-row .label { color: var(--text-secondary); }
+        .invite-card .detail-row .value { color: var(--text-primary); font-weight: 600; }
+
+        /* ========== FAQ ========== */
+        .faq-item {
+            background: var(--card); border-radius: var(--radius);
+            box-shadow: var(--shadow-sm); margin-bottom: 12px; overflow: hidden;
+        }
+        .faq-q {
+            padding: 16px 24px; font-size: 14px; font-weight: 600;
+            color: var(--accent-dark); background: var(--danger-bg);
+            border-bottom: 1px solid var(--danger-border);
+        }
+        .faq-a { padding: 16px 24px; font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+        .faq-a ul { list-style: none; margin-top: 6px; }
+        .faq-a ul li { padding: 3px 0 3px 18px; position: relative; }
+        .faq-a ul li::before {
+            content: ''; position: absolute; left: 0; top: 11px;
+            width: 5px; height: 5px; background: var(--accent); border-radius: 50%;
+        }
+
+        /* ========== MESSAGE BLOCK (for post-call templates) ========== */
+        .message {
+            background: var(--purple-bg); border: 1px solid var(--purple-border);
+            border-radius: var(--radius); padding: 20px 24px;
+            margin-bottom: 16px; position: relative;
+        }
+        .message::before {
+            content: 'TEMPLATE'; position: absolute; top: -10px; left: 16px;
+            background: var(--purple); color: #fff;
+            font-size: 10px; font-weight: 700; padding: 2px 10px;
+            border-radius: 4px; letter-spacing: 0.05em;
+        }
+        .message p { font-size: 14px; color: var(--text-primary); line-height: 1.7; }
+        .message p strong { font-weight: 600; }
+
+        /* ========== FLOW OVERVIEW ========== */
+        .flow-steps {
+            display: flex; flex-wrap: wrap; gap: 8px;
+            margin-bottom: 24px;
+        }
+        .flow-step {
+            flex: 1; min-width: 120px;
+            background: var(--card); border-radius: 10px;
+            padding: 14px 16px; text-align: center;
+            box-shadow: var(--shadow-sm); position: relative;
+        }
+        .flow-step .fs-num {
+            width: 24px; height: 24px; background: var(--accent-gradient);
+            border-radius: 6px; display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 700; color: #fff;
+            margin: 0 auto 8px;
+        }
+        .flow-step .fs-label { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+        .flow-step .fs-time { font-size: 10px; color: var(--text-light); margin-top: 2px; }
+
+        /* ========== SECTION DIVIDER ========== */
+        .section-divider { height: 2px; background: var(--accent-gradient); border-radius: 2px; margin: 48px 0 40px; opacity: 0.4; }
+
+        /* ========== SUB-HEADING ========== */
+        .sub-heading {
+            font-size: 15px; font-weight: 700; color: var(--text-primary);
+            margin: 24px 0 12px; padding-left: 14px;
+            border-left: 3px solid var(--accent);
+        }
+
+        /* ========== NAV LINK (inline go-to) ========== */
+        .nav-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            text-decoration: none; font-size: 13px; font-weight: 600;
+            color: var(--accent-dark); background: var(--danger-bg);
+            border: 1px solid var(--danger-border); border-radius: 6px;
+            padding: 4px 12px; transition: background 0.15s;
+        }
+        .nav-link:hover { background: #fde8e8; }
+        .nav-link .arrow { font-size: 14px; }
+
+        /* ========== BACK TO TOP ========== */
+        .back-to-top {
+            display: flex; justify-content: center; margin: 16px 0 0;
+        }
+        .back-to-top a {
+            text-decoration: none; font-size: 12px; font-weight: 600;
+            color: var(--text-secondary); background: var(--bg);
+            border: 1px solid var(--border); border-radius: 6px;
+            padding: 6px 16px; transition: all 0.15s;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .back-to-top a:hover { color: var(--accent-dark); border-color: var(--accent); background: var(--danger-bg); }
+
+        /* ========== PHASE NAV (prev / next) ========== */
+        .phase-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            margin: 24px 0 8px; padding: 12px 0; border-top: 1px dashed var(--border);
+        }
+        .phase-nav a {
+            text-decoration: none; font-size: 13px; font-weight: 600;
+            color: var(--accent-dark); display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 14px; border-radius: 8px; background: var(--danger-bg);
+            border: 1px solid var(--danger-border); transition: background 0.15s;
+        }
+        .phase-nav a:hover { background: #fde8e8; }
+        .phase-nav .spacer { flex: 1; }
+
+        /* ========== QUICK NAV PANEL ========== */
+        .quick-nav {
+            background: linear-gradient(135deg, #1A1A2E 0%, #2D2D44 100%);
+            border-radius: var(--radius); padding: 24px 28px; margin-bottom: 32px;
+            border: 2px solid rgba(244, 63, 94, 0.3);
+        }
+        .quick-nav h2 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 14px; }
+        .quick-nav-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+        }
+        .quick-nav-grid a {
+            text-decoration: none; font-size: 13px; font-weight: 600;
+            color: #fff; background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12); border-radius: 8px;
+            padding: 10px 14px; transition: all 0.15s;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .quick-nav-grid a:hover { background: rgba(244, 63, 94, 0.2); border-color: rgba(244, 63, 94, 0.4); }
+        .quick-nav-grid .qn-icon {
+            width: 24px; height: 24px; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 800; flex-shrink: 0;
+        }
+        .qn-phase { background: var(--accent-gradient); }
+        .qn-obj { background: linear-gradient(135deg, var(--amber) 0%, #D97706 100%); }
+        .qn-disq { background: linear-gradient(135deg, var(--danger) 0%, #DC2626 100%); }
+        .qn-post { background: linear-gradient(135deg, var(--purple) 0%, #7C3AED 100%); }
+
+        /* ========== CLICKABLE FLOW STEP ========== */
+        a.flow-step {
+            text-decoration: none; color: inherit; cursor: pointer;
+            transition: box-shadow 0.15s, border-color 0.15s;
+            border: 2px solid transparent;
+        }
+        a.flow-step:hover { box-shadow: var(--shadow-md); border-color: var(--accent); }
+
+        /* ========== FOOTER ========== */
+        .footer { text-align: center; padding: 24px 40px; font-size: 12px; color: var(--text-light); }
+
+        /* ========== PRINT ========== */
+        @media print {
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #fff; margin: 12mm; }
+            .container { padding: 24px 10px 20px; }
+            .card, .checklist-item, .faq-item, .highlight-box, .dark-box, .invite-card, .speech, .note, .stop, .rebuttal, .message, .toc, .brand-notice {
+                box-shadow: none; break-inside: avoid;
+            }
+            .card:hover { box-shadow: none; }
+            .header-inner { padding: 20px 30px; }
+            .nav-link { border: 1px solid #E5E7EB; }
+            .nav-link:hover { background: inherit; }
+            .phase-nav a { border: 1px solid #E5E7EB; }
+            .phase-nav a:hover { background: inherit; }
+            .back-to-top a { border: 1px solid #E5E7EB; }
+            .back-to-top a:hover { background: inherit; border-color: #E5E7EB; color: inherit; }
+            .quick-nav { break-inside: avoid; }
+            .quick-nav-grid a { border: 1px solid rgba(255,255,255,0.2); }
+            .quick-nav-grid a:hover { background: inherit; border-color: inherit; }
+            a.flow-step { border: 1px solid #E5E7EB; }
+            a.flow-step:hover { box-shadow: none; border-color: #E5E7EB; }
+        }
+        @page { margin: 0; size: A4; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-inner">
+            <div class="header-logo">
+                <svg viewBox="195 80 205 70" xmlns="http://www.w3.org/2000/svg" style="height: 54px; width: auto; display: block;">
+                    <style>.logo-red{fill:#E3000F;}.logo-white{fill:#FFFFFF;}</style>
+                    <g>
+                        <path class="logo-red" d="M367.85,86.09h26.29v8.72h-17.57v14.74h14.04v3.59c0,1.54-0.48,2.78-1.41,3.72c-0.94,0.94-2.19,1.41-3.73,1.41h-8.89v14.66h17.57v8.72h-26.29V86.09z"/>
+                        <path class="logo-white" d="M240.83,86.18v43.53c0,0.99,0.3,1.76,0.87,2.34c0.58,0.58,1.35,0.87,2.34,0.87h2.83c0.99,0,1.78-0.3,2.35-0.87c0.58-0.58,0.86-1.35,0.86-2.34V86.18h8.72v45.85c0,2.91-0.87,5.23-2.64,7c-1.75,1.75-4.08,2.62-7,2.62h-7.43c-2.92,0-5.25-0.87-7-2.62c-1.76-1.76-2.64-4.09-2.64-7V86.18H240.83z M263.94,141.65V86.09h3.92c1.54,0,2.92,0.44,4.14,1.32c1.22,0.87,2.07,2.06,2.55,3.56l8.3,27.07l-0.32-31.96h8.75v55.56h-3.92c-1.54,0-2.93-0.44-4.15-1.32c-1.22-0.87-2.06-2.06-2.53-3.56l-8.29-27.07l0.32,31.96H263.94z M293.69,86.17h27.37v8.72h-9.32v46.76h-8.72V94.89h-9.32V86.17z M200.99,86.09h8.72v23.46h8.87V86.09h8.72v55.56h-8.72v-23.38h-8.87v23.38h-8.72V86.09z"/>
+                        <path class="logo-red" d="M344.09,141.65h-3.01c-1.17-5.66-7.57-3.88-7.48-10.43c0.05-3.91,3.31-5.61,3.92-9.53c0.72-4.65-0.78-8.31-3.09-10.3c1.76,2.11,2.82,6.72,0.48,10.79c-1.63,2.83-4,3.68-5.12,8.4c-1.11,4.66,1.27,8.52,2.98,11.07h-8.42V86.09h9.07c1.54,0,2.86,0.46,3.92,1.38c1.07,0.93,1.71,2.16,1.93,3.7l4.82,34.53l4.82-34.53c0.22-1.54,0.86-2.78,1.93-3.7c1.07-0.91,2.38-1.38,3.92-1.38h9.07v55.56h-8.42c1.71-2.55,4.09-6.41,2.98-11.07c-1.12-4.72-3.49-5.57-5.12-8.4c-2.34-4.07-1.28-8.68,0.48-10.79c-2.31,1.99-3.81,5.65-3.09,10.3c0.61,3.92,3.87,5.62,3.92,9.53c0.09,6.55-6.31,4.77-7.48,10.43H344.09z"/>
+                    </g>
+                </svg>
+            </div>
+            <div class="header-divider"></div>
+            <div class="header-text">
+                <h1>Call Scripts &mdash; Streaming Model Position</h1>
+                <p>Internal Guide for Recruitment Team</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- ============================================================ -->
+        <!-- TABLE OF CONTENTS -->
+        <!-- ============================================================ -->
+        <div class="toc">
+            <h2>Document Structure</h2>
+            <ul class="toc-list">
+                <li><a href="#brand"><span class="toc-num">0</span> Brand &amp; Representation Guidelines</a></li>
+                <li><a href="#flow"><span class="toc-num">1</span> Call Flow Overview</a></li>
+                <li><a href="#phase1"><span class="toc-num">2</span> Phase 1 &mdash; Opening</a></li>
+                <li class="toc-sub"><a href="#open-warm">Warm Traffic</a></li>
+                <li class="toc-sub"><a href="#open-cold">Cold Traffic</a></li>
+                <li class="toc-sub"><a href="#open-referral">Referral</a></li>
+                <li><a href="#phase2"><span class="toc-num">3</span> Phase 2 &mdash; Mini-Pitch</a></li>
+                <li><a href="#phase3"><span class="toc-num">4</span> Phase 3 &mdash; Qualification</a></li>
+                <li><a href="#phase4"><span class="toc-num">5</span> Phase 4 &mdash; Value Expansion</a></li>
+                <li><a href="#phase5"><span class="toc-num">6</span> Phase 5 &mdash; Closing &amp; Interview Booking</a></li>
+                <li><a href="#situational"><span class="toc-num">7</span> Situational Scripts</a></li>
+                <li class="toc-sub"><a href="#voicemail">Voicemail</a></li>
+                <li class="toc-sub"><a href="#callback">Callback (2nd &amp; 3rd attempt)</a></li>
+                <li class="toc-sub"><a href="#reengage">Re-engagement</a></li>
+                <li><a href="#objections"><span class="toc-num">8</span> Objection Handling</a></li>
+                <li><a href="#disqualification"><span class="toc-num">9</span> Disqualification (Soft Rejection)</a></li>
+                <li><a href="#postcall"><span class="toc-num">10</span> Post-Call Templates</a></li>
+                <li><a href="#invite"><span class="toc-num">11</span> Interview Invitation Template</a></li>
+            </ul>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- QUICK NAVIGATION (mid-call fast access) -->
+        <!-- ============================================================ -->
+        <div class="quick-nav" id="quicknav">
+            <h2>Quick Navigation &mdash; Mid-Call Fast Access</h2>
+            <div class="quick-nav-grid">
+                <a href="#phase1"><span class="qn-icon qn-phase">1</span> Phase 1: Opening</a>
+                <a href="#phase2"><span class="qn-icon qn-phase">2</span> Phase 2: Mini-Pitch</a>
+                <a href="#phase3"><span class="qn-icon qn-phase">3</span> Phase 3: Qualification</a>
+                <a href="#phase4"><span class="qn-icon qn-phase">4</span> Phase 4: Value Expansion</a>
+                <a href="#phase5"><span class="qn-icon qn-phase">5</span> Phase 5: Closing</a>
+                <a href="#objections"><span class="qn-icon qn-obj">!</span> Objection Handling</a>
+                <a href="#disqualification"><span class="qn-icon qn-disq">&times;</span> Disqualification Scripts</a>
+                <a href="#situational"><span class="qn-icon qn-phase">~</span> Situational Scripts</a>
+                <a href="#postcall"><span class="qn-icon qn-post">&check;</span> Post-Call Templates</a>
+                <a href="#invite"><span class="qn-icon qn-post">&star;</span> Interview Invitation</a>
+                <a href="06_Objection_Handling_Models.html"><span class="qn-icon qn-obj">!</span> Full Objection Guide (21)</a>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- BRAND & REPRESENTATION -->
+        <!-- ============================================================ -->
+        <div id="brand" class="brand-notice">
+            <h2>Brand &amp; Representation Guidelines</h2>
+            <p>When speaking with candidates, you represent a <strong>talent agency</strong> &mdash; never mention &ldquo;HUNTME&rdquo; (this is an internal platform name only).</p>
+            <div class="rule"><span class="bullet"></span> <span>Default brand: <strong>Starmore &amp; Co.</strong> (starmoreco.com) &mdash; a talent agency specializing in developing and promoting streaming models on international platforms.</span></div>
+            <div class="rule"><span class="bullet"></span> <span>If your campaign is assigned a different client brand, use that brand name and URL instead.</span></div>
+            <div class="rule"><span class="bullet"></span> <span>Use the company name consistently throughout the entire conversation. Substitute <span class="highlight">[Company Name]</span> in all scripts below.</span></div>
+            <div class="rule"><span class="bullet"></span> <span>If asked about the company website, provide: <span class="highlight">[Company URL]</span> (default: starmoreco.com)</span></div>
+            <div class="rule"><span class="bullet"></span> <span>Positioning for the candidate: <em>&ldquo;We are a talent agency that discovers, trains, and promotes streaming talent on international platforms.&rdquo;</em></span></div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- CALL FLOW OVERVIEW -->
+        <!-- ============================================================ -->
+        <div class="script-section" id="flow">
+            <div class="script-title">
+                <span class="badge">Overview</span>
+                <h2>Call Flow &mdash; 5 Phases</h2>
+            </div>
+
+            <div class="flow-steps">
+                <a href="#phase1" class="flow-step">
+                    <div class="fs-num">1</div>
+                    <div class="fs-label">Opening</div>
+                    <div class="fs-time">0&ndash;15 sec</div>
+                </a>
+                <a href="#phase2" class="flow-step">
+                    <div class="fs-num">2</div>
+                    <div class="fs-label">Mini-Pitch</div>
+                    <div class="fs-time">15&ndash;45 sec</div>
+                </a>
+                <a href="#phase3" class="flow-step">
+                    <div class="fs-num">3</div>
+                    <div class="fs-label">Qualification</div>
+                    <div class="fs-time">1&ndash;3 min</div>
+                </a>
+                <a href="#phase4" class="flow-step">
+                    <div class="fs-num">4</div>
+                    <div class="fs-label">Value Expansion</div>
+                    <div class="fs-time">2&ndash;3 min</div>
+                </a>
+                <a href="#phase5" class="flow-step">
+                    <div class="fs-num">5</div>
+                    <div class="fs-label">Closing</div>
+                    <div class="fs-time">1&ndash;2 min</div>
+                </a>
+            </div>
+
+            <div class="note">
+                <div class="note-label">Key Principle</div>
+                <p>Every phase must earn the candidate&rsquo;s permission to continue. Do not dump information &mdash; engage, ask, listen. The goal is a <strong>conversation</strong>, not a monologue.</p>
+            </div>
+        </div>
+
+        <div class="back-to-top"><a href="#quicknav">&uarr; Quick Navigation</a></div>
+        <div class="section-divider"></div>
+
+        <!-- ============================================================ -->
+        <!-- PHASE 1: OPENING -->
+        <!-- ============================================================ -->
+        <div class="script-section" id="phase1">
+            <div class="phase">
+                <span class="phase-num">1</span>
+                <div class="phase-info">
+                    <h3>Opening</h3>
+                    <p>Goal: The candidate stays on the line and agrees to listen</p>
+                </div>
+            </div>
+
+            <div class="note">
+                <div class="note-label">Tone Guidance</div>
+                <p>Speak in a warm, confident, slightly upbeat tone. Not salesy, not robotic &mdash; like a friendly colleague sharing a genuine opportunity. Pace: moderate, clear articulation. <strong>Smile while you speak</strong> &mdash; it comes through in your voice.</p>
+            </div>
+
+            <!-- WARM -->
+            <div id="open-warm" class="sub-heading">Warm Traffic (candidate responded to an ad)</div>
+
+            <span class="variant variant-warm">WARM</span>
+            <div class="speech">
+                <p>Hello, <strong>[Name]</strong>! My name is <strong>[Your Name]</strong>, I&rsquo;m calling from <strong>[Company Name]</strong>. You recently responded to our job posting for a remote position &mdash; thank you for your interest!</p>
+                <p style="margin-top:8px;">I&rsquo;d love to tell you more about the role and see if it&rsquo;s a good fit. Do you have a couple of minutes?</p>
+            </div>
+
+            <div class="note">
+                <div class="note-label">If &ldquo;Yes&rdquo;</div>
+                <p>Proceed to <a href="#phase2" class="nav-link"><span class="arrow">&rarr;</span> Phase 2: Mini-Pitch</a></p>
+            </div>
+
+            <!-- COLD -->
+            <div id="open-cold" class="sub-heading">Cold Traffic (outbound call, no prior contact)</div>
+
+            <span class="variant variant-cold">COLD</span>
+            <div class="speech">
+                <p>Hello, <strong>[Name]</strong>! My name is <strong>[Your Name]</strong> from <strong>[Company Name]</strong> &mdash; we&rsquo;re a talent agency in the online streaming space.</p>
+                <p style="margin-top:8px;">I&rsquo;m reaching out because we&rsquo;re currently expanding our team of streaming models, and I have an opportunity that might be a great fit for you. Can I take just <strong>60 seconds</strong> to explain?</p>
+            </div>
+
+            <div class="note">
+                <div class="note-label">Why 60 seconds?</div>
+                <p>Asking for &ldquo;60 seconds&rdquo; is a micro-commitment. It feels low-risk. Once they say yes, you have permission to pitch. Never ask &ldquo;Are you interested?&rdquo; on a cold call &mdash; the default answer is always &ldquo;no.&rdquo;</p>
+            </div>
+
+            <!-- REFERRAL -->
+            <div id="open-referral" class="sub-heading">Referral (someone recommended the candidate)</div>
+
+            <span class="variant variant-referral">REFERRAL</span>
+            <div class="speech">
+                <p>Hello, <strong>[Name]</strong>! My name is <strong>[Your Name]</strong> from <strong>[Company Name]</strong>. I&rsquo;m reaching out because <strong>[Referrer Name]</strong> recommended you &mdash; they thought you&rsquo;d be a great fit for a remote opportunity we have.</p>
+                <p style="margin-top:8px;">Do you have a couple of minutes? I&rsquo;d love to tell you more.</p>
+            </div>
+
+            <!-- HANDLING EARLY RESISTANCE -->
+            <div class="sub-heading">Handling Early Resistance</div>
+
+            <div class="card">
+                <h3>If &ldquo;I&rsquo;m busy right now&rdquo;</h3>
+            </div>
+            <div class="rebuttal">
+                <p>No problem at all! When would be a better time for me to call back? I just need a couple of minutes.</p>
+            </div>
+            <div class="note">
+                <div class="note-label">Internal Note</div>
+                <p>Schedule the callback in your tracking system (e.g. Bitrix24, AmoCRM, HubSpot, Google Sheets &mdash; whatever tool your call center uses). Always confirm: &ldquo;Great, I&rsquo;ll call you on [day] at [time]. Talk to you then!&rdquo;</p>
+            </div>
+
+            <div class="card">
+                <h3>If &ldquo;Not interested&rdquo; (first resistance)</h3>
+            </div>
+            <div class="rebuttal">
+                <div class="rebuttal-label">Option A &mdash; Curiosity hook</div>
+                <p>I completely understand. Most of our current models said the same thing at first &mdash; but after learning more, they found it was different from what they expected. Can I just take <strong>30 seconds</strong> to explain what makes this unique?</p>
+            </div>
+            <div class="rebuttal">
+                <div class="rebuttal-label">Option B &mdash; Value-first</div>
+                <p>That&rsquo;s fair. Just so you have the full picture: this is a fully remote position with flexible hours and weekly pay starting from <strong>$500 per month</strong>. If that sounds like it could work for you, I&rsquo;m happy to share more. If not &mdash; no worries at all.</p>
+            </div>
+            <div class="rebuttal">
+                <div class="rebuttal-label">Option C &mdash; Soft exit with lead capture</div>
+                <p>No problem. I&rsquo;ll send you a quick message with the details &mdash; if it ever becomes relevant, you&rsquo;ll have it. What&rsquo;s the best messenger to reach you?</p>
+            </div>
+
+            <div class="note">
+                <div class="note-label">Rule</div>
+                <p>Use <strong>one</strong> rebuttal maximum. If the candidate says &ldquo;no&rdquo; again after the rebuttal &mdash; respect it, thank them, and end the call politely. Never push more than once.</p>
+            </div>
+        </div>
+
+        <div class="phase-nav">
+            <span class="spacer"></span>
+            <a href="#phase2">Phase 2: Mini-Pitch &rarr;</a>
+        </div>
+        <div class="back-to-top"><a href="#quicknav">&uarr; Quick Navigation</a></div>
+        <div class="section-divider"></div>
+
+        <!-- ============================================================ -->
+        <!-- PHASE 2: MINI-PITCH -->
+        <!-- ============================================================ -->
+        <div class="script-section" id="phase2">
+            <div class="phase">
+                <span class="phase-num">2</span>
+                <div class="phase-info">
+                    <h3>Mini-Pitch</h3>
+                    <p>Goal: Build enough interest to proceed with qualification</p>
+                </div>
+            </div>
+
+            <span class="variant variant-all">ALL TRAFFIC TYPES</span>
+            <div class="speech">
+                <p><strong>[Company Name]</strong> is a talent agency that develops streaming models for international platforms. Here&rsquo;s a quick overview:</p>
+                <ul>
+                    <li>It&rsquo;s a <strong>fully remote</strong> position &mdash; you work from home</li>
+                    <li><strong>Flexible schedule</strong> &mdash; you choose your hours</li>
+                    <li>Income starts from <strong>$500 per month</strong>, with experienced models earning significantly more</li>
+                    <li><strong>Weekly payouts</strong> &mdash; and during your first week, you get paid daily</li>
+                    <li>You&rsquo;ll work with a <strong>personal operator</strong> who supports and guides you</li>
+                </ul>
+                <p style="margin-top:10px;">The content is entertainment-based &mdash; live conversations, interactive shows, music, humor. You develop your own style, no strict scripts.</p>
+                <p style="margin-top:10px;">Before I go into more detail, I&rsquo;d like to make sure the position is a good fit for you. <strong>Can I ask you a few quick questions?</strong></p>
+            </div>
+
+            <div class="note">
+                <div class="note-label">Why pitch BEFORE qualification?</div>
+                <p>On cold traffic, the candidate has no reason to answer personal questions unless they understand the value first. The mini-pitch gives them enough context to stay engaged. Keep it under 40 seconds.</p>
+            </div>
+        </div>
+
+        <div class="phase-nav">
+            <a href="#phase1">&larr; Phase 1: Opening</a>
+            <span class="spacer"></span>
+            <a href="#phase3">Phase 3: Qualification &rarr;</a>
+        </div>
+        <div class="back-to-top"><a href="#quicknav">&uarr; Quick Navigation</a></div>
+        <div class="section-divider"></div>
+
+        <!-- ============================================================ -->
+        <!-- PHASE 3: QUALIFICATION -->
+        <!-- ============================================================ -->
+        <div class="script-section" id="phase3">
+            <div class="phase">
+                <span class="phase-num">3</span>
+                <div class="phase-info">
+                    <h3>Qualification</h3>
+                    <p>Goal: Confirm the candidate meets all requirements</p>
+                </div>
+            </div>
+
+            <span class="variant variant-all">ALL TRAFFIC TYPES</span>
+
+            <div class="speech">
+                <p>Great! These will be quick &mdash; just to confirm the technical fit.</p>
+            </div>
+
+            <!-- Q1 -->
+            <div class="checklist-item">
+                <span class="q-num">1</span>
+                <div class="q-body">
+                    <p>Which smartphone model are you currently using?</p>
+                    <p class="hint">Required: iPhone 11 or newer / Android 2023 or newer</p>
+                </div>
+            </div>
+            <div class="stop">
+                <div class="stop-label">If phone is too old</div>
+                <p>&ldquo;Unfortunately, the streaming platforms require a newer device for video quality. Do you have plans to upgrade in the near future?&rdquo; &mdash; If no, proceed to <a href="#disq-tech" class="nav-link"><span class="arrow">&rarr;</span> Disqualification: Technical</a></p>
+            </div>
+
+            <!-- Q2 -->
+            <div class="checklist-item">
+                <span class="q-num">2</span>
+                <div class="q-body">
+                    <p>Do you have headphones with a microphone?</p>
+                </div>
+            </div>
+            <div class="note">
+                <div class="note-label">If no</div>
+                <p>Not a blocker. Say: &ldquo;That&rsquo;s easy to fix &mdash; any standard headphones with a mic will work. You can pick up a pair for under $10.&rdquo;</p>
+            </div>
+
+            <!-- Q3 -->
+            <div class="checklist-item">
+                <span class="q-num">3</span>
+                <div class="q-body">
+                    <p>May I ask how old you are?</p>
+                    <p class="hint">Required: 18&ndash;25 years old</p>
+                </div>
+            </div>
+            <div class="stop">
+                <div class="stop-label">If under 18</div>
+                <p>&ldquo;Unfortunately, this position is only available for candidates 18 and older.&rdquo; &mdash; Proceed to <a href="#disq-age" class="nav-link"><span class="arrow">&rarr;</span> Disqualification: Age</a></p>
+            </div>
+
+            <!-- Q4: Height/Weight -->
+            <div class="speech">
+                <p>The platforms we work with have certain visual profile guidelines, so I need to confirm a couple of details. Could you share your approximate <strong>height and weight</strong>?</p>
+            </div>
+            <div class="note">
+                <div class="note-label">Internal Calculation</div>
+                <p>Formula: <strong>height (cm) &minus; weight (kg) &ge; 99</strong>. Example: 170 cm &minus; 65 kg = 105 &rArr; Pass. If below 99 &mdash; request recent full-body photos for additional review, or proceed to <a href="#disq-format" class="nav-link"><span class="arrow">&rarr;</span> Disqualification: Format</a></p>
+            </div>
+            <div class="stop">
+                <div class="stop-label">If borderline (95&ndash;99)</div>
+                <p>&ldquo;Thank you for sharing. I&rsquo;d like to confirm your fit with our team &mdash; could you send 2&ndash;3 recent full-body photos via Telegram or WhatsApp? This is standard practice for matching with platform visual guidelines.&rdquo;</p>
+            </div>
+
+            <!-- Q5 -->
+            <div class="checklist-item">
+                <span class="q-num">5</span>
+                <div class="q-body">
+                    <p>Do you have a private room where you can work without interruptions?</p>
+                </div>
+            </div>
+            <div class="stop">
+                <div class="stop-label">If no private room</div>
+                <p>This is a hard requirement &mdash; do not proceed without it. <a href="#disq-room" class="nav-link"><span class="arrow">&rarr;</span> Disqualification: No Private Room</a></p>
+            </div>
+
+            <!-- Q6 -->
+            <div class="checklist-item">
+                <span class="q-num">6</span>
+                <div class="q-body">
+                    <p>Can you ensure quiet conditions during streams, with no other people appearing in the background?</p>
+                </div>
+            </div>
+
+            <!-- Q7 -->
+            <div class="checklist-item">
+                <span class="q-num">7</span>
+                <div class="q-body">
+                    <p>How many hours per day and days per week would you be available to work?</p>
+                    <p class="hint">Minimum: 6 hours/day, 30 hours/week</p>
+                </div>
+            </div>
+            <div class="note">
+                <div class="note-label">If less than minimum</div>
+                <p>&ldquo;The minimum for this position is 6 hours per day. Would you be able to adjust your schedule to meet that?&rdquo; &mdash; If definitely no, note it but still invite to interview (interviewer may negotiate).</p>
+            </div>
+
+            <!-- Q8 -->
+            <div class="checklist-item">
+                <span class="q-num">8</span>
+                <div class="q-body">
+                    <p>Could you share your Telegram or WhatsApp contact? We use it for all further communication.</p>
+                    <p class="hint">Telegram: @lexa_01 / WhatsApp: +1&nbsp;234&nbsp;567&nbsp;8900</p>
+                </div>
+            </div>
+
+            <div class="speech">
+                <p>Thank you for the information! You meet all the requirements. Let me tell you more about how everything works.</p>
+            </div>
+        </div>
+
+        <div class="phase-nav">
+            <a href="#phase2">&larr; Phase 2: Mini-Pitch</a>
+            <span class="spacer"></span>
+            <a href="#phase4">Phase 4: Value Expansion &rarr;</a>
+        </div>
+        <div class="back-to-top"><a href="#quicknav">&uarr; Quick Navigation</a></div>
+        <div class="section-divider"></div>
+
+        <!-- ============================================================ -->
+        <!-- PHASE 4: VALUE EXPANSION -->
+        <!-- ============================================================ -->
+        <div class="script-section" id="phase4">
+            <div class="phase">
+                <span class="phase-num">4</span>
+                <div class="phase-info">
+                    <h3>Value Expansion</h3>
+                    <p>Goal: Build desire and commitment before closing</p>
+                </div>
+            </div>
+
+            <div class="note">
+                <div class="note-label">Important</div>
+                <p>Only reach this phase if the candidate <strong>passed qualification</strong>. Don&rsquo;t spend time pitching to someone who doesn&rsquo;t meet the criteria.</p>
+            </div>
+
+            <div class="card">
+                <h3>About the Role</h3>
+                <p>As a streaming model, you host live broadcasts on international platforms. You interact with viewers in real time &mdash; conversations, entertainment, interactive activities.</p>
+                <ul>
+                    <li>Live interaction with viewers</li>
+                    <li>Dancing, music, humor, creative content</li>
+                    <li>Casual conversations and general topics</li>
+                </ul>
+                <p style="margin-top:8px;">There is no strict script &mdash; we help you develop your unique style and personal brand.</p>
+            </div>
+
+            <div class="speech">
+                <p>Essentially, you earn through communication, attention, and your ability to keep viewers engaged. The more comfortable and natural you are, the higher your earning potential.</p>
+            </div>
+
+            <div class="dark-box">
+                <h3>How Earnings Work</h3>
+                <p>Your income comes from viewer engagement:</p>
+                <ul>
+                    <li>Viewers send virtual gifts and donations</li>
+                    <li>Viewers may invite you from public chat into private one-on-one sessions</li>
+                    <li>Private chats are paid per minute and often generate the main income</li>
+                </ul>
+                <p style="margin-top:12px;"><strong>Payment structure:</strong></p>
+                <ul>
+                    <li>Weekly payouts (at the end of each week)</li>
+                    <li>Average income starts from <span class="accent-text">$500 per month</span></li>
+                    <li>Experienced models earn <span class="accent-text">$300+ per stream</span></li>
+                    <li>First 5 days &mdash; daily payouts after each completed stream</li>
+                </ul>
+            </div>
+
+            <div class="highlight-box">
+                <h3>Important: Your Boundaries</h3>
+                <ul>
+                    <li>You are never required to do anything that makes you uncomfortable</li>
+                    <li>You control your boundaries and communication format</li>
+                    <li>Prior experience is not required</li>
+                    <li>Strong communication skills and charisma matter more than perfect appearance</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>Support Team</h3>
+                <p>You&rsquo;ll work with a dedicated operator who:</p>
+                <ul>
+                    <li>Moderates and manages the chat</li>
+                    <li>Launches interactive activities and challenges</li>
+                    <li>Optimizes your stream for maximum visibility and earnings</li>
+                    <li>Helps attract and retain paying audiences</li>
+                </ul>
+            </div>
+
+            <div class="speech">
+                <p>Their goal is to make your streams as comfortable and profitable as possible. You focus on being yourself &mdash; they handle the technical and strategic side.</p>
+            </div>
+
+            <div class="highlight-box">
+                <h3>Our Team</h3>
+                <p>We currently work with models across <strong>more than 15 countries</strong>. Many of our team members started with zero streaming experience and now earn consistently within their first 3 months.</p>
+            </div>
+
+            <div class="card">
+                <h3>Schedule &amp; Format</h3>
+                <ul>
+                    <li>Flexible schedule &mdash; you plan your own shifts</li>
+                    <li>Minimum 6 hours per day / 30 hours per week</li>
+                    <li>Morning, daytime, or night shifts &mdash; platforms operate across time zones</li>
+                    <li>Fully remote &mdash; work from anywhere with a stable internet connection</li>
+                </ul>
+            </div>
+
+            <div class="speech">
+                <p>Does everything sound clear so far? Do you have any questions?</p>
+            </div>
+
+            <div class="note">
+                <div class="note-label">Pause here</div>
+                <p>Wait for the candidate to respond. If they have questions &mdash; answer using the <a href="#objections" class="nav-link"><span class="arrow">&rarr;</span> Objection Handling</a> section. If no questions &mdash; proceed to <a href="#phase5" class="nav-link"><span class="arrow">&rarr;</span> Phase 5: Closing</a></p>
+            </div>
+        </div>
+
+        <div class="phase-nav">
+            <a href="#phase3">&larr; Phase 3: Qualification</a>
+            <span class="spacer"></span>
+            <a href="#phase5">Phase 5: Closing &rarr;</a>
+        </div>
+        <div class="back-to-top"><a href="#quicknav">&uarr; Quick Navigation</a></div>
+        <div class="section-divider"></div>
+
+        <!-- ============================================================ -->
+        <!-- PHASE 5: CLOSING -->
+        <!-- ============================================================ -->
+        <div class="script-section" id="phase5">
+            <div class="phase">
+                <span class="phase-num">5</span>
+                <div class="phase-info">
+                    <h3>Closing &amp; Interview Booking</h3>
+                    <p>Goal: Schedule the interview with a confirmed date and time</p>
+                </div>
+            </div>
+
+            <div class="speech">
+                <p>If you&rsquo;re interested, the next step is a short <strong>online interview</strong> &mdash; about 40 minutes. During the interview, you&rsquo;ll:</p>
+                <ul>
+                    <li>Learn more about the company and the platform</li>
+                    <li>Meet the interviewer and ask any remaining questions</li>
+                    <li>See exactly how the work process looks</li>
+                    <li>Schedule your first training stream if everything feels right</li>
+                </ul>
+            </div>
+
+            <div class="note">
+                <div class="note-label">Alternative Close Technique</div>
+                <p>Do NOT ask &ldquo;Would you like to schedule?&rdquo; (easy &ldquo;no&rdquo;). Instead, use an <strong>alternative close</strong> &mdash; offer two specific options:</p>
+            </div>
+
+            <div class="speech">
+                <p>The interview is via <strong>Zoom</strong>. Which works better for you &mdash; <strong>[Day 1]</strong> or <strong>[Day 2]</strong>?</p>
+            </div>
+
+            <div class="note">
+                <div class="note-label">After they pick a date/time</div>
+                <p>Confirm the exact date, time, and format. Then deliver the passport/ID requirement:</p>
+            </div>
+
+            <div class="speech">
+                <p>Perfect! I&rsquo;ll send you a confirmation message on Telegram / WhatsApp with all the details.</p>
+                <p style="margin-top:8px;">One thing to mention &mdash; please have your <strong>passport or ID card</strong> available during the interview. It&rsquo;s a standard requirement for identity and age verification. The interviewer will just need to briefly see it on camera.</p>
+                <p style="margin-top:8px;">We&rsquo;re looking forward to meeting you on <strong>[date]</strong>! If anything changes, just let us know in advance. Have a great day, <strong>[Name]</strong>!</p>
+            </div>
+
+            <div class="note">
+                <div class="note-label">Within 5 minutes after the call</div>
+                <p>Send the <a href="#postcall" class="nav-link"><span class="arrow">&rarr;</span> Post-Call Confirmation Message</a> via Telegram / WhatsApp. This cements the commitment and reduces no-shows by 30&ndash;40%.</p>
+            </div>
+
+            <!-- IF "I'll think about it" -->
+            <div class="sub-heading">If &ldquo;I&rsquo;ll think about it&rdquo;</div>
+
+            <div class="rebuttal">
+                <div class="rebuttal-label">Clarify the hesitation</div>
+                <p>Of course, take your time. Just so I can help &mdash; what specifically would you like to think over? Maybe I can clarify something right now?</p>
+            </div>
+
+            <div class="rebuttal">
+                <div class="rebuttal-label">If they insist</div>
+                <p>Totally fair. When would be a good time for me to follow up &mdash; <strong>tomorrow or the day after</strong>?</p>
+            </div>
+
+            <div class="note">
+                <div class="note-label">For detailed rebuttal scripts</div>
+                <p>See <a href="06_Objection_Handling_Models.html" style="color: #92400E; font-weight: 600;">Objection Handling Guide &rarr; "I need to think about it"</a> for advanced rebuttals and messenger templates.</p>
+            </div>
+
+            <div class="note">
+                <div class="note-label">Internal Note</div>
+                <p>Always lock down a specific callback date/time. &ldquo;I&rsquo;ll think about it&rdquo; with no follow-up date = lost lead. Schedule the callback in your tracking system (e.g. Bitrix24, AmoCRM, HubSpot, Google Sheets &mdash; whatever tool your call center uses) and mark as &ldquo;warm lead, follow-up required.&rdquo;</p>
+            </div>
+
+            <!-- IF "I need to discuss with someone" -->
+            <div class="sub-heading">If &ldquo;I need to discuss with someone&rdquo;</div>
+
+            <div class="rebuttal">
+                <p>Absolutely, I understand. Would it help if I briefly explained the key points to you, so you have all the information to share with them? And I can call you back at a time that works &mdash; would <strong>tomorrow</strong> be okay?</p>
+            </div>
+        </div>
+
+        <div class="phase-nav">
+            <a href="#phase4">&larr; Phase 4: Value Expansion</a>
+            <span class="spacer"></span>
+            <a href="#situational">Situational Scripts &rarr;</a>
+        </div>
+        <div class="back-to-top"><a href="#quicknav">&uarr; Quick Navigation</a></div>
+        <div class="section-divider"></div>
+
+        <!-- ============================================================ -->
+        <!-- SITUATIONAL SCRIPTS -->
+        <!-- ============================================================ -->
+        <div class="script-section" id="situational">
+            <div class="script-title">
+                <span class="badge">Situational</span>
+                <h2>Situational Scripts</h2>
+            </div>
+
+            <!-- VOICEMAIL -->
+            <div id="voicemail" class="sub-heading">Voicemail (15&ndash;20 seconds)</div>
+
+            <div class="speech">
+                <p>Hi <strong>[Name]</strong>, this is <strong>[Your Name]</strong> from <strong>[Company Name]</strong>. I&rsquo;m calling about a remote streaming opportunity with flexible hours and weekly pay starting from $500 per month. If you&rsquo;d like to learn more, call me back at <strong>[phone]</strong> or message me on Telegram / WhatsApp at <strong>[contact]</strong>. Have a great day!</p>
+            </div>
+
+            <div class="note">
+                <div class="note-label">Voicemail rules</div>
+                <p>Keep it under 20 seconds. Speak clearly and slowly &mdash; they need to catch your number. Always follow up with a text/messenger message immediately after leaving a voicemail.</p>
+            </div>
+
+            <!-- CALLBACK -->
+            <div id="callback" class="sub-heading">Callback &mdash; 2nd Attempt</div>
+
+            <div class="speech">
+                <p>Hello, <strong>[Name]</strong>! This is <strong>[Your Name]</strong> from <strong>[Company Name]</strong> again. I tried reaching you earlier about a remote opportunity. I wanted to give it one more try &mdash; do you have a quick minute?</p>
+            </div>
+
+            <div class="sub-heading">Callback &mdash; 3rd Attempt (final)</div>
+
+            <div class="speech">
+                <p>Hi <strong>[Name]</strong>, this is <strong>[Your Name]</strong> from <strong>[Company Name]</strong>. I&rsquo;ve tried reaching you a couple of times &mdash; no worries if the timing hasn&rsquo;t been right. I just wanted to make sure you had a chance to hear about our remote streaming position before I close your application.</p>
+                <p style="margin-top:8px;">If you&rsquo;re interested, feel free to call me back at <strong>[phone]</strong>. If not &mdash; I wish you all the best!</p>
+            </div>
+
+            <div class="note">
+                <div class="note-label">Contact attempt rules</div>
+                <p><strong>Maximum 3 call attempts</strong> per candidate, spaced 24&ndash;48 hours apart. After the 3rd attempt with no response, mark as &ldquo;unreachable&rdquo; in your tracking system (e.g. Bitrix24, AmoCRM, HubSpot, Google Sheets) and move on. Always supplement calls with messenger messages.</p>
+            </div>
+
+            <!-- RE-ENGAGEMENT -->
+            <div id="reengage" class="sub-heading">Re-engagement (previously contacted, didn&rsquo;t book)</div>
+
+            <div class="speech">
+                <p>Hello, <strong>[Name]</strong>! This is <strong>[Your Name]</strong> from <strong>[Company Name]</strong>. We spoke about <strong>[time period]</strong> ago about a streaming model position. I wanted to follow up because we have a few new openings and I thought you might still be interested. Has anything changed since we last spoke?</p>
+            </div>
+        </div>
+
+        <div class="phase-nav">
+            <a href="#phase5">&larr; Phase 5: Closing</a>
+            <span class="spacer"></span>
+            <a href="#objections">Objection Handling &rarr;</a>
+        </div>
+        <div class="back-to-top"><a href="#quicknav">&uarr; Quick Navigation</a></div>
+        <div class="section-divider"></div>
+
+        <!-- ============================================================ -->
+        <!-- OBJECTION HANDLING -->
+        <!-- ============================================================ -->
+        <div class="script-section" id="objections">
+            <div class="script-title">
+                <span class="badge">Objections</span>
+                <h2>Objection Handling</h2>
+            </div>
+
+            <div class="note">
+                <div class="note-label">General Rule</div>
+                <p>When handling objections: (1) acknowledge, (2) answer clearly and confidently, (3) redirect to the next step. Never be defensive. Never argue. If the candidate pushes back twice on the same point &mdash; move on.</p>
+            </div>
+
+            <!-- OBJECTION: Webcam -->
+            <div class="faq-item">
+                <div class="faq-q">&ldquo;Is this adult content?&rdquo;</div>
+                <div class="faq-a"><strong>[Name]</strong>, <strong>[Company Name]</strong> is a professional talent agency. We work with mainstream international streaming platforms &mdash; similar to platforms where influencers and content creators build their audiences. The content is entertainment-based: live conversations, interactive shows, music, humor. Everything follows standard platform guidelines, and you always control your own boundaries.</div>
+            </div>
+
+            <!-- OBJECTION: Scam -->
+            <div class="faq-item">
+                <div class="faq-q">&ldquo;Is this a scam?&rdquo; / &ldquo;Is this company real?&rdquo;</div>
+                <div class="faq-a">I completely understand the concern &mdash; there are a lot of questionable offers out there. <strong>[Company Name]</strong> is a registered talent agency with an established track record. You can check our website at <strong>[Company URL]</strong>. Our process is fully transparent: you go through an interview, see exactly how everything works, meet the team, and only then decide if you want to start. There are no upfront payments or fees from you at any stage.</div>
+            </div>
+
+            <!-- OBJECTION: No experience -->
+            <div class="faq-item">
+                <div class="faq-q">&ldquo;I don&rsquo;t have any experience.&rdquo;</div>
+                <div class="faq-a">That&rsquo;s completely normal &mdash; most of our successful models started with zero experience. Training is included and provided at no cost. During your training period, you already begin earning money, and you&rsquo;ll have continuous support from your operator and the team.</div>
+            </div>
+
+            <!-- OBJECTION: Height/Weight -->
+            <div class="faq-item">
+                <div class="faq-q">&ldquo;Why do you ask about height and weight?&rdquo;</div>
+                <div class="faq-a">Great question. The streaming platforms we work with follow specific visual profile guidelines &mdash; similar to how modeling agencies have certain format requirements. It helps us determine which platform and content format would be the best fit for you. It&rsquo;s a standard part of our screening process.</div>
+            </div>
+
+            <!-- OBJECTION: Passport -->
+            <div class="faq-item">
+                <div class="faq-q">&ldquo;Why do you need my passport?&rdquo;</div>
+                <div class="faq-a">It&rsquo;s a standard identity and age verification procedure. The interviewer will simply ask you to briefly show your passport or ID card on camera during the Zoom call &mdash; just to confirm your identity and that you&rsquo;re at least 18. We do not collect copies or store any personal documents.</div>
+            </div>
+
+            <!-- OBJECTION: What company does -->
+            <div class="faq-item">
+                <div class="faq-q">&ldquo;What exactly does the company do?&rdquo;</div>
+                <div class="faq-a"><strong>[Company Name]</strong> is a talent agency specializing in discovering, training, and promoting streaming talent. We work with international streaming platforms and provide full support: content strategy, professional operators for chat management, mentoring, and technical optimization. Our team handles everything behind the scenes so you can focus on streaming.</div>
+            </div>
+
+            <!-- OBJECTION: What will I do -->
+            <div class="faq-item">
+                <div class="faq-q">&ldquo;What exactly will I be doing?&rdquo;</div>
+                <div class="faq-a">
+                    Your main responsibilities:
+                    <ul>
+                        <li>Hosting live streams on international platforms</li>
+                        <li>Interacting with viewers in real time</li>
+                        <li>Building your personal brand and communication style</li>
+                        <li>Participating in creative content production</li>
+                    </ul>
+                    You won&rsquo;t be working alone &mdash; your operator and the team provide support throughout the entire process.
+                </div>
+            </div>
+
+            <!-- OBJECTION: Content topics -->
+            <div class="faq-item">
+                <div class="faq-q">&ldquo;What content topics are allowed?&rdquo;</div>
+                <div class="faq-a">
+                    You choose your content direction based on your interests. Popular formats include:
+                    <ul>
+                        <li>Just Chatting (live conversations)</li>
+                        <li>Music, dance, creative content</li>
+                        <li>Reviews and discussions</li>
+                        <li>Entertainment and humor</li>
+                    </ul>
+                    During training, mentors help you build your content plan. <strong>Restriction:</strong> political and religious topics are not allowed.
+                </div>
+            </div>
+
+            <!-- OBJECTION: Income -->
+            <div class="faq-item">
+                <div class="faq-q">&ldquo;How much can I really earn?&rdquo;</div>
+                <div class="faq-a">
+                    Income depends on your activity and engagement level:
+                    <ul>
+                        <li>Starting average: $500+ per month</li>
+                        <li>Experienced models: $300+ per individual stream</li>
+                        <li>Top performers earn significantly more</li>
+                    </ul>
+                    Income is generated through viewer tips, virtual gifts, paid private chats, and platform bonuses. The more time and effort you invest, the higher the returns.
+                </div>
+            </div>
+
+            <!-- OBJECTION: Platforms -->
+            <div class="faq-item">
+                <div class="faq-q">&ldquo;Which platforms do you work with?&rdquo;</div>
+                <div class="faq-a">We work with several major international streaming platforms. The specific platform is assigned based on your profile, strengths, and current market demand. The interviewer will explain platform details during your meeting.</div>
+            </div>
+
+            <!-- OBJECTION: Less hours -->
+            <div class="faq-item">
+                <div class="faq-q">&ldquo;Can I work less than 6 hours a day?&rdquo;</div>
+                <div class="faq-a">The minimum requirement is 6 hours per day and 30 hours per week. This workload is necessary for consistent audience growth and stable earnings. The schedule is flexible though &mdash; you choose when to start and end your shifts.</div>
+            </div>
+
+            <!-- OBJECTION: Combine with work -->
+            <div class="faq-item">
+                <div class="faq-q">&ldquo;Can I combine this with my job / studies?&rdquo;</div>
+                <div class="faq-a">Absolutely &mdash; many of our models combine streaming with other activities. The schedule is fully flexible. As long as you can commit to the minimum 6 hours per day, you&rsquo;re free to organize your time however works best.</div>
+            </div>
+
+            <!-- OBJECTION: Official employment -->
+            <div class="faq-item">
+                <div class="faq-q">&ldquo;Is the employment official?&rdquo;</div>
+                <div class="faq-a">The cooperation format is freelance-based &mdash; you work as an independent contractor. Payments are made weekly to your account. All details regarding cooperation terms, payment methods, and working conditions are explained during the interview.</div>
+            </div>
+
+            <!-- OBJECTION: Interview duration -->
+            <div class="faq-item">
+                <div class="faq-q">&ldquo;How long does the interview take?&rdquo;</div>
+                <div class="faq-a">The interview is individual and takes approximately 40 minutes. It&rsquo;s conducted via Zoom &mdash; you&rsquo;ll have a private conversation with the interviewer, learn about the work process in detail, and get answers to all your questions.</div>
+            </div>
+
+            <!-- OBJECTION: Remote -->
+            <div class="faq-item">
+                <div class="faq-q">&ldquo;Is the job fully remote?&rdquo;</div>
+                <div class="faq-a">Yes, 100% remote. You&rsquo;ll need a quiet, private workspace, a qualifying smartphone, headphones with a mic, and a stable internet connection. That&rsquo;s it &mdash; no office, no commute.</div>
+            </div>
+
+            <div class="highlight-box">
+                <h3>Full Objection Handling Guide</h3>
+                <p>This section covers the <strong>12 most common</strong> objections. For all <strong>21 objections</strong> with detailed phone and messenger scripts (including "I already have a job", "I need to think about it", "What if I don't like it?", and more), see the <a href="06_Objection_Handling_Models.html" style="color: var(--accent); font-weight: 700;">Complete Objection Handling Guide</a>.</p>
+            </div>
+        </div>
+
+        <div class="phase-nav">
+            <a href="#situational">&larr; Situational Scripts</a>
+            <span class="spacer"></span>
+            <a href="#disqualification">Disqualification &rarr;</a>
+        </div>
+        <div class="back-to-top"><a href="#quicknav">&uarr; Quick Navigation</a></div>
+        <div class="section-divider"></div>
+
+        <!-- ============================================================ -->
+        <!-- DISQUALIFICATION -->
+        <!-- ============================================================ -->
+        <div class="script-section" id="disqualification">
+            <div class="script-title">
+                <span class="badge">Exit</span>
+                <h2>Disqualification &mdash; Soft Rejection Scripts</h2>
+            </div>
+
+            <div class="note">
+                <div class="note-label">Important</div>
+                <p>Always end on a positive note. The candidate may refer friends, revisit later, or leave reviews. Treat every disqualification as a brand-building moment.</p>
+            </div>
+
+            <!-- DQ: Technical -->
+            <div id="disq-tech" class="sub-heading">Technical (phone doesn&rsquo;t meet requirements)</div>
+            <div class="speech">
+                <p>Thank you for your time, <strong>[Name]</strong>. Unfortunately, the streaming platforms require a newer smartphone model for optimal video quality. If you upgrade your device in the future, feel free to reach out &mdash; we&rsquo;d be happy to reconsider your application. I wish you all the best!</p>
+            </div>
+
+            <!-- DQ: Age -->
+            <div id="disq-age" class="sub-heading">Age (outside 18&ndash;25 range)</div>
+            <div class="speech">
+                <p>Thank you for your interest, <strong>[Name]</strong>. Unfortunately, this particular position has an age requirement of 18 to 25. If we open positions with different requirements, we&rsquo;ll keep your contact on file. Thank you and have a great day!</p>
+            </div>
+
+            <!-- DQ: Format -->
+            <div id="disq-format" class="sub-heading">Visual Format (height/weight criteria not met)</div>
+            <div class="speech">
+                <p>Thank you for sharing that information, <strong>[Name]</strong>. At the moment, the platforms we work with have specific visual profile guidelines, and this particular opening may not be the best match right now. However, our requirements do change from time to time. Would it be okay if we kept your contact for the future?</p>
+            </div>
+
+            <!-- DQ: Room -->
+            <div id="disq-room" class="sub-heading">No Private Room</div>
+            <div class="speech">
+                <p>I understand, <strong>[Name]</strong>. Unfortunately, having a private workspace is essential for this position &mdash; it&rsquo;s a core requirement from the streaming platforms. If your living situation changes, don&rsquo;t hesitate to reach out. Best of luck!</p>
+            </div>
+        </div>
+
+        <div class="phase-nav">
+            <a href="#objections">&larr; Objection Handling</a>
+            <span class="spacer"></span>
+            <a href="#postcall">Post-Call Templates &rarr;</a>
+        </div>
+        <div class="back-to-top"><a href="#quicknav">&uarr; Quick Navigation</a></div>
+        <div class="section-divider"></div>
+
+        <!-- ============================================================ -->
+        <!-- POST-CALL TEMPLATES -->
+        <!-- ============================================================ -->
+        <div class="script-section" id="postcall">
+            <div class="script-title">
+                <span class="badge">Post-Call</span>
+                <h2>Post-Call Message Templates</h2>
+            </div>
+
+            <div class="sub-heading">Interview Confirmation (send within 5 min after call)</div>
+
+            <div class="message">
+                <p>Hi <strong>[Name]</strong>! This is <strong>[Your Name]</strong> from <strong>[Company Name]</strong>.</p>
+                <p style="margin-top:8px;">Thank you for our conversation! Here are your interview details:</p>
+                <p style="margin-top:8px;"><strong>Date:</strong> [Date]<br><strong>Time:</strong> [Time]<br><strong>Format:</strong> Online via Zoom</p>
+                <p style="margin-top:12px;">Before the interview, please make sure:<br>
+                &bull; Zoom is installed and working<br>
+                &bull; Camera and microphone are functioning<br>
+                &bull; You have your passport or ID card available</p>
+                <p style="margin-top:12px;">The Zoom link will be sent 5 minutes before the interview by the interviewer via Telegram / WhatsApp.</p>
+                <p style="margin-top:8px;">If your plans change, please let me know in advance. Looking forward to seeing you there!</p>
+            </div>
+
+            <div class="sub-heading">Reminder &mdash; 24 hours before interview</div>
+
+            <div class="message">
+                <p>Hi <strong>[Name]</strong>! Just a friendly reminder &mdash; your interview for the streaming model position is scheduled for <strong>tomorrow, [Date] at [Time]</strong> via Zoom.</p>
+                <p style="margin-top:8px;">Don&rsquo;t forget to have your passport/ID ready. The Zoom link will arrive 5 minutes before start. See you tomorrow!</p>
+            </div>
+
+            <div class="sub-heading">Reminder &mdash; 2 hours before interview</div>
+
+            <div class="message">
+                <p>Hi <strong>[Name]</strong>! Your interview starts in 2 hours at <strong>[Time]</strong>. The Zoom link will be sent shortly. Please make sure your camera and mic are working. See you soon!</p>
+            </div>
+
+            <div class="sub-heading">No-Show &mdash; after missed interview</div>
+
+            <div class="message">
+                <p>Hi <strong>[Name]</strong>! We noticed you weren&rsquo;t able to make it to the interview today. No worries &mdash; things happen!</p>
+                <p style="margin-top:8px;">Would you like to reschedule? We have openings on <strong>[Date 1]</strong> and <strong>[Date 2]</strong>. Just let me know what works for you.</p>
+            </div>
+
+            <div class="sub-heading">No-Show Follow-up &mdash; 24 hours later</div>
+
+            <div class="message">
+                <p>Hi <strong>[Name]</strong>, just following up about the interview we had scheduled. If you&rsquo;re still interested in the streaming model position, I&rsquo;d love to help you reschedule.</p>
+                <p style="margin-top:8px;">If your plans have changed, that&rsquo;s completely okay too &mdash; just let me know either way.</p>
+            </div>
+
+            <div class="sub-heading">Lead Capture &mdash; after soft rejection on call</div>
+
+            <div class="message">
+                <p>Hi <strong>[Name]</strong>! This is <strong>[Your Name]</strong> from <strong>[Company Name]</strong>. Thank you for taking the time to speak with me today.</p>
+                <p style="margin-top:8px;">As promised, here&rsquo;s a quick summary: we&rsquo;re a talent agency looking for streaming models for international platforms. The position is fully remote with flexible hours and weekly pay starting from $500/month.</p>
+                <p style="margin-top:8px;">If this ever becomes relevant for you, feel free to message me anytime. Wishing you all the best!</p>
+            </div>
+        </div>
+
+        <div class="phase-nav">
+            <a href="#disqualification">&larr; Disqualification</a>
+            <span class="spacer"></span>
+            <a href="#invite">Interview Invitation &rarr;</a>
+        </div>
+        <div class="back-to-top"><a href="#quicknav">&uarr; Quick Navigation</a></div>
+        <div class="section-divider"></div>
+
+        <!-- ============================================================ -->
+        <!-- INTERVIEW INVITATION -->
+        <!-- ============================================================ -->
+        <div class="script-section" id="invite">
+            <div class="script-title">
+                <span class="badge">Template</span>
+                <h2>Interview Invitation &mdash; Formal Version</h2>
+            </div>
+
+            <div class="invite-card">
+                <h3>Scheduled Interview Details</h3>
+                <p>Hello! Following up on our previous conversation, here are the details of your scheduled online interview for the <strong>&ldquo;Online Streaming Model&rdquo;</strong> position.</p>
+                <div class="detail-row">
+                    <span class="label">Date and time:</span>
+                    <span class="value">[Date], [Time]</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Format:</span>
+                    <span class="value">Online, via Zoom</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Duration:</span>
+                    <span class="value">Approximately 40 minutes</span>
+                </div>
+                <p style="margin-top: 16px;">Please make sure that your camera and microphone are working properly on the device you will use to join the interview.</p>
+                <p>The Zoom link will be sent by the interviewer <strong>5 minutes before the interview</strong> via Telegram / WhatsApp. Please stay available and confirm that you have received the message.</p>
+                <p>Additionally, please have your <strong>original passport or ID card</strong> available during the interview for standard identity and age verification purposes.</p>
+                <p>We look forward to seeing you at the scheduled time. If your plans change, please inform us in advance. Have a great day!</p>
+            </div>
+        </div>
+
+        <div class="phase-nav">
+            <a href="#postcall">&larr; Post-Call Templates</a>
+            <span class="spacer"></span>
+        </div>
+        <div class="back-to-top"><a href="#quicknav">&uarr; Quick Navigation</a></div>
+
+    </div>
+
+    <div class="footer">HUNTME &copy; 2026 &mdash; Internal Document. Confidential.</div>
+
+</body>
+</html>

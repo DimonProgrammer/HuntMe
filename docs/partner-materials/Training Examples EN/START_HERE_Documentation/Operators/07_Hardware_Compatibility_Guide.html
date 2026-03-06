@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hardware Compatibility Guide — Streaming Moderator — HUNTME</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #F43F5E;
+            --accent-dark: #E3000F;
+            --accent-gradient: linear-gradient(135deg, #F43F5E 0%, #E3000F 100%);
+            --bg: #F0F2F5;
+            --card: #FFFFFF;
+            --text-primary: #1E1E2D;
+            --text-secondary: #6B7280;
+            --text-light: #9CA3AF;
+            --border: #E5E7EB;
+            --success: #10B981;
+            --success-bg: #ECFDF5;
+            --success-border: #A7F3D0;
+            --danger: #EF4444;
+            --danger-bg: #FEF2F2;
+            --danger-border: #FECACA;
+            --sidebar-dark: #1A1A2E;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.05);
+            --radius: 12px;
+            --blue: #3B82F6;
+            --blue-bg: #EFF6FF;
+            --blue-border: #BFDBFE;
+            --amber: #F59E0B;
+            --amber-bg: #FFFBEB;
+            --amber-border: #FDE68A;
+            --green: #10B981;
+            --green-bg: #ECFDF5;
+            --green-border: #A7F3D0;
+            --purple: #8B5CF6;
+            --purple-bg: #F5F3FF;
+            --purple-border: #DDD6FE;
+            --indigo: #6366F1;
+            --indigo-bg: #EEF2FF;
+            --indigo-border: #C7D2FE;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ========== HEADER ========== */
+        .header { background: var(--sidebar-dark); position: relative; }
+        .header::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+            height: 4px; background: var(--accent-gradient);
+        }
+        .header-inner {
+            max-width: 960px; margin: 0 auto; padding: 32px 40px;
+            display: flex; align-items: center; gap: 32px;
+        }
+        .header-logo img { height: 44px; width: auto; display: block; object-fit: contain; }
+        .header-divider { width: 1px; height: 40px; background: rgba(255,255,255,0.15); }
+        .header-text h1 { font-size: 22px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; }
+        .header-text p { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+        /* ========== CONTAINER ========== */
+        .container { max-width: 960px; margin: 0 auto; padding: 32px 40px 60px; }
+
+        /* ========== TOC ========== */
+        .toc {
+            background: var(--card); border-radius: var(--radius);
+            box-shadow: var(--shadow-md); padding: 32px; margin-bottom: 32px;
+            position: relative; overflow: hidden;
+        }
+        .toc::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent-gradient); }
+        .toc h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+        .toc-list { list-style: none; }
+        .toc-list li { padding: 8px 16px; border-radius: 8px; margin-bottom: 2px; transition: background 0.15s; }
+        .toc-list li:hover { background: var(--bg); }
+        .toc-list li a {
+            text-decoration: none; color: var(--text-primary); font-size: 14px; font-weight: 500;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .toc-num {
+            width: 28px; height: 28px; background: var(--accent-gradient); border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0;
+        }
+
+        /* ========== SECTION TITLE ========== */
+        .script-section { margin-bottom: 48px; }
+        .script-title {
+            display: flex; align-items: center; gap: 16px;
+            margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid var(--border);
+        }
+        .script-title .badge {
+            background: var(--accent-gradient); color: #fff;
+            font-size: 11px; font-weight: 700; padding: 4px 12px;
+            border-radius: 6px; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap;
+        }
+        .script-title h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; }
+
+        /* ========== CARD ========== */
+        .card {
+            background: var(--card); border-radius: var(--radius);
+            box-shadow: var(--shadow-sm); padding: 28px 32px; margin-bottom: 16px;
+            transition: box-shadow 0.2s;
+        }
+        .card:hover { box-shadow: var(--shadow-md); }
+        .card h3 { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+        .card p { font-size: 14px; color: var(--text-secondary); line-height: 1.65; }
+        .card p strong { color: var(--text-primary); font-weight: 600; }
+        .card ul { list-style: none; margin-top: 8px; }
+        .card ul li { font-size: 14px; color: var(--text-secondary); padding: 4px 0 4px 20px; position: relative; }
+        .card ul li::before {
+            content: ''; position: absolute; left: 0; top: 12px;
+            width: 6px; height: 6px; background: var(--accent); border-radius: 50%;
+        }
+
+        /* ========== DARK BOX ========== */
+        .dark-box {
+            background: linear-gradient(135deg, #1A1A2E 0%, #2D2D44 100%);
+            border-radius: var(--radius); padding: 28px 32px; margin-bottom: 16px;
+        }
+        .dark-box h3 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 12px; }
+        .dark-box p { font-size: 14px; color: rgba(255,255,255,0.75); line-height: 1.7; }
+        .dark-box p strong { color: #fff; font-weight: 600; }
+        .dark-box .accent-text { color: var(--accent); font-weight: 600; }
+        .dark-box ul { list-style: none; margin-top: 8px; }
+        .dark-box ul li { font-size: 14px; color: rgba(255,255,255,0.75); padding: 4px 0 4px 20px; position: relative; }
+        .dark-box ul li::before {
+            content: ''; position: absolute; left: 0; top: 12px;
+            width: 6px; height: 6px; background: var(--accent); border-radius: 50%;
+        }
+
+        /* ========== NOTE ========== */
+        .note {
+            background: var(--amber-bg); border: 1px solid var(--amber-border);
+            border-left: 4px solid var(--amber);
+            border-radius: 0 var(--radius) var(--radius) 0;
+            padding: 16px 20px; margin-bottom: 16px;
+        }
+        .note-label {
+            font-size: 10px; font-weight: 700; color: var(--amber);
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;
+        }
+        .note p { font-size: 13px; color: #92400E; line-height: 1.6; }
+        .note p strong { font-weight: 600; }
+
+        /* ========== STOP CARD ========== */
+        .stop {
+            background: var(--danger-bg); border: 1px solid var(--danger-border);
+            border-left: 4px solid var(--danger);
+            border-radius: 0 var(--radius) var(--radius) 0;
+            padding: 16px 20px; margin-bottom: 16px;
+        }
+        .stop-label {
+            font-size: 10px; font-weight: 700; color: var(--danger);
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;
+        }
+        .stop p { font-size: 13px; color: #991B1B; line-height: 1.6; }
+
+        /* ========== HIGHLIGHT BOX ========== */
+        .highlight-box {
+            background: var(--card); border-radius: var(--radius);
+            box-shadow: var(--shadow-md); padding: 28px 32px; margin-bottom: 16px;
+            border-left: 4px solid var(--accent);
+        }
+        .highlight-box h3 { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+        .highlight-box p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-top: 8px; }
+        .highlight-box p strong { color: var(--text-primary); }
+        .highlight-box ul { list-style: none; margin-top: 8px; }
+        .highlight-box ul li { font-size: 14px; color: var(--text-secondary); padding: 4px 0 4px 20px; position: relative; }
+        .highlight-box ul li::before {
+            content: ''; position: absolute; left: 0; top: 12px;
+            width: 6px; height: 6px; background: var(--accent); border-radius: 50%;
+        }
+
+        /* ========== SUB-HEADING ========== */
+        .sub-heading {
+            font-size: 15px; font-weight: 700; color: var(--text-primary);
+            margin: 24px 0 12px; padding-left: 14px;
+            border-left: 3px solid var(--accent);
+        }
+
+        /* ========== SECTION DIVIDER ========== */
+        .section-divider { height: 2px; background: var(--accent-gradient); border-radius: 2px; margin: 48px 0 40px; opacity: 0.4; }
+
+        /* ========== NAV LINK ========== */
+        .nav-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            text-decoration: none; font-size: 13px; font-weight: 600;
+            color: var(--accent-dark); background: var(--danger-bg);
+            border: 1px solid var(--danger-border); border-radius: 6px;
+            padding: 4px 12px; transition: background 0.15s;
+        }
+        .nav-link:hover { background: #fde8e8; }
+        .nav-link .arrow { font-size: 14px; }
+
+        /* ========== BACK TO TOP ========== */
+        .back-to-top {
+            display: flex; justify-content: center; margin: 16px 0 0;
+        }
+        .back-to-top a {
+            text-decoration: none; font-size: 12px; font-weight: 600;
+            color: var(--text-secondary); background: var(--bg);
+            border: 1px solid var(--border); border-radius: 6px;
+            padding: 6px 16px; transition: all 0.15s;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .back-to-top a:hover { color: var(--accent-dark); border-color: var(--accent); background: var(--danger-bg); }
+
+        /* ========== PHASE NAV ========== */
+        .phase-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            margin: 24px 0 8px; padding: 12px 0; border-top: 1px dashed var(--border);
+        }
+        .phase-nav a {
+            text-decoration: none; font-size: 13px; font-weight: 600;
+            color: var(--accent-dark); display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 14px; border-radius: 8px; background: var(--danger-bg);
+            border: 1px solid var(--danger-border); transition: background 0.15s;
+        }
+        .phase-nav a:hover { background: #fde8e8; }
+        .phase-nav .spacer { flex: 1; }
+
+        /* ========== QUICK NAV PANEL ========== */
+        .quick-nav {
+            background: linear-gradient(135deg, #1A1A2E 0%, #2D2D44 100%);
+            border-radius: var(--radius); padding: 24px 28px; margin-bottom: 32px;
+            border: 2px solid rgba(244, 63, 94, 0.3);
+        }
+        .quick-nav h2 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 14px; }
+        .quick-nav-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+        }
+        .quick-nav-grid a {
+            text-decoration: none; font-size: 13px; font-weight: 600;
+            color: #fff; background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12); border-radius: 8px;
+            padding: 10px 14px; transition: all 0.15s;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .quick-nav-grid a:hover { background: rgba(244, 63, 94, 0.2); border-color: rgba(244, 63, 94, 0.4); }
+        .quick-nav-grid .qn-icon {
+            width: 24px; height: 24px; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 800; flex-shrink: 0;
+        }
+        .qn-phase { background: var(--accent-gradient); }
+        .qn-obj { background: linear-gradient(135deg, var(--amber) 0%, #D97706 100%); }
+        .qn-disq { background: linear-gradient(135deg, var(--danger) 0%, #DC2626 100%); }
+        .qn-post { background: linear-gradient(135deg, var(--purple) 0%, #7C3AED 100%); }
+        .qn-hw { background: linear-gradient(135deg, var(--blue) 0%, #2563EB 100%); }
+
+        /* ========== HARDWARE TABLE ========== */
+        .hw-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 12px; }
+        .hw-table th { background: var(--sidebar-dark); color: #fff; padding: 10px 8px; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em; }
+        .hw-table td { padding: 6px 8px; border: 1px solid var(--border); font-size: 12px; vertical-align: top; }
+        .hw-table tr:nth-child(even) td:not(.hw-cat) { background: var(--bg); }
+        .hw-table .hw-cat { background: var(--accent-gradient); color: #fff; font-weight: 700; font-size: 11px; text-align: center; }
+        .hw-incompatible { background: var(--danger-bg) !important; border: 1px solid var(--danger-border); }
+        .hw-incompatible td { color: var(--danger); font-weight: 600; }
+        .hw-note { background: var(--amber-bg); border: 1px solid var(--amber-border); border-radius: var(--radius); padding: 12px 16px; margin-bottom: 16px; font-size: 13px; color: #92400E; }
+
+        /* ========== SUCCESS BOX ========== */
+        .success-box {
+            background: var(--success-bg); border: 1px solid var(--success-border);
+            border-left: 4px solid var(--success);
+            border-radius: 0 var(--radius) var(--radius) 0;
+            padding: 16px 20px; margin-bottom: 16px;
+        }
+        .success-box .success-label {
+            font-size: 10px; font-weight: 700; color: var(--success);
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px;
+        }
+        .success-box p { font-size: 13px; color: #065F46; line-height: 1.6; }
+        .success-box p strong { font-weight: 600; }
+
+        /* ========== FOOTER ========== */
+        .footer { text-align: center; padding: 24px 40px; font-size: 12px; color: var(--text-light); }
+
+        /* ========== PRINT ========== */
+        @media print {
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #fff; margin: 12mm; }
+            .container { padding: 24px 10px 20px; }
+            .card, .highlight-box, .dark-box, .note, .stop, .toc, .success-box {
+                box-shadow: none; break-inside: avoid;
+            }
+            .card:hover { box-shadow: none; }
+            .header-inner { padding: 20px 30px; }
+            .nav-link { border: 1px solid #E5E7EB; }
+            .nav-link:hover { background: inherit; }
+            .phase-nav a { border: 1px solid #E5E7EB; }
+            .phase-nav a:hover { background: inherit; }
+            .back-to-top a { border: 1px solid #E5E7EB; }
+            .back-to-top a:hover { background: inherit; border-color: #E5E7EB; color: inherit; }
+            .quick-nav { break-inside: avoid; }
+            .quick-nav-grid a { border: 1px solid rgba(255,255,255,0.2); }
+            .quick-nav-grid a:hover { background: inherit; border-color: inherit; }
+            .hw-table { break-inside: avoid; }
+        }
+        @page { margin: 0; size: A4; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-inner">
+            <div class="header-logo">
+                <svg viewBox="195 80 205 70" xmlns="http://www.w3.org/2000/svg" style="height: 54px; width: auto; display: block;">
+                    <style>.logo-red{fill:#E3000F;}.logo-white{fill:#FFFFFF;}</style>
+                    <g>
+                        <path class="logo-red" d="M367.85,86.09h26.29v8.72h-17.57v14.74h14.04v3.59c0,1.54-0.48,2.78-1.41,3.72c-0.94,0.94-2.19,1.41-3.73,1.41h-8.89v14.66h17.57v8.72h-26.29V86.09z"/>
+                        <path class="logo-white" d="M240.83,86.18v43.53c0,0.99,0.3,1.76,0.87,2.34c0.58,0.58,1.35,0.87,2.34,0.87h2.83c0.99,0,1.78-0.3,2.35-0.87c0.58-0.58,0.86-1.35,0.86-2.34V86.18h8.72v45.85c0,2.91-0.87,5.23-2.64,7c-1.75,1.75-4.08,2.62-7,2.62h-7.43c-2.92,0-5.25-0.87-7-2.62c-1.76-1.76-2.64-4.09-2.64-7V86.18H240.83z M263.94,141.65V86.09h3.92c1.54,0,2.92,0.44,4.14,1.32c1.22,0.87,2.07,2.06,2.55,3.56l8.3,27.07l-0.32-31.96h8.75v55.56h-3.92c-1.54,0-2.93-0.44-4.15-1.32c-1.22-0.87-2.06-2.06-2.53-3.56l-8.29-27.07l0.32,31.96H263.94z M293.69,86.17h27.37v8.72h-9.32v46.76h-8.72V94.89h-9.32V86.17z M200.99,86.09h8.72v23.46h8.87V86.09h8.72v55.56h-8.72v-23.38h-8.87v23.38h-8.72V86.09z"/>
+                        <path class="logo-red" d="M344.09,141.65h-3.01c-1.17-5.66-7.57-3.88-7.48-10.43c0.05-3.91,3.31-5.61,3.92-9.53c0.72-4.65-0.78-8.31-3.09-10.3c1.76,2.11,2.82,6.72,0.48,10.79c-1.63,2.83-4,3.68-5.12,8.4c-1.11,4.66,1.27,8.52,2.98,11.07h-8.42V86.09h9.07c1.54,0,2.86,0.46,3.92,1.38c1.07,0.93,1.71,2.16,1.93,3.7l4.82,34.53l4.82-34.53c0.22-1.54,0.86-2.78,1.93-3.7c1.07-0.91,2.38-1.38,3.92-1.38h9.07v55.56h-8.42c1.71-2.55,4.09-6.41,2.98-11.07c-1.12-4.72-3.49-5.57-5.12-8.4c-2.34-4.07-1.28-8.68,0.48-10.79c-2.31,1.99-3.81,5.65-3.09,10.3c0.61,3.92,3.87,5.62,3.92,9.53c0.09,6.55-6.31,4.77-7.48,10.43H344.09z"/>
+                    </g>
+                </svg>
+            </div>
+            <div class="header-divider"></div>
+            <div class="header-text">
+                <h1>Hardware Compatibility Guide &mdash; Streaming Moderator</h1>
+                <p>Quick Reference for Recruitment Team</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- ============================================================ -->
+        <!-- TABLE OF CONTENTS -->
+        <!-- ============================================================ -->
+        <div class="toc">
+            <h2>Document Structure</h2>
+            <ul class="toc-list">
+                <li><a href="#overview"><span class="toc-num">1</span> Overview &amp; How to Use This Guide</a></li>
+                <li><a href="#quick-check"><span class="toc-num">2</span> Quick Compatibility Check</a></li>
+                <li><a href="#intel"><span class="toc-num">3</span> Intel Core Processors (10th&ndash;14th Gen)</a></li>
+                <li><a href="#amd-cpu"><span class="toc-num">4</span> AMD Ryzen Processors</a></li>
+                <li><a href="#incompatible-cpu"><span class="toc-num">5</span> Incompatible Processors</a></li>
+                <li><a href="#nvidia"><span class="toc-num">6</span> NVIDIA GeForce GPUs</a></li>
+                <li><a href="#amd-gpu"><span class="toc-num">7</span> AMD Radeon GPUs</a></li>
+                <li><a href="#internet"><span class="toc-num">8</span> Internet Requirements</a></li>
+                <li><a href="#additional"><span class="toc-num">9</span> Additional Hardware Requirements</a></li>
+            </ul>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- QUICK NAVIGATION -->
+        <!-- ============================================================ -->
+        <div class="quick-nav" id="quicknav">
+            <h2>Quick Navigation</h2>
+            <div class="quick-nav-grid">
+                <a href="#quick-check"><span class="qn-icon qn-phase">?</span> Quick Compatibility Check</a>
+                <a href="#intel"><span class="qn-icon qn-hw">I</span> Intel CPUs</a>
+                <a href="#amd-cpu"><span class="qn-icon qn-hw">A</span> AMD Ryzen CPUs</a>
+                <a href="#incompatible-cpu"><span class="qn-icon qn-disq">X</span> Incompatible CPUs</a>
+                <a href="#nvidia"><span class="qn-icon qn-hw">N</span> NVIDIA GPUs</a>
+                <a href="#amd-gpu"><span class="qn-icon qn-hw">R</span> AMD Radeon GPUs</a>
+                <a href="#internet"><span class="qn-icon qn-obj">W</span> Internet Requirements</a>
+                <a href="#additional"><span class="qn-icon qn-post">+</span> Additional Requirements</a>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 1: OVERVIEW -->
+        <!-- ============================================================ -->
+        <div class="script-section" id="overview">
+            <div class="script-title">
+                <span class="badge">Section 1</span>
+                <h2>Overview &amp; How to Use This Guide</h2>
+            </div>
+
+            <div class="dark-box">
+                <h3>Purpose</h3>
+                <p>This document is a standalone reference for verifying whether a moderator candidate&rsquo;s hardware meets the minimum requirements for the <strong>Streaming Platform Moderator</strong> position.</p>
+                <p style="margin-top: 8px;">Use it during calls or messenger conversations when a candidate provides their hardware specifications.</p>
+            </div>
+
+            <div class="card">
+                <h3>How to Verify Hardware</h3>
+                <ul>
+                    <li>Ask the candidate for their <strong>processor (CPU) model</strong> &mdash; look it up in the <a href="#intel" class="nav-link"><span class="arrow">&rarr;</span> Intel</a> or <a href="#amd-cpu" class="nav-link"><span class="arrow">&rarr;</span> AMD CPU</a> tables</li>
+                    <li>Ask for their <strong>graphics card (GPU) model</strong> &mdash; look it up in the <a href="#nvidia" class="nav-link"><span class="arrow">&rarr;</span> NVIDIA</a> or <a href="#amd-gpu" class="nav-link"><span class="arrow">&rarr;</span> AMD GPU</a> sections</li>
+                    <li>If the candidate doesn&rsquo;t know their specs, ask them to check: <strong>Settings &rarr; System &rarr; About</strong> (Windows) or run <strong>dxdiag</strong></li>
+                    <li>Verify <a href="#internet" class="nav-link"><span class="arrow">&rarr;</span> Internet speed</a> and <a href="#additional" class="nav-link"><span class="arrow">&rarr;</span> Additional requirements</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="back-to-top"><a href="#quicknav">&uarr; Quick Navigation</a></div>
+        <div class="section-divider"></div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 2: QUICK COMPATIBILITY CHECK -->
+        <!-- ============================================================ -->
+        <div class="script-section" id="quick-check">
+            <div class="script-title">
+                <span class="badge">Section 2</span>
+                <h2>Quick Compatibility Check</h2>
+            </div>
+
+            <div class="note">
+                <div class="note-label">Speed Check</div>
+                <p>Use this section for a fast yes/no decision before looking up exact models in the full tables.</p>
+            </div>
+
+            <div class="highlight-box">
+                <h3>Minimum Requirements Summary</h3>
+                <ul>
+                    <li><strong>CPU:</strong> Intel Core i3 10th gen or newer &bull; AMD Ryzen 3 3000-series or newer</li>
+                    <li><strong>GPU:</strong> NVIDIA GTX 1060 6GB or newer &bull; AMD Radeon from 2019 or newer</li>
+                    <li><strong>Internet:</strong> 100 Mbps minimum (wired connection preferred)</li>
+                    <li><strong>LAN port:</strong> Required (Ethernet / RJ-45)</li>
+                    <li><strong>OS:</strong> Windows only (no macOS)</li>
+                </ul>
+            </div>
+
+            <div class="success-box">
+                <div class="success-label">Instant Pass</div>
+                <p>If the candidate has <strong>Intel Core i5/i7 12th gen+</strong> or <strong>Ryzen 5/7 5000-series+</strong> with an <strong>RTX 3060+</strong> and <strong>100+ Mbps wired internet</strong> &mdash; they are compatible. No need to look up individual models.</p>
+            </div>
+
+            <div class="stop">
+                <div class="stop-label">Instant Fail</div>
+                <p>If the candidate uses a <strong>MacBook</strong>, <strong>Intel Pentium/Celeron</strong>, <strong>Intel Xeon</strong>, or <strong>AMD FX</strong> &mdash; they are <strong>not eligible</strong>. No further hardware check needed.</p>
+            </div>
+        </div>
+
+        <div class="phase-nav">
+            <a href="#overview">&larr; Overview</a>
+            <span class="spacer"></span>
+            <a href="#intel">Intel CPUs &rarr;</a>
+        </div>
+        <div class="back-to-top"><a href="#quicknav">&uarr; Quick Navigation</a></div>
+        <div class="section-divider"></div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 3: INTEL CPUs -->
+        <!-- ============================================================ -->
+        <div class="script-section" id="intel">
+            <div class="script-title">
+                <span class="badge">Section 3</span>
+                <h2>Intel Core Processors (10th&ndash;14th Gen)</h2>
+            </div>
+
+            <div class="sub-heading">Core i3 &mdash; Entry Level</div>
+
+            <table class="hw-table">
+                <thead>
+                    <tr>
+                        <th>10th Gen</th>
+                        <th>11th Gen</th>
+                        <th>12th Gen</th>
+                        <th>13th Gen</th>
+                        <th>14th Gen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>i3-10100<br>i3-10100F<br>i3-10105<br>i3-10105F<br>i3-10300</td>
+                        <td>i3-11100<br>i3-11100F</td>
+                        <td>i3-12100<br>i3-12100F<br>i3-12300<br>i3-12300T</td>
+                        <td>i3-13100<br>i3-13100F</td>
+                        <td>i3-14100<br>i3-14100F</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="sub-heading">Core i5 &mdash; Mid Range</div>
+
+            <table class="hw-table">
+                <thead>
+                    <tr>
+                        <th>10th Gen</th>
+                        <th>11th Gen</th>
+                        <th>12th Gen</th>
+                        <th>13th Gen</th>
+                        <th>14th Gen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>i5-10400<br>i5-10600K<br>i5-10300H<br>i5-10400H<br>i5-10500H</td>
+                        <td>i5-11400<br>i5-11600K</td>
+                        <td>i5-12400<br>i5-12600K<br>i5-12500H<br>i5-12450H<br>i5-12600H</td>
+                        <td>i5-13400<br>i5-13600K<br>i5-13500H</td>
+                        <td>i5-14400<br>i5-14600K<br>i5-14500H</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="sub-heading">Core i7 &mdash; High Performance</div>
+
+            <table class="hw-table">
+                <thead>
+                    <tr>
+                        <th>10th Gen</th>
+                        <th>11th Gen</th>
+                        <th>12th Gen</th>
+                        <th>13th Gen</th>
+                        <th>14th Gen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>i7-10700K<br>i7-10850H</td>
+                        <td>i7-11700K</td>
+                        <td>i7-12700K<br>i7-12800H<br>i7-12650H</td>
+                        <td>i7-13700K<br>i7-13800H<br>i7-13650H</td>
+                        <td>i7-14700K<br>i7-14800H<br>i7-14650H</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="sub-heading">Core i9 &mdash; Enthusiast</div>
+
+            <table class="hw-table">
+                <thead>
+                    <tr>
+                        <th>10th Gen</th>
+                        <th>11th Gen</th>
+                        <th>12th Gen</th>
+                        <th>13th Gen</th>
+                        <th>14th Gen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>i9-10850K<br>i9-10900K</td>
+                        <td>i9-11900K</td>
+                        <td>i9-12900K<br>i9-12900H</td>
+                        <td>i9-13900K<br>i9-13900H</td>
+                        <td>i9-14900K<br>i9-14900H</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="hw-note">
+                <strong>Note:</strong> Laptop variants (H-suffix) and desktop variants (K-suffix, no suffix) are both compatible. The &ldquo;F&rdquo; suffix means no integrated graphics &mdash; still compatible as long as the candidate has a dedicated GPU.
+            </div>
+        </div>
+
+        <div class="phase-nav">
+            <a href="#quick-check">&larr; Quick Check</a>
+            <span class="spacer"></span>
+            <a href="#amd-cpu">AMD CPUs &rarr;</a>
+        </div>
+        <div class="back-to-top"><a href="#quicknav">&uarr; Quick Navigation</a></div>
+        <div class="section-divider"></div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 4: AMD RYZEN CPUs -->
+        <!-- ============================================================ -->
+        <div class="script-section" id="amd-cpu">
+            <div class="script-title">
+                <span class="badge">Section 4</span>
+                <h2>AMD Ryzen Processors</h2>
+            </div>
+
+            <div class="sub-heading">Ryzen 3 &mdash; Entry Level</div>
+
+            <table class="hw-table">
+                <thead>
+                    <tr><th>Compatible Ryzen 3 Models</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Ryzen 3 3100, 3300X, 4100, 4300G, Pro 4350GE, 5300G, 5300U, 5400U, 5425U, 8300G</td></tr>
+                </tbody>
+            </table>
+
+            <div class="sub-heading">Ryzen 5 &mdash; Mid Range</div>
+
+            <table class="hw-table">
+                <thead>
+                    <tr><th>Compatible Ryzen 5 Models</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Ryzen 5 1500X, 1600, 1600X, 2400G, 2400GE, 2500U, 2500X, 2600, 2600H, 2600X, 3400G, 3500U, 3550H, 3600, 3600X, 5500, 5500GT, 5600, 5600G, 5600GE, 5600GT, 5600X, 5600X3D, 7500F, 7600, 7600X, 7600X3D, 8400F, 8500G, 8600G, 9600X, PRO 2400G, PRO 2400GE, PRO 2500U, PRO 7645</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="sub-heading">Ryzen 7 &mdash; High Performance</div>
+
+            <table class="hw-table">
+                <thead>
+                    <tr><th>Compatible Ryzen 7 Models</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Ryzen 7 1700, 1700X, 1800X, 2700, 2700U, 2700X, 2800H, 3700U, 3700X, 3750H, 3800X, 3800XT, 4700U, 5700, 5700G, 5700X, 5700X3D, 5800X, 5800X3D, 5800XT, 7700, 7700X, 7800X3D, 8700F, 8700G, 9700X, PRO 2700U, PRO 7745</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="sub-heading">Ryzen 9 &mdash; Enthusiast</div>
+
+            <table class="hw-table">
+                <thead>
+                    <tr><th>Compatible Ryzen 9 Models</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Ryzen 9 3900, 3900X, 3900XT, 3950X, 5900X, 5900XT, 5950X, 7900, 7900X, 7900X3D, 7950X, 7950X3D, 9900X, 9950X, PRO 7945</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="phase-nav">
+            <a href="#intel">&larr; Intel CPUs</a>
+            <span class="spacer"></span>
+            <a href="#incompatible-cpu">Incompatible CPUs &rarr;</a>
+        </div>
+        <div class="back-to-top"><a href="#quicknav">&uarr; Quick Navigation</a></div>
+        <div class="section-divider"></div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 5: INCOMPATIBLE CPUs -->
+        <!-- ============================================================ -->
+        <div class="script-section" id="incompatible-cpu">
+            <div class="script-title">
+                <span class="badge">Section 5</span>
+                <h2>Incompatible Processors</h2>
+            </div>
+
+            <div class="stop">
+                <div class="stop-label">Not Eligible</div>
+                <p>If the candidate&rsquo;s processor falls into any of the categories below, they <strong>cannot</strong> work as a moderator. Their hardware does not meet the minimum requirements.</p>
+            </div>
+
+            <table class="hw-table">
+                <thead>
+                    <tr>
+                        <th>Processor Family</th>
+                        <th>Details</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="hw-incompatible">
+                        <td><strong>AMD FX</strong></td>
+                        <td>All models (FX-4100, FX-6300, FX-8350, etc.)</td>
+                        <td>Outdated architecture, insufficient single-thread performance</td>
+                    </tr>
+                    <tr class="hw-incompatible">
+                        <td><strong>Intel Xeon</strong></td>
+                        <td>All models (server/workstation processors)</td>
+                        <td>Server-grade, not optimized for streaming workloads</td>
+                    </tr>
+                    <tr class="hw-incompatible">
+                        <td><strong>Intel Pentium</strong></td>
+                        <td>All models (Gold, Silver, etc.)</td>
+                        <td>Insufficient processing power for simultaneous OBS + streaming</td>
+                    </tr>
+                    <tr class="hw-incompatible">
+                        <td><strong>Intel Celeron</strong></td>
+                        <td>All models</td>
+                        <td>Budget tier, cannot handle streaming software requirements</td>
+                    </tr>
+                    <tr class="hw-incompatible">
+                        <td><strong>MacBook processors</strong></td>
+                        <td>Apple M1, M2, M3, Intel-based MacBooks</td>
+                        <td>macOS is not compatible with required streaming software configuration</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="note">
+                <div class="note-label">How to Handle</div>
+                <p>If a candidate has an incompatible processor, politely explain: <em>&ldquo;Unfortunately, your current hardware configuration does not meet the minimum requirements for this position. We recommend upgrading your processor if you&rsquo;re interested in future opportunities.&rdquo;</em></p>
+            </div>
+        </div>
+
+        <div class="phase-nav">
+            <a href="#amd-cpu">&larr; AMD CPUs</a>
+            <span class="spacer"></span>
+            <a href="#nvidia">NVIDIA GPUs &rarr;</a>
+        </div>
+        <div class="back-to-top"><a href="#quicknav">&uarr; Quick Navigation</a></div>
+        <div class="section-divider"></div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 6: NVIDIA GPUs -->
+        <!-- ============================================================ -->
+        <div class="script-section" id="nvidia">
+            <div class="script-title">
+                <span class="badge">Section 6</span>
+                <h2>NVIDIA GeForce GPUs</h2>
+            </div>
+
+            <table class="hw-table">
+                <thead>
+                    <tr>
+                        <th>Series 10 (GTX)</th>
+                        <th>Series 16 (GTX)</th>
+                        <th>Series 20 (RTX)</th>
+                        <th>Series 30 (RTX)</th>
+                        <th>Series 40 (RTX)</th>
+                        <th>Series 50 (RTX)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>GTX 1060 6GB<br>GTX 1070<br>GTX 1070 Ti<br>GTX 1080<br>GTX 1080 Ti</td>
+                        <td>GTX 1630<br>GTX 1650<br>GTX 1650 Super<br>GTX 1660<br>GTX 1660 Super<br>GTX 1660 Ti</td>
+                        <td>RTX 2060<br>RTX 2060 Super<br>RTX 2070<br>RTX 2070 Super<br>RTX 2080<br>RTX 2080 Super<br>RTX 2080 Ti</td>
+                        <td>RTX 3050<br>RTX 3060<br>RTX 3060 Ti<br>RTX 3070<br>RTX 3070 Ti<br>RTX 3080<br>RTX 3080 Ti<br>RTX 3090<br>RTX 3090 Ti</td>
+                        <td>RTX 4050<br>RTX 4060<br>RTX 4060 Ti<br>RTX 4070<br>RTX 4070 Super<br>RTX 4070 Ti<br>RTX 4070 Ti Super<br>RTX 4080<br>RTX 4080 Super<br>RTX 4090</td>
+                        <td>RTX 5050<br>RTX 5060<br>RTX 5060 Ti<br>RTX 5070<br>RTX 5070 Ti<br>RTX 5080<br>RTX 5090</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="success-box">
+                <div class="success-label">Ti &amp; Super Variants</div>
+                <p>If a listed model has a <strong>Ti</strong> or <strong>SUPER</strong> variant, that variant is <strong>also compatible</strong>. Example: GTX 1650 (listed) &rarr; GTX 1650 Ti, GTX 1650 SUPER &rarr; both compatible.</p>
+            </div>
+
+            <div class="stop">
+                <div class="stop-label">Not Compatible</div>
+                <p><strong>GTX 1060 3GB</strong> is NOT compatible &mdash; only the <strong>6GB version</strong> meets requirements. If the candidate mentions &ldquo;GTX 1060&rdquo;, always confirm the VRAM amount.</p>
+            </div>
+        </div>
+
+        <div class="phase-nav">
+            <a href="#incompatible-cpu">&larr; Incompatible CPUs</a>
+            <span class="spacer"></span>
+            <a href="#amd-gpu">AMD GPUs &rarr;</a>
+        </div>
+        <div class="back-to-top"><a href="#quicknav">&uarr; Quick Navigation</a></div>
+        <div class="section-divider"></div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 7: AMD GPUs -->
+        <!-- ============================================================ -->
+        <div class="script-section" id="amd-gpu">
+            <div class="script-title">
+                <span class="badge">Section 7</span>
+                <h2>AMD Radeon GPUs</h2>
+            </div>
+
+            <div class="card">
+                <h3>Compatibility Rule</h3>
+                <p><strong>AMD GPUs released from 2019 onwards are accepted.</strong> This includes:</p>
+                <ul>
+                    <li><strong>RX 5000 series</strong> (RDNA) &mdash; RX 5500 XT, RX 5600 XT, RX 5700, RX 5700 XT</li>
+                    <li><strong>RX 6000 series</strong> (RDNA 2) &mdash; RX 6500 XT, RX 6600, RX 6600 XT, RX 6700 XT, RX 6800, RX 6800 XT, RX 6900 XT, RX 6950 XT</li>
+                    <li><strong>RX 7000 series</strong> (RDNA 3) &mdash; RX 7600, RX 7700 XT, RX 7800 XT, RX 7900 GRE, RX 7900 XT, RX 7900 XTX</li>
+                    <li><strong>RX 9000 series</strong> (RDNA 4) &mdash; all models</li>
+                </ul>
+            </div>
+
+            <div class="stop">
+                <div class="stop-label">Not Compatible</div>
+                <p>AMD GPUs <strong>older than 2019</strong> (RX 400 series, RX 500 series, Vega series, and older) are <strong>not compatible</strong>.</p>
+            </div>
+        </div>
+
+        <div class="phase-nav">
+            <a href="#nvidia">&larr; NVIDIA GPUs</a>
+            <span class="spacer"></span>
+            <a href="#internet">Internet Requirements &rarr;</a>
+        </div>
+        <div class="back-to-top"><a href="#quicknav">&uarr; Quick Navigation</a></div>
+        <div class="section-divider"></div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 8: INTERNET REQUIREMENTS -->
+        <!-- ============================================================ -->
+        <div class="script-section" id="internet">
+            <div class="script-title">
+                <span class="badge">Section 8</span>
+                <h2>Internet Requirements</h2>
+            </div>
+
+            <div class="highlight-box">
+                <h3>Minimum Speed</h3>
+                <p><strong>100 Mbps</strong> download speed (measured via <strong>speedtest.net</strong>).</p>
+                <p>Ask the candidate to run a speed test during the call/conversation and share the result (number or screenshot).</p>
+            </div>
+
+            <div class="card">
+                <h3>Connection Type</h3>
+                <ul>
+                    <li><strong>Wired (Ethernet/LAN)</strong> &mdash; strongly preferred for stability</li>
+                    <li><strong>Wi-Fi</strong> &mdash; acceptable only if speed test confirms 100+ Mbps with low latency</li>
+                    <li>The candidate&rsquo;s PC/laptop must have a <strong>LAN (Ethernet) port</strong></li>
+                </ul>
+            </div>
+
+            <div class="note">
+                <div class="note-label">If Speed Is Below 100 Mbps</div>
+                <p>Ask whether the candidate can <strong>upgrade their internet plan</strong> or <strong>switch to a wired connection</strong>. If improvement is possible within 1 week, the candidate may still qualify.</p>
+            </div>
+        </div>
+
+        <div class="phase-nav">
+            <a href="#amd-gpu">&larr; AMD GPUs</a>
+            <span class="spacer"></span>
+            <a href="#additional">Additional Requirements &rarr;</a>
+        </div>
+        <div class="back-to-top"><a href="#quicknav">&uarr; Quick Navigation</a></div>
+        <div class="section-divider"></div>
+
+        <!-- ============================================================ -->
+        <!-- SECTION 9: ADDITIONAL REQUIREMENTS -->
+        <!-- ============================================================ -->
+        <div class="script-section" id="additional">
+            <div class="script-title">
+                <span class="badge">Section 9</span>
+                <h2>Additional Hardware Requirements</h2>
+            </div>
+
+            <div class="card">
+                <h3>Checklist</h3>
+                <ul>
+                    <li><strong>Operating System:</strong> Windows 10 or Windows 11 (macOS not supported)</li>
+                    <li><strong>LAN port:</strong> Must have an Ethernet (RJ-45) port on the PC/laptop</li>
+                    <li><strong>Microphone:</strong> Working microphone (for interview; not required for daily work)</li>
+                    <li><strong>Webcam:</strong> Not required for the moderator role</li>
+                </ul>
+            </div>
+
+            <div class="dark-box">
+                <h3>Software Requirements (Installed During Training)</h3>
+                <ul>
+                    <li><strong>OBS Studio</strong> or <strong>Streamlabs</strong> (streaming software)</li>
+                    <li><strong>Zoom</strong> (for interview and team meetings)</li>
+                    <li><strong>Telegram</strong> (primary communication channel)</li>
+                </ul>
+                <p style="margin-top: 8px;">Candidates do <strong>not</strong> need to install these before the interview. All setup is done during the paid training period.</p>
+            </div>
+        </div>
+
+        <div class="phase-nav">
+            <a href="#internet">&larr; Internet Requirements</a>
+            <span class="spacer"></span>
+        </div>
+        <div class="back-to-top"><a href="#quicknav">&uarr; Quick Navigation</a></div>
+
+    </div>
+
+    <div class="footer">HUNTME &copy; 2026 &mdash; Internal Document. Confidential.</div>
+
+</body>
+</html>

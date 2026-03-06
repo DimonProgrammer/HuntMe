@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>START HERE — HUNTME Recruitment Package</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #F43F5E;
+            --accent-dark: #E3000F;
+            --accent-gradient: linear-gradient(135deg, #F43F5E 0%, #E3000F 100%);
+            --bg: #F0F2F5;
+            --card: #FFFFFF;
+            --text-primary: #1E1E2D;
+            --text-secondary: #6B7280;
+            --text-light: #9CA3AF;
+            --border: #E5E7EB;
+            --success: #10B981;
+            --success-bg: #ECFDF5;
+            --success-border: #A7F3D0;
+            --danger: #EF4444;
+            --danger-bg: #FEF2F2;
+            --danger-border: #FECACA;
+            --sidebar-dark: #1A1A2E;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.05);
+            --radius: 12px;
+            --blue: #3B82F6;
+            --blue-bg: #EFF6FF;
+            --blue-border: #BFDBFE;
+            --amber: #F59E0B;
+            --amber-bg: #FFFBEB;
+            --amber-border: #FDE68A;
+            --green: #10B981;
+            --green-bg: #ECFDF5;
+            --green-border: #A7F3D0;
+            --purple: #8B5CF6;
+            --purple-bg: #F5F3FF;
+            --purple-border: #DDD6FE;
+            --indigo: #6366F1;
+            --indigo-bg: #EEF2FF;
+            --indigo-border: #C7D2FE;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ========== HEADER ========== */
+        .header { background: var(--sidebar-dark); position: relative; }
+        .header::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+            height: 4px; background: var(--accent-gradient);
+        }
+        .header-inner {
+            max-width: 960px; margin: 0 auto; padding: 32px 40px;
+            display: flex; align-items: center; gap: 32px;
+        }
+        .header-logo img { height: 44px; width: auto; display: block; object-fit: contain; }
+        .header-divider { width: 1px; height: 40px; background: rgba(255,255,255,0.15); }
+        .header-text h1 { font-size: 22px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; }
+        .header-text p { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+        /* ========== CONTAINER ========== */
+        .container { max-width: 960px; margin: 0 auto; padding: 32px 40px 60px; }
+
+        /* ========== HERO ========== */
+        .hero {
+            background: linear-gradient(135deg, #1A1A2E 0%, #2D2D44 100%);
+            border-radius: var(--radius); padding: 48px 40px; margin-bottom: 32px;
+            border: 2px solid rgba(244, 63, 94, 0.3); text-align: center;
+        }
+        .hero h1 {
+            font-size: 32px; font-weight: 800; color: #fff;
+            margin-bottom: 12px; letter-spacing: -0.03em;
+        }
+        .hero p {
+            font-size: 16px; color: rgba(255,255,255,0.7);
+            max-width: 600px; margin: 0 auto 24px; line-height: 1.6;
+        }
+        .hero-badge {
+            display: inline-block; background: var(--accent-gradient);
+            color: #fff; font-size: 11px; font-weight: 700;
+            padding: 6px 16px; border-radius: 20px;
+            text-transform: uppercase; letter-spacing: 0.05em;
+        }
+
+        /* ========== CARD ========== */
+        .card {
+            background: var(--card); border-radius: var(--radius);
+            box-shadow: var(--shadow-sm); padding: 28px 32px; margin-bottom: 24px;
+            transition: box-shadow 0.2s;
+        }
+        .card:hover { box-shadow: var(--shadow-md); }
+        .card h3 { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+        .card p { font-size: 14px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 8px; }
+        .card p strong { color: var(--text-primary); font-weight: 600; }
+        .card ul { list-style: none; margin-top: 12px; }
+        .card ul li {
+            font-size: 14px; color: var(--text-secondary);
+            padding: 6px 0 6px 24px; position: relative;
+        }
+        .card ul li::before {
+            content: ''; position: absolute; left: 0; top: 14px;
+            width: 6px; height: 6px; background: var(--accent); border-radius: 50%;
+        }
+
+        /* ========== PATHWAY CARDS ========== */
+        .pathway-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+        .pathway-card {
+            background: var(--card); border-radius: var(--radius);
+            box-shadow: var(--shadow-sm); padding: 32px;
+            border-top: 4px solid transparent; transition: all 0.2s;
+            position: relative; overflow: hidden;
+        }
+        .pathway-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0;
+            height: 4px; background: var(--accent-gradient);
+        }
+        .pathway-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+        .pathway-card h3 {
+            font-size: 20px; font-weight: 800; margin-bottom: 8px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .pathway-card .desc {
+            font-size: 13px; color: var(--text-secondary);
+            margin-bottom: 20px; line-height: 1.5;
+        }
+        .pathway-card ul { list-style: none; }
+        .pathway-card ul li {
+            font-size: 14px; padding: 8px 0; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 12px;
+        }
+        .pathway-card ul li:last-child { border-bottom: none; }
+        .pathway-card ul li .num {
+            width: 24px; height: 24px; background: var(--accent-gradient);
+            border-radius: 6px; display: flex; align-items: center;
+            justify-content: center; font-size: 11px; font-weight: 700;
+            color: #fff; flex-shrink: 0;
+        }
+        .pathway-card ul li a {
+            text-decoration: none; color: var(--text-primary);
+            font-weight: 500; transition: color 0.15s;
+        }
+        .pathway-card ul li a:hover { color: var(--accent); }
+
+        /* ========== QUICK REF ========== */
+        .quick-ref {
+            background: var(--amber-bg); border: 1px solid var(--amber-border);
+            border-left: 4px solid var(--amber); border-radius: 0 var(--radius) var(--radius) 0;
+            padding: 20px 24px; margin-bottom: 24px;
+        }
+        .quick-ref-label {
+            font-size: 10px; font-weight: 700; color: var(--amber);
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;
+        }
+        .quick-ref p { font-size: 14px; color: #92400E; line-height: 1.6; }
+        .quick-ref p strong { font-weight: 600; }
+
+        /* ========== CHECKLIST ========== */
+        .checklist {
+            background: var(--card); border-radius: var(--radius);
+            box-shadow: var(--shadow-sm); padding: 28px 32px; margin-bottom: 24px;
+        }
+        .checklist h3 { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+        .checklist-item {
+            display: flex; align-items: flex-start; gap: 12px;
+            padding: 12px 0; border-bottom: 1px solid var(--border);
+        }
+        .checklist-item:last-child { border-bottom: none; }
+        .checklist-item .check {
+            width: 20px; height: 20px; border: 2px solid var(--border);
+            border-radius: 4px; flex-shrink: 0; margin-top: 2px;
+        }
+        .checklist-item p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+        .checklist-item p strong { color: var(--text-primary); font-weight: 600; }
+
+        /* ========== PRINT ========== */
+        @media print {
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #fff; }
+            .container { padding: 24px 10px 20px; }
+            .card, .pathway-card, .checklist, .quick-ref, .hero {
+                box-shadow: none; break-inside: avoid;
+            }
+            .pathway-grid { grid-template-columns: 1fr; }
+        }
+        @page { margin: 15mm; size: A4; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-inner">
+            <div class="header-logo">
+                <svg viewBox="195 80 205 70" xmlns="http://www.w3.org/2000/svg" style="height: 54px; width: auto; display: block;">
+                    <style>.logo-red{fill:#E3000F;}.logo-white{fill:#FFFFFF;}</style>
+                    <g>
+                        <path class="logo-red" d="M367.85,86.09h26.29v8.72h-17.57v14.74h14.04v3.59c0,1.54-0.48,2.78-1.41,3.72c-0.94,0.94-2.19,1.41-3.73,1.41h-8.89v14.66h17.57v8.72h-26.29V86.09z"/>
+                        <path class="logo-white" d="M240.83,86.18v43.53c0,0.99,0.3,1.76,0.87,2.34c0.58,0.58,1.35,0.87,2.34,0.87h2.83c0.99,0,1.78-0.3,2.35-0.87c0.58-0.58,0.86-1.35,0.86-2.34V86.18h8.72v45.85c0,2.91-0.87,5.23-2.64,7c-1.75,1.75-4.08,2.62-7,2.62h-7.43c-2.92,0-5.25-0.87-7-2.62c-1.76-1.76-2.64-4.09-2.64-7V86.18H240.83z M263.94,141.65V86.09h3.92c1.54,0,2.92,0.44,4.14,1.32c1.22,0.87,2.07,2.06,2.55,3.56l8.3,27.07l-0.32-31.96h8.75v55.56h-3.92c-1.54,0-2.93-0.44-4.15-1.32c-1.22-0.87-2.06-2.06-2.53-3.56l-8.29-27.07l0.32,31.96H263.94z M293.69,86.17h27.37v8.72h-9.32v46.76h-8.72V94.89h-9.32V86.17z M200.99,86.09h8.72v23.46h8.87V86.09h8.72v55.56h-8.72v-23.38h-8.87v23.38h-8.72V86.09z"/>
+                        <path class="logo-red" d="M344.09,141.65h-3.01c-1.17-5.66-7.57-3.88-7.48-10.43c0.05-3.91,3.31-5.61,3.92-9.53c0.72-4.65-0.78-8.31-3.09-10.3c1.76,2.11,2.82,6.72,0.48,10.79c-1.63,2.83-4,3.68-5.12,8.4c-1.11,4.66,1.27,8.52,2.98,11.07h-8.42V86.09h9.07c1.54,0,2.86,0.46,3.92,1.38c1.07,0.93,1.71,2.16,1.93,3.7l4.82,34.53l4.82-34.53c0.22-1.54,0.86-2.78,1.93-3.7c1.07-0.91,2.38-1.38,3.92-1.38h9.07v55.56h-8.42c1.71-2.55,4.09-6.41,2.98-11.07c-1.12-4.72-3.49-5.57-5.12-8.4c-2.34-4.07-1.28-8.68,0.48-10.79c-2.31,1.99-3.81,5.65-3.09,10.3c0.61,3.92,3.87,5.62,3.92,9.53c0.09,6.55-6.31,4.77-7.48,10.43H344.09z"/>
+                    </g>
+                </svg>
+            </div>
+            <div class="header-divider"></div>
+            <div class="header-text">
+                <h1>START HERE — Recruitment Package</h1>
+                <p>Complete Documentation for Call Center Teams</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- HERO SECTION -->
+        <div class="hero">
+            <div class="hero-badge">Read this first</div>
+            <h1>Welcome to HUNTME Recruitment</h1>
+            <p>This package contains everything your team needs to successfully recruit streaming talent for the HUNTME platform. Choose your recruitment path below and follow the roadmap.</p>
+        </div>
+
+        <!-- QUICK ORIENTATION -->
+        <div class="quick-ref">
+            <div class="quick-ref-label">What is HUNTME?</div>
+            <p>HUNTME is a <strong>talent platform</strong> connecting streaming studios with international streaming models and technical moderators. Your role: <strong>recruit qualified candidates</strong> from warm and cold traffic sources, qualify them, and book interviews.</p>
+        </div>
+
+        <!-- FOR DIRECTORS -->
+        <div class="card" style="background: linear-gradient(135deg, #1A1A2E 0%, #2D2D44 100%); border: 2px solid rgba(244, 63, 94, 0.3); margin-bottom: 32px;">
+            <h3 style="color: #fff; display: flex; align-items: center; gap: 10px;">
+                💼 For Call Center Directors
+            </h3>
+            <p style="color: rgba(255,255,255,0.85); margin-bottom: 16px;">
+                If you're evaluating this partnership, start here: <strong style="color: #fff;"><a href="03_Partnership_Guide.html" style="color: #F43F5E; text-decoration: none; font-weight: 700;">Partnership Guide</a></strong> — covers revenue potential, lead generation strategy, job board recommendations, and operational requirements.
+            </p>
+            <p style="color: rgba(255,255,255,0.75); margin-bottom: 0;">
+                After reviewing the Partnership Guide, read documents 01-02 below to understand the recruitment process, then train your team using the pathway-specific scripts (Models or Operators).
+            </p>
+        </div>
+
+        <!-- TWO RECRUITMENT PATHWAYS -->
+        <div class="pathway-grid">
+            <!-- MODELS PATHWAY -->
+            <div class="pathway-card">
+                <h3>📹 Models</h3>
+                <p class="desc">Recruiting streaming talent (performers who appear on camera)</p>
+                <ul>
+                    <li><span class="num">1</span> <a href="01_Campaign_Brief.html">Campaign Brief</a></li>
+                    <li><span class="num">2</span> <a href="02_Quick_Start_Guide.html">Quick Start Guide</a></li>
+                    <li><span class="num">3</span> <a href="Models/03_Photo_Approval_Guide_Models.html">Photo Approval Guide</a></li>
+                    <li><span class="num">4</span> <a href="Models/04_Call_Scripts_Models.html">Call Scripts</a></li>
+                    <li><span class="num">5</span> <a href="Models/05_Messenger_Scripts_Models.html">Messenger Scripts</a></li>
+                    <li><span class="num">6</span> <a href="Models/06_Objection_Handling_Models.html">Objection Handling</a></li>
+                </ul>
+            </div>
+
+            <!-- OPERATORS PATHWAY -->
+            <div class="pathway-card">
+                <h3>🎮 Operators</h3>
+                <p class="desc">Recruiting technical moderators (behind-the-scenes streaming staff)</p>
+                <ul>
+                    <li><span class="num">1</span> <a href="01_Campaign_Brief.html">Campaign Brief</a></li>
+                    <li><span class="num">2</span> <a href="02_Quick_Start_Guide.html">Quick Start Guide</a></li>
+                    <li><span class="num">3</span> <a href="Operators/07_Hardware_Compatibility_Guide.html">Hardware Guide</a></li>
+                    <li><span class="num">4</span> <a href="Operators/08_Call_Scripts_Operators.html">Call Scripts</a></li>
+                    <li><span class="num">5</span> <a href="Operators/09_Messenger_Scripts_Operators.html">Messenger Scripts</a></li>
+                    <li><span class="num">6</span> <a href="Operators/10_Objection_Handling_Operators.html">Objection Handling</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- DIFFERENCES BETWEEN PATHWAYS -->
+        <div class="card">
+            <h3>🔍 Key Differences: Models vs Operators</h3>
+            <p><strong>Models</strong> are streaming talent who appear on camera. Qualification criteria: age 18-25, visual format requirements (height/weight formula), smartphone with camera, private room.</p>
+            <p><strong>Operators</strong> are technical moderators who run streaming software behind the scenes. Qualification criteria: age 18+, PC with specific CPU/GPU, 100 Mbps internet, technical aptitude.</p>
+            <p><strong>Use different scripts for each pathway.</strong> Do not mix them.</p>
+        </div>
+
+        <!-- FIRST-DAY CHECKLIST -->
+        <div class="checklist">
+            <h3>✅ First Day Checklist (30 minutes)</h3>
+            <div class="checklist-item">
+                <div class="check"></div>
+                <p><strong>Step 1:</strong> Read <a href="01_Campaign_Brief.html">Campaign Brief</a> (10 min) — understand HUNTME, your role, and KPIs</p>
+            </div>
+            <div class="checklist-item">
+                <div class="check"></div>
+                <p><strong>Step 2:</strong> Read <a href="02_Quick_Start_Guide.html">Quick Start Guide</a> (10 min) — learn the qualification process</p>
+            </div>
+            <div class="checklist-item">
+                <div class="check"></div>
+                <p><strong>Step 3:</strong> Choose your pathway (Models or Operators) and read the Call Scripts (10 min)</p>
+            </div>
+            <div class="checklist-item">
+                <div class="check"></div>
+                <p><strong>Step 4:</strong> Make your first 3 calls using the script — refer to Objection Handling as needed</p>
+            </div>
+        </div>
+
+        <!-- FOLDER STRUCTURE -->
+        <div class="card">
+            <h3>📁 Folder Structure</h3>
+            <ul>
+                <li><strong>00_START_HERE.html</strong> — You are here (navigation hub)</li>
+                <li><strong>01_Campaign_Brief.html</strong> — About HUNTME, context, KPIs</li>
+                <li><strong>02_Quick_Start_Guide.html</strong> — First steps, qualification basics</li>
+                <li><strong>03_Partnership_Guide.html</strong> — For directors: economics, lead generation, operations</li>
+                <li><strong>Models/</strong> — All documents for recruiting streaming models</li>
+                <li><strong>Operators/</strong> — All documents for recruiting technical moderators</li>
+            </ul>
+        </div>
+
+        <!-- NEED HELP -->
+        <div class="quick-ref">
+            <div class="quick-ref-label">Need Help?</div>
+            <p>If you encounter edge cases, technical issues, or candidates that don't fit the qualification matrix: <strong>escalate to your team lead</strong>. Never make up answers or improvise policy on the fly.</p>
+        </div>
+
+    </div>
+
+</body>
+</html>
