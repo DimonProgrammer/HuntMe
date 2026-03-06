@@ -1052,11 +1052,11 @@ STATUS_INTERVIEW_PENDING = (
     "⏳ Your interview slot has been submitted and is awaiting confirmation from our team."
 )
 STATUS_INTERVIEW_SCHEDULED = (
-    "📅 Your interview is scheduled for **{slot}**.\n\n"
+    "📅 Your interview is scheduled for *{slot}*.\n\n"
     "We'll send you a reminder beforehand. 🙂"
 )
 STATUS_INTERVIEW_CONFIRMED = (
-    "✅ Your interview is confirmed for **{slot}**.\n\n"
+    "✅ Your interview is confirmed for *{slot}*.\n\n"
     "See you there!"
 )
 STATUS_INTERVIEW_CANCELLED = (

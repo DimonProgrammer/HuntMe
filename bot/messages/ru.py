@@ -1056,11 +1056,11 @@ STATUS_INTERVIEW_PENDING = (
     "⏳ Слот на интервью отправлен и ожидает подтверждения от нашей команды."
 )
 STATUS_INTERVIEW_SCHEDULED = (
-    "📅 Интервью назначено на **{slot}**.\n\n"
+    "📅 Интервью назначено на *{slot}*.\n\n"
     "Напомним тебе заранее. 🙂"
 )
 STATUS_INTERVIEW_CONFIRMED = (
-    "✅ Интервью подтверждено: **{slot}**.\n\n"
+    "✅ Интервью подтверждено: *{slot}*.\n\n"
     "До встречи!"
 )
 STATUS_INTERVIEW_CANCELLED = (

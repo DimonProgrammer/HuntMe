@@ -181,17 +181,26 @@ async def cmd_start(message: Message, state: FSMContext):
     if lang is None:
         lang = prev_data.get("language", "en")
 
-    # Determine if user had an active form (preserve so resume_form callback still works)
+    # Determine if user had an active form (preserve so resume_form callback still works).
+    # Also handle the case where user was in waiting_question with a paused form step.
     _form_prefixes = ("OperatorForm:", "InterviewBooking:", "AgentForm:")
-    is_active_form = prev_state and any(prev_state.startswith(p) for p in _form_prefixes)
+    prev_paused = prev_data.get("paused_state")
+    is_active_form = (
+        prev_state and any(prev_state.startswith(p) for p in _form_prefixes)
+    ) or (
+        prev_paused and any(prev_paused.startswith(p) for p in _form_prefixes)
+    )
 
     await state.clear()
 
     if is_active_form:
-        # Preserve all form data so resume_form can restore the exact step
+        # Preserve all form data so resume_form can restore the exact step.
+        # If prev_state was waiting_question, keep the existing paused_state from data.
         preserved = dict(prev_data)
         preserved["language"] = lang
-        preserved["paused_state"] = prev_state
+        if prev_state and any(prev_state.startswith(p) for p in _form_prefixes):
+            preserved["paused_state"] = prev_state
+        # else: prev_paused already in preserved dict from prev_data
         await state.update_data(**preserved)
     else:
         await state.update_data(language=lang)
@@ -352,11 +361,27 @@ async def cmd_referral(message: Message, state: FSMContext):
 async def cmd_menu(message: Message, state: FSMContext):
     data = await state.get_data()
     lang = _get_lang(data)
+    paused = data.get("paused_state")
+    _form_prefixes = ("OperatorForm:", "InterviewBooking:", "AgentForm:")
+    # Also check if current state is a form (e.g., user types /menu mid-form)
+    current = await state.get_state()
+    if current and any(current.startswith(p) for p in _form_prefixes):
+        paused = current  # treat active form state as the one to preserve
     await state.clear()
-    await state.update_data(language=lang)  # preserve language across clear
+    update: dict = {"language": lang}
+    if paused and any(paused.startswith(p) for p in _form_prefixes):
+        update["paused_state"] = paused
+    await state.update_data(**update)
     m = msg(lang)
     await message.answer(m.MAIN_MENU_TEXT, reply_markup=_main_menu_kb(lang))
     await state.set_state(MenuStates.main_menu)
+    # Show banner if form was paused
+    if update.get("paused_state"):
+        fresh_data = await state.get_data()
+        banner = await _build_status_banner(message.from_user.id, fresh_data, lang)
+        if banner:
+            text, kb = banner
+            await message.answer(text, reply_markup=kb, parse_mode="Markdown")
 
 
 # --- Universal back_main callback (no state filter) ---
@@ -366,8 +391,13 @@ async def cb_back_main(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
     data = await state.get_data()
     lang = _get_lang(data)
+    paused = data.get("paused_state")
+    _form_prefixes = ("OperatorForm:", "InterviewBooking:", "AgentForm:")
     await state.clear()
-    await state.update_data(language=lang)
+    update: dict = {"language": lang}
+    if paused and any(paused.startswith(p) for p in _form_prefixes):
+        update["paused_state"] = paused
+    await state.update_data(**update)
     m = msg(lang)
     try:
         await callback.message.edit_text(m.MAIN_MENU_TEXT, reply_markup=_main_menu_kb(lang))
@@ -385,28 +415,53 @@ async def cmd_continue(message: Message, state: FSMContext):
     m = msg(lang)
     current = await state.get_state()
 
+    # States where the bot is waiting for external action — show status, not resume prompt
+    _wait_only_steps = ("waiting_crm_approval", "waiting_slot_notify")
+    # Full prompts map for InterviewBooking steps
+    _booking_prompts = lambda _m: {
+        "waiting_birth_date": _m.BOOKING_START,
+        "waiting_phone": _m.BOOKING_PHONE,
+        "waiting_experience": _m.BOOKING_EXPERIENCE,
+        "waiting_hw_cpu": _m.BOOKING_HW_CPU,
+        "waiting_hw_gpu": _m.BOOKING_HW_GPU,
+        "waiting_hw_internet": _m.BOOKING_HW_INTERNET,
+        "waiting_hw_remind": _m.BOOKING_HW_CANT_NOW,
+        "waiting_tg_nick": _m.BOOKING_TG_NICK,
+        "waiting_slot_choice": _m.BOOKING_FETCHING_SLOTS,
+        "waiting_slot_preferred": _m.BOOKING_FETCHING_SLOTS,
+    }
+
     # If actively in a form step → resume immediately
     _form_prefixes = ("OperatorForm:", "InterviewBooking:", "AgentForm:")
     if current and any(current.startswith(p) for p in _form_prefixes):
+        # For wait-only states show status banner instead of confusing resume
+        if current.startswith("InterviewBooking:") and current.split(":")[-1] in _wait_only_steps:
+            banner = await _build_status_banner(message.from_user.id, data, lang)
+            if banner:
+                text, kb = banner
+                await message.answer(text, reply_markup=kb, parse_mode="Markdown")
+            return
         await message.answer(m.RESUME_TEXT)
         if current.startswith("OperatorForm:"):
             from bot.handlers.operator_flow import _send_step_prompt
             await _send_step_prompt(message, state)
         elif current.startswith("InterviewBooking:"):
             step = current.split(":")[-1]
-            prompts = {
-                "waiting_birth_date": m.BOOKING_START,
-                "waiting_phone": m.BOOKING_PHONE,
-                "waiting_experience": m.BOOKING_EXPERIENCE,
-            }
-            await message.answer(prompts.get(step, m.RESUME_FALLBACK))
+            await message.answer(_booking_prompts(m).get(step, m.RESUME_FALLBACK))
         else:
             await message.answer(m.RESUME_FALLBACK)
         return
 
-    # Not in active form → check for paused_state (set when /start was called mid-form)
+    # Not in active form → check for paused_state (set when /start or /menu was called mid-form)
     paused = data.get("paused_state")
     if paused and any(paused.startswith(p) for p in _form_prefixes):
+        # Wait-only paused states → show status
+        if paused.startswith("InterviewBooking:") and paused.split(":")[-1] in _wait_only_steps:
+            banner = await _build_status_banner(message.from_user.id, data, lang)
+            if banner:
+                text, kb = banner
+                await message.answer(text, reply_markup=kb, parse_mode="Markdown")
+            return
         await state.update_data(paused_state=None)
         await state.set_state(paused)
         await message.answer(m.RESUME_TEXT)
@@ -415,12 +470,7 @@ async def cmd_continue(message: Message, state: FSMContext):
             await _send_step_prompt(message, state)
         elif paused.startswith("InterviewBooking:"):
             step = paused.split(":")[-1]
-            prompts = {
-                "waiting_birth_date": m.BOOKING_START,
-                "waiting_phone": m.BOOKING_PHONE,
-                "waiting_experience": m.BOOKING_EXPERIENCE,
-            }
-            await message.answer(prompts.get(step, m.RESUME_FALLBACK))
+            await message.answer(_booking_prompts(m).get(step, m.RESUME_FALLBACK))
         else:
             await message.answer(m.RESUME_FALLBACK)
         return
@@ -563,12 +613,19 @@ async def cb_resume_form(callback: CallbackQuery, state: FSMContext):
         await _send_step_prompt(callback, state)
     elif paused.startswith("InterviewBooking:"):
         step = paused.split(":")[-1]
-        prompts = {
+        booking_prompts = {
             "waiting_birth_date": m.BOOKING_START,
             "waiting_phone": m.BOOKING_PHONE,
             "waiting_experience": m.BOOKING_EXPERIENCE,
+            "waiting_hw_cpu": m.BOOKING_HW_CPU,
+            "waiting_hw_gpu": m.BOOKING_HW_GPU,
+            "waiting_hw_internet": m.BOOKING_HW_INTERNET,
+            "waiting_hw_remind": m.BOOKING_HW_CANT_NOW,
+            "waiting_tg_nick": m.BOOKING_TG_NICK,
+            "waiting_slot_choice": m.BOOKING_FETCHING_SLOTS,
+            "waiting_slot_preferred": m.BOOKING_FETCHING_SLOTS,
         }
-        prompt = prompts.get(step, m.RESUME_FALLBACK)
+        prompt = booking_prompts.get(step, m.RESUME_FALLBACK)
         await callback.message.answer(prompt)
     else:
         await callback.message.answer(m.RESUME_FALLBACK)
