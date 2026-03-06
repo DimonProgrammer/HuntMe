@@ -1419,7 +1419,7 @@ async def on_interview_confirm(callback: CallbackQuery):
 
 @router.callback_query(F.data == "interview_cancel")
 async def on_interview_cancel(callback: CallbackQuery):
-    """Candidate said they can't make it."""
+    """Candidate said they can't make it — cancel + offer rebook."""
     await callback.answer()
     tg_user_id = callback.from_user.id
     cand_lang = "en"
@@ -1440,14 +1440,24 @@ async def on_interview_cancel(callback: CallbackQuery):
                 cand_slot = cand.huntme_crm_slot or ""
                 crm_app_id = cand.huntme_crm_app_id
                 cand.interview_confirmed = "cancelled"
+                # Reset booking fields so candidate can rebook
+                cand.huntme_crm_slot = None
+                cand.huntme_crm_submitted = False
+                cand.huntme_crm_app_id = None
+                cand.interview_morning_sent = False
+                cand.interview_reminder_sent = False
+                cand.interview_retry_sent = False
+                cand.status = "screened"  # back to pre-booking status
+                await session.commit()
+            # Release old slot reservation
+            if cand_slot:
+                await session.execute(
+                    delete(SlotReservation).where(SlotReservation.slot_str == cand_slot)
+                )
                 await session.commit()
     except Exception:
-        logger.exception("Failed to update interview_confirmed")
+        logger.exception("Failed to update interview_confirmed / reset booking")
     m = msg(cand_lang)
-    try:
-        await callback.message.edit_text(m.INTERVIEW_CANCEL_REPLY)
-    except Exception:
-        pass
     # Update CRM status to "Not confirmed"
     if crm_app_id:
         ok, err = await huntme_crm.update_application_status(
@@ -1463,6 +1473,42 @@ async def on_interview_cancel(callback: CallbackQuery):
         await callback.bot.send_message(config.ADMIN_CHAT_ID, admin_msg)
     except Exception:
         logger.exception("Failed to notify admin about interview cancellation")
+    # Offer rebook: fetch fresh slots and show picker
+    try:
+        raw_slots = await huntme_crm.get_available_slots(office_id=95)
+        slots = huntme_crm.filter_slots_by_window(raw_slots, days=4) if raw_slots else {}
+        if slots:
+            nearest = huntme_crm.pick_nearest_slots(slots, count=5)
+            if nearest:
+                try:
+                    await callback.message.edit_text(m.INTERVIEW_CANCEL_REPLY)
+                except Exception:
+                    pass
+                await _rebook_candidate(callback.bot, tg_user_id, slots)
+                return
+        # No slots available — put in waiting queue
+        try:
+            async with async_session() as session:
+                result = await session.execute(
+                    select(Candidate).where(Candidate.tg_user_id == tg_user_id)
+                )
+                cand = result.scalar_one_or_none()
+                if cand:
+                    cand.waiting_for_slot = True
+                    cand.slot_wait_since = _dt.datetime.utcnow()
+                    await session.commit()
+        except Exception:
+            logger.debug("Failed to set waiting_for_slot for %s", tg_user_id)
+        try:
+            await callback.message.edit_text(m.INTERVIEW_CANCEL_NO_SLOTS)
+        except Exception:
+            pass
+    except Exception:
+        logger.exception("Failed to offer rebook after cancel")
+        try:
+            await callback.message.edit_text(m.INTERVIEW_CANCEL_REPLY)
+        except Exception:
+            pass
 
 
 def _format_slot_display(slot_str: str) -> str:

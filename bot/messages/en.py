@@ -984,7 +984,13 @@ BTN_INTERVIEW_YES = "✅ I'll be there!"
 BTN_INTERVIEW_NO = "❌ Can't make it"
 INTERVIEW_CONFIRMED_REPLY = "✅ Great, see you soon!"
 INTERVIEW_CANCEL_REPLY = (
-    "Got it. Please contact @hr_helper31 or send \"+\" to wa.me/14433037260 (WhatsApp) to reschedule."
+    "Got it, no worries! Let's find you a new time right away."
+)
+INTERVIEW_CANCEL_NO_SLOTS = (
+    "Got it, no worries!\n\n"
+    "Unfortunately there are no open slots in the next 4 days.\n"
+    "We'll message you as soon as one opens up — usually within 24 hours.\n"
+    "No need to do anything, just keep an eye on this chat!"
 )
 INTERVIEW_RETRY_CONFIRM = (
     "Hey {name}! We haven't heard back — your interview is today at {time} (Manila time, GMT+8).\n\n"
