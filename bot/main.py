@@ -351,6 +351,7 @@ async def main():
     from aiogram.types import BotCommand
     await bot.set_my_commands([
         BotCommand(command="start", description="Start / Main menu"),
+        BotCommand(command="continue", description="Continue your application"),
         BotCommand(command="ask", description="Ask a question"),
         BotCommand(command="menu", description="Back to main menu"),
     ])

@@ -1037,3 +1037,41 @@ BOOKING_SLOT_WAIT_EXPIRED = (
     "We weren't able to find an open slot for your interview. "
     "Please contact @vision_dmitry and we'll schedule you directly."
 )
+
+# ═══ STATUS BANNER (shown in main menu when user has an active application) ═══
+
+STATUS_FORM_IN_PROGRESS = (
+    "📝 You have an unfinished application.\n\n"
+    "Tap below to continue — just a few more minutes!"
+)
+STATUS_BOOKING_IN_PROGRESS = (
+    "📅 Your screening is done! You just need to pick an interview slot.\n\n"
+    "Tap below to finish booking."
+)
+STATUS_INTERVIEW_PENDING = (
+    "⏳ Your interview slot has been submitted and is awaiting confirmation from our team."
+)
+STATUS_INTERVIEW_SCHEDULED = (
+    "📅 Your interview is scheduled for **{slot}**.\n\n"
+    "We'll send you a reminder beforehand. 🙂"
+)
+STATUS_INTERVIEW_CONFIRMED = (
+    "✅ Your interview is confirmed for **{slot}**.\n\n"
+    "See you there!"
+)
+STATUS_INTERVIEW_CANCELLED = (
+    "❌ Your interview was cancelled.\n\n"
+    "Have questions? Reach out to our team below."
+)
+STATUS_WAITING_SLOT = (
+    "⏳ You're in the queue for an interview slot.\n\n"
+    "We'll notify you as soon as one opens up — usually within 24 hours."
+)
+STATUS_UNDER_REVIEW = (
+    "⏳ Your application is under review.\n\n"
+    "We'll reach out soon."
+)
+CONTINUE_NO_FORM = (
+    "No active application found.\n\n"
+    "Start a new one below! 👇"
+)

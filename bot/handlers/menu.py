@@ -58,11 +58,95 @@ def _get_lang(data: dict) -> str:
     return data.get("language", "en")
 
 
+def _format_slot(slot: str, lang: str) -> str:
+    """Format '05.03.2026 18:00' → '5 марта в 18:00' (ru) or 'March 5 at 18:00' (en)."""
+    try:
+        dt = datetime.strptime(slot, "%d.%m.%Y %H:%M")
+        if lang == "ru":
+            months_ru = ["янв", "фев", "мар", "апр", "мая", "июн",
+                         "июл", "авг", "сен", "окт", "ноя", "дек"]
+            return f"{dt.day} {months_ru[dt.month - 1]} в {dt.strftime('%H:%M')}"
+        else:
+            return dt.strftime("%-d %B at %H:%M")
+    except Exception:
+        return slot
+
+
+async def _build_status_banner(
+    tg_user_id: int, fsm_data: dict, lang: str
+) -> Optional[tuple]:
+    """Return (text, keyboard | None) status banner for main menu, or None if nothing to show."""
+    m = msg(lang)
+    paused = fsm_data.get("paused_state")
+
+    # Active form in progress → offer Continue button
+    if paused:
+        if paused.startswith("OperatorForm:") or paused.startswith("AgentForm:"):
+            kb = InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text=m.BTN_CONTINUE, callback_data="resume_form")],
+            ])
+            return (m.STATUS_FORM_IN_PROGRESS, kb)
+
+        if paused.startswith("InterviewBooking:"):
+            step = paused.split(":")[-1]
+            if step == "waiting_crm_approval":
+                return (m.STATUS_INTERVIEW_PENDING, None)
+            elif step == "waiting_slot_notify":
+                return (m.STATUS_WAITING_SLOT, None)
+            else:
+                kb = InlineKeyboardMarkup(inline_keyboard=[
+                    [InlineKeyboardButton(text=m.BTN_CONTINUE, callback_data="resume_form")],
+                ])
+                return (m.STATUS_BOOKING_IN_PROGRESS, kb)
+
+    # No active FSM form → check DB for persistent statuses
+    try:
+        async with async_session() as session:
+            result = await session.execute(
+                select(Candidate).where(Candidate.tg_user_id == tg_user_id)
+            )
+            candidate = result.scalar_one_or_none()
+    except Exception:
+        return None
+
+    if not candidate:
+        return None
+
+    # Interview confirmed
+    if candidate.interview_confirmed == "confirmed" and candidate.huntme_crm_slot:
+        slot_fmt = _format_slot(candidate.huntme_crm_slot, lang)
+        return (m.STATUS_INTERVIEW_CONFIRMED.format(slot=slot_fmt), None)
+
+    # Interview cancelled
+    if candidate.interview_confirmed == "cancelled":
+        kb = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text=m.BTN_QUESTION, callback_data="menu_question")],
+        ])
+        return (m.STATUS_INTERVIEW_CANCELLED, kb)
+
+    # Interview scheduled (slot booked, waiting for candidate confirmation)
+    if candidate.status == "interview_invited" and candidate.huntme_crm_slot:
+        slot_fmt = _format_slot(candidate.huntme_crm_slot, lang)
+        return (m.STATUS_INTERVIEW_SCHEDULED.format(slot=slot_fmt), None)
+
+    # In queue for a slot
+    if candidate.waiting_for_slot:
+        return (m.STATUS_WAITING_SLOT, None)
+
+    # Pending admin decision (MAYBE)
+    if candidate.status == "screened" and candidate.recommendation == "MAYBE":
+        return (m.STATUS_UNDER_REVIEW, None)
+
+    return None
+
+
 # --- /start ---
 
 @router.message(F.text.startswith("/start"))
 async def cmd_start(message: Message, state: FSMContext):
-    await state.clear()
+    # Capture current state BEFORE clearing — needed for status banner
+    prev_state = await state.get_state()
+    prev_data = await state.get_data()
 
     lang = None  # will be resolved below
 
@@ -95,8 +179,22 @@ async def cmd_start(message: Message, state: FSMContext):
             await _track_event(message.from_user.id, "utm_source", "start", {"source": param})
 
     if lang is None:
-        lang = "en"
-    await state.update_data(language=lang)
+        lang = prev_data.get("language", "en")
+
+    # Determine if user had an active form (preserve so resume_form callback still works)
+    _form_prefixes = ("OperatorForm:", "InterviewBooking:", "AgentForm:")
+    is_active_form = prev_state and any(prev_state.startswith(p) for p in _form_prefixes)
+
+    await state.clear()
+
+    if is_active_form:
+        # Preserve all form data so resume_form can restore the exact step
+        preserved = dict(prev_data)
+        preserved["language"] = lang
+        preserved["paused_state"] = prev_state
+        await state.update_data(**preserved)
+    else:
+        await state.update_data(language=lang)
 
     await _track_event(message.from_user.id, "bot_started", "start")
 
@@ -113,6 +211,13 @@ async def cmd_start(message: Message, state: FSMContext):
     m = msg(lang)
     await message.answer(m.MAIN_MENU_TEXT, reply_markup=_main_menu_kb(lang))
     await state.set_state(MenuStates.main_menu)
+
+    # Show contextual status banner if user has an ongoing application
+    fresh_data = await state.get_data()
+    banner = await _build_status_banner(message.from_user.id, fresh_data, lang)
+    if banner:
+        text, kb = banner
+        await message.answer(text, reply_markup=kb, parse_mode="Markdown")
 
 
 async def _handle_landing_deeplink(
@@ -269,6 +374,65 @@ async def cb_back_main(callback: CallbackQuery, state: FSMContext):
     except Exception:
         await callback.message.answer(m.MAIN_MENU_TEXT, reply_markup=_main_menu_kb(lang))
     await state.set_state(MenuStates.main_menu)
+
+
+# --- /continue — resume active application or show current status ---
+
+@router.message(Command("continue"))
+async def cmd_continue(message: Message, state: FSMContext):
+    data = await state.get_data()
+    lang = _get_lang(data)
+    m = msg(lang)
+    current = await state.get_state()
+
+    # If actively in a form step → resume immediately
+    _form_prefixes = ("OperatorForm:", "InterviewBooking:", "AgentForm:")
+    if current and any(current.startswith(p) for p in _form_prefixes):
+        await message.answer(m.RESUME_TEXT)
+        if current.startswith("OperatorForm:"):
+            from bot.handlers.operator_flow import _send_step_prompt
+            await _send_step_prompt(message, state)
+        elif current.startswith("InterviewBooking:"):
+            step = current.split(":")[-1]
+            prompts = {
+                "waiting_birth_date": m.BOOKING_START,
+                "waiting_phone": m.BOOKING_PHONE,
+                "waiting_experience": m.BOOKING_EXPERIENCE,
+            }
+            await message.answer(prompts.get(step, m.RESUME_FALLBACK))
+        else:
+            await message.answer(m.RESUME_FALLBACK)
+        return
+
+    # Not in active form → check for paused_state (set when /start was called mid-form)
+    paused = data.get("paused_state")
+    if paused and any(paused.startswith(p) for p in _form_prefixes):
+        await state.update_data(paused_state=None)
+        await state.set_state(paused)
+        await message.answer(m.RESUME_TEXT)
+        if paused.startswith("OperatorForm:"):
+            from bot.handlers.operator_flow import _send_step_prompt
+            await _send_step_prompt(message, state)
+        elif paused.startswith("InterviewBooking:"):
+            step = paused.split(":")[-1]
+            prompts = {
+                "waiting_birth_date": m.BOOKING_START,
+                "waiting_phone": m.BOOKING_PHONE,
+                "waiting_experience": m.BOOKING_EXPERIENCE,
+            }
+            await message.answer(prompts.get(step, m.RESUME_FALLBACK))
+        else:
+            await message.answer(m.RESUME_FALLBACK)
+        return
+
+    # No active form → show status banner from DB or prompt to apply
+    banner = await _build_status_banner(message.from_user.id, data, lang)
+    if banner:
+        text, kb = banner
+        await message.answer(text, reply_markup=kb, parse_mode="Markdown")
+    else:
+        await message.answer(m.CONTINUE_NO_FORM, reply_markup=_main_menu_kb(lang))
+        await state.set_state(MenuStates.main_menu)
 
 
 # --- /ask — pause flow and ask a question (works from any state) ---
