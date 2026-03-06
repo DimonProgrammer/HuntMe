@@ -7,7 +7,7 @@
   <meta name="description" content="Become a Talent Scout at Apex Talent. Recruit models from anywhere in the world and earn $10 per shift — passive income for 12 months per model.">
   <meta name="robots" content="noindex, nofollow">
   <link rel="canonical" href="https://apextalent.pro/agent">
-  <meta name="theme-color" content="#000000">
+  <meta name="theme-color" content="#1A0F2E">
 
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="/favicon.ico" sizes="32x32">
@@ -21,17 +21,18 @@
   <meta property="og:description" content="Recruit models worldwide. Earn $10 per shift per model — passive income for 12 months. No PC needed, work from your phone.">
   <meta property="og:image" content="https://apextalent.pro/og.jpg">
 
-  <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin>
-  <style>@import url('https://fonts.cdnfonts.com/css/pp-neue-montreal');</style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Fraunces:ital,opsz,wght@1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'PP Neue Montreal', sans-serif;
-      color: #F9F9F9;
-      background: #000000;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #1A0F2E;
+      background: linear-gradient(150deg, #FFF5F0 0%, #FFFAED 50%, #FFF3B0 100%);
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
     }
@@ -44,12 +45,12 @@
         background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
         pointer-events: none;
         z-index: 0;
-        opacity: 0.5;
+        opacity: 0.4;
       }
     }
 
-    .font-heading { font-family: 'PP Neue Montreal', sans-serif; }
-    .font-serif   { font-family: 'PP Neue Montreal', sans-serif; font-style: italic; }
+    .font-heading { font-family: 'Outfit', sans-serif; }
+    .font-serif   { font-family: 'Fraunces', serif; }
 
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(24px); }
@@ -71,32 +72,30 @@
     .reveal-delay-3 { transition-delay: 0.3s; }
 
     .card {
-      background: #111111;
+      background: #FFFFFF;
       border-radius: 20px;
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: none;
-      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 20px 40px -10px rgba(26,15,46,0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     .card:hover {
       transform: translateY(-6px);
-      border-color: rgba(232,80,2,0.3);
-      box-shadow: 0 16px 40px -12px rgba(232,80,2,0.15);
+      box-shadow: 0 32px 64px -16px rgba(26,15,46,0.15);
     }
-    .card-lime { border: 1.5px solid rgba(232,80,2,0.5); }
+    .card-lime { border: 2.5px solid #CCFF00; }
 
     @keyframes floatY {
       0%,100% { transform: translateY(0); }
       50% { transform: translateY(-6px); }
     }
 
-    @keyframes pulseOrange {
-      0%,100% { box-shadow: 0 0 0 0 rgba(232,80,2,0.45); }
-      60%      { box-shadow: 0 0 0 14px rgba(232,80,2,0); }
+    @keyframes pulseMagenta {
+      0%,100% { box-shadow: 0 0 0 0 rgba(227,59,197,0.45); }
+      60%      { box-shadow: 0 0 0 14px rgba(227,59,197,0); }
     }
-    .btn-pulse { animation: pulseOrange 2.6s ease infinite; }
+    .btn-pulse { animation: pulseMagenta 2.6s ease infinite; }
 
     .text-gradient {
-      background: linear-gradient(135deg, #E85002 0%, #FF6D29 100%);
+      background: linear-gradient(135deg, #E33BC5 0%, #FF8C42 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -105,21 +104,21 @@
     .form-input {
       width: 100%;
       padding: 13px 16px;
-      border: 1.5px solid rgba(255,255,255,0.12);
+      border: 2px solid rgba(26,15,46,0.1);
       border-radius: 12px;
-      font-family: 'PP Neue Montreal', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 15px;
-      color: #F9F9F9;
-      background: rgba(255,255,255,0.06);
+      color: #1A0F2E;
+      background: #FAFAFA;
       outline: none;
       transition: border-color 0.2s ease, background 0.2s ease;
       -webkit-appearance: none;
     }
     .form-input:focus {
-      border-color: #E85002;
-      background: rgba(255,255,255,0.1);
+      border-color: #E33BC5;
+      background: #fff;
     }
-    .form-input::placeholder { color: rgba(255,255,255,0.3); }
+    .form-input::placeholder { color: rgba(26,15,46,0.35); }
 
     .faq-answer {
       max-height: 0;
@@ -129,23 +128,23 @@
     .faq-item.open .faq-answer { max-height: 360px; }
     .faq-icon { transition: transform 0.3s ease; }
     .faq-item.open .faq-icon { transform: rotate(45deg); }
-    .faq-item { border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .faq-item { border-bottom: 1px solid rgba(26,15,46,0.08); }
     .faq-item:last-child { border-bottom: none; }
 
     #successMsg { display: none; opacity: 0; transition: opacity 0.4s ease; }
     #successMsg.show { display: block; opacity: 1; }
 
     #navbar.scrolled {
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      box-shadow: 0 1px 0 rgba(255,255,255,0.06);
+      background: rgba(250,248,245,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 1px 0 rgba(26,15,46,0.07);
     }
 
     .step-connector {
       width: 40px;
       height: 2px;
-      background: linear-gradient(90deg, rgba(232,80,2,0.4), rgba(255,109,41,0.2));
+      background: linear-gradient(90deg, rgba(227,59,197,0.3), rgba(204,255,0,0.3));
       flex-shrink: 0;
     }
 
@@ -159,26 +158,25 @@
     .lang-dropdown { position: relative; display: inline-block; }
     .lang-btn {
       display: flex; align-items: center; gap: 6px;
-      background: rgba(255,255,255,0.08); border: none; border-radius: 100px;
-      padding: 8px 14px; font-family: 'PP Neue Montreal', sans-serif;
-      font-size: 13px; font-weight: 600; color: #F9F9F9; cursor: pointer;
+      background: rgba(26,15,46,0.06); border: none; border-radius: 100px;
+      padding: 8px 14px; font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px; font-weight: 600; color: #1A0F2E; cursor: pointer;
       transition: background 0.2s;
     }
-    .lang-btn:hover { background: rgba(255,255,255,0.14); }
+    .lang-btn:hover { background: rgba(26,15,46,0.12); }
     .lang-menu {
       display: none; position: absolute; top: 100%; right: 0; margin-top: 6px;
-      background: #1A1A1A; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-      border: 1px solid rgba(255,255,255,0.08);
+      background: #fff; border-radius: 12px; box-shadow: 0 8px 32px rgba(26,15,46,0.15);
       overflow: hidden; min-width: 140px; z-index: 200;
     }
     .lang-dropdown.open .lang-menu { display: block; }
     .lang-menu a {
       display: flex; align-items: center; gap: 8px; padding: 10px 16px;
-      font-size: 13px; font-weight: 500; color: #F9F9F9; text-decoration: none;
+      font-size: 13px; font-weight: 500; color: #1A0F2E; text-decoration: none;
       transition: background 0.15s;
     }
-    .lang-menu a:hover { background: rgba(255,255,255,0.06); }
-    .lang-menu a.active { font-weight: 700; background: rgba(232,80,2,0.2); }
+    .lang-menu a:hover { background: rgba(26,15,46,0.04); }
+    .lang-menu a.active { font-weight: 700; background: rgba(204,255,0,0.15); }
 
     /* === Aurora Background === */
     @keyframes auroraFloat1 { 0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(50px,-40px) scale(1.12);} }
@@ -203,17 +201,17 @@
 </head>
 <body>
 <!-- Aurora Background Blobs -->
-<div style="position:fixed;border-radius:50%;filter:blur(130px);pointer-events:none;z-index:1;will-change:transform;width:640px;height:640px;background:radial-gradient(circle,rgba(232,80,2,0.25) 0%,transparent 65%);top:-160px;left:-180px;opacity:0.45;animation:auroraFloat1 14s ease-in-out infinite;"></div>
-<div style="position:fixed;border-radius:50%;filter:blur(130px);pointer-events:none;z-index:1;will-change:transform;width:540px;height:540px;background:radial-gradient(circle,rgba(193,8,1,0.18) 0%,transparent 65%);top:80px;right:-160px;opacity:0.35;animation:auroraFloat2 18s ease-in-out infinite;"></div>
-<div style="position:fixed;border-radius:50%;filter:blur(130px);pointer-events:none;z-index:1;will-change:transform;width:480px;height:480px;background:radial-gradient(circle,rgba(241,96,1,0.15) 0%,transparent 65%);top:680px;left:35%;transform:translateX(-50%);opacity:0.3;animation:auroraFloat3 22s ease-in-out infinite;"></div>
+<div style="position:fixed;border-radius:50%;filter:blur(110px);pointer-events:none;z-index:1;will-change:transform;width:640px;height:640px;background:radial-gradient(circle,rgba(227,59,197,0.28) 0%,transparent 65%);top:-160px;left:-180px;opacity:0.55;animation:auroraFloat1 14s ease-in-out infinite;"></div>
+<div style="position:fixed;border-radius:50%;filter:blur(110px);pointer-events:none;z-index:1;will-change:transform;width:540px;height:540px;background:radial-gradient(circle,rgba(120,60,220,0.2) 0%,transparent 65%);top:80px;right:-160px;opacity:0.45;animation:auroraFloat2 18s ease-in-out infinite;"></div>
+<div style="position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:1;will-change:transform;width:480px;height:480px;background:radial-gradient(circle,rgba(204,255,0,0.22) 0%,transparent 65%);top:680px;left:35%;transform:translateX(-50%);opacity:0.4;animation:auroraFloat3 22s ease-in-out infinite;"></div>
 
 
 <!-- NAVBAR -->
 <nav id="navbar" style="position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 24px;transition:background 0.3s,box-shadow 0.3s;">
   <div style="max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;">
     <a href="/" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
-      <svg width="24" height="24" viewBox="0 0 80 80" fill="none"><polygon points="40,16 18,62 30,62 40,38 50,62 62,62" fill="#F9F9F9"/></svg>
-      <span class="font-heading" style="font-size:14px;font-weight:800;color:#F9F9F9;letter-spacing:0.08em;">APEX TALENT</span>
+      <svg width="24" height="24" viewBox="0 0 80 80" fill="none"><polygon points="40,16 18,62 30,62 40,38 50,62 62,62" fill="#1A0F2E"/></svg>
+      <span class="font-heading" style="font-size:14px;font-weight:800;color:#1A0F2E;letter-spacing:0.08em;">APEX TALENT</span>
     </a>
     <div style="display:flex;align-items:center;gap:12px;">
       <div class="lang-dropdown" onclick="this.classList.toggle('open')" onmouseleave="this.classList.remove('open')">
@@ -224,7 +222,7 @@
           <a href="/agent/pt">🇧🇷 Português</a>
         </div>
       </div>
-      <a href="#apply" class="font-heading" style="font-size:13px;font-weight:700;color:#fff;background:#E85002;padding:10px 20px;border-radius:100px;text-decoration:none;transition:filter 0.2s;" onmouseover="this.style.filter='brightness(1.1)'" onmouseout="this.style.filter='none'">Apply Now</a>
+      <a href="#apply" class="font-heading" style="font-size:13px;font-weight:700;color:#fff;background:#E33BC5;padding:10px 20px;border-radius:100px;text-decoration:none;transition:filter 0.2s;" onmouseover="this.style.filter='brightness(1.1)'" onmouseout="this.style.filter='none'">Apply Now</a>
     </div>
   </div>
 </nav>
@@ -235,12 +233,12 @@
   <div style="max-width:720px;margin:0 auto;">
 
     <div class="animate-fade-up" style="animation-delay:0.1s;">
-      <span style="display:inline-block;background:#E85002;color:#F9F9F9;font-size:12px;font-weight:800;padding:6px 16px;border-radius:100px;margin-bottom:24px;letter-spacing:0.05em;font-family:'PP Neue Montreal',sans-serif;">
+      <span style="display:inline-block;background:#CCFF00;color:#1A0F2E;font-size:12px;font-weight:800;padding:6px 16px;border-radius:100px;margin-bottom:24px;letter-spacing:0.05em;font-family:'Outfit',sans-serif;">
         REMOTE OPPORTUNITY
       </span>
     </div>
 
-    <h1 class="font-heading animate-fade-up" style="font-size:clamp(2.4rem,6vw,4rem);font-weight:900;line-height:1.05;letter-spacing:-0.03em;color:#F9F9F9;margin-bottom:20px;animation-delay:0.2s;">
+    <h1 class="font-heading animate-fade-up" style="font-size:clamp(2.4rem,6vw,4rem);font-weight:900;line-height:1.05;letter-spacing:-0.03em;color:#1A0F2E;margin-bottom:20px;animation-delay:0.2s;">
       Become a<br><span class="text-gradient">Talent Scout</span>
     </h1>
 
@@ -250,28 +248,28 @@
     </p>
 
     <div class="animate-fade-up" style="animation-delay:0.45s;margin-bottom:28px;">
-      <div style="display:inline-block;background:linear-gradient(135deg,#1A0A00 0%,#2A1200 100%);border:1px solid rgba(232,80,2,0.2);border-radius:16px;padding:16px 28px;position:relative;overflow:hidden;">
-        <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(232,80,2,0.15) 0%,transparent 70%);"></div>
+      <div style="display:inline-block;background:linear-gradient(135deg,#1A0F2E 0%,#2D1B4E 100%);border-radius:16px;padding:16px 28px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(204,255,0,0.2) 0%,transparent 70%);"></div>
         <span style="font-size:13px;color:rgba(255,255,255,0.6);font-weight:500;">Average scouts earn from the 1st month</span>
-        <div class="font-heading" style="font-size:clamp(1.8rem,4vw,2.4rem);font-weight:900;color:#E85002;letter-spacing:-0.02em;">$700+<span style="font-size:0.5em;color:rgba(255,255,255,0.5);font-weight:600;">/month</span></div>
+        <div class="font-heading" style="font-size:clamp(1.8rem,4vw,2.4rem);font-weight:900;color:#CCFF00;letter-spacing:-0.02em;">$700+<span style="font-size:0.5em;color:rgba(255,255,255,0.5);font-weight:600;">/month</span></div>
       </div>
     </div>
 
     <div class="animate-fade-up" style="margin-bottom:28px;animation-delay:0.55s;">
-      <a href="#apply" class="btn-pulse font-heading" style="display:inline-block;background:#E85002;color:#fff;font-size:1.1rem;font-weight:900;padding:18px 36px;border:none;cursor:pointer;text-decoration:none;border-radius:16px;letter-spacing:-0.01em;transition:all 0.2s;">Apply Now →</a>
+      <a href="#apply" class="btn-pulse font-heading" style="display:inline-block;background:#E33BC5;color:#fff;font-size:1.1rem;font-weight:900;padding:18px 36px;border:none;cursor:pointer;text-decoration:none;border-radius:16px;letter-spacing:-0.01em;transition:all 0.2s;">Apply Now →</a>
     </div>
 
     <div class="animate-fade-up" style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;animation-delay:0.65s;">
-      <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.06);border-radius:100px;padding:8px 16px;font-size:13px;font-weight:600;">
+      <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(26,15,46,0.05);border-radius:100px;padding:8px 16px;font-size:13px;font-weight:600;">
         <span style="font-size:16px;">📱</span> Work from your phone
       </span>
-      <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.06);border-radius:100px;padding:8px 16px;font-size:13px;font-weight:600;">
+      <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(26,15,46,0.05);border-radius:100px;padding:8px 16px;font-size:13px;font-weight:600;">
         <span style="font-size:16px;">💰</span> Weekly USD payments
       </span>
-      <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.06);border-radius:100px;padding:8px 16px;font-size:13px;font-weight:600;">
+      <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(26,15,46,0.05);border-radius:100px;padding:8px 16px;font-size:13px;font-weight:600;">
         <span style="font-size:16px;">🌍</span> Recruit globally
       </span>
-      <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.06);border-radius:100px;padding:8px 16px;font-size:13px;font-weight:600;">
+      <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(26,15,46,0.05);border-radius:100px;padding:8px 16px;font-size:13px;font-weight:600;">
         <span style="font-size:16px;">🚫</span> No boss. No schedule.
       </span>
     </div>
@@ -286,15 +284,15 @@
   <div class="card reveal" style="max-width:800px;margin:0 auto;padding:28px 32px;">
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;text-align:center;">
       <div>
-        <div id="stat-scouts" class="font-heading" style="font-size:clamp(1.4rem,3vw,1.9rem);font-weight:900;color:#E85002;">5,000+</div>
+        <div id="stat-scouts" class="font-heading" style="font-size:clamp(1.4rem,3vw,1.9rem);font-weight:900;color:#E33BC5;">5,000+</div>
         <div style="font-size:13px;opacity:0.5;margin-top:4px;line-height:1.4;">Active scouts<br>worldwide</div>
       </div>
-      <div style="border-left:1px solid rgba(255,255,255,0.06);border-right:1px solid rgba(255,255,255,0.06);padding:0 16px;">
-        <div id="stat-models" class="font-heading" style="font-size:clamp(1.4rem,3vw,1.9rem);font-weight:900;color:#F9F9F9;">30,000+</div>
+      <div style="border-left:1px solid rgba(26,15,46,0.08);border-right:1px solid rgba(26,15,46,0.08);padding:0 16px;">
+        <div id="stat-models" class="font-heading" style="font-size:clamp(1.4rem,3vw,1.9rem);font-weight:900;color:#1A0F2E;">30,000+</div>
         <div style="font-size:13px;opacity:0.5;margin-top:4px;line-height:1.4;">Models &amp; operators<br>placed</div>
       </div>
       <div>
-        <div class="font-heading" style="font-size:clamp(1.4rem,3vw,1.9rem);font-weight:900;color:#F9F9F9;">$M+</div>
+        <div class="font-heading" style="font-size:clamp(1.4rem,3vw,1.9rem);font-weight:900;color:#1A0F2E;">$M+</div>
         <div style="font-size:13px;opacity:0.5;margin-top:4px;line-height:1.4;">Paid out to scouts<br>in USD</div>
       </div>
     </div>
@@ -312,12 +310,12 @@
     <div style="display:flex;flex-direction:column;gap:24px;">
       <!-- Card 1: What models do -->
       <div class="card reveal" style="padding:32px 28px;display:flex;gap:24px;align-items:flex-start;overflow:hidden;position:relative;">
-        <div style="flex-shrink:0;width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,rgba(232,80,2,0.15) 0%,rgba(232,80,2,0.08) 100%);display:flex;align-items:center;justify-content:center;">
+        <div style="flex-shrink:0;width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,#FFF0FB 0%,#FFE0F5 100%);display:flex;align-items:center;justify-content:center;">
           <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style="animation:floatY 3s ease-in-out infinite;">
-            <circle cx="16" cy="10" r="5" stroke="#E85002" stroke-width="2" fill="none"/>
-            <path d="M8 26c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="#E85002" stroke-width="2" fill="none" stroke-linecap="round"/>
-            <circle cx="24" cy="8" r="2" fill="#E85002"/>
-            <path d="M26 6l1-2M28 8l2 0M26 10l1 2" stroke="#E85002" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="16" cy="10" r="5" stroke="#E33BC5" stroke-width="2" fill="none"/>
+            <path d="M8 26c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="#E33BC5" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <circle cx="24" cy="8" r="2" fill="#CCFF00"/>
+            <path d="M26 6l1-2M28 8l2 0M26 10l1 2" stroke="#CCFF00" stroke-width="1.5" stroke-linecap="round"/>
           </svg>
         </div>
         <div style="flex:1;">
@@ -326,15 +324,15 @@
             Models perform live streams — chatting, singing, dancing, playing games. They earn <strong style="opacity:1;">$1,500–$5,000/month</strong> from viewers' gifts and tips. Because models earn well, they want to work. And every shift they work — <strong style="opacity:1;">you automatically get $10</strong>. For 12 months.
           </p>
         </div>
-        <div style="position:absolute;top:-30px;right:-30px;width:100px;height:100px;background:radial-gradient(circle,rgba(232,80,2,0.06) 0%,transparent 70%);pointer-events:none;"></div>
+        <div style="position:absolute;top:-30px;right:-30px;width:100px;height:100px;background:radial-gradient(circle,rgba(227,59,197,0.06) 0%,transparent 70%);pointer-events:none;"></div>
       </div>
       <!-- Card 2: What you do -->
       <div class="card reveal reveal-delay-1" style="padding:32px 28px;display:flex;gap:24px;align-items:flex-start;overflow:hidden;position:relative;">
-        <div style="flex-shrink:0;width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,rgba(255,109,41,0.12) 0%,rgba(255,109,41,0.06) 100%);display:flex;align-items:center;justify-content:center;">
+        <div style="flex-shrink:0;width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,#F0FFF0 0%,#E8FFD0 100%);display:flex;align-items:center;justify-content:center;">
           <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style="animation:floatY 3s ease-in-out infinite 0.5s;">
-            <rect x="6" y="4" width="20" height="24" rx="3" stroke="#F9F9F9" stroke-width="2" fill="none"/>
-            <path d="M11 12h10M11 16h7M11 20h9" stroke="#E85002" stroke-width="2" stroke-linecap="round"/>
-            <path d="M22 22l4 4" stroke="#E85002" stroke-width="2" stroke-linecap="round"/>
+            <rect x="6" y="4" width="20" height="24" rx="3" stroke="#1A0F2E" stroke-width="2" fill="none"/>
+            <path d="M11 12h10M11 16h7M11 20h9" stroke="#CCFF00" stroke-width="2" stroke-linecap="round"/>
+            <path d="M22 22l4 4" stroke="#E33BC5" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </div>
         <div style="flex:1;">
@@ -343,16 +341,16 @@
             Find potential models on social media, job boards, or Telegram. Send them our ready-made scripts. Guide them to sign up. <strong style="opacity:1;">That's it</strong> — our team handles onboarding, training, and support after that.
           </p>
         </div>
-        <div style="position:absolute;bottom:-30px;left:-30px;width:100px;height:100px;background:radial-gradient(circle,rgba(255,109,41,0.06) 0%,transparent 70%);pointer-events:none;"></div>
+        <div style="position:absolute;bottom:-30px;left:-30px;width:100px;height:100px;background:radial-gradient(circle,rgba(204,255,0,0.08) 0%,transparent 70%);pointer-events:none;"></div>
       </div>
       <!-- Card 3: Income grows -->
-      <div class="card reveal reveal-delay-2" style="padding:32px 28px;display:flex;gap:24px;align-items:flex-start;overflow:hidden;position:relative;border:1.5px solid rgba(232,80,2,0.5);">
-        <div style="flex-shrink:0;width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,rgba(232,80,2,0.18) 0%,rgba(232,80,2,0.1) 100%);display:flex;align-items:center;justify-content:center;">
+      <div class="card reveal reveal-delay-2" style="padding:32px 28px;display:flex;gap:24px;align-items:flex-start;overflow:hidden;position:relative;border:2px solid rgba(204,255,0,0.4);">
+        <div style="flex-shrink:0;width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,#FFFDE0 0%,#FFF8B0 100%);display:flex;align-items:center;justify-content:center;">
           <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style="animation:floatY 3s ease-in-out infinite 1s;">
-            <path d="M6 24L12 16L18 20L26 8" stroke="#E85002" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-            <path d="M22 8h4v4" stroke="#E85002" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="12" cy="16" r="2" fill="#E85002"/>
-            <circle cx="18" cy="20" r="2" fill="#E85002"/>
+            <path d="M6 24L12 16L18 20L26 8" stroke="#E33BC5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <path d="M22 8h4v4" stroke="#E33BC5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="16" r="2" fill="#CCFF00"/>
+            <circle cx="18" cy="20" r="2" fill="#CCFF00"/>
           </svg>
         </div>
         <div style="flex:1;">
@@ -361,7 +359,7 @@
             1 active model = <strong style="opacity:1;">~$230/month</strong>. 3 models = <strong style="opacity:1;">~$700/month</strong>. 5 models = ~$1,000/month. Each model pays you for a <strong style="opacity:1;">full year</strong>. Last month's recruits still pay you this month — and next month you add more.
           </p>
         </div>
-        <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(232,80,2,0.08) 0%,transparent 70%);pointer-events:none;"></div>
+        <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(204,255,0,0.1) 0%,transparent 70%);pointer-events:none;"></div>
       </div>
     </div>
   </div>
@@ -380,7 +378,7 @@
 
       <!-- Step 1 -->
       <div style="text-align:center;flex:1;max-width:200px;">
-        <div style="width:64px;height:64px;border-radius:50%;background:#1A1A1A;color:#E85002;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-family:'PP Neue Montreal',sans-serif;font-weight:900;font-size:24px;">1</div>
+        <div style="width:64px;height:64px;border-radius:50%;background:#1A0F2E;color:#CCFF00;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-family:'Outfit',sans-serif;font-weight:900;font-size:24px;">1</div>
         <h3 class="font-heading" style="font-size:0.95rem;font-weight:800;margin-bottom:6px;">Find Models</h3>
         <p style="font-size:13px;opacity:0.55;line-height:1.5;">Social media, job boards, Telegram groups</p>
       </div>
@@ -389,7 +387,7 @@
 
       <!-- Step 2 -->
       <div style="text-align:center;flex:1;max-width:200px;">
-        <div style="width:64px;height:64px;border-radius:50%;background:#1A1A1A;color:#E85002;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-family:'PP Neue Montreal',sans-serif;font-weight:900;font-size:24px;">2</div>
+        <div style="width:64px;height:64px;border-radius:50%;background:#1A0F2E;color:#CCFF00;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-family:'Outfit',sans-serif;font-weight:900;font-size:24px;">2</div>
         <h3 class="font-heading" style="font-size:0.95rem;font-weight:800;margin-bottom:6px;">Send Scripts</h3>
         <p style="font-size:13px;opacity:0.55;line-height:1.5;">Use our ready-made templates and scripts</p>
       </div>
@@ -398,7 +396,7 @@
 
       <!-- Step 3 -->
       <div style="text-align:center;flex:1;max-width:200px;">
-        <div style="width:64px;height:64px;border-radius:50%;background:#1A1A1A;color:#E85002;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-family:'PP Neue Montreal',sans-serif;font-weight:900;font-size:24px;">3</div>
+        <div style="width:64px;height:64px;border-radius:50%;background:#1A0F2E;color:#CCFF00;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-family:'Outfit',sans-serif;font-weight:900;font-size:24px;">3</div>
         <h3 class="font-heading" style="font-size:0.95rem;font-weight:800;margin-bottom:6px;">Get Paid</h3>
         <p style="font-size:13px;opacity:0.55;line-height:1.5;">$10 per shift per model, every week in USD</p>
       </div>
@@ -421,24 +419,24 @@
 
       <!-- Tier 1 -->
       <div class="card" style="padding:32px 24px;text-align:center;">
-        <div style="font-size:13px;font-weight:700;opacity:0.4;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;font-family:'PP Neue Montreal',sans-serif;">Per Model</div>
-        <div class="font-heading" style="font-size:2.2rem;font-weight:900;color:#F9F9F9;margin-bottom:8px;">$10<span style="font-size:1rem;opacity:0.5;">/shift</span></div>
+        <div style="font-size:13px;font-weight:700;opacity:0.4;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;font-family:'Outfit',sans-serif;">Per Model</div>
+        <div class="font-heading" style="font-size:2.2rem;font-weight:900;color:#1A0F2E;margin-bottom:8px;">$10<span style="font-size:1rem;opacity:0.5;">/shift</span></div>
         <p style="font-size:13px;opacity:0.5;line-height:1.5;">~$230/month per model<br>Recurring for 12 months</p>
       </div>
 
       <!-- Tier 2 — highlighted -->
       <div class="card card-lime" style="padding:32px 24px;text-align:center;">
-        <div style="background:#1A1A1A;color:#E85002;font-weight:800;font-size:11px;letter-spacing:0.05em;padding:5px 12px;border-radius:8px;display:inline-block;margin-bottom:12px;font-family:'PP Neue Montreal',sans-serif;">SCALES UP</div>
-        <div class="font-heading" style="font-size:2.2rem;font-weight:900;color:#F9F9F9;margin-bottom:8px;">$1,000<span style="font-size:1rem;opacity:0.5;">/mo</span></div>
+        <div style="background:#1A0F2E;color:#CCFF00;font-weight:800;font-size:11px;letter-spacing:0.05em;padding:5px 12px;border-radius:8px;display:inline-block;margin-bottom:12px;font-family:'Outfit',sans-serif;">SCALES UP</div>
+        <div class="font-heading" style="font-size:2.2rem;font-weight:900;color:#1A0F2E;margin-bottom:8px;">$1,000<span style="font-size:1rem;opacity:0.5;">/mo</span></div>
         <p style="font-size:13px;opacity:0.5;line-height:1.5;">With just 5 active models<br>Income keeps growing</p>
       </div>
 
     </div>
 
     <!-- Example calculation -->
-    <div class="card reveal" style="padding:24px 28px;background:linear-gradient(135deg,#1A0A00 0%,#2A1200 100%);border:1px solid rgba(232,80,2,0.2);color:#fff;text-align:center;">
+    <div class="card reveal" style="padding:24px 28px;background:#1A0F2E;color:#fff;text-align:center;">
       <p style="font-size:14px;opacity:0.6;margin-bottom:8px;">Example: recruit 3 models this month</p>
-      <div class="font-heading" style="font-size:1.8rem;font-weight:900;color:#E85002;">$700/month</div>
+      <div class="font-heading" style="font-size:1.8rem;font-weight:900;color:#CCFF00;">$700/month</div>
       <p style="font-size:13px;opacity:0.45;margin-top:6px;">Passive income for a full year per model</p>
     </div>
 
@@ -502,108 +500,108 @@
 <section style="padding:0 20px 80px;position:relative;z-index:10;">
   <div style="max-width:760px;margin:0 auto;">
     <div class="reveal" style="text-align:center;margin-bottom:48px;">
-      <span style="display:inline-block;background:#E85002;color:#F9F9F9;font-size:12px;font-weight:800;padding:6px 16px;border-radius:100px;margin-bottom:16px;letter-spacing:0.05em;font-family:'PP Neue Montreal',sans-serif;">REAL RESULTS</span>
+      <span style="display:inline-block;background:#CCFF00;color:#1A0F2E;font-size:12px;font-weight:800;padding:6px 16px;border-radius:100px;margin-bottom:16px;letter-spacing:0.05em;font-family:'Outfit',sans-serif;">REAL RESULTS</span>
       <h2 class="font-heading" style="font-size:clamp(1.6rem,4vw,2.4rem);font-weight:900;letter-spacing:-0.02em;">Scouts Like You</h2>
       <p style="font-size:15px;opacity:0.5;margin-top:8px;">No experience. Just started. Real payouts.</p>
     </div>
     <div class="marquee-outer">
       <div class="marquee-track">
         <div class="card marquee-card" style="padding:24px 20px 20px;position:relative;overflow:hidden;">
-          <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#E85002;border-radius:4px 0 0 4px;"></div>
+          <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#E33BC5;border-radius:4px 0 0 4px;"></div>
           <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
-            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,rgba(232,80,2,0.2),rgba(232,80,2,0.1));display:flex;align-items:center;justify-content:center;font-family:'PP Neue Montreal',sans-serif;font-weight:900;font-size:17px;color:#E85002;flex-shrink:0;">J</div>
+            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#FFF0FB,#FFD6F0);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:17px;color:#E33BC5;flex-shrink:0;">J</div>
             <div>
               <div style="font-weight:700;font-size:14px;">Jayson R. 🇵🇭</div>
               <div style="font-size:11px;opacity:0.45;">Philippines · Feb 2026</div>
             </div>
-            <div style="margin-left:auto;background:#1A1A1A;color:#E85002;font-family:'PP Neue Montreal',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:7px;white-space:nowrap;">2 WKS IN</div>
+            <div style="margin-left:auto;background:#1A0F2E;color:#CCFF00;font-family:'Outfit',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:7px;white-space:nowrap;">2 WKS IN</div>
           </div>
           <p style="font-size:13px;line-height:1.7;opacity:0.65;font-style:italic;margin-bottom:12px;">"Had Facebook groups for remote jobs. Started posting. First model signed up on day 9. Didn't expect it so fast."</p>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <span style="font-size:11px;opacity:0.45;">Earned in 2 weeks:</span>
-            <span class="font-heading" style="font-size:1rem;font-weight:900;color:#E85002;">$280</span>
+            <span class="font-heading" style="font-size:1rem;font-weight:900;color:#E33BC5;">$280</span>
           </div>
         </div>
         <div class="card marquee-card" style="padding:24px 20px 20px;position:relative;overflow:hidden;">
-          <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#E85002;border-radius:4px 0 0 4px;"></div>
+          <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#CCFF00;border-radius:4px 0 0 4px;"></div>
           <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
-            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,rgba(255,109,41,0.15),rgba(255,109,41,0.08));display:flex;align-items:center;justify-content:center;font-family:'PP Neue Montreal',sans-serif;font-weight:900;font-size:17px;color:#FF6D29;flex-shrink:0;">C</div>
+            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#F0FFE8,#DDFFC8);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:17px;color:#3A7C1A;flex-shrink:0;">C</div>
             <div>
               <div style="font-weight:700;font-size:14px;">Camila F. 🇧🇷</div>
               <div style="font-size:11px;opacity:0.45;">Brazil · Jan 2026</div>
             </div>
-            <div style="margin-left:auto;background:#1A1A1A;color:#E85002;font-family:'PP Neue Montreal',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:7px;white-space:nowrap;">1 MO IN</div>
+            <div style="margin-left:auto;background:#1A0F2E;color:#CCFF00;font-family:'Outfit',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:7px;white-space:nowrap;">1 MO IN</div>
           </div>
           <p style="font-size:13px;line-height:1.7;opacity:0.65;font-style:italic;margin-bottom:12px;">"Posted in 3 Telegram groups, DMs to girls I knew. Two signed up week one. End of month — $700 passive income."</p>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <span style="font-size:11px;opacity:0.45;">Month 1 income:</span>
-            <span class="font-heading" style="font-size:1rem;font-weight:900;color:#F9F9F9;">$700</span>
+            <span class="font-heading" style="font-size:1rem;font-weight:900;color:#1A0F2E;">$700</span>
           </div>
         </div>
-        <div class="card marquee-card" style="padding:24px 20px 20px;position:relative;overflow:hidden;border:1.5px solid rgba(232,80,2,0.5);">
-          <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#E85002;border-radius:4px 0 0 4px;"></div>
+        <div class="card marquee-card" style="padding:24px 20px 20px;position:relative;overflow:hidden;border:2px solid rgba(204,255,0,0.4);">
+          <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#CCFF00;border-radius:4px 0 0 4px;"></div>
           <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
-            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,rgba(232,80,2,0.2),rgba(232,80,2,0.12));display:flex;align-items:center;justify-content:center;font-family:'PP Neue Montreal',sans-serif;font-weight:900;font-size:17px;color:#E85002;flex-shrink:0;">A</div>
+            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#FFFDE0,#FFF8A0);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:17px;color:#7A6500;flex-shrink:0;">A</div>
             <div>
               <div style="font-weight:700;font-size:14px;">Artem K. 🇷🇺</div>
               <div style="font-size:11px;opacity:0.45;">Russia · Sep 2025</div>
             </div>
-            <div style="margin-left:auto;background:#1A1A1A;color:#E85002;font-family:'PP Neue Montreal',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:7px;white-space:nowrap;">6 MO IN</div>
+            <div style="margin-left:auto;background:#1A0F2E;color:#CCFF00;font-family:'Outfit',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:7px;white-space:nowrap;">6 MO IN</div>
           </div>
           <p style="font-size:13px;line-height:1.7;opacity:0.65;font-style:italic;margin-bottom:12px;">"Started with friends, learned TikTok targeting. Now 11 active models, $2,400/month — comes in automatically."</p>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <span style="font-size:11px;opacity:0.45;">Monthly now:</span>
-            <span class="font-heading" style="font-size:1rem;font-weight:900;color:#F9F9F9;">$2,400</span>
+            <span class="font-heading" style="font-size:1rem;font-weight:900;color:#1A0F2E;">$2,400</span>
             <span style="font-size:11px;opacity:0.4;">/ passive</span>
           </div>
         </div>
         <!-- duplicates for seamless loop -->
         <div class="card marquee-card" style="padding:24px 20px 20px;position:relative;overflow:hidden;">
-          <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#E85002;border-radius:4px 0 0 4px;"></div>
+          <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#E33BC5;border-radius:4px 0 0 4px;"></div>
           <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
-            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,rgba(232,80,2,0.2),rgba(232,80,2,0.1));display:flex;align-items:center;justify-content:center;font-family:'PP Neue Montreal',sans-serif;font-weight:900;font-size:17px;color:#E85002;flex-shrink:0;">J</div>
+            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#FFF0FB,#FFD6F0);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:17px;color:#E33BC5;flex-shrink:0;">J</div>
             <div>
               <div style="font-weight:700;font-size:14px;">Jayson R. 🇵🇭</div>
               <div style="font-size:11px;opacity:0.45;">Philippines · Feb 2026</div>
             </div>
-            <div style="margin-left:auto;background:#1A1A1A;color:#E85002;font-family:'PP Neue Montreal',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:7px;white-space:nowrap;">2 WKS IN</div>
+            <div style="margin-left:auto;background:#1A0F2E;color:#CCFF00;font-family:'Outfit',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:7px;white-space:nowrap;">2 WKS IN</div>
           </div>
           <p style="font-size:13px;line-height:1.7;opacity:0.65;font-style:italic;margin-bottom:12px;">"Had Facebook groups for remote jobs. Started posting. First model signed up on day 9. Didn't expect it so fast."</p>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <span style="font-size:11px;opacity:0.45;">Earned in 2 weeks:</span>
-            <span class="font-heading" style="font-size:1rem;font-weight:900;color:#E85002;">$280</span>
+            <span class="font-heading" style="font-size:1rem;font-weight:900;color:#E33BC5;">$280</span>
           </div>
         </div>
         <div class="card marquee-card" style="padding:24px 20px 20px;position:relative;overflow:hidden;">
-          <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#E85002;border-radius:4px 0 0 4px;"></div>
+          <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#CCFF00;border-radius:4px 0 0 4px;"></div>
           <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
-            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,rgba(255,109,41,0.15),rgba(255,109,41,0.08));display:flex;align-items:center;justify-content:center;font-family:'PP Neue Montreal',sans-serif;font-weight:900;font-size:17px;color:#FF6D29;flex-shrink:0;">C</div>
+            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#F0FFE8,#DDFFC8);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:17px;color:#3A7C1A;flex-shrink:0;">C</div>
             <div>
               <div style="font-weight:700;font-size:14px;">Camila F. 🇧🇷</div>
               <div style="font-size:11px;opacity:0.45;">Brazil · Jan 2026</div>
             </div>
-            <div style="margin-left:auto;background:#1A1A1A;color:#E85002;font-family:'PP Neue Montreal',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:7px;white-space:nowrap;">1 MO IN</div>
+            <div style="margin-left:auto;background:#1A0F2E;color:#CCFF00;font-family:'Outfit',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:7px;white-space:nowrap;">1 MO IN</div>
           </div>
           <p style="font-size:13px;line-height:1.7;opacity:0.65;font-style:italic;margin-bottom:12px;">"Posted in 3 Telegram groups, DMs to girls I knew. Two signed up week one. End of month — $700 passive income."</p>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <span style="font-size:11px;opacity:0.45;">Month 1 income:</span>
-            <span class="font-heading" style="font-size:1rem;font-weight:900;color:#F9F9F9;">$700</span>
+            <span class="font-heading" style="font-size:1rem;font-weight:900;color:#1A0F2E;">$700</span>
           </div>
         </div>
-        <div class="card marquee-card" style="padding:24px 20px 20px;position:relative;overflow:hidden;border:1.5px solid rgba(232,80,2,0.5);">
-          <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#E85002;border-radius:4px 0 0 4px;"></div>
+        <div class="card marquee-card" style="padding:24px 20px 20px;position:relative;overflow:hidden;border:2px solid rgba(204,255,0,0.4);">
+          <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#CCFF00;border-radius:4px 0 0 4px;"></div>
           <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
-            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,rgba(232,80,2,0.2),rgba(232,80,2,0.12));display:flex;align-items:center;justify-content:center;font-family:'PP Neue Montreal',sans-serif;font-weight:900;font-size:17px;color:#E85002;flex-shrink:0;">A</div>
+            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#FFFDE0,#FFF8A0);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:17px;color:#7A6500;flex-shrink:0;">A</div>
             <div>
               <div style="font-weight:700;font-size:14px;">Artem K. 🇷🇺</div>
               <div style="font-size:11px;opacity:0.45;">Russia · Sep 2025</div>
             </div>
-            <div style="margin-left:auto;background:#1A1A1A;color:#E85002;font-family:'PP Neue Montreal',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:7px;white-space:nowrap;">6 MO IN</div>
+            <div style="margin-left:auto;background:#1A0F2E;color:#CCFF00;font-family:'Outfit',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:7px;white-space:nowrap;">6 MO IN</div>
           </div>
           <p style="font-size:13px;line-height:1.7;opacity:0.65;font-style:italic;margin-bottom:12px;">"Started with friends, learned TikTok targeting. Now 11 active models, $2,400/month — comes in automatically."</p>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <span style="font-size:11px;opacity:0.45;">Monthly now:</span>
-            <span class="font-heading" style="font-size:1rem;font-weight:900;color:#F9F9F9;">$2,400</span>
+            <span class="font-heading" style="font-size:1rem;font-weight:900;color:#1A0F2E;">$2,400</span>
             <span style="font-size:11px;opacity:0.4;">/ passive</span>
           </div>
         </div>
@@ -617,14 +615,14 @@
 <section style="padding:0 20px 80px;position:relative;z-index:10;">
   <div style="max-width:700px;margin:0 auto;">
     <div class="reveal" style="text-align:center;margin-bottom:48px;">
-      <span style="display:inline-block;background:#1A1A1A;color:#E85002;font-size:12px;font-weight:800;padding:6px 16px;border-radius:100px;margin-bottom:16px;letter-spacing:0.05em;font-family:'PP Neue Montreal',sans-serif;">YOUR FIRST 7 DAYS</span>
+      <span style="display:inline-block;background:#1A0F2E;color:#CCFF00;font-size:12px;font-weight:800;padding:6px 16px;border-radius:100px;margin-bottom:16px;letter-spacing:0.05em;font-family:'Outfit',sans-serif;">YOUR FIRST 7 DAYS</span>
       <h2 class="font-heading" style="font-size:clamp(1.6rem,4vw,2.4rem);font-weight:900;letter-spacing:-0.02em;">How to Get Your First Model<br>in 1 Week</h2>
       <p style="font-size:15px;opacity:0.5;margin-top:8px;">Step-by-step. No guessing. We give you everything.</p>
     </div>
     <div style="display:flex;flex-direction:column;gap:16px;">
 
       <div class="card reveal" style="padding:24px 28px;display:flex;gap:20px;align-items:flex-start;">
-        <div style="flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#1A1A1A;display:flex;align-items:center;justify-content:center;font-family:'PP Neue Montreal',sans-serif;font-weight:900;font-size:16px;color:#E85002;">1</div>
+        <div style="flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#1A0F2E;display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:16px;color:#CCFF00;">1</div>
         <div>
           <div style="font-weight:800;font-size:14px;margin-bottom:6px;">Day 1 — Get your toolkit</div>
           <p style="font-size:13px;opacity:0.6;line-height:1.6;">After joining, you get ready-made scripts, posting templates, and a personal team leader. Read through once — it takes 20 minutes. You'll know exactly what to say.</p>
@@ -632,7 +630,7 @@
       </div>
 
       <div class="card reveal reveal-delay-1" style="padding:24px 28px;display:flex;gap:20px;align-items:flex-start;">
-        <div style="flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#1A1A1A;display:flex;align-items:center;justify-content:center;font-family:'PP Neue Montreal',sans-serif;font-weight:900;font-size:16px;color:#E85002;">2</div>
+        <div style="flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#1A0F2E;display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:16px;color:#CCFF00;">2</div>
         <div>
           <div style="font-weight:800;font-size:14px;margin-bottom:6px;">Days 2–3 — First outreach</div>
           <p style="font-size:13px;opacity:0.6;line-height:1.6;"><strong style="opacity:1;">Warm approach:</strong> send 15–20 DMs to girls you already know who might be interested. <strong style="opacity:1;">Cold approach:</strong> post in 3–5 Facebook/Telegram groups (remote work, income from home, freelance). Use the script exactly — don't change it. Both work. Pick what fits you.</p>
@@ -640,7 +638,7 @@
       </div>
 
       <div class="card reveal reveal-delay-2" style="padding:24px 28px;display:flex;gap:20px;align-items:flex-start;">
-        <div style="flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#1A1A1A;display:flex;align-items:center;justify-content:center;font-family:'PP Neue Montreal',sans-serif;font-weight:900;font-size:16px;color:#E85002;">3</div>
+        <div style="flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#1A0F2E;display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:16px;color:#CCFF00;">3</div>
         <div>
           <div style="font-weight:800;font-size:14px;margin-bottom:6px;">Days 4–5 — Follow up &amp; qualify</div>
           <p style="font-size:13px;opacity:0.6;line-height:1.6;">Most replies come on day 2–4. Use your objection-handling script. Only 2–3 questions determine if someone's a fit: age, available time, device. Your team leader helps with tricky cases.</p>
@@ -648,16 +646,16 @@
       </div>
 
       <div class="card reveal reveal-delay-3" style="padding:24px 28px;display:flex;gap:20px;align-items:flex-start;">
-        <div style="flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#1A1A1A;display:flex;align-items:center;justify-content:center;font-family:'PP Neue Montreal',sans-serif;font-weight:900;font-size:16px;color:#E85002;">4</div>
+        <div style="flex-shrink:0;width:44px;height:44px;border-radius:12px;background:#1A0F2E;display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:16px;color:#CCFF00;">4</div>
         <div>
           <div style="font-weight:800;font-size:14px;margin-bottom:6px;">Days 6–7 — Submit &amp; earn</div>
           <p style="font-size:13px;opacity:0.6;line-height:1.6;">Pass the contact to your team leader. The studio handles the interview, training, and launch. Once the model works her first shift — your <strong style="opacity:1;">$10 starts coming in automatically</strong>. Every shift. For 12 months.</p>
         </div>
       </div>
 
-      <div class="reveal" style="background:linear-gradient(135deg,#1A0A00 0%,#2A1200 100%);border:1px solid rgba(232,80,2,0.2);border-radius:20px;padding:28px;text-align:center;margin-top:8px;">
+      <div class="reveal" style="background:linear-gradient(135deg,#1A0F2E 0%,#2D1B4E 100%);border-radius:20px;padding:28px;text-align:center;margin-top:8px;">
         <p style="font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:8px;">Most scouts get their first model within</p>
-        <div class="font-heading" style="font-size:1.8rem;font-weight:900;color:#E85002;margin-bottom:4px;">5–10 days</div>
+        <div class="font-heading" style="font-size:1.8rem;font-weight:900;color:#CCFF00;margin-bottom:4px;">5–10 days</div>
         <p style="font-size:13px;color:rgba(255,255,255,0.4);">from the day they join. Zero investment required.</p>
       </div>
 
@@ -673,23 +671,23 @@
       <h2 class="font-heading" style="font-size:1.3rem;font-weight:900;margin-bottom:24px;text-align:center;">Requirements</h2>
       <div style="display:flex;flex-direction:column;gap:14px;">
         <div style="display:flex;align-items:center;gap:12px;">
-          <span style="width:28px;height:28px;border-radius:50%;background:#E85002;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">✓</span>
+          <span style="width:28px;height:28px;border-radius:50%;background:#CCFF00;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">✓</span>
           <span style="font-size:14px;font-weight:500;">18+ years old</span>
         </div>
         <div style="display:flex;align-items:center;gap:12px;">
-          <span style="width:28px;height:28px;border-radius:50%;background:#E85002;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">✓</span>
+          <span style="width:28px;height:28px;border-radius:50%;background:#CCFF00;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">✓</span>
           <span style="font-size:14px;font-weight:500;">Active on social media or Telegram</span>
         </div>
         <div style="display:flex;align-items:center;gap:12px;">
-          <span style="width:28px;height:28px;border-radius:50%;background:#E85002;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">✓</span>
+          <span style="width:28px;height:28px;border-radius:50%;background:#CCFF00;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">✓</span>
           <span style="font-size:14px;font-weight:500;">English B1+ (intermediate or higher)</span>
         </div>
         <div style="display:flex;align-items:center;gap:12px;">
-          <span style="width:28px;height:28px;border-radius:50%;background:#E85002;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">✓</span>
+          <span style="width:28px;height:28px;border-radius:50%;background:#CCFF00;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">✓</span>
           <span style="font-size:14px;font-weight:500;">Good communication skills</span>
         </div>
         <div style="display:flex;align-items:center;gap:12px;">
-          <span style="width:28px;height:28px;border-radius:50%;background:#E85002;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">✓</span>
+          <span style="width:28px;height:28px;border-radius:50%;background:#CCFF00;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">✓</span>
           <span style="font-size:14px;font-weight:500;">No PC or equipment needed</span>
         </div>
       </div>
@@ -703,7 +701,7 @@
   <div style="max-width:600px;margin:0 auto;">
 
     <div class="reveal" style="text-align:center;margin-bottom:48px;">
-      <span style="display:inline-block;background:#E85002;color:#F9F9F9;font-size:12px;font-weight:800;padding:6px 16px;border-radius:100px;margin-bottom:16px;letter-spacing:0.05em;font-family:'PP Neue Montreal',sans-serif;">
+      <span style="display:inline-block;background:#CCFF00;color:#1A0F2E;font-size:12px;font-weight:800;padding:6px 16px;border-radius:100px;margin-bottom:16px;letter-spacing:0.05em;font-family:'Outfit',sans-serif;">
         APPLY NOW
       </span>
       <h2 class="font-heading" style="font-size:clamp(2rem,5vw,3.2rem);font-weight:900;line-height:1.05;letter-spacing:-0.02em;margin-bottom:12px;">
@@ -736,7 +734,7 @@
 
           <button type="submit"
                   class="btn-pulse font-heading"
-                  style="background:#E85002;color:#fff;font-size:1.1rem;font-weight:900;padding:18px 24px;width:100%;margin-top:4px;border:none;cursor:pointer;border-radius:16px;letter-spacing:-0.01em;transition:all 0.2s;">
+                  style="background:#E33BC5;color:#fff;font-size:1.1rem;font-weight:900;padding:18px 24px;width:100%;margin-top:4px;border:none;cursor:pointer;border-radius:16px;letter-spacing:-0.01em;transition:all 0.2s;">
             Continue in Telegram →
           </button>
 
@@ -750,7 +748,7 @@
       <!-- Success state -->
       <div id="successMsg">
         <div style="text-align:center;padding:24px 16px 32px;">
-          <div style="display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#E85002 0%,#FF6D29 100%);margin-bottom:20px;">
+          <div style="display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#CCFF00 0%,#E33BC5 100%);margin-bottom:20px;">
             <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
           <h3 class="font-heading" style="font-size:1.6rem;font-weight:900;margin-bottom:10px;">Almost there!</h3>
@@ -779,13 +777,13 @@
 <!-- CLOSING TAGLINE -->
 <section style="padding:0 20px 80px;position:relative;z-index:10;">
   <div style="max-width:700px;margin:0 auto;">
-    <div class="card reveal" style="padding:40px 36px;background:linear-gradient(135deg,#1A0A00 0%,#2A1200 100%);border:1px solid rgba(232,80,2,0.2);text-align:center;position:relative;overflow:hidden;">
-      <div style="position:absolute;top:-40px;left:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(232,80,2,0.2) 0%,transparent 70%);pointer-events:none;"></div>
-      <div style="position:absolute;bottom:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(255,109,41,0.15) 0%,transparent 70%);pointer-events:none;"></div>
+    <div class="card reveal" style="padding:40px 36px;background:linear-gradient(135deg,#1A0F2E 0%,#2D1B4E 100%);text-align:center;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:-40px;left:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(227,59,197,0.15) 0%,transparent 70%);pointer-events:none;"></div>
+      <div style="position:absolute;bottom:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(204,255,0,0.1) 0%,transparent 70%);pointer-events:none;"></div>
       <p class="font-serif" style="font-size:clamp(1.1rem,2.5vw,1.4rem);line-height:1.6;color:rgba(255,255,255,0.9);font-style:italic;margin-bottom:20px;position:relative;">
         "Do today what others only talk about.<br>Tomorrow you live how others can't."
       </p>
-      <a href="#apply" class="btn-pulse font-heading" style="display:inline-block;background:#E85002;color:#fff;font-size:1rem;font-weight:900;padding:16px 32px;border:none;cursor:pointer;text-decoration:none;border-radius:14px;letter-spacing:-0.01em;transition:all 0.2s;position:relative;">Start Now — It's Free →</a>
+      <a href="#apply" class="btn-pulse font-heading" style="display:inline-block;background:#E33BC5;color:#fff;font-size:1rem;font-weight:900;padding:16px 32px;border:none;cursor:pointer;text-decoration:none;border-radius:14px;letter-spacing:-0.01em;transition:all 0.2s;position:relative;">Start Now — It's Free →</a>
     </div>
   </div>
 </section>
@@ -803,7 +801,7 @@
       <div class="faq-item" onclick="toggleFaq(this)" style="cursor:pointer;padding:18px 0;">
         <div style="display:flex;align-items:center;justify-content:space-between;">
           <span style="font-weight:700;font-size:15px;">Do I need experience recruiting?</span>
-          <span class="faq-icon font-heading" style="font-size:22px;color:#E85002;flex-shrink:0;margin-left:12px;">+</span>
+          <span class="faq-icon font-heading" style="font-size:22px;color:#E33BC5;flex-shrink:0;margin-left:12px;">+</span>
         </div>
         <div class="faq-answer">
           <p style="padding-top:12px;font-size:14px;opacity:0.6;line-height:1.7;">
@@ -815,7 +813,7 @@
       <div class="faq-item" onclick="toggleFaq(this)" style="cursor:pointer;padding:18px 0;">
         <div style="display:flex;align-items:center;justify-content:space-between;">
           <span style="font-weight:700;font-size:15px;">Where do I find models?</span>
-          <span class="faq-icon font-heading" style="font-size:22px;color:#E85002;flex-shrink:0;margin-left:12px;">+</span>
+          <span class="faq-icon font-heading" style="font-size:22px;color:#E33BC5;flex-shrink:0;margin-left:12px;">+</span>
         </div>
         <div class="faq-answer">
           <p style="padding-top:12px;font-size:14px;opacity:0.6;line-height:1.7;">
@@ -827,7 +825,7 @@
       <div class="faq-item" onclick="toggleFaq(this)" style="cursor:pointer;padding:18px 0;">
         <div style="display:flex;align-items:center;justify-content:space-between;">
           <span style="font-weight:700;font-size:15px;">When and how do I get paid?</span>
-          <span class="faq-icon font-heading" style="font-size:22px;color:#E85002;flex-shrink:0;margin-left:12px;">+</span>
+          <span class="faq-icon font-heading" style="font-size:22px;color:#E33BC5;flex-shrink:0;margin-left:12px;">+</span>
         </div>
         <div class="faq-answer">
           <p style="padding-top:12px;font-size:14px;opacity:0.6;line-height:1.7;">
@@ -839,7 +837,7 @@
       <div class="faq-item" onclick="toggleFaq(this)" style="cursor:pointer;padding:18px 0;">
         <div style="display:flex;align-items:center;justify-content:space-between;">
           <span style="font-weight:700;font-size:15px;">Is this a legitimate opportunity?</span>
-          <span class="faq-icon font-heading" style="font-size:22px;color:#E85002;flex-shrink:0;margin-left:12px;">+</span>
+          <span class="faq-icon font-heading" style="font-size:22px;color:#E33BC5;flex-shrink:0;margin-left:12px;">+</span>
         </div>
         <div class="faq-answer">
           <p style="padding-top:12px;font-size:14px;opacity:0.6;line-height:1.7;">
@@ -854,11 +852,11 @@
 
 
 <!-- FOOTER -->
-<footer style="border-top:1px solid rgba(255,255,255,0.06);padding:40px 20px;text-align:center;position:relative;z-index:10;">
+<footer style="border-top:1px solid rgba(26,15,46,0.08);padding:40px 20px;text-align:center;position:relative;z-index:10;">
   <div style="max-width:800px;margin:0 auto;">
     <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px;">
-      <svg width="20" height="20" viewBox="0 0 80 80" fill="none"><polygon points="40,16 18,62 30,62 40,38 50,62 62,62" fill="#F9F9F9"/></svg>
-      <span class="font-heading" style="font-size:12px;font-weight:800;letter-spacing:0.1em;color:#F9F9F9;">APEX TALENT</span>
+      <svg width="20" height="20" viewBox="0 0 80 80" fill="none"><polygon points="40,16 18,62 30,62 40,38 50,62 62,62" fill="#1A0F2E"/></svg>
+      <span class="font-heading" style="font-size:12px;font-weight:800;letter-spacing:0.1em;color:#1A0F2E;">APEX TALENT</span>
     </div>
     <div style="display:flex;align-items:center;justify-content:center;gap:20px;margin-bottom:16px;flex-wrap:wrap;">
       <a href="/privacy" style="font-size:12px;opacity:0.45;color:inherit;text-decoration:none;">Privacy Policy</a>
