@@ -147,7 +147,8 @@
 - AI fallback chain: Groq → Gemini → OpenRouter → Anthropic (реально работает только Groq)
 - Роутеры в `main.py`: admin → interview_booking → menu → operator_flow (порядок важен!)
 - `bot/messages/` — i18n модуль: `en.py` (англ.), `ru.py` (рус.). Все user-facing строки здесь
-- `agent_flow.py`, `model_flow.py` — Phase 2, роутеры НЕ подключены
+- `agent_flow.py` — агентская воронка (CRM auto-submit), роутер подключён
+- `model_flow.py` — модельная воронка EN (10 шагов + AI screening), роутер подключён
 - `interview_booking.py` — CRM auto-booking flow, роутер подключён
 - `huntme_crm.py` → авторизация через NextAuth session cookie → fetch слотов + submit заявки
 
