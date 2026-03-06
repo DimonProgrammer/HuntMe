@@ -177,9 +177,34 @@
     }
     .lang-menu a:hover { background: rgba(26,15,46,0.04); }
     .lang-menu a.active { font-weight: 700; background: rgba(204,255,0,0.15); }
+
+    /* === Aurora Background === */
+    @keyframes auroraFloat1 { 0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(50px,-40px) scale(1.12);} }
+    @keyframes auroraFloat2 { 0%,100%{transform:translate(0,0) scale(1.05);}55%{transform:translate(-40px,50px) scale(0.9);} }
+    @keyframes auroraFloat3 { 0%,100%{transform:translate(0,0) scale(0.92);}60%{transform:translate(30px,30px) scale(1.1);} }
+
+    /* === Marquee === */
+    @keyframes marqueeScroll { from{transform:translateX(0);}to{transform:translateX(-50%);} }
+    .marquee-outer {
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 7%, black 93%, transparent 100%);
+      mask-image: linear-gradient(90deg, transparent 0%, black 7%, black 93%, transparent 100%);
+    }
+    .marquee-track {
+      display: flex; gap: 20px; width: max-content;
+      animation: marqueeScroll 38s linear infinite;
+    }
+    .marquee-track:hover { animation-play-state: paused; }
+    .marquee-card { width: 340px; flex-shrink: 0; }
+    @media (max-width: 640px) { .marquee-card { width: 272px; } }
   </style>
 </head>
 <body>
+<!-- Aurora Background Blobs -->
+<div style="position:fixed;border-radius:50%;filter:blur(110px);pointer-events:none;z-index:1;will-change:transform;width:640px;height:640px;background:radial-gradient(circle,rgba(227,59,197,0.28) 0%,transparent 65%);top:-160px;left:-180px;opacity:0.55;animation:auroraFloat1 14s ease-in-out infinite;"></div>
+<div style="position:fixed;border-radius:50%;filter:blur(110px);pointer-events:none;z-index:1;will-change:transform;width:540px;height:540px;background:radial-gradient(circle,rgba(120,60,220,0.2) 0%,transparent 65%);top:80px;right:-160px;opacity:0.45;animation:auroraFloat2 18s ease-in-out infinite;"></div>
+<div style="position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:1;will-change:transform;width:480px;height:480px;background:radial-gradient(circle,rgba(204,255,0,0.22) 0%,transparent 65%);top:680px;left:35%;transform:translateX(-50%);opacity:0.4;animation:auroraFloat3 22s ease-in-out infinite;"></div>
+
 
 <!-- NAVBAR -->
 <nav id="navbar" style="position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 24px;transition:background 0.3s,box-shadow 0.3s;">
@@ -259,11 +284,11 @@
   <div class="card reveal" style="max-width:800px;margin:0 auto;padding:28px 32px;">
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;text-align:center;">
       <div>
-        <div class="font-heading" style="font-size:clamp(1.4rem,3vw,1.9rem);font-weight:900;color:#E33BC5;">5,000+</div>
+        <div id="stat-scouts" class="font-heading" style="font-size:clamp(1.4rem,3vw,1.9rem);font-weight:900;color:#E33BC5;">5,000+</div>
         <div style="font-size:13px;opacity:0.5;margin-top:4px;line-height:1.4;">Active scouts<br>worldwide</div>
       </div>
       <div style="border-left:1px solid rgba(26,15,46,0.08);border-right:1px solid rgba(26,15,46,0.08);padding:0 16px;">
-        <div class="font-heading" style="font-size:clamp(1.4rem,3vw,1.9rem);font-weight:900;color:#1A0F2E;">30,000+</div>
+        <div id="stat-models" class="font-heading" style="font-size:clamp(1.4rem,3vw,1.9rem);font-weight:900;color:#1A0F2E;">30,000+</div>
         <div style="font-size:13px;opacity:0.5;margin-top:4px;line-height:1.4;">Models &amp; operators<br>placed</div>
       </div>
       <div>
@@ -479,63 +504,108 @@
       <h2 class="font-heading" style="font-size:clamp(1.6rem,4vw,2.4rem);font-weight:900;letter-spacing:-0.02em;">Scouts Like You</h2>
       <p style="font-size:15px;opacity:0.5;margin-top:8px;">No experience. Just started. Real payouts.</p>
     </div>
-    <div style="display:flex;flex-direction:column;gap:20px;">
-
-      <!-- Case 1 — Philippines, 2 weeks -->
-      <div class="card reveal" style="padding:28px 28px 24px;position:relative;overflow:hidden;">
-        <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#E33BC5;border-radius:4px 0 0 4px;"></div>
-        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
-          <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#FFF0FB,#FFD6F0);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:18px;color:#E33BC5;flex-shrink:0;">J</div>
-          <div>
-            <div style="font-weight:700;font-size:15px;">Jayson R. <span style="font-size:14px;">🇵🇭</span></div>
-            <div style="font-size:12px;opacity:0.45;">Philippines · Joined Feb 2026</div>
+    <div class="marquee-outer">
+      <div class="marquee-track">
+        <div class="card marquee-card" style="padding:24px 20px 20px;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#E33BC5;border-radius:4px 0 0 4px;"></div>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#FFF0FB,#FFD6F0);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:17px;color:#E33BC5;flex-shrink:0;">J</div>
+            <div>
+              <div style="font-weight:700;font-size:14px;">Jayson R. 🇵🇭</div>
+              <div style="font-size:11px;opacity:0.45;">Philippines · Feb 2026</div>
+            </div>
+            <div style="margin-left:auto;background:#1A0F2E;color:#CCFF00;font-family:'Outfit',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:7px;white-space:nowrap;">2 WKS IN</div>
           </div>
-          <div style="margin-left:auto;background:#1A0F2E;color:#CCFF00;font-family:'Outfit',sans-serif;font-weight:800;font-size:11px;padding:5px 12px;border-radius:8px;white-space:nowrap;">2 WEEKS IN</div>
+          <p style="font-size:13px;line-height:1.7;opacity:0.65;font-style:italic;margin-bottom:12px;">"Had Facebook groups for remote jobs. Started posting. First model signed up on day 9. Didn't expect it so fast."</p>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:11px;opacity:0.45;">Earned in 2 weeks:</span>
+            <span class="font-heading" style="font-size:1rem;font-weight:900;color:#E33BC5;">$280</span>
+          </div>
         </div>
-        <p style="font-size:14px;line-height:1.75;opacity:0.65;font-style:italic;margin-bottom:14px;">"I already had Facebook groups for remote jobs in my country. Just started posting there. My first model signed up on day 9. Didn't expect it to work that quickly honestly."</p>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:12px;opacity:0.45;">Earned in 2 weeks:</span>
-          <span class="font-heading" style="font-size:1.1rem;font-weight:900;color:#E33BC5;">$280</span>
+        <div class="card marquee-card" style="padding:24px 20px 20px;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#CCFF00;border-radius:4px 0 0 4px;"></div>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#F0FFE8,#DDFFC8);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:17px;color:#3A7C1A;flex-shrink:0;">C</div>
+            <div>
+              <div style="font-weight:700;font-size:14px;">Camila F. 🇧🇷</div>
+              <div style="font-size:11px;opacity:0.45;">Brazil · Jan 2026</div>
+            </div>
+            <div style="margin-left:auto;background:#1A0F2E;color:#CCFF00;font-family:'Outfit',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:7px;white-space:nowrap;">1 MO IN</div>
+          </div>
+          <p style="font-size:13px;line-height:1.7;opacity:0.65;font-style:italic;margin-bottom:12px;">"Posted in 3 Telegram groups, DMs to girls I knew. Two signed up week one. End of month — $700 passive income."</p>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:11px;opacity:0.45;">Month 1 income:</span>
+            <span class="font-heading" style="font-size:1rem;font-weight:900;color:#1A0F2E;">$700</span>
+          </div>
+        </div>
+        <div class="card marquee-card" style="padding:24px 20px 20px;position:relative;overflow:hidden;border:2px solid rgba(204,255,0,0.4);">
+          <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#CCFF00;border-radius:4px 0 0 4px;"></div>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#FFFDE0,#FFF8A0);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:17px;color:#7A6500;flex-shrink:0;">A</div>
+            <div>
+              <div style="font-weight:700;font-size:14px;">Artem K. 🇷🇺</div>
+              <div style="font-size:11px;opacity:0.45;">Russia · Sep 2025</div>
+            </div>
+            <div style="margin-left:auto;background:#1A0F2E;color:#CCFF00;font-family:'Outfit',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:7px;white-space:nowrap;">6 MO IN</div>
+          </div>
+          <p style="font-size:13px;line-height:1.7;opacity:0.65;font-style:italic;margin-bottom:12px;">"Started with friends, learned TikTok targeting. Now 11 active models, $2,400/month — comes in automatically."</p>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:11px;opacity:0.45;">Monthly now:</span>
+            <span class="font-heading" style="font-size:1rem;font-weight:900;color:#1A0F2E;">$2,400</span>
+            <span style="font-size:11px;opacity:0.4;">/ passive</span>
+          </div>
+        </div>
+        <!-- duplicates for seamless loop -->
+        <div class="card marquee-card" style="padding:24px 20px 20px;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#E33BC5;border-radius:4px 0 0 4px;"></div>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#FFF0FB,#FFD6F0);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:17px;color:#E33BC5;flex-shrink:0;">J</div>
+            <div>
+              <div style="font-weight:700;font-size:14px;">Jayson R. 🇵🇭</div>
+              <div style="font-size:11px;opacity:0.45;">Philippines · Feb 2026</div>
+            </div>
+            <div style="margin-left:auto;background:#1A0F2E;color:#CCFF00;font-family:'Outfit',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:7px;white-space:nowrap;">2 WKS IN</div>
+          </div>
+          <p style="font-size:13px;line-height:1.7;opacity:0.65;font-style:italic;margin-bottom:12px;">"Had Facebook groups for remote jobs. Started posting. First model signed up on day 9. Didn't expect it so fast."</p>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:11px;opacity:0.45;">Earned in 2 weeks:</span>
+            <span class="font-heading" style="font-size:1rem;font-weight:900;color:#E33BC5;">$280</span>
+          </div>
+        </div>
+        <div class="card marquee-card" style="padding:24px 20px 20px;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#CCFF00;border-radius:4px 0 0 4px;"></div>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#F0FFE8,#DDFFC8);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:17px;color:#3A7C1A;flex-shrink:0;">C</div>
+            <div>
+              <div style="font-weight:700;font-size:14px;">Camila F. 🇧🇷</div>
+              <div style="font-size:11px;opacity:0.45;">Brazil · Jan 2026</div>
+            </div>
+            <div style="margin-left:auto;background:#1A0F2E;color:#CCFF00;font-family:'Outfit',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:7px;white-space:nowrap;">1 MO IN</div>
+          </div>
+          <p style="font-size:13px;line-height:1.7;opacity:0.65;font-style:italic;margin-bottom:12px;">"Posted in 3 Telegram groups, DMs to girls I knew. Two signed up week one. End of month — $700 passive income."</p>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:11px;opacity:0.45;">Month 1 income:</span>
+            <span class="font-heading" style="font-size:1rem;font-weight:900;color:#1A0F2E;">$700</span>
+          </div>
+        </div>
+        <div class="card marquee-card" style="padding:24px 20px 20px;position:relative;overflow:hidden;border:2px solid rgba(204,255,0,0.4);">
+          <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#CCFF00;border-radius:4px 0 0 4px;"></div>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#FFFDE0,#FFF8A0);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:17px;color:#7A6500;flex-shrink:0;">A</div>
+            <div>
+              <div style="font-weight:700;font-size:14px;">Artem K. 🇷🇺</div>
+              <div style="font-size:11px;opacity:0.45;">Russia · Sep 2025</div>
+            </div>
+            <div style="margin-left:auto;background:#1A0F2E;color:#CCFF00;font-family:'Outfit',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:7px;white-space:nowrap;">6 MO IN</div>
+          </div>
+          <p style="font-size:13px;line-height:1.7;opacity:0.65;font-style:italic;margin-bottom:12px;">"Started with friends, learned TikTok targeting. Now 11 active models, $2,400/month — comes in automatically."</p>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:11px;opacity:0.45;">Monthly now:</span>
+            <span class="font-heading" style="font-size:1rem;font-weight:900;color:#1A0F2E;">$2,400</span>
+            <span style="font-size:11px;opacity:0.4;">/ passive</span>
+          </div>
         </div>
       </div>
-
-      <!-- Case 2 — Brazil, 1 month -->
-      <div class="card reveal reveal-delay-1" style="padding:28px 28px 24px;position:relative;overflow:hidden;">
-        <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#CCFF00;border-radius:4px 0 0 4px;"></div>
-        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
-          <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#F0FFE8,#DDFFC8);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:18px;color:#3A7C1A;flex-shrink:0;">C</div>
-          <div>
-            <div style="font-weight:700;font-size:15px;">Camila F. <span style="font-size:14px;">🇧🇷</span></div>
-            <div style="font-size:12px;opacity:0.45;">Brazil · Joined Jan 2026</div>
-          </div>
-          <div style="margin-left:auto;background:#1A0F2E;color:#CCFF00;font-family:'Outfit',sans-serif;font-weight:800;font-size:11px;padding:5px 12px;border-radius:8px;white-space:nowrap;">1 MONTH IN</div>
-        </div>
-        <p style="font-size:14px;line-height:1.75;opacity:0.65;font-style:italic;margin-bottom:14px;">"I posted in 3 Telegram groups for remote work and sent DMs to girls I already knew. Two signed up in the first week. By the end of month one I had $700 passive — while keeping my main job."</p>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:12px;opacity:0.45;">Month 1 income:</span>
-          <span class="font-heading" style="font-size:1.1rem;font-weight:900;color:#1A0F2E;">$700</span>
-        </div>
-      </div>
-
-      <!-- Case 3 — Russia, 6 months -->
-      <div class="card card-lime reveal reveal-delay-2" style="padding:28px 28px 24px;position:relative;overflow:hidden;">
-        <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#CCFF00;border-radius:4px 0 0 4px;"></div>
-        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
-          <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#FFFDE0,#FFF8A0);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:18px;color:#7A6500;flex-shrink:0;">A</div>
-          <div>
-            <div style="font-weight:700;font-size:15px;">Artem K. <span style="font-size:14px;">🇷🇺</span></div>
-            <div style="font-size:12px;opacity:0.45;">Russia · Joined Sep 2025</div>
-          </div>
-          <div style="margin-left:auto;background:#1A0F2E;color:#CCFF00;font-family:'Outfit',sans-serif;font-weight:800;font-size:11px;padding:5px 12px;border-radius:8px;white-space:nowrap;">6 MONTHS IN</div>
-        </div>
-        <p style="font-size:14px;line-height:1.75;opacity:0.65;font-style:italic;margin-bottom:14px;">"Started with friends, then learned targeting on VK and TikTok. Took 3 months to figure out the flow. Now I have 11 active models and withdraw around $2,400 every month — and it keeps coming in automatically."</p>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:12px;opacity:0.45;">Monthly now:</span>
-          <span class="font-heading" style="font-size:1.1rem;font-weight:900;color:#1A0F2E;">$2,400</span>
-          <span style="font-size:12px;opacity:0.4;">/ passive</span>
-        </div>
-      </div>
-
     </div>
   </div>
 </section>
@@ -886,6 +956,35 @@
     window.addEventListener('scroll', function() {
       nav.classList.toggle('scrolled', window.scrollY > 40);
     }, { passive: true });
+  })();
+
+  // Animated number counter
+  (function() {
+    function countUp(el, target, suffix, duration) {
+      var start = performance.now();
+      function step(now) {
+        var p = Math.min((now - start) / duration, 1);
+        var ease = 1 - Math.pow(1 - p, 3);
+        var val = Math.floor(ease * target);
+        el.textContent = val.toLocaleString() + suffix;
+        if (p < 1) requestAnimationFrame(step);
+        else el.textContent = target.toLocaleString() + suffix;
+      }
+      requestAnimationFrame(step);
+    }
+    var el1 = document.getElementById('stat-scouts');
+    var el2 = document.getElementById('stat-models');
+    if (!el1 || !el2) return;
+    var triggered = false;
+    var obs = new IntersectionObserver(function(entries) {
+      if (entries[0].isIntersecting && !triggered) {
+        triggered = true;
+        countUp(el1, 5000, '+', 1800);
+        countUp(el2, 30000, '+', 2200);
+        obs.disconnect();
+      }
+    }, { threshold: 0.5 });
+    obs.observe(el1.closest('.card') || el1.parentElement);
   })();
 </script>
 

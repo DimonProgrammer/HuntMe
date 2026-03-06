@@ -83,9 +83,34 @@
     .lang-menu a { display: flex; align-items: center; gap: 8px; padding: 10px 16px; font-size: 13px; font-weight: 500; color: #1A0F2E; text-decoration: none; transition: background 0.15s; }
     .lang-menu a:hover { background: rgba(26,15,46,0.04); }
     .lang-menu a.active { font-weight: 700; background: rgba(204,255,0,0.15); }
+
+    /* === Aurora Background === */
+    @keyframes auroraFloat1 { 0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(50px,-40px) scale(1.12);} }
+    @keyframes auroraFloat2 { 0%,100%{transform:translate(0,0) scale(1.05);}55%{transform:translate(-40px,50px) scale(0.9);} }
+    @keyframes auroraFloat3 { 0%,100%{transform:translate(0,0) scale(0.92);}60%{transform:translate(30px,30px) scale(1.1);} }
+
+    /* === Marquee === */
+    @keyframes marqueeScroll { from{transform:translateX(0);}to{transform:translateX(-50%);} }
+    .marquee-outer {
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 7%, black 93%, transparent 100%);
+      mask-image: linear-gradient(90deg, transparent 0%, black 7%, black 93%, transparent 100%);
+    }
+    .marquee-track {
+      display: flex; gap: 20px; width: max-content;
+      animation: marqueeScroll 38s linear infinite;
+    }
+    .marquee-track:hover { animation-play-state: paused; }
+    .marquee-card { width: 340px; flex-shrink: 0; }
+    @media (max-width: 640px) { .marquee-card { width: 272px; } }
   </style>
 </head>
 <body>
+<!-- Aurora Background Blobs -->
+<div style="position:fixed;border-radius:50%;filter:blur(110px);pointer-events:none;z-index:1;will-change:transform;width:640px;height:640px;background:radial-gradient(circle,rgba(227,59,197,0.28) 0%,transparent 65%);top:-160px;left:-180px;opacity:0.55;animation:auroraFloat1 14s ease-in-out infinite;"></div>
+<div style="position:fixed;border-radius:50%;filter:blur(110px);pointer-events:none;z-index:1;will-change:transform;width:540px;height:540px;background:radial-gradient(circle,rgba(120,60,220,0.2) 0%,transparent 65%);top:80px;right:-160px;opacity:0.45;animation:auroraFloat2 18s ease-in-out infinite;"></div>
+<div style="position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:1;will-change:transform;width:480px;height:480px;background:radial-gradient(circle,rgba(204,255,0,0.22) 0%,transparent 65%);top:680px;left:35%;transform:translateX(-50%);opacity:0.4;animation:auroraFloat3 22s ease-in-out infinite;"></div>
+
 
 <nav id="navbar" style="position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 24px;transition:background 0.3s,box-shadow 0.3s;">
   <div style="max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;">
@@ -153,11 +178,11 @@
   <div class="card reveal" style="max-width:800px;margin:0 auto;padding:28px 32px;">
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;text-align:center;">
       <div>
-        <div class="font-heading" style="font-size:clamp(1.4rem,3vw,1.9rem);font-weight:900;color:#E33BC5;">5,000+</div>
+        <div id="stat-scouts" class="font-heading" style="font-size:clamp(1.4rem,3vw,1.9rem);font-weight:900;color:#E33BC5;">5,000+</div>
         <div style="font-size:13px;opacity:0.5;margin-top:4px;line-height:1.4;">Активных скаутов<br>по всему миру</div>
       </div>
       <div style="border-left:1px solid rgba(26,15,46,0.08);border-right:1px solid rgba(26,15,46,0.08);padding:0 16px;">
-        <div class="font-heading" style="font-size:clamp(1.4rem,3vw,1.9rem);font-weight:900;color:#1A0F2E;">30,000+</div>
+        <div id="stat-models" class="font-heading" style="font-size:clamp(1.4rem,3vw,1.9rem);font-weight:900;color:#1A0F2E;">30,000+</div>
         <div style="font-size:13px;opacity:0.5;margin-top:4px;line-height:1.4;">Моделей и операторов<br>устроено</div>
       </div>
       <div>
@@ -313,60 +338,108 @@
       <h2 class="font-heading" style="font-size:clamp(1.6rem,4vw,2.4rem);font-weight:900;letter-spacing:-0.02em;">Такие же, как ты</h2>
       <p style="font-size:15px;opacity:0.5;margin-top:8px;">Без опыта. С нуля. Реальные выплаты.</p>
     </div>
-    <div style="display:flex;flex-direction:column;gap:20px;">
-
-      <div class="card reveal" style="padding:28px 28px 24px;position:relative;overflow:hidden;">
-        <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#E33BC5;border-radius:4px 0 0 4px;"></div>
-        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
-          <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#FFF0FB,#FFD6F0);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:18px;color:#E33BC5;flex-shrink:0;">J</div>
-          <div>
-            <div style="font-weight:700;font-size:15px;">Jayson R. <span style="font-size:14px;">🇵🇭</span></div>
-            <div style="font-size:12px;opacity:0.45;">Филиппины · Присоединился фев 2026</div>
+    <div class="marquee-outer">
+      <div class="marquee-track">
+        <div class="card marquee-card" style="padding:24px 20px 20px;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#E33BC5;border-radius:4px 0 0 4px;"></div>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#FFF0FB,#FFD6F0);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:17px;color:#E33BC5;flex-shrink:0;">J</div>
+            <div>
+              <div style="font-weight:700;font-size:14px;">Jayson R. 🇵🇭</div>
+              <div style="font-size:11px;opacity:0.45;">Филиппины · фев 2026</div>
+            </div>
+            <div style="margin-left:auto;background:#1A0F2E;color:#CCFF00;font-family:'Outfit',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:7px;white-space:nowrap;">2 НЕДЕЛИ</div>
           </div>
-          <div style="margin-left:auto;background:#1A0F2E;color:#CCFF00;font-family:'Outfit',sans-serif;font-weight:800;font-size:11px;padding:5px 12px;border-radius:8px;white-space:nowrap;">2 НЕДЕЛИ</div>
+          <p style="font-size:13px;line-height:1.7;opacity:0.65;font-style:italic;margin-bottom:12px;">«Facebook-группы для удалённой работы уже были. Начал постить. Первая модель — на 9-й день. Не ожидал, что так быстро.»</p>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:11px;opacity:0.45;">Заработок за 2 нед.:</span>
+            <span class="font-heading" style="font-size:1rem;font-weight:900;color:#E33BC5;">$280</span>
+          </div>
         </div>
-        <p style="font-size:14px;line-height:1.75;opacity:0.65;font-style:italic;margin-bottom:14px;">«У меня уже были Facebook-группы для удалённой работы. Просто начал постить туда. Первая модель зарегистрировалась на 9-й день. Не ожидал, что сработает так быстро.»</p>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:12px;opacity:0.45;">Заработок за 2 недели:</span>
-          <span class="font-heading" style="font-size:1.1rem;font-weight:900;color:#E33BC5;">$280</span>
+        <div class="card marquee-card" style="padding:24px 20px 20px;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#CCFF00;border-radius:4px 0 0 4px;"></div>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#F0FFE8,#DDFFC8);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:17px;color:#3A7C1A;flex-shrink:0;">C</div>
+            <div>
+              <div style="font-weight:700;font-size:14px;">Camila F. 🇧🇷</div>
+              <div style="font-size:11px;opacity:0.45;">Бразилия · янв 2026</div>
+            </div>
+            <div style="margin-left:auto;background:#1A0F2E;color:#CCFF00;font-family:'Outfit',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:7px;white-space:nowrap;">1 МЕСЯЦ</div>
+          </div>
+          <p style="font-size:13px;line-height:1.7;opacity:0.65;font-style:italic;margin-bottom:12px;">«3 Telegram-группы + знакомые девушки. Двое за первую неделю. К концу месяца $700 пассивного дохода.»</p>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:11px;opacity:0.45;">Доход за 1-й мес.:</span>
+            <span class="font-heading" style="font-size:1rem;font-weight:900;color:#1A0F2E;">$700</span>
+          </div>
+        </div>
+        <div class="card marquee-card" style="padding:24px 20px 20px;position:relative;overflow:hidden;border:2px solid rgba(204,255,0,0.4);">
+          <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#CCFF00;border-radius:4px 0 0 4px;"></div>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#FFFDE0,#FFF8A0);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:17px;color:#7A6500;flex-shrink:0;">А</div>
+            <div>
+              <div style="font-weight:700;font-size:14px;">Артём К. 🇷🇺</div>
+              <div style="font-size:11px;opacity:0.45;">Россия · сен 2025</div>
+            </div>
+            <div style="margin-left:auto;background:#1A0F2E;color:#CCFF00;font-family:'Outfit',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:7px;white-space:nowrap;">6 МЕСЯЦЕВ</div>
+          </div>
+          <p style="font-size:13px;line-height:1.7;opacity:0.65;font-style:italic;margin-bottom:12px;">«Начал с подруг, освоил таргет ВК и TikTok. Сейчас 11 моделей и $2 400 в месяц — приходят автоматически.»</p>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:11px;opacity:0.45;">Сейчас в месяц:</span>
+            <span class="font-heading" style="font-size:1rem;font-weight:900;color:#1A0F2E;">$2 400</span>
+            <span style="font-size:11px;opacity:0.4;">/ пассивно</span>
+          </div>
+        </div>
+        <!-- duplicates for seamless loop -->
+        <div class="card marquee-card" style="padding:24px 20px 20px;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#E33BC5;border-radius:4px 0 0 4px;"></div>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#FFF0FB,#FFD6F0);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:17px;color:#E33BC5;flex-shrink:0;">J</div>
+            <div>
+              <div style="font-weight:700;font-size:14px;">Jayson R. 🇵🇭</div>
+              <div style="font-size:11px;opacity:0.45;">Филиппины · фев 2026</div>
+            </div>
+            <div style="margin-left:auto;background:#1A0F2E;color:#CCFF00;font-family:'Outfit',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:7px;white-space:nowrap;">2 НЕДЕЛИ</div>
+          </div>
+          <p style="font-size:13px;line-height:1.7;opacity:0.65;font-style:italic;margin-bottom:12px;">«Facebook-группы для удалённой работы уже были. Начал постить. Первая модель — на 9-й день. Не ожидал, что так быстро.»</p>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:11px;opacity:0.45;">Заработок за 2 нед.:</span>
+            <span class="font-heading" style="font-size:1rem;font-weight:900;color:#E33BC5;">$280</span>
+          </div>
+        </div>
+        <div class="card marquee-card" style="padding:24px 20px 20px;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#CCFF00;border-radius:4px 0 0 4px;"></div>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#F0FFE8,#DDFFC8);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:17px;color:#3A7C1A;flex-shrink:0;">C</div>
+            <div>
+              <div style="font-weight:700;font-size:14px;">Camila F. 🇧🇷</div>
+              <div style="font-size:11px;opacity:0.45;">Бразилия · янв 2026</div>
+            </div>
+            <div style="margin-left:auto;background:#1A0F2E;color:#CCFF00;font-family:'Outfit',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:7px;white-space:nowrap;">1 МЕСЯЦ</div>
+          </div>
+          <p style="font-size:13px;line-height:1.7;opacity:0.65;font-style:italic;margin-bottom:12px;">«3 Telegram-группы + знакомые девушки. Двое за первую неделю. К концу месяца $700 пассивного дохода.»</p>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:11px;opacity:0.45;">Доход за 1-й мес.:</span>
+            <span class="font-heading" style="font-size:1rem;font-weight:900;color:#1A0F2E;">$700</span>
+          </div>
+        </div>
+        <div class="card marquee-card" style="padding:24px 20px 20px;position:relative;overflow:hidden;border:2px solid rgba(204,255,0,0.4);">
+          <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#CCFF00;border-radius:4px 0 0 4px;"></div>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#FFFDE0,#FFF8A0);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:17px;color:#7A6500;flex-shrink:0;">А</div>
+            <div>
+              <div style="font-weight:700;font-size:14px;">Артём К. 🇷🇺</div>
+              <div style="font-size:11px;opacity:0.45;">Россия · сен 2025</div>
+            </div>
+            <div style="margin-left:auto;background:#1A0F2E;color:#CCFF00;font-family:'Outfit',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:7px;white-space:nowrap;">6 МЕСЯЦЕВ</div>
+          </div>
+          <p style="font-size:13px;line-height:1.7;opacity:0.65;font-style:italic;margin-bottom:12px;">«Начал с подруг, освоил таргет ВК и TikTok. Сейчас 11 моделей и $2 400 в месяц — приходят автоматически.»</p>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:11px;opacity:0.45;">Сейчас в месяц:</span>
+            <span class="font-heading" style="font-size:1rem;font-weight:900;color:#1A0F2E;">$2 400</span>
+            <span style="font-size:11px;opacity:0.4;">/ пассивно</span>
+          </div>
         </div>
       </div>
-
-      <div class="card reveal reveal-delay-1" style="padding:28px 28px 24px;position:relative;overflow:hidden;">
-        <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#CCFF00;border-radius:4px 0 0 4px;"></div>
-        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
-          <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#F0FFE8,#DDFFC8);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:18px;color:#3A7C1A;flex-shrink:0;">C</div>
-          <div>
-            <div style="font-weight:700;font-size:15px;">Camila F. <span style="font-size:14px;">🇧🇷</span></div>
-            <div style="font-size:12px;opacity:0.45;">Бразилия · Присоединилась янв 2026</div>
-          </div>
-          <div style="margin-left:auto;background:#1A0F2E;color:#CCFF00;font-family:'Outfit',sans-serif;font-weight:800;font-size:11px;padding:5px 12px;border-radius:8px;white-space:nowrap;">1 МЕСЯЦ</div>
-        </div>
-        <p style="font-size:14px;line-height:1.75;opacity:0.65;font-style:italic;margin-bottom:14px;">«Постила в 3 Telegram-группы по удалённой работе и писала девушкам, которых знала. Двое зарегистрировались в первую неделю. К концу месяца — $700 пассивного дохода, не бросая основную работу.»</p>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:12px;opacity:0.45;">Доход за 1-й месяц:</span>
-          <span class="font-heading" style="font-size:1.1rem;font-weight:900;color:#1A0F2E;">$700</span>
-        </div>
-      </div>
-
-      <div class="card card-lime reveal reveal-delay-2" style="padding:28px 28px 24px;position:relative;overflow:hidden;">
-        <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:#CCFF00;border-radius:4px 0 0 4px;"></div>
-        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
-          <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#FFFDE0,#FFF8A0);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:900;font-size:18px;color:#7A6500;flex-shrink:0;">А</div>
-          <div>
-            <div style="font-weight:700;font-size:15px;">Артём К. <span style="font-size:14px;">🇷🇺</span></div>
-            <div style="font-size:12px;opacity:0.45;">Россия · Присоединился сен 2025</div>
-          </div>
-          <div style="margin-left:auto;background:#1A0F2E;color:#CCFF00;font-family:'Outfit',sans-serif;font-weight:800;font-size:11px;padding:5px 12px;border-radius:8px;white-space:nowrap;">6 МЕСЯЦЕВ</div>
-        </div>
-        <p style="font-size:14px;line-height:1.75;opacity:0.65;font-style:italic;margin-bottom:14px;">«Начал с подруг, потом освоил таргет ВКонтакте и TikTok. Ушло 3 месяца, чтобы понять схему. Сейчас 11 активных моделей и $2 400 каждый месяц — приходят автоматически.»</p>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:12px;opacity:0.45;">Сейчас в месяц:</span>
-          <span class="font-heading" style="font-size:1.1rem;font-weight:900;color:#1A0F2E;">$2 400</span>
-          <span style="font-size:12px;opacity:0.4;">/ пассивно</span>
-        </div>
-      </div>
-
     </div>
   </div>
 </section>
@@ -651,6 +724,35 @@
   (function() {
     var nav = document.getElementById('navbar');
     window.addEventListener('scroll', function() { nav.classList.toggle('scrolled', window.scrollY > 40); }, { passive: true });
+  })();
+
+  // Animated number counter
+  (function() {
+    function countUp(el, target, suffix, duration) {
+      var start = performance.now();
+      function step(now) {
+        var p = Math.min((now - start) / duration, 1);
+        var ease = 1 - Math.pow(1 - p, 3);
+        var val = Math.floor(ease * target);
+        el.textContent = val.toLocaleString() + suffix;
+        if (p < 1) requestAnimationFrame(step);
+        else el.textContent = target.toLocaleString() + suffix;
+      }
+      requestAnimationFrame(step);
+    }
+    var el1 = document.getElementById('stat-scouts');
+    var el2 = document.getElementById('stat-models');
+    if (!el1 || !el2) return;
+    var triggered = false;
+    var obs = new IntersectionObserver(function(entries) {
+      if (entries[0].isIntersecting && !triggered) {
+        triggered = true;
+        countUp(el1, 5000, '+', 1800);
+        countUp(el2, 30000, '+', 2200);
+        obs.disconnect();
+      }
+    }, { threshold: 0.5 });
+    obs.observe(el1.closest('.card') || el1.parentElement);
   })();
 </script>
 <a href="https://t.me/apextalent" target="_blank" rel="noopener" style="position:fixed;bottom:24px;right:24px;z-index:999;width:56px;height:56px;border-radius:50%;background:#0EA5E9;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(14,165,233,0.4);transition:transform 0.2s,box-shadow 0.2s;text-decoration:none;" onmouseover="this.style.transform='scale(1.1)';this.style.boxShadow='0 6px 28px rgba(14,165,233,0.5)'" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 4px 20px rgba(14,165,233,0.4)'" title="Задать вопрос"><svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></a>
