@@ -103,9 +103,14 @@
 - **Удержание:** если модель отработала 7 смен → с высокой вер-тью отработает месяц. Сливаются на 1-2 смене
 - **Саппорт-модель (когда будет объём):** 10% со смен саппорту (из доли агента/лидера). Или филиппинец на оклад ~$200
 
-## Уроки (только то, чего НЕТ в CLAUDE.md Gotchas)
+## Obsidian Vault
 
-- **Render API PUT /env-vars ЗАМЕНЯЕТ ВСЕ переменные!** Всегда: GET all → добавить новые → PUT all. Никогда не слать PUT с одной переменной — это удалит остальные. Инцидент: затёрли все env vars, бот лежал
+- HuntMe project = Obsidian vault. Daily notes в `daily/YYYY-MM-DD.md`
+- Obsidian-конвенции: `[[double brackets]]` для ссылок между файлами vault
+- 12 vault-команд: `/context`, `/today`, `/trace`, `/connect`, `/ghost`, `/challenge`, `/ideas`, `/graduate`, `/closeday`, `/drift`, `/emerge`, `/schedule`
+- Авто-триггеры: `/today` утром, `/closeday` вечером, `/graduate` при 7+ daily notes
+- Vault = "второй мозг": knowledge/ + docs/ + research/ + daily/ + MEMORY.md
+- Vin's principle: "quality of information the agent has determines what it can do for you"
 
 ## Скиллы
 
