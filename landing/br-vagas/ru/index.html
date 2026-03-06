@@ -235,19 +235,56 @@ nav.navbar.scrolled { background: rgba(255,245,240,0.92); backdrop-filter: blur(
 .review-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 100px; margin-bottom: 10px; }
 .review-card p { font-size: 14px; color: rgba(26,15,46,0.6); line-height: 1.6; }
 
-/* FAQ */
-.faq-list { margin-top: 32px; }
+/* FAQ — two-column */
+.faq-wrap { display: grid; grid-template-columns: 1fr 1.7fr; gap: 64px; align-items: start; }
+.faq-left { position: sticky; top: 100px; }
+.faq-left .section-pre { margin-bottom: 8px; }
+.faq-left .section-title { margin-bottom: 12px; }
+.faq-left-desc { font-size: 14px; color: rgba(26,15,46,0.5); line-height: 1.7; margin-bottom: 28px; }
+.faq-contact-box { padding: 18px 20px; background: rgba(26,15,46,0.03); border-radius: 16px; border: 1px solid rgba(26,15,46,0.07); }
+.faq-contact-box p { font-size: 13px; color: rgba(26,15,46,0.5); line-height: 1.6; }
+.faq-contact-box a { color: #E33BC5; text-decoration: none; font-weight: 600; }
+.faq-contact-box a:hover { text-decoration: underline; }
+.faq-list { margin-top: 0; }
 .faq-item { border-bottom: 1px solid rgba(26,15,46,0.08); }
 .faq-item:last-child { border-bottom: none; }
 .faq-q { width: 100%; background: none; border: none; text-align: left; padding: 18px 0; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 15px; color: #1A0F2E; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.faq-q-text { display: flex; align-items: baseline; gap: 10px; text-align: left; }
+.faq-num { font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 900; color: rgba(26,15,46,0.2); flex-shrink: 0; min-width: 18px; }
 .faq-icon { font-size: 20px; color: #E33BC5; transition: transform 0.3s; flex-shrink: 0; }
 .faq-item.open .faq-icon { transform: rotate(45deg); }
 .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.45s cubic-bezier(0.4,0,0.2,1); }
 .faq-item.open .faq-a { max-height: 500px; }
-.faq-a p { font-size: 14px; color: rgba(26,15,46,0.55); line-height: 1.7; padding-bottom: 18px; }
+.faq-a p { font-size: 14px; color: rgba(26,15,46,0.55); line-height: 1.7; padding-bottom: 18px; padding-left: 28px; }
+@media (max-width: 700px) { .faq-wrap { grid-template-columns: 1fr; gap: 32px; } .faq-left { position: static; } }
 
-/* Final CTA */
-.final-cta { text-align: center; padding: 80px 0; background: linear-gradient(135deg, rgba(227,59,197,0.06) 0%, rgba(204,255,0,0.08) 100%); }
+/* Final CTA — dark card */
+.final-cta { padding: 72px 0 80px; background: none; }
+.final-cta-card {
+  background: #1A0F2E; border-radius: 32px; padding: 72px 48px;
+  text-align: center; position: relative; overflow: hidden;
+}
+.final-cta-glow1 {
+  position: absolute; top: -140px; left: 50%; transform: translateX(-50%);
+  width: 560px; height: 420px; pointer-events: none;
+  background: radial-gradient(ellipse, rgba(227,59,197,0.38) 0%, transparent 68%);
+}
+.final-cta-glow2 {
+  position: absolute; bottom: -100px; right: -80px; pointer-events: none;
+  width: 320px; height: 320px;
+  background: radial-gradient(ellipse, rgba(204,255,0,0.18) 0%, transparent 68%);
+}
+.final-cta-card .section-pre { color: #CCFF00; margin-bottom: 12px; position: relative; z-index: 1; }
+.final-cta-title { font-family: 'Outfit', sans-serif; font-weight: 900; font-size: clamp(2rem, 5vw, 3rem); color: #fff; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 14px; position: relative; z-index: 1; }
+.final-cta-sub { font-size: 15px; color: rgba(255,255,255,0.45); max-width: 420px; margin: 0 auto 24px; line-height: 1.6; position: relative; z-index: 1; }
+.final-cta-urgency { display: inline-flex; align-items: center; gap: 8px; background: rgba(227,59,197,0.18); border: 1px solid rgba(227,59,197,0.35); color: #E33BC5; font-size: 13px; font-weight: 700; padding: 6px 16px; border-radius: 100px; margin-bottom: 28px; position: relative; z-index: 1; }
+.final-cta-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; position: relative; z-index: 1; }
+.btn-cta-pink { display: inline-flex; align-items: center; gap: 10px; background: #E33BC5; color: #fff; font-family: 'Outfit', sans-serif; font-weight: 800; padding: 16px 36px; border-radius: 16px; font-size: 1.05rem; border: none; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+.btn-cta-pink:hover { transform: scale(1.04); filter: brightness(1.1); }
+.btn-cta-ghost { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.8); font-family: 'Outfit', sans-serif; font-weight: 700; padding: 16px 28px; border-radius: 16px; font-size: 1rem; border: 1px solid rgba(255,255,255,0.14); cursor: pointer; text-decoration: none; transition: all 0.2s; }
+.btn-cta-ghost:hover { background: rgba(255,255,255,0.13); border-color: rgba(255,255,255,0.28); }
+.final-cta-note { font-size: 12px; color: rgba(255,255,255,0.25); margin-top: 16px; position: relative; z-index: 1; }
+@media (max-width: 600px) { .final-cta-card { padding: 48px 24px; border-radius: 24px; } }
 
 /* Sticky CTA bar */
 .sticky-cta {
@@ -273,10 +310,22 @@ nav.navbar.scrolled { background: rgba(255,245,240,0.92); backdrop-filter: blur(
   .sticky-cta button { font-size: 12px; padding: 7px 14px; }
 }
 
-/* Footer */
-.site-footer { padding: 28px 0; text-align: center; font-size: 12px; color: rgba(26,15,46,0.35); }
-.site-footer a { color: rgba(26,15,46,0.35); text-decoration: none; }
-.site-footer a:hover { color: #E33BC5; }
+/* Footer — multi-column */
+.site-footer { padding: 56px 0 32px; }
+.footer-inner { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 48px; padding-bottom: 40px; border-bottom: 1px solid rgba(26,15,46,0.07); }
+.footer-logo { display: flex; align-items: center; gap: 8px; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 13px; letter-spacing: 0.1em; color: #1A0F2E; margin-bottom: 10px; text-decoration: none; }
+.footer-tagline { font-size: 13px; color: rgba(26,15,46,0.45); line-height: 1.65; max-width: 210px; }
+.footer-col-title { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(26,15,46,0.3); margin-bottom: 14px; }
+.footer-links { list-style: none; }
+.footer-links li { margin-bottom: 9px; }
+.footer-links a { font-size: 14px; color: rgba(26,15,46,0.5); text-decoration: none; transition: color 0.2s; }
+.footer-links a:hover { color: #E33BC5; }
+.footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 24px; flex-wrap: wrap; gap: 10px; }
+.footer-copy { font-size: 12px; color: rgba(26,15,46,0.3); }
+.footer-legal { display: flex; gap: 20px; }
+.footer-legal a { font-size: 12px; color: rgba(26,15,46,0.3); text-decoration: none; transition: color 0.2s; }
+.footer-legal a:hover { color: #E33BC5; }
+@media (max-width: 640px) { .footer-inner { grid-template-columns: 1fr 1fr; gap: 32px; } .footer-brand { grid-column: 1 / -1; } .footer-bottom { flex-direction: column; align-items: flex-start; } }
 
 /* Divider */
 hr.divider { border: none; height: 1px; background: linear-gradient(90deg, transparent 0%, rgba(26,15,46,0.08) 50%, transparent 100%); margin: 0; }
@@ -592,50 +641,92 @@ hr.divider { border: none; height: 1px; background: linear-gradient(90deg, trans
 <!-- 8. FAQ -->
 <section class="reveal">
   <div class="container">
-    <p class="section-pre">Вопросы</p>
-    <h2 class="section-title">Частые вопросы</h2>
+    <div class="faq-wrap">
 
-    <div class="faq-list">
-      <div class="faq-item open">
-        <button class="faq-q" onclick="toggleFaq(this)">Что за формат работы?<span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Развлекательные прямые эфиры на международных платформах — разговоры, музыка, шоу, юмор. По формату похоже на Instagram Live или Twitch. Вы сами выбираете тему и стиль.</p></div>
+      <!-- Левая колонка -->
+      <div class="faq-left">
+        <p class="section-pre">Вопросы</p>
+        <h2 class="section-title">Частые<br>вопросы</h2>
+        <p class="faq-left-desc">Собрали самое важное. Если не нашли ответ — напишите нам.</p>
+        <div class="faq-contact-box">
+          <p>Остались вопросы?<br>Напишите на <a href="mailto:hello@apextalent.pro">hello@apextalent.pro</a><br>или перейдите в <a href="https://t.me/apextalent_bot?start=land_br_vagas_ru">бот</a> — ответим в течение 24 часов.</p>
+        </div>
       </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Меня увидят знакомые?<span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Нет. На всех платформах включена геоблокировка — зрители из стран СНГ не видят ваш стрим. Это техническое ограничение на уровне платформы, а не настройка.</p></div>
+
+      <!-- Правая колонка — аккордеон -->
+      <div class="faq-list">
+        <div class="faq-item open">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-q-text"><span class="faq-num">01</span>Что за формат работы?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a"><p>Развлекательные прямые эфиры на международных платформах — разговоры, музыка, шоу, юмор. По формату похоже на Instagram Live или Twitch. Вы сами выбираете тему и стиль.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-q-text"><span class="faq-num">02</span>Меня увидят знакомые?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a"><p>Нет. На всех платформах включена геоблокировка — зрители из вашей страны не видят ваш стрим. Это техническое ограничение на уровне платформы, а не настройка.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-q-text"><span class="faq-num">03</span>Что конкретно делать на стримах?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a"><p>Тему выбираете сами: разговоры, музыка, танцы, распаковки, юмор, бьюти. Куратор помогает составить контент-план. Ограничение одно — без политики и религии.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-q-text"><span class="faq-num">04</span>Нужен ли опыт или знание английского?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a"><p>Опыт не нужен — учитесь прямо во время работы, первая неделя оплачивается. Английский необязателен: на платформах встроенный переводчик.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-q-text"><span class="faq-num">05</span>Когда начну зарабатывать?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a"><p>В первый же эфир. Зрители отправляют донаты и виртуальные подарки. Первые 5 смен — ежедневные выплаты. Средний старт — от $700 в месяц.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-q-text"><span class="faq-num">06</span>Нужно ли вкладывать деньги?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a"><p>Нет. Ноль вложений. Нужен смартфон (iPhone 11+ или Android 2023+) или ноутбук с камерой, стабильный интернет. Софт, доступ к платформам — за наш счёт.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-q-text"><span class="faq-num">07</span>Как выводить деньги?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a"><p>Первые 5 смен — ежедневно. Дальше — раз в неделю. Способы: карта (для РФ) или USDT (для других стран). Валюта выплат — доллары США.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-q-text"><span class="faq-num">08</span>Какие устройства подходят?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a"><p>iPhone 11 и новее. Android 2023+ (Samsung S23+, Xiaomi 13+, Pixel 7a+). Или ноутбук / ПК с веб-камерой HD. Наушники с микрофоном — желательны, но не обязательны.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-q-text"><span class="faq-num">09</span>Можно совмещать с учёбой или работой?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a"><p>Да. Минимум — 6 часов в день, 5 дней в неделю. Вы сами выбираете время смен: утро, день, вечер или ночь. Многие совмещают с учёбой или другой работой.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-q-text"><span class="faq-num">10</span>Как проходит собеседование?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a"><p>Видеозвонок на 30 минут, один на один. Расскажем детали, покажем платформу, ответим на вопросы. Если после разговора решите, что не подходит — ничего страшного. Это знакомство, не экзамен.</p></div>
+        </div>
       </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Что конкретно делать на стримах?<span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Тему выбираете сами: разговоры на любые темы, музыка, танцы, распаковки, юмор, бьюти. Куратор помогает составить контент-план во время обучения. Ограничение одно — без политики и религии.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Нужен ли опыт или знание английского?<span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Опыт не нужен — учитесь прямо во время работы, первая неделя оплачивается. Английский необязателен: на платформах встроенный переводчик.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Когда начну зарабатывать?<span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>В первый же эфир. Зрители отправляют донаты и виртуальные подарки во время стрима. Первые 5 смен — ежедневные выплаты. Средний старт — от $700 в месяц.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Нужно ли вкладывать деньги?<span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Нет. Ноль вложений. Нужен смартфон (iPhone 11+ или Android 2023+) или ноутбук с камерой, стабильный интернет. Софт, настройка, доступ к платформам — за наш счёт.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Как выводить деньги?<span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Первые 5 смен — ежедневно. Дальше — раз в неделю. Способы: карта (для РФ) или криптовалюта USDT (для других стран). Валюта выплат — доллары США.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Какие устройства подходят?<span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>iPhone модели 11 и новее. Android — 2023 года выпуска и новее (Samsung S23+, Xiaomi 13+, Pixel 7a+ и т.д.). Или ноутбук / ПК с веб-камерой HD. Наушники с микрофоном желательны, но не обязательны.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Можно совмещать с учёбой или работой?<span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Да. Минимум — 6 часов в день, 5 дней в неделю. Вы сами выбираете время смен: утро, день, вечер или ночь. Многие совмещают с учёбой или другой работой.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Как проходит собеседование?<span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Видеозвонок на 30 минут, один на один. Расскажем детали, покажем платформу, ответим на вопросы. Если после разговора решите, что не подходит — ничего страшного. Это знакомство, не экзамен.</p></div>
-      </div>
+
     </div>
   </div>
 </section>
@@ -643,13 +734,22 @@ hr.divider { border: none; height: 1px; background: linear-gradient(90deg, trans
 <!-- 9. ФИНАЛЬНЫЙ CTA -->
 <section class="final-cta reveal">
   <div class="container">
-    <h2 class="section-title">Набор открыт</h2>
-    <p style="max-width:460px;margin:0 auto 16px;font-size:15px;color:rgba(26,15,46,0.5);">
-      Заполните анкету — свяжемся в течение 24 часов и расскажем подробности.
-    </p>
-    <p style="color:#E33BC5;font-weight:700;font-size:14px;margin-bottom:20px;">В марте осталось 3 из 5 мест</p>
-    <button class="btn-cta btn-shimmer" onclick="openForm()">Оставить заявку</button>
-    <p class="btn-sub">30 секунд. Ни к чему не обязывает.</p>
+    <div class="final-cta-card">
+      <div class="final-cta-glow1"></div>
+      <div class="final-cta-glow2"></div>
+      <p class="section-pre">Присоединиться</p>
+      <h2 class="final-cta-title">Твоё место<br>всё ещё свободно</h2>
+      <p class="final-cta-sub">Заполните анкету — свяжемся в течение 24 часов и расскажем подробности.</p>
+      <div class="final-cta-urgency">✦ В марте осталось 3 из 5 мест</div>
+      <div class="final-cta-buttons">
+        <button class="btn-cta-pink btn-shimmer" onclick="openForm()">Оставить заявку</button>
+        <a class="btn-cta-ghost" href="https://t.me/apextalent_bot?start=land_br_vagas_ru">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+          Написать в бот
+        </a>
+      </div>
+      <p class="final-cta-note">30 секунд. Ни к чему не обязывает.</p>
+    </div>
   </div>
 </section>
 
@@ -662,12 +762,38 @@ hr.divider { border: none; height: 1px; background: linear-gradient(90deg, trans
 <!-- FOOTER -->
 <footer class="site-footer">
   <div class="container">
-    <p>&copy; 2026 Apex Talent</p>
-    <p style="margin-top:6px;">
-      <a href="/privacy.html">Конфиденциальность</a> &middot;
-      <a href="/terms.html">Условия</a> &middot;
-      <a href="mailto:hello@apextalent.pro">hello@apextalent.pro</a>
-    </p>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="#" class="footer-logo">
+          <svg width="20" height="20" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><polygon points="40,16 18,62 30,62 40,38 50,62 62,62" fill="#1A0F2E"/></svg>
+          APEX TALENT
+        </a>
+        <p class="footer-tagline">Международная платформа для стриминговых моделей. 100% удалённо.</p>
+      </div>
+      <div>
+        <p class="footer-col-title">Вакансия</p>
+        <ul class="footer-links">
+          <li><a href="#" onclick="openForm();return false;">Оставить заявку</a></li>
+          <li><a href="https://t.me/apextalent_bot?start=land_br_vagas_ru">Telegram-бот</a></li>
+          <li><a href="https://apextalent.pro">Главная</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-col-title">Контакты</p>
+        <ul class="footer-links">
+          <li><a href="mailto:hello@apextalent.pro">hello@apextalent.pro</a></li>
+          <li><a href="/privacy.html">Конфиденциальность</a></li>
+          <li><a href="/terms.html">Условия использования</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">&copy; 2026 Apex Talent. Все права защищены.</span>
+      <div class="footer-legal">
+        <a href="/privacy.html">Политика конфиденциальности</a>
+        <a href="/terms.html">Пользовательское соглашение</a>
+      </div>
+    </div>
   </div>
 </footer>
 
