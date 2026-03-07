@@ -21,6 +21,7 @@ from bot.handlers import admin, agent_flow, interview_booking, menu, model_flow,
 from bot.services import live_feed
 from bot.services import reminder
 from bot.services import chatwoot_client
+from bot.services import daily_reports
 
 logging.basicConfig(
     level=logging.INFO,
@@ -346,6 +347,7 @@ async def main():
     asyncio.create_task(reminder.run_reminder_checker(bot))
     asyncio.create_task(reminder.run_interview_reminder_checker(bot))
     asyncio.create_task(reminder.run_slot_notify_checker(bot))
+    asyncio.create_task(daily_reports.run_daily_reports(bot))
     logger.info("Reminder checkers started")
 
     # Set Telegram command menu (blue button near keyboard)
