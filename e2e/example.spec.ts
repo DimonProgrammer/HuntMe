@@ -1,18 +1,12 @@
 import { test, expect } from '@playwright/test';
 
-test('has title', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
-
-  // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Playwright/);
+test('EN landing page loads and has key elements', async ({ page }) => {
+  await page.goto('/');
+  await expect(page).toHaveTitle(/Apex Talent/i);
+  await expect(page.locator('body')).toContainText('Apply Now');
 });
 
-test('get started link', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
-
-  // Click the get started link.
-  await page.getByRole('link', { name: 'Get started' }).click();
-
-  // Expects page to have a heading with the name of Installation.
-  await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
+test('RU landing page loads and has key elements', async ({ page }) => {
+  await page.goto('/ru/');
+  await expect(page).toHaveTitle(/Apex Talent/i);
 });

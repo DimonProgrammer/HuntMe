@@ -149,6 +149,7 @@ async def cmd_start(message: Message, state: FSMContext):
     prev_data = await state.get_data()
 
     lang = None  # will be resolved below
+    extra_data: dict = {}  # ref/utm collected before clear, applied after
 
     # Parse deep link: /start <param>
     # land_ru_42 → RU landing lead, land_42 → EN landing lead,
@@ -173,13 +174,13 @@ async def cmd_start(message: Message, state: FSMContext):
             try:
                 referrer_id = int(param.removeprefix("ref_"))
                 if referrer_id != message.from_user.id:
-                    await state.update_data(referrer_tg_id=referrer_id)
+                    extra_data["referrer_tg_id"] = referrer_id
                     await _track_event(message.from_user.id, "referral_click", "start", {"referrer_id": referrer_id})
             except ValueError:
                 pass
         else:
             # UTM source: fb_ph, jb_ng, landing, ig, tw, etc.
-            await state.update_data(utm_source=param)
+            extra_data["utm_source"] = param
             await _track_event(message.from_user.id, "utm_source", "start", {"source": param})
 
     if lang is None:
@@ -205,9 +206,10 @@ async def cmd_start(message: Message, state: FSMContext):
         if prev_state and any(prev_state.startswith(p) for p in _form_prefixes):
             preserved["paused_state"] = prev_state
         # else: prev_paused already in preserved dict from prev_data
+        preserved.update(extra_data)
         await state.update_data(**preserved)
     else:
-        await state.update_data(language=lang)
+        await state.update_data(language=lang, **extra_data)
 
     await _track_event(message.from_user.id, "bot_started", "start")
 
@@ -217,6 +219,9 @@ async def cmd_start(message: Message, state: FSMContext):
         tg_id=message.from_user.id,
         tg_username=message.from_user.username,
         utm_source=data.get("utm_source"),
+        utm_medium=data.get("utm_medium"),
+        utm_campaign=data.get("utm_campaign"),
+        click_id=data.get("click_id"),
     )
     if notion_page_id:
         await state.update_data(notion_page_id=notion_page_id)
@@ -244,6 +249,7 @@ async def _handle_landing_deeplink(
     m = msg(lang)
 
     candidate_name = None
+    landing_tracking = {}
     try:
         cid = int(raw_id)
         async with async_session() as session:
@@ -258,6 +264,12 @@ async def _handle_landing_deeplink(
                 candidate.status = "in_bot"
                 candidate.language = lang
                 await session.commit()
+                # Carry over tracking from landing form
+                for f in ("utm_source", "utm_medium", "utm_campaign", "utm_content",
+                          "utm_term", "click_id", "sub1", "sub2", "sub3", "sub4", "sub5"):
+                    v = getattr(candidate, f, None)
+                    if v:
+                        landing_tracking[f] = v
     except (ValueError, Exception) as exc:
         logger.debug("Landing deep link parse error: %s", exc)
 
@@ -265,10 +277,11 @@ async def _handle_landing_deeplink(
     name = candidate_name or message.from_user.first_name or fallback_name
 
     await state.update_data(
-        utm_source="landing",
+        utm_source=landing_tracking.get("utm_source", "landing"),
         candidate_type="operator",
         name=name,
         language=lang,
+        **{k: v for k, v in landing_tracking.items() if k != "utm_source"},
     )
     await _track_event(message.from_user.id, "bot_started", "start", {"source": "landing", "lang": lang})
 
@@ -276,7 +289,10 @@ async def _handle_landing_deeplink(
     notion_page_id = await notion_leads.on_start(
         tg_id=message.from_user.id,
         tg_username=message.from_user.username,
-        utm_source="landing",
+        utm_source=landing_tracking.get("utm_source", "landing"),
+        utm_medium=landing_tracking.get("utm_medium"),
+        utm_campaign=landing_tracking.get("utm_campaign"),
+        click_id=landing_tracking.get("click_id"),
     )
     if notion_page_id:
         await state.update_data(notion_page_id=notion_page_id)
@@ -299,6 +315,7 @@ async def _handle_model_deeplink(
     m = msg(lang)
 
     candidate_name = None
+    landing_tracking = {}
     try:
         cid = int(raw_id)
         async with async_session() as session:
@@ -313,16 +330,22 @@ async def _handle_model_deeplink(
                 candidate.language = lang
                 candidate.candidate_type = "model"
                 await session.commit()
+                for f in ("utm_source", "utm_medium", "utm_campaign", "utm_content",
+                          "utm_term", "click_id", "sub1", "sub2", "sub3", "sub4", "sub5"):
+                    v = getattr(candidate, f, None)
+                    if v:
+                        landing_tracking[f] = v
     except (ValueError, Exception) as exc:
         logger.debug("Model deep link parse error: %s", exc)
 
     name = candidate_name or message.from_user.first_name or "there"
 
     await state.update_data(
-        utm_source="model_landing",
+        utm_source=landing_tracking.get("utm_source", "model_landing"),
         candidate_type="model",
         name=name,
         language=lang,
+        **{k: v for k, v in landing_tracking.items() if k != "utm_source"},
     )
     await _track_event(
         message.from_user.id, "bot_started", "start",
@@ -333,7 +356,10 @@ async def _handle_model_deeplink(
     notion_page_id = await notion_leads.on_start(
         tg_id=message.from_user.id,
         tg_username=message.from_user.username,
-        utm_source="model_landing",
+        utm_source=landing_tracking.get("utm_source", "model_landing"),
+        utm_medium=landing_tracking.get("utm_medium"),
+        utm_campaign=landing_tracking.get("utm_campaign"),
+        click_id=landing_tracking.get("click_id"),
     )
     if notion_page_id:
         await state.update_data(notion_page_id=notion_page_id)
@@ -357,6 +383,7 @@ async def _handle_agent_deeplink(
     m = msg(lang)
 
     candidate_name = None
+    landing_tracking = {}
     try:
         cid = int(raw_id)
         async with async_session() as session:
@@ -371,16 +398,22 @@ async def _handle_agent_deeplink(
                 candidate.language = lang
                 candidate.candidate_type = "agent"
                 await session.commit()
+                for f in ("utm_source", "utm_medium", "utm_campaign", "utm_content",
+                          "utm_term", "click_id", "sub1", "sub2", "sub3", "sub4", "sub5"):
+                    v = getattr(candidate, f, None)
+                    if v:
+                        landing_tracking[f] = v
     except (ValueError, Exception) as exc:
         logger.debug("Agent deep link parse error: %s", exc)
 
     name = candidate_name or message.from_user.first_name or "there"
 
     await state.update_data(
-        utm_source="agent_landing",
+        utm_source=landing_tracking.get("utm_source", "agent_landing"),
         candidate_type="agent",
         name=name,
         language=lang,
+        **{k: v for k, v in landing_tracking.items() if k != "utm_source"},
     )
     await _track_event(
         message.from_user.id, "bot_started", "start",
@@ -391,7 +424,10 @@ async def _handle_agent_deeplink(
     notion_page_id = await notion_leads.on_start(
         tg_id=message.from_user.id,
         tg_username=message.from_user.username,
-        utm_source="agent_landing",
+        utm_source=landing_tracking.get("utm_source", "agent_landing"),
+        utm_medium=landing_tracking.get("utm_medium"),
+        utm_campaign=landing_tracking.get("utm_campaign"),
+        click_id=landing_tracking.get("click_id"),
     )
     if notion_page_id:
         await state.update_data(notion_page_id=notion_page_id)

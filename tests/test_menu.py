@@ -28,8 +28,8 @@ class TestStartCommand:
         assert "Apex Talent" in text
         assert await state.get_state() == MenuStates.main_menu.state
 
-    async def test_start_clears_previous_state(self, state):
-        """If user was mid-flow and sends /start, state is cleared."""
+    async def test_start_preserves_form_state_for_resume(self, state):
+        """If user was mid-flow and sends /start, form data is preserved for resume."""
         await state.set_state(OperatorForm.waiting_age)
         await state.update_data(name="Old Name")
 
@@ -38,7 +38,8 @@ class TestStartCommand:
 
         assert await state.get_state() == MenuStates.main_menu.state
         data = await state.get_data()
-        assert "name" not in data
+        # Form data preserved so user can resume via /continue
+        assert data.get("paused_state") == OperatorForm.waiting_age.state
 
     async def test_start_with_referral(self, state):
         msg = make_message("/start ref_999888")

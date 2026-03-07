@@ -123,15 +123,14 @@ class TestAgentObjections:
         assert detect_objection("Сколько агент зарабатывает?", "ru") == "agent_earnings"
         assert detect_objection("Как стать агентом?", "ru") == "agent_how_start"
 
-    def test_agent_response_contains_referral_info(self):
+    def test_agent_response_contains_earnings_info(self):
         response = get_response("what_is_agent")
-        assert "$50" in response or "referral" in response.lower()
+        assert "$10" in response or "talent scout" in response.lower()
 
     def test_agent_earnings_contains_rates(self):
         response = get_response("agent_earnings")
-        assert "$50" in response
-        assert "$100" in response
         assert "$10" in response
+        assert "$200" in response or "$1,000" in response
 
     def test_agent_how_start_contains_steps(self):
         response = get_response("agent_how_start")
