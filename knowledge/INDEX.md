@@ -25,6 +25,7 @@
 | FAQ модели (платформы, доход, стажировка) | `models/faq.md` |
 | Удержание модели после записи | `models/retention.md` |
 | Заполнить заявку в CRM | `general/crm-application.md` |
+| Трекинг трафика (UTM, постбэки, Metabase) | `general/tracking-system.md` |
 | Условия выплат | `general/payments.md` |
 | Как работает партнёрство | `general/partnership.md` |
 | Быстрый старт нового агента | `general/quick-start.md` |
@@ -79,6 +80,7 @@
 | **partnership.md** | 267 | EN | Как работает партнёрство, revenue, масштабирование |
 | **payments.md** | 127 | RU | Условия выплат: модели, операторы, рефералы, бонусы |
 | **crm-application.md** | 138 | RU | Заполнение заявок в CRM, поля, логика одобрения |
+| **tracking-system.md** | — | RU | Сквозной трекинг: UTM → DB → постбэки → Metabase |
 
 ---
 

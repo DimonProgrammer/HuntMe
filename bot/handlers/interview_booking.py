@@ -908,6 +908,11 @@ async def on_crm_approve(callback: CallbackQuery):
         except Exception:
             logger.exception("Failed to update CRM status")
 
+        # Fire postback on interview booked
+        if cand and cand.click_id:
+            from bot.services.postback import fire_postback
+            await fire_postback(cand.click_id, "interview")
+
         # Clear FSM state so reminder system stops monitoring this candidate
         await _clear_candidate_fsm(tg_user_id, callback.bot.id)
 

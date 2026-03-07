@@ -672,6 +672,16 @@
 </footer>
 
 <script>
+  // ── Traffic tracking: capture UTM & affiliate params from URL ──
+  (function() {
+    var p = new URLSearchParams(window.location.search);
+    var keys = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','click_id','sub1','sub2','sub3','sub4','sub5'];
+    var t = {};
+    keys.forEach(function(k) { if (p.get(k)) t[k] = p.get(k); });
+    if (document.referrer) t.referrer = document.referrer;
+    if (Object.keys(t).length) sessionStorage.setItem('_tracking', JSON.stringify(t));
+  })();
+
   (function() {
     var obs = new IntersectionObserver(function(entries) {
       entries.forEach(function(e) { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
@@ -699,11 +709,12 @@
     errorDiv.style.display = 'none';
     btn.innerHTML = 'Перенаправляем\u2026';
     btn.disabled = true;
-    var data = {
+    var tracking = JSON.parse(sessionStorage.getItem('_tracking') || '{}');
+    var data = Object.assign({
       name: form.querySelector('[name="name"]').value.trim(),
       language: form.querySelector('[name="language"]').value,
       candidate_type: form.querySelector('[name="candidate_type"]').value,
-    };
+    }, tracking);
     if (isTg) { data.telegram = contactInput.replace(/^@/, ''); } else { data.contact = contactInput; }
     var candidateId = null;
     try {

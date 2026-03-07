@@ -150,7 +150,14 @@ async def _update_page(page_id: str, properties: dict) -> None:
         logger.debug("Notion update page failed", exc_info=True)
 
 
-async def on_start(tg_id: int, tg_username: Optional[str], utm_source: Optional[str] = None) -> Optional[str]:
+async def on_start(
+    tg_id: int,
+    tg_username: Optional[str],
+    utm_source: Optional[str] = None,
+    utm_medium: Optional[str] = None,
+    utm_campaign: Optional[str] = None,
+    click_id: Optional[str] = None,
+) -> Optional[str]:
     """Called on /start. Creates or finds existing lead. Returns notion page_id."""
     if not config.NOTION_TOKEN or not config.NOTION_LEADS_DB_ID:
         return None
@@ -168,6 +175,13 @@ async def on_start(tg_id: int, tg_username: Optional[str], utm_source: Optional[
         "Started At": _date(),
         "Updated At": _date(),
     }
+    # Extended tracking fields
+    if utm_medium:
+        props["Medium"] = _rich_text(utm_medium)
+    if utm_campaign:
+        props["Campaign"] = _rich_text(utm_campaign)
+    if click_id:
+        props["Click ID"] = _rich_text(click_id)
 
     existing = await _find_page_by_tg_id(tg_id)
     if existing:

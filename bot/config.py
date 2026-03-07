@@ -48,6 +48,10 @@ class Config:
 
     AGENT_VIDEO_FILE_ID: str = os.getenv("AGENT_VIDEO_FILE_ID", "")
 
+    # Traffic tracking: postback URL template for conversion events
+    # Example: https://tracker.example.com/postback?clickid={click_id}&status={status}&payout={payout}
+    POSTBACK_URL: str = os.getenv("POSTBACK_URL", "")
+
     # Chatwoot live chat integration
     CHATWOOT_BASE_URL: str = os.getenv("CHATWOOT_BASE_URL", "")  # e.g. https://chat.apextalent.pro
     CHATWOOT_API_TOKEN: str = os.getenv("CHATWOOT_API_TOKEN", "")  # agent API access token

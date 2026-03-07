@@ -52,6 +52,19 @@ class Candidate(Base):
     referrer_tg_id: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)
     utm_source: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
 
+    # Traffic tracking (UTM + affiliate sub-params)
+    utm_medium: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    utm_campaign: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    utm_content: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    utm_term: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    click_id: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    sub1: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    sub2: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    sub3: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    sub4: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    sub5: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    referrer_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+
     # Screening results
     score: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     recommendation: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)  # PASS, MAYBE, REJECT

@@ -73,6 +73,18 @@
 - Создать Hetzner VPS
 - Зарегистрировать Битрикс24 → получить webhook URL → добавить в `.env` + `.mcp.json`
 
+## Сквозной трекинг трафика (внедрён 7 марта 2026)
+
+Цепочка: **URL с UTM → sessionStorage → webhook → Neon DB → бот → Notion → постбэк**
+
+- Параметры: `utm_source/medium/campaign/content/term`, `click_id`, `sub1-sub5`, `referrer`
+- Все 6 лендингов (EN/RU + agent x4) захватывают параметры
+- Кандидат в Neon хранит все tracking-поля (миграция выполнена)
+- Постбэки при PASS (qualified) и CRM submit (interview): `bot/services/postback.py`
+- Постбэк URL задаётся через `POSTBACK_URL` env var на Render (пустой пока нет трекера)
+- Аналитика: Metabase на Hetzner (там же WAHA) — план, не внедрено
+- SQL-отчёты: `knowledge/general/tracking-system.md`
+
 ## Решения (не менять без обсуждения)
 
 - Approve/Reject: только ручной (был баг с авто-аппрувом)

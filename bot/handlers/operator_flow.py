@@ -1006,6 +1006,11 @@ async def process_phone(message: Message, state: FSMContext):
         notes=result.reasoning,
     )
 
+    # Fire postback on qualification
+    if result.recommendation == "PASS" and data.get("click_id"):
+        from bot.services.postback import fire_postback
+        await fire_postback(data["click_id"], "qualified")
+
     # PASS → auto-start interview booking (AI decided to invite)
     # MAYBE → just send clarifying question (no agent offer)
     # REJECT → decline + agent offer if eligible

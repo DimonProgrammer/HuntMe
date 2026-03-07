@@ -135,6 +135,20 @@ async def landing_webhook(request):
     backup_contact = data.get("contact", "").strip()
     language = data.get("language", "en").strip() or "en"
 
+    # Traffic tracking params
+    utm_source = data.get("utm_source", "").strip()[:100] or None
+    utm_medium = data.get("utm_medium", "").strip()[:100] or None
+    utm_campaign = data.get("utm_campaign", "").strip()[:255] or None
+    utm_content = data.get("utm_content", "").strip()[:255] or None
+    utm_term = data.get("utm_term", "").strip()[:255] or None
+    click_id = data.get("click_id", "").strip()[:255] or None
+    sub1 = data.get("sub1", "").strip()[:255] or None
+    sub2 = data.get("sub2", "").strip()[:255] or None
+    sub3 = data.get("sub3", "").strip()[:255] or None
+    sub4 = data.get("sub4", "").strip()[:255] or None
+    sub5 = data.get("sub5", "").strip()[:255] or None
+    referrer_url = data.get("referrer", "").strip()[:500] or None
+
     # Save to Neon database
     candidate_id = None
     try:
@@ -146,6 +160,14 @@ async def landing_webhook(request):
                 candidate_type=data.get("candidate_type", "operator"),
                 status="pending_bot",
                 language=language,
+                utm_source=utm_source,
+                utm_medium=utm_medium,
+                utm_campaign=utm_campaign,
+                utm_content=utm_content,
+                utm_term=utm_term,
+                click_id=click_id,
+                sub1=sub1, sub2=sub2, sub3=sub3, sub4=sub4, sub5=sub5,
+                referrer_url=referrer_url,
             )
             session.add(candidate)
             await session.commit()
@@ -169,12 +191,15 @@ async def landing_webhook(request):
         deep = f"https://t.me/apextalent_bot?start={dl_prefix}{candidate_id}" if candidate_id else ""
         lang_flag = "🇷🇺 RU" if language == "ru" else "🇬🇧 EN"
         type_label = "🔍 Agent" if candidate_type == "agent" else "🖥️ Operator"
+        # Source line for admin
+        source_parts = [p for p in [utm_source, utm_medium, utm_campaign] if p]
+        source_line = f"\n📊 <b>Source:</b> {' / '.join(source_parts)}" if source_parts else ""
         admin_msg = (
             f"🌐 <b>Новый лид с сайта</b>\n\n"
             f"👤 <b>Имя:</b> {name or '—'}\n"
             f"✈️ <b>Telegram:</b> {tg_link}{backup_line}\n"
             f"🎭 <b>Тип:</b> {type_label}\n"
-            f"🌍 <b>Язык:</b> {lang_flag}\n"
+            f"🌍 <b>Язык:</b> {lang_flag}{source_line}\n"
             f"🆔 #{candidate_id or '?'}\n\n"
             f"⏳ Ждём в боте"
         )
