@@ -1274,6 +1274,15 @@
 </section>
 
 
+<!-- ABOUT APEX TALENT -->
+<section style="padding:0 20px 64px;">
+  <div style="max-width:640px;margin:0 auto;text-align:center;">
+    <p style="font-size:13px;line-height:1.85;color:#1A0F2E;opacity:0.4;letter-spacing:0.01em;">
+      Apex Talent подбирает специалистов для стриминговых платформ по всему миру. Работаем с моделями, операторами прямых эфиров и агентами в 15+ странах. Никаких вступительных взносов и вложений. Выплаты в долларах каждую неделю, начиная с первой.
+    </p>
+  </div>
+</section>
+
 <!-- ═══════════════════════════════════════════
      FOOTER
 ════════════════════════════════════════════ -->
@@ -1321,6 +1330,16 @@
      JAVASCRIPT
 ════════════════════════════════════════════ -->
 <script>
+  // ── Traffic tracking: capture UTM & affiliate params from URL ──
+  (function() {
+    var p = new URLSearchParams(window.location.search);
+    var keys = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','click_id','sub1','sub2','sub3','sub4','sub5'];
+    var t = {};
+    keys.forEach(function(k) { if (p.get(k)) t[k] = p.get(k); });
+    if (document.referrer) t.referrer = document.referrer;
+    if (Object.keys(t).length) sessionStorage.setItem('_tracking', JSON.stringify(t));
+  })();
+
   // ── Sticky nav ──────────────────────────────
   const navbar = document.getElementById('navbar');
   window.addEventListener('scroll', () => {
@@ -1372,11 +1391,12 @@
     btn.innerHTML = 'Переходим…';
     btn.disabled = true;
 
-    const data = {
+    var tracking = JSON.parse(sessionStorage.getItem('_tracking') || '{}');
+    const data = Object.assign({
       name:     form.querySelector('[name="name"]').value.trim(),
       telegram: tgInput,
       language: form.querySelector('[name="language"]').value,
-    };
+    }, tracking);
 
     let candidateId = null;
     try {
