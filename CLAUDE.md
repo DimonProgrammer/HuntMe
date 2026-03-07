@@ -53,6 +53,7 @@
 - CRM слоты доступны только на 4 дня вперёд. Новые открываются ровно в 00:00 МСК. `filter_slots_by_window(days=4)`
 - CRM status API: PATCH `/api/backend/requests/{id}/status` с `{"status": "i-10"}` (confirmed) / `{"status": "i-60"}` (not confirmed)
 - Render API PUT /env-vars ЗАМЕНЯЕТ ВСЕ переменные! Всегда: GET all → добавить новые → PUT all. Никогда PUT с одной переменной
+- `aiogram==3.13.1` требует `aiohttp<3.11` → использовать `aiohttp==3.10.11`, не выше
 
 ## Workflow
 

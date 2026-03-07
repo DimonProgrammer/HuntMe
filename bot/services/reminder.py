@@ -332,6 +332,17 @@ async def _send_interview_morning(bot: Bot, cand: Candidate, m, time_str: str):
             )
             await session.commit()
         logger.info("Interview morning reminder sent to %s", cand.tg_user_id)
+        # Notify admin
+        tg = cand.tg_username or str(cand.tg_user_id)
+        try:
+            await bot.send_message(
+                config.ADMIN_CHAT_ID,
+                m.ADMIN_INTERVIEW_MORNING_SENT.format(
+                    name=cand.name or "?", tg=tg, slot=cand.huntme_crm_slot or "?",
+                ),
+            )
+        except Exception:
+            logger.debug("Failed to send admin morning-sent alert for %s", cand.tg_user_id)
     except Exception:
         logger.debug("Failed to send interview morning reminder to %s", cand.tg_user_id)
 
@@ -378,6 +389,17 @@ async def _send_interview_retry(bot: Bot, cand: Candidate, m, time_str: str):
             )
             await session.commit()
         logger.info("Interview retry reminder sent to %s", cand.tg_user_id)
+        # Notify admin about 2h silence
+        tg = cand.tg_username or str(cand.tg_user_id)
+        try:
+            await bot.send_message(
+                config.ADMIN_CHAT_ID,
+                m.ADMIN_INTERVIEW_RETRY_SENT.format(
+                    name=cand.name or "?", tg=tg, slot=cand.huntme_crm_slot or "?",
+                ),
+            )
+        except Exception:
+            logger.debug("Failed to send admin retry-sent alert for %s", cand.tg_user_id)
     except Exception:
         logger.debug("Failed to send interview retry reminder to %s", cand.tg_user_id)
 
